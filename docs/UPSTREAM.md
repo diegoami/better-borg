@@ -25,11 +25,14 @@ nothing to adopt. Rules: process.md §7).
 ## Touched by us, worth closing the loop
 
 - **neo-angband#415** (`repo:mod-borg`, parity, effort:S) — "the Borg reads
-  live terrain where it should read the remembered map". Our pin already
-  carries the `knownFeat` wrapper in `src/core-api.ts:390-400`, so part of
-  the fix is in; the issue is still open and names three call sites. Verify
-  against our pin and either confirm fixed (comment upstream with the
-  evidence) or finish it as a B-task. **Filed as our #14.**
+  live terrain where it should read the remembered map". **Verified fixed at
+  our pin (2026-11-02, B14/#14)**: all five named call sites read through the
+  `knownFeat` wrapper (`src/core-api.ts:393-404` via `borgView().cell`,
+  `:440`), active on core 1.23.0-beta.1. Site-level regression pins in
+  `src/remembered-terrain.test.ts` (fail red if any site reverts to live
+  reads); per-site evidence commented upstream. Upstream keeps the issue open
+  until a stable release carries the fields, and for the rest of its audit
+  (monsters/simulateLoadout/stores). **Filed as our #14.**
 
 ## Watch (affects our roadmap)
 
