@@ -1,4 +1,4 @@
-// borg - generated from plugin.ts by neo-angband-mod-build
+// betterborg - generated from plugin.ts by neo-angband-mod-build
 // (@rpgm-tools/neo-angband-mod-sdk). Edit the TypeScript source, not this file.
 
 // title.ts

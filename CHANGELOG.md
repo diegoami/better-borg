@@ -4,6 +4,17 @@ All notable changes to this mod are recorded here. Versions follow the mod's own
 `manifest.json`, which is what the game reads, and each released version has a
 matching git tag that an install pins itself to.
 
+## 0.1.0 - 2026-11-02
+
+The fork's first version: upstream `1fa2f8d` (v1.4.0-beta.2) rebranded as
+`betterborg`, with no behaviour change yet. The first defect fix (the seed-1
+door-closing loop) comes after this entry, one marked change.
+
+- [Visible] **This is now the Better Borg.** New mod id (`betterborg`), name,
+  repository and description; the Borg inside is unchanged.
+
+## Upstream, until v1.4.0-beta.2
+
 An entry has to matter to somebody running the mod. Documentation wording,
 internal refactoring and test-only additions are not recorded here. Bug fixes
 are, however small.

@@ -1,0 +1,64 @@
+# Getting stronger - the roadmap
+
+The goal: **a Borg of any class that reaches deeper**, measured as median
+deepest depth over a fixed seed cohort. Three phases in dependency order, and
+one standing constraint that shapes all of them.
+
+## The constraint: determinism (rule 5)
+
+The Borg draws only its own seeded RNG; games stay replayable. Therefore:
+
+- Parameters are chosen BETWEEN runs and frozen during a life; every run
+  record stores the parameters it played with.
+- No mid-life policy shifts, no wall clock, no "current best" changing under
+  a live save.
+- Learning and evolution happen OFFLINE, in `tools/`, against the headless
+  harness; winners ship as frozen defaults or versioned read-only data.
+
+In-game self-mutation each death was considered and rejected: one life is one
+extremely noisy fitness sample, and a GA over single-life outcomes breeds
+luck, not strength. Evolution wants a population measured in parallel - the
+harness, not the game window. "Children" are real as LINEAGE in the run
+records: parents, generation, fitness, a name.
+
+## Phase 1 - Raise the ceiling (B01-B03)
+
+Tuning parameters against a broken policy spends compute measuring the bug.
+
+- **B01: the door-closing defect.** Seed 1: 771 of 1500 decisions are `close`
+  (cap 750) - half a session on doors is depth not gained. A port defect
+  (reproduced bit-for-bit on pristine upstream): fix it marked, offer it
+  upstream.
+- **B02: the bake-off runner.** The sweep harness (fixed seed cohort, N lives
+  per candidate, per-run records) - first as the measurement instrument, later
+  as the fitness evaluator. Held-out seeds the optimizer never sees.
+- **B03: the swap subsystem.** Ring swaps and weapon/armour swap buying - the
+  biggest unported muscle (upstream 4.2.6 has it; the port's seams are
+  deliberately unwired). Likely one shared valuation seam.
+
+## Phase 2 - Parameter evolution (B04+)
+
+- Port upstream's formula engine (`borg_uses_dynamic_calcs`, borg-formulas.c):
+  the natural genome - upstream's own knob-set for power/depth/restock math.
+  Plus the cfg toggles and numeric settings as the rest of the chromosome.
+- The runner from B02 becomes the fitness evaluator: fitness = median maxDepth
+  (town-death penalty), N lives per candidate to beat the noise.
+- Search: random search / CEM before a GA - with tens of dimensions CEM often
+  matches a GA at a fraction of the code. Add the GA (and lineage naming)
+  only if it pays.
+- Winners land as frozen defaults + a run record; the training cohort is
+  retired when the genome ships.
+
+## Phase 3 - Accumulated knowledge
+
+A versioned, read-only knowledge base built offline and shipped with the mod:
+per-monster observed threat (what actually killed borgs, at what depth),
+per-depth pacing priors, item value tables learned from shop outcomes. The
+Borg consults it at birth; within a life it is deterministic data, not a live
+learner. Every entry cites the runs that produced it.
+
+## Where work lives
+
+Everything in this roadmap is class-agnostic: it lives HERE. Downstream forks
+(neowarrior-borg) cherry-pick. See `docs/process.md` §2 for the routing and
+the cherry-pick protocol.

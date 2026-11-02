@@ -1,0 +1,14 @@
+{
+  "recorded": "2026-11-02",
+  "build": {
+    "commit": "70145c5 + rebrand",
+    "what": "unmodified import of neostryder/neo-angband-mod-borg at 1fa2f8d (v1.4.0-beta.2), same boundary as neowarrior-borg's 301abd7",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.1 (published)",
+    "content": "sibling checkout neo-angband master at 836b8da2a (1.23.0-beta.2)"
+  },
+  "suite": {
+    "command": "pnpm vitest run --exclude 'src/play.test.ts'",
+    "result": "415 passed (415) post-rebrand; play suite expectation carried from the identical pin: seed 1 fails with close 771/1500 (the door-closing defect, B01)"
+  },
+  "note": "The door-closing defect is this fork's first task (B01), not a tolerated exception: rule 7."
+}
