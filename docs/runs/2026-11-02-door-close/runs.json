@@ -1,0 +1,74 @@
+{
+  "recorded": "2026-11-02",
+  "task": "B01 (issue #2)",
+  "build": {
+    "commit": "branch task/B01-door-close from main (scaffold 249cb49+)",
+    "what": "mod unchanged; the diagnosis session for the seed-1 door-closing defect",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.1 (published, pinned)",
+    "content": "sibling checkout neo-angband at fc68bccc1"
+  },
+  "outcome": "defect located in the ENGINE, not in the mod. B01's fix belongs in neostryder/neo-angband (see ../upstream-prs/B01.md draft); no mod-side change can fix the cause without working around an engine bug",
+  "seed1Census": {
+    "before": {
+      "engine": "pristine 1.23.0-beta.1",
+      "commands": { "descend": 21, "walk": 659, "open": 18, "ascend": 19, "read": 1, "rest": 7, "quaff": 1, "pickup": 3, "close": 771 },
+      "decisions": 1500,
+      "turns": 8691,
+      "note": "turns FROZEN at 8691 from decision #731 on: the last 770 close commands were refused by the engine for free"
+    },
+    "afterEnginePatch": {
+      "engine": "1.23.0-beta.1 + one diagnostic line: noteSpot(state, grid) in Chunk.onFeatSet (restores cave-square.c:1261)",
+      "commands": { "descend": 21, "walk": 1026, "open": 5, "ascend": 20, "pickup": 6, "rest": 131, "quaff": 1, "tunnel": 1, "wield": 1, "takeoff": 1 },
+      "close": 0,
+      "note": "same mod bytes, cap untouched: src/play.test.ts 6/6 green"
+    }
+  },
+  "causalityProtocol": {
+    "steps": [
+      "pristine engine: seed 1 fails, close 771/1500 (bit-for-bit the import baseline)",
+      "patch installed engine dist (trap.js) with noteSpot in installChunkFeatHook; md5 of original saved",
+      "patched engine: pnpm vitest run src/play.test.ts -> 6/6 passed",
+      "restored dist from saved original; cmp byte-identical (md5 c89b1b08474b1692b352f8d0b64823f4 both sides)",
+      "pristine again: seed 1 fails again, close 771/1500 - causality closed in both directions"
+    ],
+    "engineRestoreProof": "cmp trap.js trap.js.orig: identical; md5 c89b1b08474b1692b352f8d0b64823f4"
+  },
+  "frozenLoop": {
+    "firstClose": "decision #730, depth 1, borg at 152,53, door 153,53 open in view: close issued, engine closed it, turn 8681 -> 8691",
+    "fromDecision": 731,
+    "evidence": [
+      "decision #731 onward, raw host cell at 153,53: feat(live)=2 (CLOSED - the engine did close it) but knownFeat=3 (player memory still OPEN), known=true, inView=true (probe in /tmp/opencode/b01-knownfeat.txt, scratch deleted)",
+      "engine chunk at 153,53: closed door (live terrain)",
+      "borg map at 153,53: feat=3 (OPEN) every decision - ingestMap copies the remembered terrain (core-api.ts rememberedCell), which is the faithful choice; the memory behind it is stale",
+      "engine reply: 'You see nothing there to close.', zero energy (cave-cmd.ts close handler returns 0), no turn, world frozen: nothing that could refresh the memory (a walk's updateFov) can ever run again"
+    ]
+  },
+  "sweep": {
+    "shape": "5 seeds x 1500 decisions, same mod bytes, only the engine differs",
+    "pristine": [
+      { "seed": 1, "decisions": 1500, "turns": 8691, "maxDepth": 1, "clvl": 1, "places": 421, "dead": false, "commands": { "descend": 21, "walk": 659, "open": 18, "ascend": 19, "read": 1, "rest": 7, "quaff": 1, "pickup": 3, "close": 771 } },
+      { "seed": 7, "decisions": 1228, "turns": 15773, "maxDepth": 1, "clvl": 2, "places": 611, "dead": true, "commands": { "descend": 32, "ascend": 31, "walk": 1081, "rest": 31, "open": 17, "quaff": 3, "pickup": 4, "drop": 18, "tunnel": 12 } },
+      { "seed": 42, "decisions": 1500, "turns": 17914, "maxDepth": 2, "clvl": 3, "places": 945, "dead": false, "commands": { "descend": 33, "ascend": 31, "walk": 1322, "pickup": 18, "wield": 1, "open": 24, "quaff": 2, "rest": 22, "drop": 42, "tunnel": 4, "read": 1 } },
+      { "seed": 99, "decisions": 124, "turns": 1214, "maxDepth": 1, "clvl": 1, "places": 61, "dead": true, "commands": { "descend": 4, "walk": 111, "ascend": 3, "open": 4, "quaff": 2, "pickup": 1 } },
+      { "seed": 2026, "decisions": 1162, "turns": 17451, "maxDepth": 2, "clvl": 2, "places": 583, "dead": true, "commands": { "descend": 36, "walk": 1004, "quaff": 1, "pickup": 5, "ascend": 34, "rest": 59, "read": 2, "open": 18, "tunnel": 4 } }
+    ],
+    "patchedEngine": [
+      { "seed": 1, "decisions": 702, "turns": 8567, "maxDepth": 2, "clvl": 2, "places": 442, "dead": true, "commands": { "descend": 18, "walk": 650, "open": 2, "ascend": 17, "pickup": 4, "rest": 5, "quaff": 3, "tunnel": 1, "wield": 2, "takeoff": 1 } },
+      { "seed": 7, "decisions": 1266, "turns": 18139, "maxDepth": 2, "clvl": 2, "places": 672, "dead": true, "commands": { "descend": 36, "ascend": 35, "walk": 1126, "rest": 40, "open": 15, "quaff": 2, "pickup": 10, "wield": 2, "tunnel": 1 } },
+      { "seed": 42, "decisions": 1500, "turns": 18032, "maxDepth": 2, "clvl": 2, "places": 873, "dead": false, "commands": { "descend": 35, "ascend": 33, "walk": 1352, "pickup": 8, "wield": 2, "open": 20, "quaff": 1, "read": 1, "rest": 23, "disarm": 2, "tunnel": 1, "drop": 22 } },
+      { "seed": 99, "decisions": 1500, "turns": 15817, "maxDepth": 1, "clvl": 2, "places": 842, "dead": false, "commands": { "descend": 34, "walk": 1395, "ascend": 32, "open": 27, "pickup": 8, "quaff": 2, "read": 1, "wield": 1 } },
+      { "seed": 2026, "decisions": 519, "turns": 6030, "maxDepth": 2, "clvl": 2, "places": 263, "dead": true, "commands": { "descend": 14, "walk": 405, "quaff": 2, "pickup": 4, "ascend": 13, "rest": 52, "open": 12, "tunnel": 17, "read": 1 } }
+    ],
+    "note": "no seed regresses on depth; close disappears everywhere; seed 1 unfreezes (turns advance again) and reaches its deepest depth; seed 99 dies at decision 124 pristine but plays all 1500 patched; seed 2026 dies sooner patched - an ordinary death, not a stall, and the harness counts a death as an ending"
+  },
+  "cReferences": {
+    "borgSide": "borg_play_step breeder close block: reference/src/borg/borg-flow.c:629-698 (ported faithfully at src/flow/flow.ts:606-642)",
+    "engineSide": [
+      "square_set_feat live path calls square_note_spot on the changed grid: reference/src/cave-square.c:1256-1262 (the port wired only :1256-1259, the trap half, as Chunk.onFeatSet)",
+      "do_cmd_close_aux closes then memorizes + forces a view update: reference/src/cmd-cave.c:393-398",
+      "do_cmd_close_test refuses a not-there door and forgets the stale remembered one: reference/src/cmd-cave.c:337-341",
+      "square_note_spot memorizes a SEEN grid: reference/src/cave-map.c:226-246"
+    ],
+    "engineGap": "neo-angband-core: Chunk.setFeat's live hook (game/trap.ts installChunkFeatHook) runs only squareSetFeatTrapSideEffect; no noteSpot, and the headless loop (unlike packages/web main.ts) never re-runs the note_spot pass after a state-changing action"
+  }
+}

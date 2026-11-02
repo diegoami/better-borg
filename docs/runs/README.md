@@ -41,3 +41,4 @@ Bulky by-products (screenshots, video, long traces) live outside git in
 | Directory | Build | What it established |
 | --- | --- | --- |
 | `2026-11-02-import/` | import commit `70145c5` + rebrand | Same upstream suite state as neowarrior-borg's import (same pin, same machine): 420/421, the one failure the seed-1 door-closing defect - B01's subject, not a tolerated exception here (rule 7) |
+| `2026-11-02-door-close/` | mod unchanged from `main` | B01's diagnosis: the defect is in the ENGINE (`setFeat`'s live path drops `square_note_spot`, cave-square.c:1261); mod faithful at every step; one engine line flips seed 1 to green (771 closes → 0), reverted byte-identical; PR draft in `docs/upstream-prs/B01.md` |
