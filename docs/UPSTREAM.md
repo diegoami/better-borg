@@ -11,7 +11,9 @@ cherry-picked with the floor-bump rule (process §2); upstream issues we can
 advance become B-tasks here, diagnosed and branched in OUR fork, then offered
 upstream (#428 is the pattern).
 
-Last checked: 2026-11-02.
+Last checked: 2026-11-02 (sync pass: both upstreams — `neostryder/neo-angband`
+and `neostryder/neo-angband-mod-borg` — zero commits ahead of our pins;
+nothing to adopt. Rules: process.md §7).
 
 ## Ours, waiting upstream
 

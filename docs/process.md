@@ -81,3 +81,30 @@ that. Instead:
 
 The local game checkout's `neowarrior-lab` branch (environment patches) is a
 different thing entirely: never pushed, deleted when a fixed release lands.
+
+## 7. Keeping current with upstream
+
+Cadence: a sync pass at every milestone close, plus ad hoc whenever an
+upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
+
+1. `git fetch upstream` in each pristine checkout; compare our pins (the mod
+   import boundary, and the engine floor in `package.json`) against
+   `upstream/master`. Zero ahead = nothing to adopt (2026-11-02: both
+   upstreams zero ahead of our pins).
+2. Triage what's new against the watchlist (`docs/UPSTREAM.md`): movement on
+   issues we queued (#14), seams we depend on (#418/#385/#414), anything
+   touching our filed reports (#428). Read the CHANGELOG diff, not just the
+   log.
+3. Adopt by cherry-pick or merge, the merge message naming the upstream SHA;
+   `pnpm verify` plus a run-record re-baseline decides whether existing
+   records carry over. An ENGINE change bumps the published floor - records
+   must say what they ran on.
+4. The GitHub forks (`diegoami/neo-angband`, `diegoami/neo-angband-mod-borg`)
+   are PR vehicles only: `gh repo sync` them on demand when cutting a §6 PR.
+   No working trees; never ahead of upstream except a PR branch.
+5. The local game checkout: `master` follows upstream, ff-only. The local
+   `neowarrior-lab` branch rebases onto it and shrinks as upstream ships our
+   fixes - the noteSpot line dies the day a release carries #428, and the
+   branch is deleted once empty.
+
+
