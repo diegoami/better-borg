@@ -3,7 +3,10 @@
 The ecosystem's issues live in the consolidated tracker
 (`neostryder/neo-angband`), dispositioned with `repo:*` labels — the same
 vocabulary our trackers use. This file is what we watch and why. Re-check at
-every milestone close; date each pass. Relevant upstream fixes are
+every milestone close; date each pass. When WE file upstream (the #428
+pattern): we cannot apply labels on their tracker (maintainer-only, verified
+2026-11-02) - suggest them in the issue body as a footer, in their vocabulary
+(`bug`/`effort:*`/`priority:*`/`repo:*`/`source:community`/`area:*`). Relevant upstream fixes are
 cherry-picked with the floor-bump rule (process §2); upstream issues we can
 advance become B-tasks here, diagnosed and branched in OUR fork, then offered
 upstream (#428 is the pattern).
