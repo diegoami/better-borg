@@ -63,3 +63,21 @@ body: the reproduced defect with its run record, the C reference, the fix,
 and the test that fails without it. If upstream prefers a different fix, this
 repo adopts theirs and the diverging local commit is reverted in favour of
 the cherry-pick.
+
+**The vehicle (settled 2026-11-02): never PR from a diverged main.** Our
+`main` carries the rebrand and scaffold; a PR head from it would show all of
+that. Instead:
+
+1. Forks exist for exactly this: `diegoami/neo-angband-mod-borg` and
+   `diegoami/neo-angband` (plain forks of upstream, no working tree of their
+   own).
+2. Cut the PR branch from UPSTREAM's master
+   (`git fetch upstream && git checkout -b upstream-pr/<slug> upstream/master`),
+   cherry-pick ONLY the fix commits from this repo's history, push to the
+   fork, open the PR from `diegoami:<branch>`.
+3. One PR per defect; the PR body is the issue body plus the diff. Suggest
+   labels in the issue body (we cannot label on their tracker) and cross-link
+   both ways.
+
+The local game checkout's `neowarrior-lab` branch (environment patches) is a
+different thing entirely: never pushed, deleted when a fixed release lands.
