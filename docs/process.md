@@ -33,6 +33,20 @@ repo's SHA. **Fixed a port defect here?** Open the upstream PR from this
 repo's branch; if upstream changes the approach, adopt theirs here and the
 downstream forks cherry-pick the corrected version.
 
+**Class forks do not multiply** (owner decision, 2026-11-02): there will be
+no mage-borg, ranger-borg, or any further per-class repository. The endgame
+is ONE class-agnostic core - this repo - with per-class strategy packs
+(birth plan, race shortlist, valuation weights) selected by settings, and
+per-class lineages isolated by install slots (T06 slot persistence already
+provides that). `neowarrior-borg` is the single special case and is wound
+down at a milestone boundary, not "when the warrior is done" (deepest-depth
+is asymptotic; the lineage runs forever): at M2 open, its class-agnostic
+instruments (restart loop, session driver, journal/graveyard, records)
+move here - ending the play-session/session.ts duplication - its
+warrior-specific code becomes strategy pack #1, and the repository archives
+with its records preserved. A new class starts as a pack plus a setting,
+never a fork.
+
 ## 3. Task files and the loop
 
 `docs/tasks/B<nn>.md` (B for better-borg). One branch per task,
