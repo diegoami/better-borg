@@ -10,9 +10,9 @@ muscle.
 
 | Task | Title | Difficulty | Issue | Merge after |
 | --- | --- | --- | --- | --- |
-| [B01](B01.md) | The door-closing defect | Hard | #4 | — |
-| [B02](B02.md) | The bake-off runner (measurement instrument, then fitness evaluator) | Medium | #5 | B01 |
-| [B03](B03.md) | The swap subsystem (rings + weapon/armour, one valuation seam) | Hard | #6 | B02 |
+| [B01](B01.md) | The door-closing defect | Hard | #2 | — |
+| [B02](B02.md) | The bake-off runner (measurement instrument, then fitness evaluator) | Medium | #3 | B01 |
+| [B03](B03.md) | The swap subsystem (rings + weapon/armour, one valuation seam) | Hard | #4 | B02 |
 
 ## Later phases
 
