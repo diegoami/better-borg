@@ -1,0 +1,152 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-02T19:22:42.212Z",
+  "label": "b02-verify",
+  "runner": {
+    "tool": "tools/sweep.mjs",
+    "decisions": 1500,
+    "seeds": [
+      1,
+      7,
+      42
+    ],
+    "lives": 1
+  },
+  "build": {
+    "commit": "task/B02-bakeoff-runner@a3020019 (dirty)",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.1",
+    "content": "neo-angband@ceb484205",
+    "borg": "stock"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        13,
+        15,
+        14,
+        10,
+        15
+      ],
+      "decisions": 1500,
+      "turns": 8691,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 143,
+      "kills": 4,
+      "places": 421,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 21,
+        "walk": 659,
+        "open": 18,
+        "ascend": 19,
+        "read": 1,
+        "rest": 7,
+        "quaff": 1,
+        "pickup": 3,
+        "close": 771
+      },
+      "jitter": 1,
+      "restedBesideMonster": 0,
+      "meta": {
+        "wallClockMs": 12235
+      }
+    },
+    {
+      "seed": 7,
+      "life": 1,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        12,
+        16,
+        13,
+        11,
+        14
+      ],
+      "decisions": 1228,
+      "turns": 15773,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 186,
+      "kills": 26,
+      "places": 611,
+      "dead": true,
+      "causeOfDeath": "giant white mouse",
+      "commands": {
+        "descend": 32,
+        "ascend": 31,
+        "walk": 1081,
+        "rest": 31,
+        "open": 17,
+        "quaff": 3,
+        "pickup": 4,
+        "drop": 18,
+        "tunnel": 12
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "meta": {
+        "wallClockMs": 13486
+      }
+    },
+    {
+      "seed": 42,
+      "life": 1,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        14,
+        17,
+        11,
+        14,
+        8
+      ],
+      "decisions": 1500,
+      "turns": 17914,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 3,
+      "gold": 152,
+      "kills": 12,
+      "places": 945,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 33,
+        "ascend": 31,
+        "walk": 1322,
+        "pickup": 18,
+        "wield": 1,
+        "open": 24,
+        "quaff": 2,
+        "rest": 22,
+        "drop": 42,
+        "tunnel": 4,
+        "read": 1
+      },
+      "jitter": 30,
+      "restedBesideMonster": 0,
+      "meta": {
+        "wallClockMs": 18836
+      }
+    }
+  ]
+}
