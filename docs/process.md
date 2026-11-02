@@ -22,7 +22,11 @@ Three repositories, one rule each:
 | `diegoami/neowarrior-borg` | warrior-only behaviour: birth, race defaults, warrior valuation |
 
 **Found a generic improvement while working downstream?** File it here (issue
-or PR) - do not fix it in a class fork. **Landed something here that a
+or PR) - do not fix it in a class fork. **Dupe-check first** (owner rule,
+2026-11-02): before working any issue, check upstream's consolidated tracker
+(OPEN AND CLOSED, `repo:mod-borg` / `repo:neo-angband`) for the same ground -
+ours may be a duplicate, or theirs may already carry the fix (the watchlist,
+`docs/UPSTREAM.md`, is the index). **Landed something here that a
 downstream fork needs?** The downstream session cherry-picks it (same import
 boundary, `70145c5` ↔ neowarrior's `301abd7`); its merge message names this
 repo's SHA. **Fixed a port defect here?** Open the upstream PR from this
