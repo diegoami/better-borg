@@ -68,6 +68,7 @@ import type {
   RunOutcome,
   RunReport,
 } from "@rpgm-tools/neo-angband-mod-sdk";
+import type { UnsurePoint } from "../uncertainty.js";
 
 /** The events domain's subscribe half, the slice this module needs. */
 type Events = Pick<Api2Events, "on" | "off">;
@@ -116,10 +117,23 @@ export interface GraveyardEntry {
  * One finished run as the INSTALL ARCHIVE stores it: the report's entry plus
  * the run key it was recorded under, so a later read can find the ended run
  * by the same key the host named it with (#34).
+ *
+ * #27's ADDITIVE halves (unsure points, and later the trainer's advice and
+ * demonstrations) ride beside the report's own fields under optional keys: an
+ * archive written before #27 carries none of them, and a reader treats
+ * absence as empty - the same additive rule the run-record schema keeps
+ * (rule 7's spirit; this archive's format id is its `journal` field).
  */
 export interface ArchivedRun extends GraveyardEntry {
   /** The run's key as the report carried it (`report.key`); null when the report carried none - an unknown run is still a run. */
   readonly run: string | null;
+  /** #27, additive: where the run was unsure (a bounded tail plus the raw total; absent when nobody journaled). */
+  readonly unsure?: { readonly total: number; readonly points: readonly UnsurePoint[] };
+}
+
+/** The trainer loop's journal extras for one ended run (#27): all optional, all additive. */
+export interface RunDossier {
+  readonly unsure?: { readonly total: number; readonly points: readonly UnsurePoint[] };
 }
 
 /**
@@ -179,7 +193,7 @@ export interface BorgJournal {
    * even when the arrival subscription was refused, because the report does
    * not arrive on it.
    */
-  graveyard(report: RunReport): Promise<void>;
+  graveyard(report: RunReport, dossier?: RunDossier): Promise<void>;
   /** Stop listening. The character's stored journal stays as it is. */
   stop(): Promise<void>;
 }
@@ -277,7 +291,56 @@ function archivedRunOf(value: JsonValue): ArchivedRun | null {
   const entry = entryOf(value);
   if (entry === null) return null;
   const run = value["run"];
-  return { ...entry, run: typeof run === "string" ? run : null };
+  const unsure = unsureOf(value["unsure"]);
+  return { ...entry, run: typeof run === "string" ? run : null, ...(unsure === null ? {} : { unsure }) };
+}
+
+/**
+ * An unsure-points block only this module writes (#27, additive): a finite
+ * total and points whose every field is re-checked, because a value this
+ * module did not write is not a record (the house rule over both slots).
+ */
+/** A {x, y} pair only this module writes, or undefined when the key is absent. */
+function gridOf(value: JsonValue | undefined): { readonly x: number; readonly y: number } | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+  if (!isObject(value) || typeof value["x"] !== "number" || typeof value["y"] !== "number") return INVALID;
+  return { x: value["x"], y: value["y"] };
+}
+
+/** The sentinel gridOf returns for a value that is neither a grid nor absent. */
+const INVALID = { x: Number.NaN, y: Number.NaN };
+
+function unsureOf(value: JsonValue | undefined): { readonly total: number; readonly points: readonly UnsurePoint[] } | null {
+  if (value === undefined || !isObject(value)) return null;
+  const total = value["total"];
+  if (typeof total !== "number" || !Number.isFinite(total) || total < 0) return null;
+  const raw = value["points"];
+  if (!Array.isArray(raw)) return null;
+  const points: UnsurePoint[] = [];
+  for (const point of raw) {
+    if (!isObject(point)) return null;
+    const kind = point["kind"];
+    if (kind !== "valuation-tie" && kind !== "known-world-gap") return null;
+    const turn = point["turn"];
+    const depth = point["depth"];
+    const hp = point["hp"];
+    const chosen = point["chosen"];
+    if (typeof turn !== "number" || typeof depth !== "number" || typeof hp !== "number" || typeof chosen !== "string") return null;
+    const at = gridOf(point["at"]);
+    if (at === undefined || at === null || Number.isNaN(at.x)) return null;
+    const aim = gridOf(point["aim"]);
+    if (aim !== undefined && aim !== null && Number.isNaN(aim.x)) return null;
+    const candidates = point["candidates"];
+    if (!Array.isArray(candidates)) return null;
+    const read: { method: string; score: number }[] = [];
+    for (const one of candidates) {
+      if (!isObject(one) || typeof one["method"] !== "string" || typeof one["score"] !== "number") return null;
+      read.push({ method: one["method"], score: one["score"] });
+    }
+    points.push({ kind, turn, depth, hp, chosen, at, candidates: read, aim: aim ?? null });
+  }
+  return { total, points };
 }
 
 /**
@@ -307,6 +370,21 @@ export function graveyardArchiveOf(value: JsonValue | null): { readonly journal:
 function storeArchiveRun(run: ArchivedRun): JsonValue {
   const stored: Record<string, JsonValue> = storeGraveyardEntry(run) as Record<string, JsonValue>;
   if (run.run !== null) stored["run"] = run.run;
+  if (run.unsure !== undefined) {
+    stored["unsure"] = {
+      total: run.unsure.total,
+      points: run.unsure.points.map((point) => ({
+        kind: point.kind,
+        turn: point.turn,
+        depth: point.depth,
+        hp: point.hp,
+        chosen: point.chosen,
+        at: { x: point.at.x, y: point.at.y },
+        candidates: point.candidates.map((one) => ({ method: one.method, score: one.score })),
+        ...(point.aim === null ? {} : { aim: { x: point.aim.x, y: point.aim.y } }),
+      })),
+    };
+  }
   return stored;
 }
 
@@ -425,10 +503,17 @@ function storeGraveyardEntry(entry: GraveyardEntry): JsonValue {
  * install value (the lineage counter, the birth flag, the title row's
  * memory) is carried forward verbatim: #26's discipline, the same one
  * bumpLineage keeps over this slot. Returns whether the write landed.
+ *
+ * `dossier` (#27, optional, additive): the ended run's trainer-loop record -
+ * its unsure points, and the advice/demonstrations the later phases add -
+ * written INTO the same archived entry, so the on-death report a later page
+ * reads carries them beside the report's own facts. One write, one entry:
+ * no second read-modify-write over the shared slot.
  */
 export async function archiveFinishedRun(
   deps: Pick<BorgJournalDeps, "archive" | "log">,
   report: RunReport,
+  dossier: RunDossier = {},
 ): Promise<boolean> {
   let read: Awaited<ReturnType<Slot["get"]>>;
   try {
@@ -445,7 +530,11 @@ export async function archiveFinishedRun(
     ? (read.value as Record<string, JsonValue>)
     : {};
   const current = graveyardArchiveOf(base[GRAVEYARD_KEY] ?? null);
-  const entry: ArchivedRun = { run: typeof report.key === "string" ? report.key : null, ...graveyardEntryOf(report) };
+  const entry: ArchivedRun = {
+    run: typeof report.key === "string" ? report.key : null,
+    ...graveyardEntryOf(report),
+    ...(dossier.unsure === undefined ? {} : { unsure: dossier.unsure }),
+  };
   const runs = [...current.runs];
   const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);
   if (at >= 0) runs[at] = entry;
@@ -530,11 +619,12 @@ export function installBorgJournal(deps: BorgJournalDeps): BorgJournal {
     get listening(): boolean {
       return subscription !== null;
     },
-    graveyard(report) {
+    graveyard(report, dossier) {
       /* The install archive (#34), not the character's bag: the host deletes
        * the character's save before the report publishes, so this slot is the
-       * only one whose write can still be read on any later page. */
-      return enqueue(() => archiveFinishedRun({ archive: deps.archive, log: deps.log }, report).then(() => undefined));
+       * only one whose write can still be read on any later page. The
+       * dossier's trainer-loop record lands in the SAME entry (#27). */
+      return enqueue(() => archiveFinishedRun({ archive: deps.archive, log: deps.log }, report, dossier).then(() => undefined));
     },
     async stop() {
       await subscribed;

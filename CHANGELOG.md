@@ -6,6 +6,27 @@ matching git tag that an install pins itself to.
 
 ## Unreleased
 
+- [Visible] **The uncertainty journal: the Borg knows its own doubts** (#27,
+  phase 1 as scoped by the owner 2026-11-03; the question and demonstration
+  phases are deferred). Two deterministic signals, always on, needing no
+  setting and no new capability: the best-attack chooser records its top
+  two scores and a decision whose top two came within 5% of each other
+  (an exact tie means the enum order alone broke it) marks a
+  *valuation-tie*; a command acting on a grid the Borg's own map has never
+  observed marks a *known-world-gap*. Every unsure point is journaled with
+  its context - depth, turn, hit points, where it stood, the tied
+  candidates with their scores, what it chose - and lands in THREE places:
+  the mod's install-storage archive (inside the on-death entry, beside the
+  report's own facts: "where I was not sure" beside "what happened"), the
+  harness session's runs.json (`unsure`: the raw total plus a bounded tail
+  of the points; additive, the schema id stays `better-borg/runs@1`, rule
+  7), and summary.md's cohort count. Observation-only: no extra
+  simulation pass, no RNG draw, no clock - a decision that journals an
+  unsure point is byte-for-byte the decision that did not, and the stock
+  suites are the proof. Valuation scores surface at the mod layer (the
+  engine's agent seam exposes none): the port's own best-attack chooser is
+  the one per-decision numeric ranking of candidate actions.
+
 - [Visible] **The death-replay trainer** (#29, the trainer loop's first
   rail): every dead harness run now grows a post-mortem dossier ladder -
   one deterministic text page per dead run x rung (5/10/15/20 turns before

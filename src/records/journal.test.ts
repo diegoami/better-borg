@@ -284,6 +284,60 @@ describe("the install graveyard archive", () => {
     expect(parseGraveyardArchive(stored[GRAVEYARD_KEY] as JsonValue)?.runs[0]?.run).toBe("cedar");
   });
 
+  it("carries the run's uncertainty journal inside the same archived entry (#27, additive)", async () => {
+    /* The dossier's unsure half lands beside the report's own facts, in ONE
+     * write: no second read-modify-write over the shared install slot. An
+     * archive written without a dossier keeps its old shape - the additive
+     * rule a pre-#27 reader already relies on. */
+    const install = slot();
+    const points = [
+      {
+        kind: "valuation-tie" as const,
+        turn: 5029,
+        depth: 1,
+        at: { x: 20, y: 12 },
+        hp: 17,
+        chosen: "walk",
+        candidates: [
+          { method: "THRUST", score: 100 },
+          { method: "LAUNCH", score: 96 },
+        ],
+        aim: null,
+      },
+      {
+        kind: "known-world-gap" as const,
+        turn: 5031,
+        depth: 1,
+        at: { x: 21, y: 12 },
+        hp: 17,
+        chosen: "walk",
+        candidates: [],
+        aim: { x: 22, y: 12 },
+      },
+    ];
+    expect(await archiveFinishedRun({ archive: install, log: () => undefined }, report("death"), { unsure: { total: 5, points } })).toBe(true);
+    const runs = graveyardArchiveOf((install.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs;
+    expect(runs).toHaveLength(1);
+    expect(runs[0]!.unsure).toEqual({ total: 5, points });
+    /* A re-delivered report WITHOUT a dossier re-records the entry and drops
+     * the stale journal: the dossier is per-report, exactly as the cause is. */
+    await archiveFinishedRun({ archive: install, log: () => undefined }, report("death"));
+    const reRuns = graveyardArchiveOf((install.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs;
+    expect(reRuns).toHaveLength(1);
+    expect(reRuns[0]!.unsure).toBeUndefined();
+    /* And a malformed unsure block under a foreign value is dropped, not
+     * adopted - the same rule every field of this archive keeps. */
+    const foreign = slot();
+    await archiveFinishedRun({ archive: foreign, log: () => undefined }, report("death"));
+    (foreign.held() as Record<string, unknown>)[GRAVEYARD_KEY] = {
+      journal: 1,
+      runs: [{ outcome: "death", cause: "x", unsure: { total: -1, points: "garbage" } }],
+    };
+    expect(graveyardArchiveOf((foreign.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs).toEqual([
+      { run: null, ...graveyardEntryOf({ outcome: "death", cause: "x" } as unknown as RunReport) },
+    ]);
+  });
+
   it("records what a partial report carried, and nulls what it did not", async () => {
     /* A front end that delivers only the outcome and the cause (the shape
      * plugin.test.ts's fake game sends) must not crash the writer. */

@@ -572,6 +572,7 @@ suite("the pack restart chain, headless", () => {
         restedBesideMonster: life.restedBesideMonster,
         stageAttained: life.stageAttained,
         retired: life.retired,
+        unsure: { total: life.unsure.total, points: [...life.unsure.points] },
         wallClockMs: life.wallClockMs,
       })),
     };
@@ -595,6 +596,9 @@ suite("the pack restart chain, headless", () => {
         dead: life.dead,
         causeOfDeath: life.causeOfDeath,
         commands: life.commands,
+        /* #27: the uncertainty journal the observing controller collected
+         * flows into the record beside the census, totals agreeing. */
+        unsure: { total: life.unsure.total, points: [...life.unsure.points] },
       });
       /* Kills come from the game's own lore counters (per-race pkills,
        * summed - the number the character dump prints): a count, never a

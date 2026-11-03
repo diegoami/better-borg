@@ -49,6 +49,7 @@ const RUN_KEYS = [
   "restedBesideMonster",
   "stageAttained",
   "retired",
+  "unsure",
   "meta",
 ] as const;
 
@@ -74,6 +75,7 @@ function fixtureRun(overrides: Partial<RunReport>): RunReport {
     restedBesideMonster: 0,
     stageAttained: false,
     retired: false,
+    unsure: { total: 0, points: [] },
     wallClockMs: 21094,
     ...overrides,
   };
@@ -207,6 +209,40 @@ describe("buildRunsJson", () => {
     expect(text).not.toMatch(/"mean/i);
     expect(text).not.toMatch(/"average/i);
     expect(text).not.toMatch(/"summary/i);
+  });
+
+  it("carries the uncertainty journal verbatim (#27, additive)", () => {
+    /* The unsure points are raw facts like the census: the record carries
+     * the total and the points exactly as the session observed them - the
+     * tail bound is the collector's, never the writer's. */
+    const session = fixtureSession();
+    const point = {
+      kind: "valuation-tie" as const,
+      turn: 5029,
+      depth: 1,
+      at: { x: 20, y: 12 },
+      hp: 17,
+      chosen: "walk",
+      candidates: [
+        { method: "THRUST", score: 100 },
+        { method: "LAUNCH", score: 96 },
+      ],
+      aim: null,
+    };
+    session.runs = [
+      fixtureRun({ unsure: { total: 3, points: [point] } }),
+    ];
+    const run = (buildRunsJson(session) as unknown as { runs: Array<Record<string, unknown>> })["runs"][0]!;
+    expect(run["unsure"]).toEqual({ total: 3, points: [point] });
+  });
+
+  it("summarizes the cohort's unsure points as a count, not an interpretation (#27)", () => {
+    const session = fixtureSession();
+    session.runs = session.runs.map((run, at) => ({
+      ...run,
+      unsure: { total: at === 0 ? 2 : 5, points: [] },
+    }));
+    expect(buildSummary(session)).toContain("unsure points (#27): 7 across the cohort");
   });
 
   it("is pure: the same session serializes to the same bytes", () => {

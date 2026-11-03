@@ -86,6 +86,7 @@ import { borgExtractDir } from "../flow/flow-consts.js";
 import { getFightState, idiv, iabs, type FightState } from "./state.js";
 import { BA, BF, BTH_PLUS_ADJ } from "./bf.js";
 import { borgOffsetProjectable, borgTarget } from "./projection.js";
+import { methodLabel, noteAttackValuation } from "../uncertainty.js";
 
 /* ---------------------------------------------------------------- *
  * Small shared readers
@@ -2360,9 +2361,22 @@ export function borgAttack(ctx: BorgContext, boostedBravery = false): AgentComma
   fs.simulate = true;
   let bG = -1;
   let bN = 0;
+  /* The runner-up, tracked in the same pass (#27): observation-only
+   * bookkeeping over scores the loop already computed - the committed method
+   * and every tie the chooser could not separate are unchanged. */
+  let rG = -1;
+  let rN = 0;
   for (let gI = 0; gI < maxAttacks; gI++) {
     const n = borgCalculateAttackEffectiveness(ctx, fs, gI as BF);
-    if (n <= bN) continue;
+    if (n <= bN) {
+      if (n > rN) {
+        rN = n;
+        rG = gI;
+      }
+      continue;
+    }
+    rN = bN;
+    rG = bG;
     bG = gI;
     bN = n;
   }
@@ -2376,6 +2390,18 @@ export function borgAttack(ctx: BorgContext, boostedBravery = false): AgentComma
   fs.pending = null;
   borgCalculateAttackEffectiveness(ctx, fs, bG as BF);
   g.attacking = false;
+  /* #27: the committed valuation, beside the command it chose - the
+   * uncertainty signal's tie half. The command is the very object being
+   * returned, so the assessor can tell THIS attack from any later decision.
+   * The runner-up rides as a SCORE only (phase 2's ask-mode capture is
+   * deferred): no extra pass, no extra RNG draw, observation-only. */
+  if (fs.pending !== null) {
+    noteAttackValuation(ctx.world, {
+      best: { method: methodLabel(bG), score: bN },
+      runner: rG >= 0 ? { method: methodLabel(rG), score: rN } : null,
+      command: fs.pending,
+    });
+  }
   return fs.pending;
 }
 

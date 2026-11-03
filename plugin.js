@@ -10504,6 +10504,180 @@ function iabs(a) {
 }
 
 // src/fight/bf.ts
+var BF = /* @__PURE__ */ ((BF2) => {
+  BF2[BF2["REST"] = 0] = "REST";
+  BF2[BF2["THRUST"] = 1] = "THRUST";
+  BF2[BF2["OBJECT"] = 2] = "OBJECT";
+  BF2[BF2["LAUNCH"] = 3] = "LAUNCH";
+  BF2[BF2["SPELL_MAGIC_MISSILE"] = 4] = "SPELL_MAGIC_MISSILE";
+  BF2[BF2["SPELL_MAGIC_MISSILE_RESERVE"] = 5] = "SPELL_MAGIC_MISSILE_RESERVE";
+  BF2[BF2["SPELL_STINK_CLOUD"] = 6] = "SPELL_STINK_CLOUD";
+  BF2[BF2["SPELL_LIGHT_BEAM"] = 7] = "SPELL_LIGHT_BEAM";
+  BF2[BF2["SPELL_COLD_BOLT"] = 8] = "SPELL_COLD_BOLT";
+  BF2[BF2["SPELL_STONE_TO_MUD"] = 9] = "SPELL_STONE_TO_MUD";
+  BF2[BF2["SPELL_SLOW_MONSTER"] = 10] = "SPELL_SLOW_MONSTER";
+  BF2[BF2["SPELL_SLEEP_III"] = 11] = "SPELL_SLEEP_III";
+  BF2[BF2["SPELL_FIRE_BALL"] = 12] = "SPELL_FIRE_BALL";
+  BF2[BF2["SPELL_SHOCK_WAVE"] = 13] = "SPELL_SHOCK_WAVE";
+  BF2[BF2["SPELL_EXPLOSION"] = 14] = "SPELL_EXPLOSION";
+  BF2[BF2["SPELL_CONFUSE_MONSTER"] = 15] = "SPELL_CONFUSE_MONSTER";
+  BF2[BF2["SPELL_COLD_STORM"] = 16] = "SPELL_COLD_STORM";
+  BF2[BF2["SPELL_METEOR_SWARM"] = 17] = "SPELL_METEOR_SWARM";
+  BF2[BF2["SPELL_RIFT"] = 18] = "SPELL_RIFT";
+  BF2[BF2["SPELL_MANA_STORM"] = 19] = "SPELL_MANA_STORM";
+  BF2[BF2["SPELL_BLIND_CREATURE"] = 20] = "SPELL_BLIND_CREATURE";
+  BF2[BF2["SPELL_TRANCE"] = 21] = "SPELL_TRANCE";
+  BF2[BF2["PRAYER_HOLY_ORB_BALL"] = 22] = "PRAYER_HOLY_ORB_BALL";
+  BF2[BF2["PRAYER_DISP_UNDEAD"] = 23] = "PRAYER_DISP_UNDEAD";
+  BF2[BF2["PRAYER_DISP_EVIL"] = 24] = "PRAYER_DISP_EVIL";
+  BF2[BF2["PRAYER_DISP_SPIRITS"] = 25] = "PRAYER_DISP_SPIRITS";
+  BF2[BF2["PRAYER_HOLY_WORD"] = 26] = "PRAYER_HOLY_WORD";
+  BF2[BF2["SPELL_ANNIHILATE"] = 27] = "SPELL_ANNIHILATE";
+  BF2[BF2["SPELL_ELECTRIC_ARC"] = 28] = "SPELL_ELECTRIC_ARC";
+  BF2[BF2["SPELL_ACID_SPRAY"] = 29] = "SPELL_ACID_SPRAY";
+  BF2[BF2["SPELL_MANA_BOLT"] = 30] = "SPELL_MANA_BOLT";
+  BF2[BF2["SPELL_THRUST_AWAY"] = 31] = "SPELL_THRUST_AWAY";
+  BF2[BF2["SPELL_LIGHTNING_STRIKE"] = 32] = "SPELL_LIGHTNING_STRIKE";
+  BF2[BF2["SPELL_EARTH_RISING"] = 33] = "SPELL_EARTH_RISING";
+  BF2[BF2["SPELL_VOLCANIC_ERUPTION"] = 34] = "SPELL_VOLCANIC_ERUPTION";
+  BF2[BF2["SPELL_RIVER_OF_LIGHTNING"] = 35] = "SPELL_RIVER_OF_LIGHTNING";
+  BF2[BF2["SPELL_SPEAR_OF_OROME"] = 36] = "SPELL_SPEAR_OF_OROME";
+  BF2[BF2["SPELL_LIGHT_OF_MANWE"] = 37] = "SPELL_LIGHT_OF_MANWE";
+  BF2[BF2["SPELL_NETHER_BOLT"] = 38] = "SPELL_NETHER_BOLT";
+  BF2[BF2["SPELL_TAP_UNLIFE"] = 39] = "SPELL_TAP_UNLIFE";
+  BF2[BF2["SPELL_CRUSH"] = 40] = "SPELL_CRUSH";
+  BF2[BF2["SPELL_SLEEP_EVIL"] = 41] = "SPELL_SLEEP_EVIL";
+  BF2[BF2["SPELL_DISENCHANT"] = 42] = "SPELL_DISENCHANT";
+  BF2[BF2["SPELL_FRIGHTEN"] = 43] = "SPELL_FRIGHTEN";
+  BF2[BF2["SPELL_VAMPIRE_STRIKE"] = 44] = "SPELL_VAMPIRE_STRIKE";
+  BF2[BF2["PRAYER_DISPEL_LIFE"] = 45] = "PRAYER_DISPEL_LIFE";
+  BF2[BF2["SPELL_DARK_SPEAR"] = 46] = "SPELL_DARK_SPEAR";
+  BF2[BF2["SPELL_UNLEASH_CHAOS"] = 47] = "SPELL_UNLEASH_CHAOS";
+  BF2[BF2["SPELL_STORM_OF_DARKNESS"] = 48] = "SPELL_STORM_OF_DARKNESS";
+  BF2[BF2["SPELL_CURSE"] = 49] = "SPELL_CURSE";
+  BF2[BF2["SPELL_WHIRLWIND_ATTACK"] = 50] = "SPELL_WHIRLWIND_ATTACK";
+  BF2[BF2["SPELL_LEAP_INTO_BATTLE"] = 51] = "SPELL_LEAP_INTO_BATTLE";
+  BF2[BF2["SPELL_MAIM_FOE"] = 52] = "SPELL_MAIM_FOE";
+  BF2[BF2["SPELL_HOWL_OF_THE_DAMNED"] = 53] = "SPELL_HOWL_OF_THE_DAMNED";
+  BF2[BF2["ROD_ELEC_BOLT"] = 54] = "ROD_ELEC_BOLT";
+  BF2[BF2["ROD_COLD_BOLT"] = 55] = "ROD_COLD_BOLT";
+  BF2[BF2["ROD_ACID_BOLT"] = 56] = "ROD_ACID_BOLT";
+  BF2[BF2["ROD_FIRE_BOLT"] = 57] = "ROD_FIRE_BOLT";
+  BF2[BF2["ROD_LIGHT_BEAM"] = 58] = "ROD_LIGHT_BEAM";
+  BF2[BF2["ROD_DRAIN_LIFE"] = 59] = "ROD_DRAIN_LIFE";
+  BF2[BF2["ROD_ELEC_BALL"] = 60] = "ROD_ELEC_BALL";
+  BF2[BF2["ROD_COLD_BALL"] = 61] = "ROD_COLD_BALL";
+  BF2[BF2["ROD_ACID_BALL"] = 62] = "ROD_ACID_BALL";
+  BF2[BF2["ROD_FIRE_BALL"] = 63] = "ROD_FIRE_BALL";
+  BF2[BF2["ROD_SLOW_MONSTER"] = 64] = "ROD_SLOW_MONSTER";
+  BF2[BF2["ROD_SLEEP_MONSTER"] = 65] = "ROD_SLEEP_MONSTER";
+  BF2[BF2["ROD_UNKNOWN"] = 66] = "ROD_UNKNOWN";
+  BF2[BF2["STAFF_SLEEP_MONSTERS"] = 67] = "STAFF_SLEEP_MONSTERS";
+  BF2[BF2["STAFF_SLOW_MONSTERS"] = 68] = "STAFF_SLOW_MONSTERS";
+  BF2[BF2["STAFF_DISPEL_EVIL"] = 69] = "STAFF_DISPEL_EVIL";
+  BF2[BF2["STAFF_POWER"] = 70] = "STAFF_POWER";
+  BF2[BF2["STAFF_HOLINESS"] = 71] = "STAFF_HOLINESS";
+  BF2[BF2["WAND_UNKNOWN"] = 72] = "WAND_UNKNOWN";
+  BF2[BF2["WAND_MAGIC_MISSILE"] = 73] = "WAND_MAGIC_MISSILE";
+  BF2[BF2["WAND_ELEC_BOLT"] = 74] = "WAND_ELEC_BOLT";
+  BF2[BF2["WAND_COLD_BOLT"] = 75] = "WAND_COLD_BOLT";
+  BF2[BF2["WAND_ACID_BOLT"] = 76] = "WAND_ACID_BOLT";
+  BF2[BF2["WAND_FIRE_BOLT"] = 77] = "WAND_FIRE_BOLT";
+  BF2[BF2["WAND_SLOW_MONSTER"] = 78] = "WAND_SLOW_MONSTER";
+  BF2[BF2["WAND_HOLD_MONSTER"] = 79] = "WAND_HOLD_MONSTER";
+  BF2[BF2["WAND_CONFUSE_MONSTER"] = 80] = "WAND_CONFUSE_MONSTER";
+  BF2[BF2["WAND_FEAR_MONSTER"] = 81] = "WAND_FEAR_MONSTER";
+  BF2[BF2["WAND_ANNIHILATION"] = 82] = "WAND_ANNIHILATION";
+  BF2[BF2["WAND_DRAIN_LIFE"] = 83] = "WAND_DRAIN_LIFE";
+  BF2[BF2["WAND_LIGHT_BEAM"] = 84] = "WAND_LIGHT_BEAM";
+  BF2[BF2["WAND_STINKING_CLOUD"] = 85] = "WAND_STINKING_CLOUD";
+  BF2[BF2["WAND_ELEC_BALL"] = 86] = "WAND_ELEC_BALL";
+  BF2[BF2["WAND_COLD_BALL"] = 87] = "WAND_COLD_BALL";
+  BF2[BF2["WAND_ACID_BALL"] = 88] = "WAND_ACID_BALL";
+  BF2[BF2["WAND_FIRE_BALL"] = 89] = "WAND_FIRE_BALL";
+  BF2[BF2["WAND_WONDER"] = 90] = "WAND_WONDER";
+  BF2[BF2["WAND_DRAGON_COLD"] = 91] = "WAND_DRAGON_COLD";
+  BF2[BF2["WAND_DRAGON_FIRE"] = 92] = "WAND_DRAGON_FIRE";
+  BF2[BF2["RING_ACID"] = 93] = "RING_ACID";
+  BF2[BF2["RING_FIRE"] = 94] = "RING_FIRE";
+  BF2[BF2["RING_ICE"] = 95] = "RING_ICE";
+  BF2[BF2["RING_LIGHTNING"] = 96] = "RING_LIGHTNING";
+  BF2[BF2["DRAGON_BLUE"] = 97] = "DRAGON_BLUE";
+  BF2[BF2["DRAGON_WHITE"] = 98] = "DRAGON_WHITE";
+  BF2[BF2["DRAGON_BLACK"] = 99] = "DRAGON_BLACK";
+  BF2[BF2["DRAGON_GREEN"] = 100] = "DRAGON_GREEN";
+  BF2[BF2["DRAGON_RED"] = 101] = "DRAGON_RED";
+  BF2[BF2["DRAGON_MULTIHUED"] = 102] = "DRAGON_MULTIHUED";
+  BF2[BF2["DRAGON_GOLD"] = 103] = "DRAGON_GOLD";
+  BF2[BF2["DRAGON_CHAOS"] = 104] = "DRAGON_CHAOS";
+  BF2[BF2["DRAGON_LAW"] = 105] = "DRAGON_LAW";
+  BF2[BF2["DRAGON_BALANCE"] = 106] = "DRAGON_BALANCE";
+  BF2[BF2["DRAGON_SHINING"] = 107] = "DRAGON_SHINING";
+  BF2[BF2["DRAGON_POWER"] = 108] = "DRAGON_POWER";
+  BF2[BF2["ACT_FIRE_BOLT"] = 109] = "ACT_FIRE_BOLT";
+  BF2[BF2["ACT_FIRE_BALL72"] = 110] = "ACT_FIRE_BALL72";
+  BF2[BF2["ACT_FIRE_BALL"] = 111] = "ACT_FIRE_BALL";
+  BF2[BF2["ACT_COLD_BOLT"] = 112] = "ACT_COLD_BOLT";
+  BF2[BF2["ACT_COLD_BALL50"] = 113] = "ACT_COLD_BALL50";
+  BF2[BF2["ACT_COLD_BALL100"] = 114] = "ACT_COLD_BALL100";
+  BF2[BF2["ACT_COLD_BOLT2"] = 115] = "ACT_COLD_BOLT2";
+  BF2[BF2["ACT_DRAIN_LIFE1"] = 116] = "ACT_DRAIN_LIFE1";
+  BF2[BF2["ACT_DRAIN_LIFE2"] = 117] = "ACT_DRAIN_LIFE2";
+  BF2[BF2["ACT_STINKING_CLOUD"] = 118] = "ACT_STINKING_CLOUD";
+  BF2[BF2["ACT_CONFUSE2"] = 119] = "ACT_CONFUSE2";
+  BF2[BF2["ACT_ARROW"] = 120] = "ACT_ARROW";
+  BF2[BF2["ACT_MISSILE"] = 121] = "ACT_MISSILE";
+  BF2[BF2["ACT_SLEEPII"] = 122] = "ACT_SLEEPII";
+  BF2[BF2["ACT_ELEC_BOLT"] = 123] = "ACT_ELEC_BOLT";
+  BF2[BF2["ACT_ACID_BOLT"] = 124] = "ACT_ACID_BOLT";
+  BF2[BF2["ACT_DISPEL_EVIL"] = 125] = "ACT_DISPEL_EVIL";
+  BF2[BF2["ACT_MANA_BOLT"] = 126] = "ACT_MANA_BOLT";
+  BF2[BF2["ACT_STAR_BALL"] = 127] = "ACT_STAR_BALL";
+  BF2[BF2["ACT_STARLIGHT2"] = 128] = "ACT_STARLIGHT2";
+  BF2[BF2["ACT_STARLIGHT"] = 129] = "ACT_STARLIGHT";
+  BF2[BF2["ACT_MON_SLOW"] = 130] = "ACT_MON_SLOW";
+  BF2[BF2["ACT_MON_CONFUSE"] = 131] = "ACT_MON_CONFUSE";
+  BF2[BF2["ACT_SLEEP_ALL"] = 132] = "ACT_SLEEP_ALL";
+  BF2[BF2["ACT_FEAR_MONSTER"] = 133] = "ACT_FEAR_MONSTER";
+  BF2[BF2["ACT_LIGHT_BEAM"] = 134] = "ACT_LIGHT_BEAM";
+  BF2[BF2["ACT_DRAIN_LIFE3"] = 135] = "ACT_DRAIN_LIFE3";
+  BF2[BF2["ACT_DRAIN_LIFE4"] = 136] = "ACT_DRAIN_LIFE4";
+  BF2[BF2["ACT_ELEC_BALL"] = 137] = "ACT_ELEC_BALL";
+  BF2[BF2["ACT_ELEC_BALL2"] = 138] = "ACT_ELEC_BALL2";
+  BF2[BF2["ACT_ACID_BOLT2"] = 139] = "ACT_ACID_BOLT2";
+  BF2[BF2["ACT_ACID_BOLT3"] = 140] = "ACT_ACID_BOLT3";
+  BF2[BF2["ACT_ACID_BALL"] = 141] = "ACT_ACID_BALL";
+  BF2[BF2["ACT_COLD_BALL160"] = 142] = "ACT_COLD_BALL160";
+  BF2[BF2["ACT_COLD_BALL2"] = 143] = "ACT_COLD_BALL2";
+  BF2[BF2["ACT_FIRE_BALL2"] = 144] = "ACT_FIRE_BALL2";
+  BF2[BF2["ACT_FIRE_BALL200"] = 145] = "ACT_FIRE_BALL200";
+  BF2[BF2["ACT_FIRE_BOLT2"] = 146] = "ACT_FIRE_BOLT2";
+  BF2[BF2["ACT_FIRE_BOLT3"] = 147] = "ACT_FIRE_BOLT3";
+  BF2[BF2["ACT_DISPEL_EVIL60"] = 148] = "ACT_DISPEL_EVIL60";
+  BF2[BF2["ACT_DISPEL_UNDEAD"] = 149] = "ACT_DISPEL_UNDEAD";
+  BF2[BF2["ACT_DISPEL_ALL"] = 150] = "ACT_DISPEL_ALL";
+  BF2[BF2["ACT_LOSSLOW"] = 151] = "ACT_LOSSLOW";
+  BF2[BF2["ACT_LOSSLEEP"] = 152] = "ACT_LOSSLEEP";
+  BF2[BF2["ACT_LOSCONF"] = 153] = "ACT_LOSCONF";
+  BF2[BF2["ACT_WONDER"] = 154] = "ACT_WONDER";
+  BF2[BF2["ACT_STAFF_HOLY"] = 155] = "ACT_STAFF_HOLY";
+  BF2[BF2["ACT_RING_ACID"] = 156] = "ACT_RING_ACID";
+  BF2[BF2["ACT_RING_FIRE"] = 157] = "ACT_RING_FIRE";
+  BF2[BF2["ACT_RING_ICE"] = 158] = "ACT_RING_ICE";
+  BF2[BF2["ACT_RING_LIGHTNING"] = 159] = "ACT_RING_LIGHTNING";
+  BF2[BF2["ACT_DRAGON_BLUE"] = 160] = "ACT_DRAGON_BLUE";
+  BF2[BF2["ACT_DRAGON_GREEN"] = 161] = "ACT_DRAGON_GREEN";
+  BF2[BF2["ACT_DRAGON_RED"] = 162] = "ACT_DRAGON_RED";
+  BF2[BF2["ACT_DRAGON_MULTIHUED"] = 163] = "ACT_DRAGON_MULTIHUED";
+  BF2[BF2["ACT_DRAGON_GOLD"] = 164] = "ACT_DRAGON_GOLD";
+  BF2[BF2["ACT_DRAGON_CHAOS"] = 165] = "ACT_DRAGON_CHAOS";
+  BF2[BF2["ACT_DRAGON_LAW"] = 166] = "ACT_DRAGON_LAW";
+  BF2[BF2["ACT_DRAGON_BALANCE"] = 167] = "ACT_DRAGON_BALANCE";
+  BF2[BF2["ACT_DRAGON_SHINING"] = 168] = "ACT_DRAGON_SHINING";
+  BF2[BF2["ACT_DRAGON_POWER"] = 169] = "ACT_DRAGON_POWER";
+  BF2[BF2["MAX"] = 170] = "MAX";
+  return BF2;
+})(BF || {});
 var BTH_PLUS_ADJ = 3;
 
 // src/fight/projection.ts
@@ -10540,6 +10714,55 @@ function borgTarget(ctx, y, x, requireMonster = false) {
   }
   ctx.act.setTargetLocation(x, y);
   return true;
+}
+
+// src/uncertainty.ts
+var TIE_WITHIN = 0.05;
+var MAX_UNSURE_KEPT = 100;
+var STATES3 = /* @__PURE__ */ new WeakMap();
+function uncertaintyOf(world) {
+  let st2 = STATES3.get(world);
+  if (st2 === void 0) {
+    st2 = { valuation: null };
+    STATES3.set(world, st2);
+  }
+  return st2;
+}
+function noteAttackValuation(world, valuation) {
+  uncertaintyOf(world).valuation = valuation;
+}
+function methodLabel(method) {
+  return BF[method] ?? `BF#${String(method)}`;
+}
+function tieBetween(best, runner) {
+  if (runner === null || runner.score <= 0 || best.score <= 0) return false;
+  return runner.score >= best.score * (1 - TIE_WITHIN);
+}
+var DIR_DX = [0, -1, 0, 1, -1, 0, 1, -1, 0, 1];
+var DIR_DY = [0, 1, 1, 1, 0, 0, 0, -1, -1, -1];
+function aimedAt(command, from) {
+  const dir = command.dir;
+  if (dir === void 0 || dir < 1 || dir > 9 || dir === 5) return null;
+  return { x: from.x + DIR_DX[dir], y: from.y + DIR_DY[dir] };
+}
+function assessUncertainty(world, view, command) {
+  const player = view.player();
+  const stamp = {
+    turn: view.turn(),
+    depth: player.depth,
+    at: { x: player.grid.x, y: player.grid.y },
+    hp: player.hp,
+    chosen: command.code
+  };
+  const valuation = uncertaintyOf(world).valuation;
+  if (valuation !== null && valuation.command === command && valuation.runner !== null && tieBetween(valuation.best, valuation.runner)) {
+    return { kind: "valuation-tie", ...stamp, candidates: [valuation.best, valuation.runner], aim: null };
+  }
+  const aim = aimedAt(command, player.grid);
+  if (aim !== null && world.map.inBounds(aim.x, aim.y) && (world.map.at(aim.x, aim.y).info & BORG_MARK) === 0) {
+    return { kind: "known-world-gap", ...stamp, candidates: [], aim };
+  }
+  return null;
 }
 
 // src/fight/attack.ts
@@ -12332,9 +12555,19 @@ function borgAttack(ctx, boostedBravery = false) {
   fs.simulate = true;
   let bG = -1;
   let bN = 0;
+  let rG = -1;
+  let rN = 0;
   for (let gI = 0; gI < maxAttacks; gI++) {
     const n = borgCalculateAttackEffectiveness(ctx, fs, gI);
-    if (n <= bN) continue;
+    if (n <= bN) {
+      if (n > rN) {
+        rN = n;
+        rG = gI;
+      }
+      continue;
+    }
+    rN = bN;
+    rG = bG;
     bG = gI;
     bN = n;
   }
@@ -12346,6 +12579,13 @@ function borgAttack(ctx, boostedBravery = false) {
   fs.pending = null;
   borgCalculateAttackEffectiveness(ctx, fs, bG);
   g.attacking = false;
+  if (fs.pending !== null) {
+    noteAttackValuation(ctx.world, {
+      best: { method: methodLabel(bG), score: bN },
+      runner: rG >= 0 ? { method: methodLabel(rG), score: rN } : null,
+      command: fs.pending
+    });
+  }
   return fs.pending;
 }
 
@@ -16632,8 +16872,8 @@ var IDLE_BEFORE_RELEASE = 25;
 var MAX_EXTRA_PASSES = 6;
 var STALLS_BEFORE_FORGET = 6;
 var STALLS_BEFORE_RELEASE = 40;
-var DIR_DX = [0, -1, 0, 1, -1, 0, 1, -1, 0, 1];
-var DIR_DY = [0, 1, 1, 1, 0, 0, 0, -1, -1, -1];
+var DIR_DX2 = [0, -1, 0, 1, -1, 0, 1, -1, 0, 1];
+var DIR_DY2 = [0, 1, 1, 1, 0, 0, 0, -1, -1, -1];
 function promptAnswer(prompt) {
   switch (prompt.kind) {
     case "ack":
@@ -16651,7 +16891,7 @@ function promptAnswer(prompt) {
 function aimedGrid(command, from) {
   const dir = command.dir;
   if (dir === void 0 || dir < 1 || dir > 9 || dir === 5) return null;
-  return { x: from.x + DIR_DX[dir], y: from.y + DIR_DY[dir] };
+  return { x: from.x + DIR_DX2[dir], y: from.y + DIR_DY2[dir] };
 }
 function sceneOf(world) {
   const player = world.view.player();
@@ -16705,6 +16945,8 @@ function createTick(bridge2, borg) {
       return;
     }
     idle = 0;
+    const unsure = borg.trainer?.assess(world, command) ?? null;
+    if (unsure !== null) borg.trainer?.note(unsure);
     const scene = sceneOf(world);
     const key = JSON.stringify(command);
     stalls = scene === lastScene && key === lastCommand ? stalls + 1 : 0;
@@ -17224,7 +17466,46 @@ function archivedRunOf(value) {
   const entry = entryOf(value);
   if (entry === null) return null;
   const run = value["run"];
-  return { ...entry, run: typeof run === "string" ? run : null };
+  const unsure = unsureOf(value["unsure"]);
+  return { ...entry, run: typeof run === "string" ? run : null, ...unsure === null ? {} : { unsure } };
+}
+function gridOf(value) {
+  if (value === void 0) return void 0;
+  if (value === null) return null;
+  if (!isObject(value) || typeof value["x"] !== "number" || typeof value["y"] !== "number") return INVALID;
+  return { x: value["x"], y: value["y"] };
+}
+var INVALID = { x: Number.NaN, y: Number.NaN };
+function unsureOf(value) {
+  if (value === void 0 || !isObject(value)) return null;
+  const total = value["total"];
+  if (typeof total !== "number" || !Number.isFinite(total) || total < 0) return null;
+  const raw = value["points"];
+  if (!Array.isArray(raw)) return null;
+  const points = [];
+  for (const point of raw) {
+    if (!isObject(point)) return null;
+    const kind = point["kind"];
+    if (kind !== "valuation-tie" && kind !== "known-world-gap") return null;
+    const turn = point["turn"];
+    const depth = point["depth"];
+    const hp = point["hp"];
+    const chosen = point["chosen"];
+    if (typeof turn !== "number" || typeof depth !== "number" || typeof hp !== "number" || typeof chosen !== "string") return null;
+    const at = gridOf(point["at"]);
+    if (at === void 0 || at === null || Number.isNaN(at.x)) return null;
+    const aim = gridOf(point["aim"]);
+    if (aim !== void 0 && aim !== null && Number.isNaN(aim.x)) return null;
+    const candidates = point["candidates"];
+    if (!Array.isArray(candidates)) return null;
+    const read = [];
+    for (const one of candidates) {
+      if (!isObject(one) || typeof one["method"] !== "string" || typeof one["score"] !== "number") return null;
+      read.push({ method: one["method"], score: one["score"] });
+    }
+    points.push({ kind, turn, depth, hp, chosen, at, candidates: read, aim: aim ?? null });
+  }
+  return { total, points };
 }
 function parseGraveyardArchive(value) {
   if (value === null || !isObject(value) || value["journal"] !== JOURNAL_FORMAT) return null;
@@ -17237,6 +17518,21 @@ function graveyardArchiveOf(value) {
 function storeArchiveRun(run) {
   const stored = storeGraveyardEntry(run);
   if (run.run !== null) stored["run"] = run.run;
+  if (run.unsure !== void 0) {
+    stored["unsure"] = {
+      total: run.unsure.total,
+      points: run.unsure.points.map((point) => ({
+        kind: point.kind,
+        turn: point.turn,
+        depth: point.depth,
+        hp: point.hp,
+        chosen: point.chosen,
+        at: { x: point.at.x, y: point.at.y },
+        candidates: point.candidates.map((one) => ({ method: one.method, score: one.score })),
+        ...point.aim === null ? {} : { aim: { x: point.aim.x, y: point.aim.y } }
+      }))
+    };
+  }
   return stored;
 }
 async function readJournal(slot) {
@@ -17314,7 +17610,7 @@ function storeGraveyardEntry(entry) {
     ...entry.score === null ? {} : { score: entry.score }
   };
 }
-async function archiveFinishedRun(deps, report) {
+async function archiveFinishedRun(deps, report, dossier = {}) {
   let read;
   try {
     read = await deps.archive.get();
@@ -17328,7 +17624,11 @@ async function archiveFinishedRun(deps, report) {
   }
   const base = read.value !== null && typeof read.value === "object" && !Array.isArray(read.value) ? read.value : {};
   const current = graveyardArchiveOf(base[GRAVEYARD_KEY] ?? null);
-  const entry = { run: typeof report.key === "string" ? report.key : null, ...graveyardEntryOf(report) };
+  const entry = {
+    run: typeof report.key === "string" ? report.key : null,
+    ...graveyardEntryOf(report),
+    ...dossier.unsure === void 0 ? {} : { unsure: dossier.unsure }
+  };
   const runs = [...current.runs];
   const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);
   if (at >= 0) runs[at] = entry;
@@ -17382,8 +17682,8 @@ function installBorgJournal(deps) {
     get listening() {
       return subscription !== null;
     },
-    graveyard(report) {
-      return enqueue(() => archiveFinishedRun({ archive: deps.archive, log: deps.log }, report).then(() => void 0));
+    graveyard(report, dossier) {
+      return enqueue(() => archiveFinishedRun({ archive: deps.archive, log: deps.log }, report, dossier).then(() => void 0));
     },
     async stop() {
       await subscribed;
@@ -17883,11 +18183,28 @@ async function begin(mod2) {
     ownsKeyboard: () => mod2.act.controller.owns(),
     create: mod2.manage?.saves.create ?? null,
     events: mod2.events,
-    graveyard: journal.graveyard,
+    /* The graveyard write carries the ended run's uncertainty journal in the
+     * SAME archived entry (#27): where the run was unsure, beside the facts
+     * the report itself carries - the on-death report's "where I was not
+     * sure" half. Nothing journaled means no dossier: the entry keeps its
+     * pre-#27 shape. */
+    graveyard: (report) => journal.graveyard(
+      report,
+      unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {}
+    ),
     save: mod2.manage?.session?.save ?? null,
     listSaves: mod2.manage?.saves.list ?? null,
     rename: mod2.manage?.saves.rename ?? null
   });
+  const unsure = { total: 0, points: [] };
+  const trainerRail = {
+    assess: (world, command) => assessUncertainty(borg.world, world.view, command),
+    note: (point) => {
+      unsure.total += 1;
+      unsure.points.push(point);
+      if (unsure.points.length > MAX_UNSURE_KEPT) unsure.points.shift();
+    }
+  };
   let attainmentSeen = false;
   const stageWatch = {
     attained: (world) => {
@@ -17943,7 +18260,7 @@ async function begin(mod2) {
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
 }
 var definition = {
   api: ">=2.0.0 <3.0.0",

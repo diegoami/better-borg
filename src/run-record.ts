@@ -101,7 +101,26 @@ interface RunEntry {
   stageAttained: boolean;
   /** #25, additive: whether the retire flow kept a save of this run (the library). */
   retired: boolean;
+  /**
+   * #27, additive: the uncertainty journal - how many decisions marked
+   * themselves unsure (attack-valuation ties, known-world gaps) and the
+   * bounded tail of the points themselves. Records before B27 carry no
+   * `unsure` key; a reader treats absence as `{ total: 0, points: [] }`.
+   */
+  unsure: { total: number; points: UnknownPoint[] };
   meta: { wallClockMs: number };
+}
+
+/** One journaled unsure point as runs.json carries it (the raw shape, verbatim). */
+interface UnknownPoint {
+  kind: string;
+  turn: number;
+  depth: number;
+  at: { x: number; y: number };
+  hp: number;
+  chosen: string;
+  candidates: { method: string; score: number }[];
+  aim: { x: number; y: number } | null;
 }
 
 /** The runs.json document (key order fixed: it is a record, and diffable). */
@@ -137,6 +156,19 @@ function runEntry(run: RunReport): RunEntry {
     restedBesideMonster: run.restedBesideMonster,
     stageAttained: run.stageAttained,
     retired: run.retired,
+    unsure: {
+      total: run.unsure.total,
+      points: run.unsure.points.map((point) => ({
+        kind: point.kind,
+        turn: point.turn,
+        depth: point.depth,
+        at: { x: point.at.x, y: point.at.y },
+        hp: point.hp,
+        chosen: point.chosen,
+        candidates: point.candidates.map((one) => ({ method: one.method, score: one.score })),
+        aim: point.aim === null ? null : { x: point.aim.x, y: point.aim.y },
+      })),
+    },
     meta: { wallClockMs: run.wallClockMs },
   };
 }
@@ -222,12 +254,14 @@ export function buildSummary(record: SessionRecord): string {
   const meanDepth =
     depths.length > 0 ? depths.reduce((a, b) => a + b, 0) / depths.length : 0;
   const kills = record.runs.reduce((a, r) => a + r.kills, 0);
+  const unsure = record.runs.reduce((a, r) => a + r.unsure.total, 0);
   lines.push(`- runs: ${String(record.runs.length)}`);
   lines.push(`- median maxDepth: ${String(median(depths))}`);
   lines.push(`- mean maxDepth: ${meanDepth.toFixed(2)}`);
   lines.push(`- ${String(deaths)} of ${String(record.runs.length)} runs died`);
   lines.push(`- mean turns: ${meanTurns.toFixed(0)}`);
   lines.push(`- kills: ${String(kills)}`);
+  lines.push(`- unsure points (#27): ${String(unsure)} across the cohort - decisions the Borg could not separate (attack-valuation ties) or made against terrain it had never seen`);
   if (record.runner.stage !== null) {
     const attained = record.runs.filter((r) => r.stageAttained).length;
     const stage = record.runner.stage;

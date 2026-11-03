@@ -78,6 +78,7 @@ import { installBorgJournal, type BorgJournal } from "./src/records/journal.js";
 import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
 import { librarySlotName, stageAttained, stageOf, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING, type StageDefinition } from "./src/loop/stage.js";
 import { replayBanner, replayModeOf, REPLAY_DEATH_SETTING, REPLAY_RELEASE_SETTING, type ReplayMode } from "./src/loop/replay.js";
+import { assessUncertainty, MAX_UNSURE_KEPT, type UnsurePoint } from "./src/uncertainty.js";
 import { readLineage } from "./src/class/warrior/lineage.js";
 
 /**
@@ -460,11 +461,35 @@ async function begin(mod: ModApi2): Promise<Running | null> {
     ownsKeyboard: () => mod.act.controller.owns(),
     create: mod.manage?.saves.create ?? null,
     events: mod.events,
-    graveyard: journal.graveyard,
+    /* The graveyard write carries the ended run's uncertainty journal in the
+     * SAME archived entry (#27): where the run was unsure, beside the facts
+     * the report itself carries - the on-death report's "where I was not
+     * sure" half. Nothing journaled means no dossier: the entry keeps its
+     * pre-#27 shape. */
+    graveyard: (report) =>
+      journal.graveyard(
+        report,
+        unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {},
+      ),
     save: mod.manage?.session?.save ?? null,
     listSaves: mod.manage?.saves.list ?? null,
     rename: mod.manage?.saves.rename ?? null,
   });
+  /* THE UNCERTAINTY JOURNAL (#27, phase 1): this page's unsure points, the
+   * bounded tail beside the raw total, collected by the tick's trainer rail
+   * at every decision the signal marks. Pure observation - the assess call
+   * reads the valuation the attack chooser already recorded and the world
+   * model the decision already ran on, so the mod's play is byte-for-byte
+   * what it was, and the journal only adds the record. */
+  const unsure = { total: 0, points: [] as UnsurePoint[] };
+  const trainerRail: NonNullable<Parameters<typeof createTick>[1]>["trainer"] = {
+    assess: (world, command) => assessUncertainty(borg.world, world.view, command),
+    note: (point) => {
+      unsure.total += 1;
+      unsure.points.push(point);
+      if (unsure.points.length > MAX_UNSURE_KEPT) unsure.points.shift();
+    },
+  };
   /* THE STAGE WATCH (#25): the tick asks it after every world read; it
    * answers from the sticky facts (level, maxDepth) against the page's
    * stage, ONCE - attainment never un-happens, so the latch costs nothing
@@ -521,8 +546,8 @@ async function begin(mod: ModApi2): Promise<Running | null> {
    * one subscription covers the human half - from the release on, each
    * command the OWNER issues is logged with the payload's own frozen
    * facts. The Borg's own line needs no logging: the dossier IS its
-   * evidence. #27's phase 3 deepens this into paired state snapshots; the
-   * issue's `event:turn` does not exist in API 2 at this pin (the bus has
+   * evidence. #27's phase 3 (the paired demonstration deepening) is DEFERRED
+   * by the owner (2026-11-03): this rail keeps its #29 shape. The issue's `event:turn` does not exist in API 2 at this pin (the bus has
    * no turn event), which src/loop/replay.ts documents. The subscription
    * is retired in stop() and on a re-begin, like every handle. */
   if (replayLogHandle !== null && replayLogOff !== null) {
@@ -552,7 +577,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
 }
 
 const definition: Api2ModDefinition = {

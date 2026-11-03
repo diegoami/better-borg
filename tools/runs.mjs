@@ -212,6 +212,7 @@ const record = {
     restedBesideMonster: life.restedBesideMonster,
     stageAttained: life.stageAttained,
     retired: life.retired,
+    unsure: { total: life.unsure.total, points: [...life.unsure.points] },
     wallClockMs: life.wallClockMs,
   })),
 };

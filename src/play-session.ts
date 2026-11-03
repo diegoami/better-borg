@@ -69,6 +69,7 @@ import type {
 import { createBorg } from "./controller.js";
 import { bindCore, coreIsBound } from "./core-api.js";
 import { makeCoreResolvers } from "./resolvers.js";
+import { assessUncertainty, MAX_UNSURE_KEPT, type UnsurePoint } from "./uncertainty.js";
 import { installBorgJournal, parseJournal, GRAVEYARD_KEY, graveyardArchiveOf, type ArchivedRun, type BorgJournalData } from "./records/journal.js";
 import { retireAtStage } from "./loop/restart.js";
 import { librarySlotName, stageAttained, type StageDefinition } from "./loop/stage.js";
@@ -156,6 +157,16 @@ interface LifeObservation {
   readonly depths: Set<number>;
   /** Decisions on which the Borg chose to sit still with a monster adjacent. */
   restedBesideMonster: number;
+  /**
+   * The uncertainty journal (#27): how many decisions marked themselves
+   * unsure, and the bounded tail of the points themselves. Collected beside
+   * the census for the same reason - the record must be able to say where
+   * the Borg was NOT sure, read from the world model the decisions ran on.
+   */
+  readonly unsure: {
+    total: number;
+    points: UnsurePoint[];
+  };
   /** Arm the Borg for the next decision (the host's latch, main.ts). */
   arm(): void;
   /** Remove the controller (the engine restores the previous provider). */
@@ -212,6 +223,11 @@ export function observingLife(
   const places = new Set<string>();
   const depths = new Set<number>([state.chunk.depth]);
   let restedBesideMonster = 0;
+  /* The uncertainty journal (#27): observation-only, the same standing the
+   * census and the trail keep. assessUncertainty draws nothing - it reads the
+   * valuation the attack chooser already recorded and the world model the
+   * decision already ran on - so the driven life is exactly what it was. */
+  const unsure = { total: 0, points: [] as UnsurePoint[] };
   const session = core.installController(
     state,
     (view, act) => {
@@ -219,6 +235,14 @@ export function observingLife(
       armed = false;
       const cmd = borg.controller(view, act);
       if (cmd) commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
+      if (cmd !== null) {
+        const point = assessUncertainty(borg.world, view, cmd);
+        if (point !== null) {
+          unsure.total += 1;
+          unsure.points.push(point);
+          if (unsure.points.length > MAX_UNSURE_KEPT) unsure.points.shift();
+        }
+      }
 
       let alone = true;
       let adjacent = false;
@@ -246,6 +270,7 @@ export function observingLife(
     trail,
     places,
     depths,
+    unsure,
     get restedBesideMonster(): number {
       return restedBesideMonster;
     },
@@ -417,6 +442,13 @@ export interface RunReport {
   /** Decisions on which the Borg chose to sit still with a monster adjacent. */
   restedBesideMonster: number;
   /**
+   * The uncertainty journal (#27, additive in spirit - records before it
+   * carry no `unsure` key): how many decisions marked themselves unsure, and
+   * the bounded tail of the points. Raw facts: the aggregation a post-mortem
+   * or a reader layer does over them is derived, and lives elsewhere.
+   */
+  unsure: { total: number; points: UnsurePoint[] };
+  /**
    * Whether this run attained the session's stage (#25): character level
    * and first-arrival depth both at or past its thresholds. False when the
    * session played no stage.
@@ -533,6 +565,7 @@ export function playSession(
       causeOfDeath: dead ? player.diedFrom : null,
       jitter: jitterOf(observed),
       restedBesideMonster: observed.restedBesideMonster,
+      unsure: { total: observed.unsure.total, points: [...observed.unsure.points] },
       stageAttained: attained,
       retired: false,
       wallClockMs: Date.now() - startedAt,
@@ -722,6 +755,11 @@ export interface SessionLife {
   readonly jitter: number;
   /** Decisions on which the Borg chose to sit still with a monster adjacent. */
   readonly restedBesideMonster: number;
+  /**
+   * The uncertainty journal (#27), the stock RunReport's own field: the
+   * total and the bounded tail, from the same observation both drivers share.
+   */
+  readonly unsure: { readonly total: number; readonly points: readonly UnsurePoint[] };
   /**
    * Wall-clock time the life took. METADATA, never a fact (rule 5) - the
    * same standing the stock RunReport's wallClockMs has.
@@ -993,6 +1031,7 @@ export async function playPackSession(
       places: observed.places.size,
       jitter: jitterOf(observed),
       restedBesideMonster: observed.restedBesideMonster,
+      unsure: { total: observed.unsure.total, points: [...observed.unsure.points] },
       wallClockMs: Date.now() - startedAt,
       arrivalStamps,
       journal: parseJournal(slot.held()),

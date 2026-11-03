@@ -73,8 +73,19 @@ field list is a contract, not a suggestion:
   `baseStats` (birth stats in the pack's order), `decisions`, `turns`,
   `depths` (every depth stood on), `maxDepth`, `clvl`, `gold`, `kills`,
   `places`, `dead`, `causeOfDeath`, `commands` (the census), `jitter`,
-  `restedBesideMonster`, `stageAttained`, `retired`, and `meta.wallClockMs` -
-  wall clock is metadata and never influences a result (rule 5).
+  `restedBesideMonster`, `stageAttained`, `retired`, `unsure`, and
+  `meta.wallClockMs` - wall clock is metadata and never influences a result
+  (rule 5).
+
+The `unsure` field is #27's ADDITION (the schema id stays `better-borg/runs@1`,
+the same additive rule the stage fields keep): `{ total, points }`, where
+`total` counts the decisions that marked themselves unsure and `points` carries
+the bounded tail (100 newest) as the session observed them - `valuation-tie`
+(the attack chooser's top two methods within 5%, the candidates and scores
+beside what was chosen) and `known-world-gap` (a command acting on terrain the
+Borg's own map never observed, the grid named). Raw facts: any aggregation over
+them lives in `summary.md` or a post-mortem. Records written before #27 carry
+no `unsure` key; a reader treats absence as `{ total: 0, points: [] }`.
 
 The stage fields are #25's ADDITION, and the schema id string stays
 `better-borg/runs@1` (a format identifier committed byte-identically into
@@ -151,6 +162,7 @@ in-repo example: 1228 recorded, 1229 issued).
 | `places` | Distinct depth+grid occupied - a decision loop leaves this tiny |
 | `jitter` | Fewest squares in any monster-free 60-decision stretch (999 = none) |
 | `restedBesideMonster` | Rest decisions taken with a monster adjacent (0 is the assertion) |
+| `unsure.total` | Decisions that marked themselves unsure (#27): attack-valuation ties (top two methods within 5%) plus commands acting on never-observed terrain |
 
 ## Baselines
 

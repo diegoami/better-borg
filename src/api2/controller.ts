@@ -23,6 +23,7 @@ import type { Api2InputState, Api2Prompt, Api2PromptAnswer, ModApi2 } from "@rpg
 import type { Bridge } from "./host.js";
 import type { World } from "./world.js";
 import { createActFacade, intentOf } from "./act.js";
+import type { UnsurePoint } from "../uncertainty.js";
 
 /** Consecutive refusals after which the keyboard goes back. */
 export const REFUSALS_BEFORE_RELEASE = 25;
@@ -102,6 +103,20 @@ export interface Decider {
     banner(world: World): string;
     onReleased?(world: World): void;
   };
+  /**
+   * THE TRAINER RAIL (#27, PHASE 1 as scoped by the owner, 2026-11-03): the
+   * uncertainty journal. `assess` answers whether the command this wait is
+   * about to carry marks the decision unsure (the wiring closes over the
+   * Borg's own world model; pure, observation-only); `note` journals the
+   * point wherever this page keeps it. The QUESTION half of the issue's
+   * phase 2 - pausing at an unsure point to ask a human through a panel -
+   * is deferred: no ask, no pause, no panel, and no capability beyond the
+   * grind's own.
+   */
+  readonly trainer?: {
+    assess(world: World, command: AgentCommand): UnsurePoint | null;
+    note(point: UnsurePoint): void;
+  };
 }
 
 /** What a command's aim is, for the commands that name a direction. */
@@ -178,6 +193,15 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
       return;
     }
     idle = 0;
+
+    /* The uncertainty journal (#27, phase 1), assessed after the decision is
+     * final - the extra passes done - and before anything is submitted: the
+     * point describes the command this wait is about to carry, and a decision
+     * with no command is a yield, not a choice. Observation-only; the
+     * question half of the issue (phase 2) is deferred and nothing hangs off
+     * the point but the journal. */
+    const unsure = borg.trainer?.assess(world, command) ?? null;
+    if (unsure !== null) borg.trainer?.note(unsure);
 
     /* The same command against the same scene, again and again, is a command the
      * game takes and does nothing with. */
