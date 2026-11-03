@@ -29,6 +29,24 @@ Prior pass: 2026-11-02, same result.
   precedent and consent pattern. Gates the unattended half of our stage
   ladder (#26); attended reuse (load + Ctrl-Z) works today. A `copy`/snapshot
   seam is noted there as a possible separate follow-up.
+- **neo-angband#431 → PR #433** (up 2026-11-03, mergeable): the master seed,
+  read-only, one field on the RunReport - the run-identity payload a journaling
+  mod already receives at `onRunEnd`. Fail-before/pass-after proven; the PR
+  offers to re-cut onto another surface if preferred. Unblocks watched-lineage
+  replay for #29.
+- **neo-angband#414 → PR #432** (up 2026-11-03, mergeable): `disturb()` signals
+  `input-flush` (player-util.c:1674), with the MOD_SEAMS doc paragraph. 33/33,
+  fail-before proven.
+- **#377 fixed upstream** (their 1.4.0-beta line; issue open pending release):
+  verified from our side - our ported awareness test passes on the current
+  line (comment posted 2026-11-03).
+
+**Tracker convention (learned 2026-11-03)**: open != unfixed here - issues stay
+open until a stable release carries the fix (#371/#372/#415/#377). Check the
+maintainer's dedup/release comments before treating an open issue as work.
+**tsc note**: the packages/core build shows 53 missing-declaration errors in a
+FRESH worktree (build-order artifact: core references mod-sdk/dist) - build
+from the repo root (`tsc -b`) for the true count; master is genuinely clean.
 
 ## Touched by us, worth closing the loop
 
