@@ -33,6 +33,7 @@ const THREADS = [
   { repo: "neostryder/neo-angband", kind: "issue", num: 418, what: "watchlist seam we depend on" },
   { repo: "neostryder/neo-angband", kind: "issue", num: 385, what: "watchlist seam we depend on" },
   { repo: "neostryder/neo-angband", kind: "issue", num: 434, what: "our track_step finding (moved from mod-borg#21, labeled bug)" },
+  { repo: "neostryder/neo-angband-mod-borg", kind: "pr", num: 22, what: "the track_step recorder PR (fixes neo-angband#434)" },
 ];
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
