@@ -9,7 +9,14 @@ ground (#26), and learns without a human in the loop: every death produces a
 post-mortem dossier ladder that a session with code access diagnoses (#29);
 the human may still demonstrate (#27) but is never the bottleneck.
 
-**Classes: wide first, then iteratively deeper** (owner, amended 2026-11-03):
+**THE CURRENT PRIORITY (owner pivot, 2026-11-03, #34): audit the borg's
+full space** - all classes, strategies and configuration options - finding
+as many issues as possible and deriving each one's provenance (C design /
+inherited port defect / our defect / engine gap), before improvements.
+Nothing may force warrior play; everything warrior-shaped is a setting.
+The loop underneath is proven (B32): cover, diagnose, attribute, fix,
+measure. **Classes: wide first, then iteratively deeper** (amended earlier
+2026-11-03):
 BEFORE any warrior specialization, a GENERIC first pass — class-agnostic
 improvements (#29's post-mortem diagnoses, Phase 1's ceiling fixes) that lift
 every class. Then START WIDE: fixed-class pinning at birth and race sets
