@@ -27,7 +27,9 @@ const THREADS = [
   { repo: "neostryder/neo-angband", kind: "issue", num: 428, what: "the noteSpot gap" },
   { repo: "neostryder/neo-angband", kind: "issue", num: 430, what: "our load-resume proposal" },
   { repo: "neostryder/neo-angband", kind: "issue", num: 431, what: "our seed-exposure ask" },
-  { repo: "neostryder/neo-angband", kind: "issue", num: 414, what: "input-flush (our fix verified, PR pending order)" },
+  { repo: "neostryder/neo-angband", kind: "pr", num: 432, what: "the input-flush fix (fixes #414)" },
+  { repo: "neostryder/neo-angband", kind: "issue", num: 414, what: "the input-flush gap" },
+  { repo: "neostryder/neo-angband", kind: "pr", num: 433, what: "RunReport carries the seed (fixes #431)" },
   { repo: "neostryder/neo-angband", kind: "issue", num: 418, what: "watchlist seam we depend on" },
   { repo: "neostryder/neo-angband", kind: "issue", num: 385, what: "watchlist seam we depend on" },
 ];
