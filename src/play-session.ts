@@ -70,6 +70,7 @@ import { createBorg } from "./controller.js";
 import { bindCore, coreIsBound } from "./core-api.js";
 import { makeCoreResolvers } from "./resolvers.js";
 import { assessUncertainty, MAX_UNSURE_KEPT, type UnsurePoint } from "./uncertainty.js";
+import { inventoryLedger, kindLabel, MAX_SAID_KEPT, type DiscardMoment, type LedgerRow } from "./inventory.js";
 import { installBorgJournal, parseJournal, GRAVEYARD_KEY, graveyardArchiveOf, type ArchivedRun, type BorgJournalData } from "./records/journal.js";
 import { retireAtStage } from "./loop/restart.js";
 import { librarySlotName, stageAttained, type StageDefinition } from "./loop/stage.js";
@@ -167,10 +168,59 @@ interface LifeObservation {
     total: number;
     points: UnsurePoint[];
   };
+  /**
+   * The inventory ledger (#28): how many discard moments the run produced
+   * (pack under capacity pressure + an item leaving by the borg's own
+   * command) and the bounded tail of the moments themselves. Collected
+   * beside the census and the uncertainty journal, with the same
+   * observation-only standing: the rows are frozen from the same view the
+   * decision read and the engine's own message log, so the driven life is
+   * exactly what it was.
+   */
+  readonly inventory: {
+    total: number;
+    moments: DiscardMoment[];
+  };
   /** Arm the Borg for the next decision (the host's latch, main.ts). */
   arm(): void;
   /** Remove the controller (the engine restores the previous provider). */
   uninstall(): void;
+}
+
+/**
+ * The borg shop number the character stands in (0..7, BORG_HOME = 7), or
+ * null off every entrance - the known world's own square_shopnum arithmetic
+ * (known-world.js: f_info[feat].shopnum - 1), read from the live chunk the
+ * same way. The ledger needs it to tell a SELL from a STASH (#28): the same
+ * shop-sell command is one or the other by the shop it stands in.
+ */
+function shopNumberOf(state: GameState): number | null {
+  const shopnum = state.chunk.feature(state.actor.grid).shopnum;
+  return shopnum > 0 ? shopnum - 1 : null;
+}
+
+/**
+ * The engine's message-log lines printed since the previous observation
+ * (#28): the discard moment's "said" window, oldest first, newest capped.
+ * Read from the ENGINE'S OWN LOG (the #29 dossier's read), never from the
+ * view's messages() - that drain belongs to the Borg's perceive, and taking
+ * it would change the play (rule 5). The marker is read-and-advanced through
+ * the callbacks so the observation stays one expression.
+ */
+function saidSince(
+  state: GameState,
+  mark: () => number,
+  setMark: (next: number) => void,
+): string[] {
+  const log = state.messages ?? null;
+  const total = log === null ? 0 : log.num();
+  const fresh = total - mark();
+  setMark(total);
+  if (log === null || fresh <= 0) return [];
+  const take = Math.min(fresh, MAX_SAID_KEPT);
+  const lines: string[] = [];
+  for (let age = take - 1; age >= 0; age--) lines.push(log.str(age));
+  return lines;
 }
 
 /**
@@ -228,6 +278,13 @@ export function observingLife(
    * valuation the attack chooser already recorded and the world model the
    * decision already ran on - so the driven life is exactly what it was. */
   const unsure = { total: 0, points: [] as UnsurePoint[] };
+  /* The inventory ledger (#28), the same standing again: pack rows frozen
+   * from the view the decision read (descriptions from the engine's own
+   * describe call, the #29 dossier's read), the command the census counted,
+   * and the engine's message-log window between observations. Reads only -
+   * the driven life is exactly what it was, and the seed-1 census proves it. */
+  const inventory = inventoryLedger();
+  let saidMark = 0;
   const session = core.installController(
     state,
     (view, act) => {
@@ -242,6 +299,33 @@ export function observingLife(
           unsure.points.push(point);
           if (unsure.points.length > MAX_UNSURE_KEPT) unsure.points.shift();
         }
+        /* One observation per decision (#28): the pack as the previous
+         * command left it, the command about to run. The rows are frozen
+         * AFTER the decision (so a decision that drew nothing stays a
+         * decision that drew nothing), the said window from the engine's
+         * own log - never the view's drain, which the Borg's perceive owns. */
+        const handle = (cmd.args as { readonly handle?: unknown } | undefined)?.handle;
+        inventory.observe(
+          view.inventory().map((item): LedgerRow => {
+            const obj = state.gear.store.get(item.handle);
+            return {
+              handle: item.handle,
+              desc: obj !== undefined ? core.describeObject(state, obj) : item.label,
+              kind: kindLabel(item.tval),
+              tval: item.tval,
+              sval: item.sval,
+              number: item.number,
+              value: item.value ?? null,
+            };
+          }),
+          {
+            code: cmd.code,
+            handle: typeof handle === "number" ? handle : null,
+            shop: shopNumberOf(state),
+          },
+          { turn: view.turn(), depth: view.player().depth },
+          saidSince(state, () => saidMark, (mark) => void (saidMark = mark)),
+        );
       }
 
       let alone = true;
@@ -271,6 +355,7 @@ export function observingLife(
     places,
     depths,
     unsure,
+    inventory: { total: inventory.total, moments: [...inventory.moments] },
     get restedBesideMonster(): number {
       return restedBesideMonster;
     },
@@ -449,6 +534,13 @@ export interface RunReport {
    */
   unsure: { total: number; points: UnsurePoint[] };
   /**
+   * The inventory ledger (#28, additive in spirit - records before it carry
+   * no `inventory` key): the discard moments under capacity pressure, raw
+   * facts like the unsure points. The reviewer (tools/inventory-review/)
+   * reads these through the exporter (tools/inventory-export.mjs).
+   */
+  inventory: { total: number; moments: DiscardMoment[] };
+  /**
    * Whether this run attained the session's stage (#25): character level
    * and first-arrival depth both at or past its thresholds. False when the
    * session played no stage.
@@ -566,6 +658,7 @@ export function playSession(
       jitter: jitterOf(observed),
       restedBesideMonster: observed.restedBesideMonster,
       unsure: { total: observed.unsure.total, points: [...observed.unsure.points] },
+      inventory: { total: observed.inventory.total, moments: [...observed.inventory.moments] },
       stageAttained: attained,
       retired: false,
       wallClockMs: Date.now() - startedAt,
@@ -760,6 +853,11 @@ export interface SessionLife {
    * total and the bounded tail, from the same observation both drivers share.
    */
   readonly unsure: { readonly total: number; readonly points: readonly UnsurePoint[] };
+  /**
+   * The inventory ledger (#28), the stock RunReport's own field: the total
+   * and the bounded tail, from the same observation both drivers share.
+   */
+  readonly inventory: { readonly total: number; readonly moments: readonly DiscardMoment[] };
   /**
    * Wall-clock time the life took. METADATA, never a fact (rule 5) - the
    * same standing the stock RunReport's wallClockMs has.
@@ -1032,6 +1130,7 @@ export async function playPackSession(
       jitter: jitterOf(observed),
       restedBesideMonster: observed.restedBesideMonster,
       unsure: { total: observed.unsure.total, points: [...observed.unsure.points] },
+      inventory: { total: observed.inventory.total, moments: [...observed.inventory.moments] },
       wallClockMs: Date.now() - startedAt,
       arrivalStamps,
       journal: parseJournal(slot.held()),

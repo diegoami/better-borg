@@ -50,6 +50,7 @@ const RUN_KEYS = [
   "stageAttained",
   "retired",
   "unsure",
+  "inventory",
   "meta",
 ] as const;
 
@@ -76,6 +77,7 @@ function fixtureRun(overrides: Partial<RunReport>): RunReport {
     stageAttained: false,
     retired: false,
     unsure: { total: 0, points: [] },
+    inventory: { total: 0, moments: [] },
     wallClockMs: 21094,
     ...overrides,
   };
@@ -243,6 +245,40 @@ describe("buildRunsJson", () => {
       unsure: { total: at === 0 ? 2 : 5, points: [] },
     }));
     expect(buildSummary(session)).toContain("unsure points (#27): 7 across the cohort");
+  });
+
+  it("carries the inventory ledger verbatim (#28, additive)", () => {
+    /* The discard moments are raw facts like the unsure points: the record
+     * carries the total and the moments exactly as the session observed
+     * them. The moment here is one the ledger really writes - see
+     * src/inventory.test.ts for the definition's own tests. */
+    const session = fixtureSession();
+    const moment = {
+      turn: 5140,
+      depth: 1,
+      way: "drop" as const,
+      command: "drop",
+      slotsUsed: 23,
+      packSize: 23,
+      left: { handle: 7, desc: "a Wooden Torch (with 1500 turns of light)", kind: "light", tval: 19, sval: 1, number: 1, value: 3 },
+      gone: 1,
+      stayed: [{ handle: 8, desc: "a Ration of Food", kind: "food", tval: 28, sval: 5, number: 4, value: 12 }],
+      said: ["You drop a Wooden Torch (t)."],
+    };
+    session.runs = [
+      fixtureRun({ inventory: { total: 1, moments: [moment] } }),
+    ];
+    const run = (buildRunsJson(session) as unknown as { runs: Array<Record<string, unknown>> })["runs"][0]!;
+    expect(run["inventory"]).toEqual({ total: 1, moments: [moment] });
+  });
+
+  it("summarizes the cohort's discard moments as a count (#28)", () => {
+    const session = fixtureSession();
+    session.runs = session.runs.map((run, at) => ({
+      ...run,
+      inventory: { total: at === 0 ? 1 : 4, moments: [] },
+    }));
+    expect(buildSummary(session)).toContain("discard moments (#28): 5 across the cohort");
   });
 
   it("is pure: the same session serializes to the same bytes", () => {

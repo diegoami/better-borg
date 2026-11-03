@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mandos - inventory decision reviewer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Inventory decision reviewer</h1>
+    <p class="tagline">
+      What the Borg kept and what it let go, at the moments the pack was too
+      full to keep everything. Mark each decision good or bad, note why, and
+      export <code>feedback.json</code>. This page is a static file: no
+      server, no network, nothing leaves your machine.
+    </p>
+  </header>
+
+  <main>
+    <section id="load" class="panel">
+      <h2>Load a decisions export</h2>
+      <p>
+        Produced by <code>node tools/inventory-export.mjs &lt;record-dir&gt;</code>
+        from a session under <code>docs/runs/</code>.
+      </p>
+      <div id="drop" class="drop">
+        <label for="file">Choose decisions.json</label>
+        <input id="file" type="file" accept=".json,application/json">
+        <p class="hint">or drop the file here</p>
+      </div>
+      <p id="load-error" class="error" hidden></p>
+    </section>
+
+    <section id="record" hidden>
+      <h2 id="record-title"></h2>
+      <dl id="record-facts" class="facts"></dl>
+      <nav id="runs" class="runs"></nav>
+    </section>
+
+    <section id="run" hidden>
+      <div class="run-head">
+        <h2 id="run-title"></h2>
+        <dl id="run-facts" class="facts"></dl>
+        <div class="progress">
+          <span id="progress-text"></span>
+          <div class="bar"><div id="progress-fill"></div></div>
+        </div>
+      </div>
+      <div id="moments"></div>
+      <div class="actions">
+        <button id="export" type="button">Export feedback.json</button>
+        <span id="export-note" class="hint"></span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Format ids: decisions <code>mandos/inventory-decisions@1</code>,
+      feedback <code>mandos/inventory-feedback@1</code>. The field
+      documentation lives in the repository's <code>docs/runs/README.md</code>.
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
