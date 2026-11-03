@@ -69,6 +69,7 @@ import type {
   RunReport,
 } from "@rpgm-tools/neo-angband-mod-sdk";
 import type { UnsurePoint } from "../uncertainty.js";
+import { readDiscardMoment, type DiscardMoment } from "../inventory.js";
 
 /** The events domain's subscribe half, the slice this module needs. */
 type Events = Pick<Api2Events, "on" | "off">;
@@ -129,11 +130,14 @@ export interface ArchivedRun extends GraveyardEntry {
   readonly run: string | null;
   /** #27, additive: where the run was unsure (a bounded tail plus the raw total; absent when nobody journaled). */
   readonly unsure?: { readonly total: number; readonly points: readonly UnsurePoint[] };
+  /** #28, additive: what the run kept and let go under capacity pressure (a bounded tail plus the raw total; absent when nobody journaled). */
+  readonly inventory?: { readonly total: number; readonly moments: readonly DiscardMoment[] };
 }
 
-/** The trainer loop's journal extras for one ended run (#27): all optional, all additive. */
+/** The trainer loop's journal extras for one ended run (#27, #28): all optional, all additive. */
 export interface RunDossier {
   readonly unsure?: { readonly total: number; readonly points: readonly UnsurePoint[] };
+  readonly inventory?: { readonly total: number; readonly moments: readonly DiscardMoment[] };
 }
 
 /**
@@ -292,7 +296,34 @@ function archivedRunOf(value: JsonValue): ArchivedRun | null {
   if (entry === null) return null;
   const run = value["run"];
   const unsure = unsureOf(value["unsure"]);
-  return { ...entry, run: typeof run === "string" ? run : null, ...(unsure === null ? {} : { unsure }) };
+  const inventory = inventoryOf(value["inventory"]);
+  return {
+    ...entry,
+    run: typeof run === "string" ? run : null,
+    ...(unsure === null ? {} : { unsure }),
+    ...(inventory === null ? {} : { inventory }),
+  };
+}
+
+/**
+ * An inventory-ledger block only this module writes (#28, additive): a
+ * finite total and moments re-checked through the ledger's own defensive
+ * read - a value this module did not write is not a record (the house rule
+ * over both slots, the unsure block's rule again).
+ */
+function inventoryOf(value: JsonValue | undefined): { readonly total: number; readonly moments: readonly DiscardMoment[] } | null {
+  if (value === undefined || !isObject(value)) return null;
+  const total = value["total"];
+  if (typeof total !== "number" || !Number.isFinite(total) || total < 0) return null;
+  const raw = value["moments"];
+  if (!Array.isArray(raw)) return null;
+  const moments: DiscardMoment[] = [];
+  for (const one of raw) {
+    const moment = readDiscardMoment(one);
+    if (moment === null) return null;
+    moments.push(moment);
+  }
+  return { total, moments };
 }
 
 /**
@@ -385,7 +416,37 @@ function storeArchiveRun(run: ArchivedRun): JsonValue {
       })),
     };
   }
+  if (run.inventory !== undefined) {
+    stored["inventory"] = {
+      total: run.inventory.total,
+      moments: run.inventory.moments.map((moment) => ({
+        turn: moment.turn,
+        depth: moment.depth,
+        way: moment.way,
+        command: moment.command,
+        slotsUsed: moment.slotsUsed,
+        packSize: moment.packSize,
+        left: storeLedgerRow(moment.left),
+        gone: moment.gone,
+        stayed: moment.stayed.map(storeLedgerRow),
+        said: [...moment.said],
+      })),
+    };
+  }
   return stored;
+}
+
+/** The JSON for one ledger row (src/inventory.ts's shape, nulls kept honest). */
+function storeLedgerRow(row: DiscardMoment["left"]): JsonValue {
+  return {
+    handle: row.handle,
+    desc: row.desc,
+    kind: row.kind,
+    tval: row.tval,
+    sval: row.sval,
+    number: row.number,
+    value: row.value,
+  };
 }
 
 /* ==================================================================
@@ -504,11 +565,12 @@ function storeGraveyardEntry(entry: GraveyardEntry): JsonValue {
  * memory) is carried forward verbatim: #26's discipline, the same one
  * bumpLineage keeps over this slot. Returns whether the write landed.
  *
- * `dossier` (#27, optional, additive): the ended run's trainer-loop record -
- * its unsure points, and the advice/demonstrations the later phases add -
- * written INTO the same archived entry, so the on-death report a later page
- * reads carries them beside the report's own facts. One write, one entry:
- * no second read-modify-write over the shared slot.
+ * `dossier` (#27, #28, optional, additive): the ended run's trainer-loop
+ * record - its unsure points, its inventory ledger (the discard moments
+ * under capacity pressure), and the advice/demonstrations the later phases
+ * add - written INTO the same archived entry, so the on-death report a
+ * later page reads carries them beside the report's own facts. One write,
+ * one entry: no second read-modify-write over the shared slot.
  */
 export async function archiveFinishedRun(
   deps: Pick<BorgJournalDeps, "archive" | "log">,
@@ -534,6 +596,7 @@ export async function archiveFinishedRun(
     run: typeof report.key === "string" ? report.key : null,
     ...graveyardEntryOf(report),
     ...(dossier.unsure === undefined ? {} : { unsure: dossier.unsure }),
+    ...(dossier.inventory === undefined ? {} : { inventory: dossier.inventory }),
   };
   const runs = [...current.runs];
   const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);

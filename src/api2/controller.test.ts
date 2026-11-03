@@ -214,6 +214,67 @@ describe("one tick", () => {
   });
 });
 
+describe("the inventory ledger rail (#28)", () => {
+  /** A world whose pack the fake rail can see, however small. */
+  const worldAt = (turn: number): World =>
+    ({ view: { turn: () => turn, player: () => ({ grid: { x: 1, y: 1 } }), monsters: () => [], inventory: () => [] } as never, facts: { shopnum: null, kinds: new Map() } }) as World;
+
+  it("sees the world the decision read and the final command, once per wait", async () => {
+    const game = fakeGame();
+    const seen: Array<{ turn: number; code: string }> = [];
+    const tick = createTick(
+      bridge({ readWorld: () => Promise.resolve(worldAt(5140)) }),
+      {
+        controller: () => WALK,
+        rewind: () => undefined,
+        inventory: {
+          observe: (world, command) => void seen.push({ turn: world.view.turn(), code: command.code }),
+        },
+      },
+    );
+    await tick(game.mod, game.input());
+    expect(seen).toEqual([{ turn: 5140, code: "walk" }]);
+  });
+
+  it("sees the command after the loadout passes made it final", async () => {
+    const game = fakeGame();
+    const codes: string[] = [];
+    let pending = true;
+    let settled = 0;
+    const tick = createTick(
+      bridge({
+        loadoutsPending: () => pending,
+        settleLoadouts: () => {
+          settled += 1;
+          pending = settled < 2;
+          return Promise.resolve(1);
+        },
+      }),
+      {
+        controller: (_view, act) => (settled === 0 ? act.hold() : act.quaff(3)),
+        rewind: () => undefined,
+        inventory: { observe: (_world, command) => void codes.push(command.code) },
+      },
+    );
+    await tick(game.mod, game.input());
+    expect(codes).toEqual(["quaff"]);
+  });
+
+  it("is not asked at a prompt, a foreign phase, or an idle wait", async () => {
+    const game = fakeGame();
+    let calls = 0;
+    const tick = createTick(bridge(), {
+      controller: () => null,
+      rewind: () => undefined,
+      inventory: { observe: () => void (calls += 1) },
+    });
+    await tick(game.mod, game.input({ prompt: { promptId: 3, kind: "ack" } as unknown as Api2Prompt }));
+    await tick(game.mod, game.input({ phase: "death" as never }));
+    await tick(game.mod, game.input());
+    expect(calls).toBe(0);
+  });
+});
+
 describe("the replay release (#29)", () => {
   /** A world whose turn the fake watcher counts up from, as the wiring's
    * does from the game's own counter. */

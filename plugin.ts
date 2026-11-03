@@ -79,6 +79,7 @@ import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
 import { librarySlotName, stageAttained, stageOf, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING, type StageDefinition } from "./src/loop/stage.js";
 import { replayBanner, replayModeOf, REPLAY_DEATH_SETTING, REPLAY_RELEASE_SETTING, type ReplayMode } from "./src/loop/replay.js";
 import { assessUncertainty, MAX_UNSURE_KEPT, type UnsurePoint } from "./src/uncertainty.js";
+import { inventoryLedger, kindLabel, type LedgerRow } from "./src/inventory.js";
 import { readLineage } from "./src/class/warrior/lineage.js";
 
 /**
@@ -296,6 +297,17 @@ let journalHandle: BorgJournal | undefined;
 let replayLogHandle: Api2Subscription | null = null;
 let replayLogOff: Api2Events["off"] | null = null;
 /**
+ * THE INVENTORY LEDGER'S MESSAGE WINDOW (#28): its own subscription to the
+ * message event (the capability the feed already holds), retired with the
+ * rest in stop() and on a re-begin. The ledger needs the lines the game
+ * printed while a discard command ran - "what the borg said" - but the feed
+ * DRAINS for the Borg's own perceive, and stealing a line from the decision
+ * code would change the play (rule 5). A second listener reads the same
+ * events without consuming anything.
+ */
+let inventoryLogHandle: Api2Subscription | null = null;
+let inventoryLogOff: Api2Events["off"] | null = null;
+/**
  * The installation epoch (ported from the archived fork's #30). stop() bumps
  * it SYNCHRONOUSLY; a begin that was still starting when stop ran finds the
  * epoch it captured stale at its checkpoint and installs NOTHING - no title
@@ -461,16 +473,17 @@ async function begin(mod: ModApi2): Promise<Running | null> {
     ownsKeyboard: () => mod.act.controller.owns(),
     create: mod.manage?.saves.create ?? null,
     events: mod.events,
-    /* The graveyard write carries the ended run's uncertainty journal in the
-     * SAME archived entry (#27): where the run was unsure, beside the facts
-     * the report itself carries - the on-death report's "where I was not
-     * sure" half. Nothing journaled means no dossier: the entry keeps its
-     * pre-#27 shape. */
+    /* The graveyard write carries the ended run's uncertainty journal AND
+     * inventory ledger in the SAME archived entry (#27, #28): where the run
+     * was unsure and what it chose to keep when the pack was too full -
+     * beside the facts the report itself carries. Nothing journaled means
+     * no dossier: the entry keeps its pre-#27 shape. The closure runs at
+     * report time, long after the collectors below are initialized. */
     graveyard: (report) =>
-      journal.graveyard(
-        report,
-        unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {},
-      ),
+      journal.graveyard(report, {
+        ...(unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {}),
+        ...(inventory.total > 0 ? { inventory: { total: inventory.total, moments: [...inventory.moments] } } : {}),
+      }),
     save: mod.manage?.session?.save ?? null,
     listSaves: mod.manage?.saves.list ?? null,
     rename: mod.manage?.saves.rename ?? null,
@@ -488,6 +501,50 @@ async function begin(mod: ModApi2): Promise<Running | null> {
       unsure.total += 1;
       unsure.points.push(point);
       if (unsure.points.length > MAX_UNSURE_KEPT) unsure.points.shift();
+    },
+  };
+  /* THE INVENTORY LEDGER (#28): this page's discard moments, collected by
+   * the same standing the uncertainty journal keeps - one observation per
+   * wait (the tick's inventory rail), the pack the previous command left
+   * diffed against the pack before that, departures attributed by the
+   * handle the command named (src/inventory.ts). The message window rides
+   * the ledger's OWN message subscription (see inventoryLogHandle above):
+   * the lines the game printed while the discard command ran, sliced by a
+   * marker that advances once per observation. Observation-only - nothing
+   * here draws RNG or reads a clock, so the play is byte-for-byte what it
+   * was, and the moments only add the record. */
+  const inventory = inventoryLedger();
+  const saidRing: string[] = [];
+  let saidCount = 0;
+  let saidMark = 0;
+  const SAID_RING = 32;
+  const saidWindow = (): string[] => {
+    const fresh = saidCount - saidMark;
+    saidMark = saidCount;
+    return fresh <= 0 ? [] : saidRing.slice(-Math.min(fresh, saidRing.length));
+  };
+  const inventoryRail: NonNullable<Parameters<typeof createTick>[1]>["inventory"] = {
+    observe: (world, command) => {
+      const rows: LedgerRow[] = world.view.inventory().map((item) => ({
+        handle: item.handle,
+        desc: item.name ?? item.label,
+        kind: kindLabel(item.tval),
+        tval: item.tval,
+        sval: item.sval,
+        number: item.number,
+        value: item.value ?? null,
+      }));
+      const handle = (command.args as { readonly handle?: unknown } | undefined)?.handle;
+      inventory.observe(
+        rows,
+        {
+          code: command.code,
+          handle: typeof handle === "number" ? handle : null,
+          shop: world.facts.shopnum,
+        },
+        { turn: world.view.turn(), depth: world.view.player().depth },
+        saidWindow(),
+      );
     },
   };
   /* THE STAGE WATCH (#25): the tick asks it after every world read; it
@@ -569,6 +626,25 @@ async function begin(mod: ModApi2): Promise<Running | null> {
       `the Borg cannot log the replayed commands (${replayLog.message}); the release still works, the demonstration log does not`,
     );
   }
+  /* The inventory ledger's message window (#28): its own listener on the
+   * same event the message feed holds, retired the same ways - in stop(),
+   * and here on a re-begin, so a second start on one page never double-
+   * counts a line. A refusal is honest and quiet: the ledger still works,
+   * its moments just carry no message lines on this host. */
+  if (inventoryLogHandle !== null && inventoryLogOff !== null) {
+    const held = inventoryLogHandle;
+    inventoryLogHandle = null;
+    await inventoryLogOff(held).catch(() => undefined);
+  }
+  inventoryLogOff = mod.events.off;
+  const inventoryLog = await mod.events.on("message", (event) => {
+    saidCount += 1;
+    saidRing.push(event.text);
+    if (saidRing.length > SAID_RING) saidRing.shift();
+  });
+  if (inventoryLog.ok) {
+    inventoryLogHandle = inventoryLog.value;
+  }
   /* Module-level so stop() can retire them even before `running` settles,
    * and retired here the same way the bridge is, so a second start on the
    * same page (a start without a stop) never leaves two loops listening for
@@ -577,7 +653,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail, inventory: inventoryRail }), restart, journal };
 }
 
 const definition: Api2ModDefinition = {
@@ -646,6 +722,14 @@ const definition: Api2ModDefinition = {
     replayLogHandle = null;
     replayLogOff = null;
     if (replayLog !== null && replayOff !== null) void replayOff(replayLog).catch(() => undefined);
+    /* The inventory ledger's message window leaves with it (#28), for the
+     * same reason: a standing one beside a fresh start would double-count
+     * every line. */
+    const inventoryLog = inventoryLogHandle;
+    const inventoryOff = inventoryLogOff;
+    inventoryLogHandle = null;
+    inventoryLogOff = null;
+    if (inventoryLog !== null && inventoryOff !== null) void inventoryOff(inventoryLog).catch(() => undefined);
     void held?.dispose();
   },
 

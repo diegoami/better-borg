@@ -201,26 +201,28 @@ export function inventoryLedger(): InventoryLedger {
       if (was !== null) {
         const way = discardWayOf(was.command);
         const handle = was.command.handle;
-        const before = way === null || handle === null ? undefined : was.rows.find((row) => row.handle === handle);
-        if (before !== undefined && underPressure(was.rows.length)) {
-          const after = rows.find((row) => row.handle === handle);
-          const gone = after === undefined ? before.number : before.number - after.number;
-          if (gone > 0) {
-            moment = {
-              turn: was.stamp.turn,
-              depth: was.stamp.depth,
-              way,
-              command: was.command.code,
-              slotsUsed: was.rows.length,
-              packSize: PACK_SIZE,
-              left: before,
-              gone,
-              stayed: [...rows],
-              said: said.slice(-MAX_SAID_KEPT),
-            };
-            total += 1;
-            moments.push(moment);
-            if (moments.length > MAX_MOMENTS_KEPT) moments.shift();
+        if (way !== null && handle !== null) {
+          const before = was.rows.find((row) => row.handle === handle);
+          if (before !== undefined && underPressure(was.rows.length)) {
+            const after = rows.find((row) => row.handle === handle);
+            const gone = after === undefined ? before.number : before.number - after.number;
+            if (gone > 0) {
+              moment = {
+                turn: was.stamp.turn,
+                depth: was.stamp.depth,
+                way,
+                command: was.command.code,
+                slotsUsed: was.rows.length,
+                packSize: PACK_SIZE,
+                left: before,
+                gone,
+                stayed: [...rows],
+                said: said.slice(-MAX_SAID_KEPT),
+              };
+              total += 1;
+              moments.push(moment);
+              if (moments.length > MAX_MOMENTS_KEPT) moments.shift();
+            }
           }
         }
       }

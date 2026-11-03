@@ -338,6 +338,47 @@ describe("the install graveyard archive", () => {
     ]);
   });
 
+  it("carries the run's inventory ledger inside the same archived entry (#28, additive)", async () => {
+    /* The dossier's inventory half lands beside the report's own facts and
+     * #27's unsure block, in ONE write. An archive written without a dossier
+     * keeps its old shape - the additive rule, again. */
+    const install = slot();
+    const moments = [
+      {
+        turn: 5140,
+        depth: 1,
+        way: "stash" as const,
+        command: "shop-sell",
+        slotsUsed: 23,
+        packSize: 23,
+        left: { handle: 7, desc: "a Ring of Protection", kind: "ring", tval: 24, sval: 3, number: 1, value: 500 },
+        gone: 1,
+        stayed: [{ handle: 8, desc: "a Ration of Food", kind: "food", tval: 28, sval: 5, number: 4, value: 12 }],
+        said: ["You have a Ring of Protection (s)."],
+      },
+    ];
+    expect(await archiveFinishedRun({ archive: install, log: () => undefined }, report("death"), { inventory: { total: 1, moments } })).toBe(true);
+    const runs = graveyardArchiveOf((install.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs;
+    expect(runs).toHaveLength(1);
+    expect(runs[0]!.inventory).toEqual({ total: 1, moments });
+    /* A re-delivered report WITHOUT a dossier re-records the entry and drops
+     * the stale ledger: the dossier is per-report, exactly as the cause is. */
+    await archiveFinishedRun({ archive: install, log: () => undefined }, report("death"));
+    const reRuns = graveyardArchiveOf((install.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs;
+    expect(reRuns[0]!.inventory).toBeUndefined();
+    /* And a malformed inventory block under a foreign value is dropped, not
+     * adopted - the same rule every field of this archive keeps. */
+    const foreign = slot();
+    await archiveFinishedRun({ archive: foreign, log: () => undefined }, report("death"));
+    (foreign.held() as Record<string, unknown>)[GRAVEYARD_KEY] = {
+      journal: 1,
+      runs: [{ outcome: "death", cause: "x", inventory: { total: 2, moments: [{ way: "lost" }] } }],
+    };
+    expect(graveyardArchiveOf((foreign.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs).toEqual([
+      { run: null, ...graveyardEntryOf({ outcome: "death", cause: "x" } as unknown as RunReport) },
+    ]);
+  });
+
   it("records what a partial report carried, and nulls what it did not", async () => {
     /* A front end that delivers only the outcome and the cause (the shape
      * plugin.test.ts's fake game sends) must not crash the writer. */
