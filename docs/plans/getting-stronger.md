@@ -1,14 +1,24 @@
 # Getting stronger - the roadmap
 
 The goal, redirected by the owner on 2026-11-03: **a Borg that helps with the
-grind.** It concentrates on reaching a chosen STAGE reliably — reach-rate over
-a fixed seed cohort replaces median deepest depth as the number — retires
-each successful run into a kept, loadable save (#25), climbs a ladder of
-stages by resuming from the previous stage's saves instead of re-grinding
-proven ground (#26), and treats the human as TRAINER: unsure decision points
-become questions, demonstration play is logged and fed back offline (#27).
-Reaching deeper survives as the ladder's axis. Three phases in dependency
-order, and one standing constraint that shapes all of them.
+grind.** It reaches a chosen STAGE reliably — reach-rate over a fixed seed
+cohort is the number, replacing median deepest depth — retires each
+successful run into a kept, loadable save (#25), climbs a ladder of stages
+by resuming from the previous stage's saves instead of re-grinding proven
+ground (#26), and learns without a human in the loop: every death produces a
+post-mortem dossier ladder that a session with code access diagnoses (#29);
+the human may still demonstrate (#27) but is never the bottleneck.
+
+**Classes are covered iteratively** (owner, 2026-11-03): first the WARRIOR
+reaches the target level and depth reliably — that is the milestone in
+flight. Then that same milestone repeats for EVERY class, one class at a
+time, the easiest next class first (each class a strategy pack under
+`src/class/`, never a fork - process §2; its race shortlist decided per class
+the T07 way). Then the targets move up, and the rounds repeat — stage-major,
+one concentration at a time. Reaching deeper survives as the ladder's axis.
+
+Three phases in dependency order, and one standing constraint that shapes
+all of them.
 
 ## The constraint: determinism (rule 5)
 
