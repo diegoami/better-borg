@@ -11,8 +11,8 @@
  *
  * So this boots a REAL game against the engine, installs the Borg as its command
  * provider, and drives the loop for thousands of decisions. It does not check
- * that the Borg plays WELL - "it tries its best and gets as far as it can" is the
- * target, and a level-1 character dying on depth 2 is upstream's own outcome. It
+ * that the Borg plays WELL - "it tries its best and gets as far as it can" is
+ * the target, and a level-1 character dying on depth 2 is upstream's own outcome. It
  * checks that the Borg is still PLAYING: that no single command has run away with
  * the session, that the character has been to more than a handful of squares,
  * that it does not pace with nothing in sight, and that it does not sit down to
@@ -25,17 +25,32 @@
  * (or the sibling checkout the other tools already assume) is what makes this
  * runnable, exactly as it is for the plugin builder. A skip says so out loud
  * rather than passing on nothing.
+ *
+ * The session machinery (pack discovery, the boot, the drive loop, the run
+ * report) is not test-bound anymore: it lives in ./play-session.ts, shared
+ * with tools/sweep.mjs and tools/runs.mjs - ONE session module, TWO drivers.
+ * This file keeps the ASSERTIONS - the suite is the proof the loop did not
+ * move - and the engine probe below.
+ *
+ * The second half (ported from neowarrior-borg's own play.test.ts at v0.1.0
+ * e1ec1b7, its T04/T06 suites) drives the PACK side of the same module: the
+ * restart chain's BUILD assertion (every boot is the active pack's plan, read
+ * from the live player), and the recorded session (journal milestones,
+ * graveyard archive, and the ONE record writer's runs.json over the pack
+ * session's lives).
  */
 
-/* The session machinery (pack discovery, the boot, the drive loop, the run
- * report) is not test-bound anymore: it lives in ./play-session.ts, shared
- * with tools/sweep.mjs, the bake-off runner B02 extracted it for. This file
- * keeps the ASSERTIONS - the suite is the proof the loop did not move - and
- * the engine probe below. */
-import * as Core from "@rpgm-tools/neo-angband-core";
-import type { GamePack } from "@rpgm-tools/neo-angband-core";
 import { describe, expect, it } from "vitest";
-import { loadPack, packRoot, playRun } from "./play-session.js";
+import * as Core from "@rpgm-tools/neo-angband-core";
+import { ContentIdResolver, LOOP_STATUS, installController, runGameLoop, startGame } from "@rpgm-tools/neo-angband-core";
+import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
+import { createBorg } from "./controller.js";
+import { makeCoreResolvers } from "./resolvers.js";
+import { loadPack, packRoot, playRun, playPackSession } from "./play-session.js";
+import { RUNS_SCHEMA_ID, buildRunsJson, type SessionRecord } from "./run-record.js";
+import { WARRIOR_CLASS_NAME, type WarriorBuildPlan } from "./class/warrior/plan.js";
+import { planWarriorFor, warriorPack } from "./class/warrior/index.js";
+import { WARRIOR_RACE_CANDIDATES } from "./class/warrior/settings.js";
 
 const PACK_DIR = packRoot();
 
@@ -161,6 +176,15 @@ suite("the Borg plays a real game", () => {
         r.restedBesideMonster,
         "the Borg chose to rest with a monster adjacent",
       ).toBe(0);
+
+      /* AND THE COUNT AGREES WITH THE CENSUS. The unified session's one
+       * counting rule (#36, adopted at the unification): every issued command
+       * is a completed decision, death's killing decision included. The driver
+       * enforces the equality and throws; this is the outside check over what
+       * it reported - B02's committed record predates the rule and its one
+       * dying run is short by one, which is why the rule is asserted here. */
+      const issued = Object.values(r.commands).reduce((a, b) => a + b, 0);
+      expect(issued, `seed ${String(seed)}: census vs decisions`).toBe(r.decisions);
     }, 120_000);
   }
 
@@ -174,4 +198,411 @@ suite("the Borg plays a real game", () => {
     expect(r.commands["descend"] ?? 0).toBeGreaterThan(0);
     expect(r.commands["ascend"] ?? 0).toBeGreaterThan(0);
   }, 120_000);
+});
+
+/* ==================================================================
+ * THE PACK RESTART CHAIN, HEADLESS (ported from neowarrior-borg's T04
+ * suite; the build assert is the per-pack one)
+ * ==================================================================
+ *
+ * The mod's loop runs through host seams this harness does not have - no web
+ * shell, no page to reload, no roster - so the loop is APPROXIMATED the way
+ * the archived fork's T04 task specified: when a character dies, the next one
+ * is booted by the same plan (the pack's planFor) the presenter replays, with
+ * startGame({ roller: "point", birthStats }) standing in for
+ * saves.create({ resumeAutoplayer: true }) + the presenter + the reload.
+ * What that keeps faithful is the part the task cares about: the BUILD is
+ * the presenter's build (one plan module, both callers), and every assertion
+ * about it is made against the LIVE player the engine just birthed, never
+ * against our own bookkeeping.
+ *
+ * WHY statBirth IS THE PINNED FIELD. generatePlayer threads the point-buy
+ * through reset_stats + buy_stat and stores the result as the natural stats
+ * BEFORE race and class adjustments are folded in (packages/core/src/player/
+ * birth.ts: statMax = statCur = statBirth = the buy), which is exactly the
+ * plan's baseStats semantics. statBirth is that array FROZEN AT BIRTH: play
+ * moves statCur (drains, restoration) and statMax (gain potions, drains),
+ * but nothing in play rewrites statBirth, so a level-5 warrior who found
+ * three gain-strength potions still shows the allocation it was born with.
+ * Asserting it at the first moment after startGame - before a single
+ * decision - pins the birth itself rather than anything a level-up could
+ * confound; asserting it after a whole life would still be true, which is
+ * the point of choosing it.
+ */
+suite("the pack restart chain, headless", () => {
+  const pack = PACK_DIR ? loadPack(PACK_DIR) : null;
+  const engineReady = pack ? engineSeparatesDoorLocksFromTraps(pack) : false;
+  const when = engineReady ? it : it.skip;
+
+  /**
+   * The harness's own EXPLICIT race. It never goes through the race
+   * settings (src/class/warrior/settings.ts): the harness hands startGame the
+   * plan directly, so it names its race here - candidate 0 of the same
+   * shortlist the settings index (Half-Troll, the import baseline's race,
+   * kept for comparability with the committed run records). The default draw
+   * is not involved: the harness measures explicit races, the mod's births
+   * draw.
+   */
+  const WARRIOR_RACE = WARRIOR_RACE_CANDIDATES[0];
+
+  /**
+   * The plan the presenter replays, computed exactly as the pack wires it:
+   * the same module (planWarriorFor is the pack's planFor), the published
+   * engine's own cost table and point budget, this explicit race. This is
+   * the ONE plan every caller shares; a disagreement between the harness's
+   * warrior and the presenter's is a bug in one of them, not a choice each
+   * makes.
+   */
+  function warriorBuildPlan(): WarriorBuildPlan {
+    return planWarriorFor(Core, pack!, WARRIOR_RACE);
+  }
+
+  /** What one character's life shows, in the terms the loop cares about. */
+  interface PackLife {
+    readonly seed: number;
+    /** Whether the character died (the event that boots the next one). */
+    readonly dead: boolean;
+    readonly decisions: number;
+    readonly turns: number;
+    /** The deepest dungeon level the LIVE player says it reached. */
+    readonly deepest: number;
+    /** The cause of death, as the player's own died_from carries it. */
+    readonly cause: string | null;
+  }
+
+  /**
+   * Boot one planned warrior and assert its build FROM THE LIVE PLAYER, at
+   * the first moment the player exists - before a single decision, so no
+   * level-up or drain can confound the check. This is the whole "the loop
+   * rebirths the SAME character" claim - the per-pack birth assert: if the
+   * engine birthed anything else, these three expectations fail on that
+   * character, not on an aggregate.
+   */
+  function bootPlannedWarrior(seed: number, plan: WarriorBuildPlan): StartedGame {
+    const game = startGame(pack!, {
+      seed,
+      depth: 0,
+      raceName: plan.raceName,
+      className: WARRIOR_CLASS_NAME,
+      roller: "point",
+      birthStats: [...plan.baseStats],
+    });
+    const born = game.state.actor.player;
+    expect(born.race.name, `warrior on seed ${String(seed)} was born the wrong race`).toBe(plan.raceName);
+    expect(born.cls.name, `warrior on seed ${String(seed)} was born the wrong class`).toBe(WARRIOR_CLASS_NAME);
+    expect(
+      [...born.statBirth],
+      `warrior on seed ${String(seed)} was born with stats it was not planned with`,
+    ).toEqual([...plan.baseStats]);
+    return game;
+  }
+
+  /** One warrior: boot (asserted), play to its death or the decision cap. */
+  function playWarriorLife(seed: number, plan: WarriorBuildPlan, decisions: number): PackLife {
+    const game = bootPlannedWarrior(seed, plan);
+    const state: GameState = game.state;
+    const resolver = new ContentIdResolver({
+      objects: game.booted.registries.objects,
+      playerRaces: game.players.races,
+      playerClasses: game.players.classes,
+    });
+    const borg = createBorg({
+      /* The Borg's private stream, varied with the game seed exactly as
+       * playRun varies it: the chain of warriors must not share one draw
+       * sequence either. */
+      rngSeed: (seed * 2654435761) >>> 0 || 1,
+      resolvers: makeCoreResolvers({
+        races: game.booted.registries.monsters.races,
+        objects: game.booted.registries.objects,
+        state: state as never,
+        blowMethods: game.booted.registries.monsters.blowMethods.values(),
+      }),
+    });
+
+    /* The latch, as in playRun: runGameLoop asks nextCommand for as long as
+     * the player has energy, so a controller that always answers never lets
+     * the loop return. */
+    let armed = false;
+    installController(
+      state,
+      (view, act) => {
+        if (!armed) return null;
+        armed = false;
+        return borg.controller(view, act);
+      },
+      { viewDeps: { resolver, reg: game.booted.registries.objects } },
+    );
+
+    let dead = false;
+    let taken = 0;
+    for (; taken < decisions; ) {
+      armed = true;
+      const status = runGameLoop(state, game.registry);
+      taken += 1;
+      if (status === LOOP_STATUS.DEAD) {
+        dead = true;
+        break;
+      }
+      if (status === LOOP_STATUS.DEATH_CONFIRM) {
+        state.pendingDeath?.resolve(true);
+        continue;
+      }
+      if (status === LOOP_STATUS.LEVEL_CHANGE) {
+        game.changeLevel(state.targetDepth ?? state.chunk.depth + 1);
+        state.generateLevel = false;
+      }
+    }
+
+    return {
+      seed,
+      dead,
+      decisions: taken,
+      turns: state.turn,
+      deepest: state.actor.player.maxDepth,
+      cause: dead ? state.actor.player.diedFrom : null,
+    };
+  }
+
+  /**
+   * Run the loop's chain over `seeds`, the way the loop itself sequences:
+   * the next character boots ONLY behind an explicit assertion that its
+   * predecessor DIED (the archived #31 - three deaths anywhere among four
+   * lives do not prove a chain; an interior survivor splits it into two
+   * shorter chains, and the real loop, which sequences on LOOP_STATUS.DEAD,
+   * would simply never have booted the next one). Every boot asserts the
+   * planned build from the live player inside bootPlannedWarrior.
+   */
+  function chainPlannedWarriors(plan: WarriorBuildPlan, seeds: readonly number[], capFor: (seed: number) => number): PackLife[] {
+    const lives: PackLife[] = [];
+    for (const seed of seeds) {
+      const previous = lives[lives.length - 1];
+      if (previous !== undefined) {
+        expect(
+          previous.dead,
+          `warrior on seed ${String(previous.seed)} was still alive after its session slice, ` +
+            `so the restart loop would never have booted seed ${String(seed)}`,
+        ).toBe(true);
+      }
+      lives.push(playWarriorLife(seed, plan, capFor(seed)));
+    }
+    return lives;
+  }
+
+  when("plays a session of consecutive planned warriors, each reborn on the last one's death", () => {
+    const plan = warriorBuildPlan();
+    /* The plan is what the pack's walk makes of the stock table: STR 18, CON
+     * 17, the rest at base, no points left - asserted here rather than
+     * assumed, because the session's meaning depends on it. */
+    expect(plan.raceName).toBe(WARRIOR_RACE);
+    expect(plan.baseStats).toEqual([18, 10, 10, 10, 17]);
+    expect(plan.pointsLeft).toBe(0);
+
+    /* THE SESSION: boot warriors in a chain, each behind its predecessor's
+     * death, exactly as the loop's create would. The seeds are pinned (the
+     * engine is deterministic): probed on the pinned engine, each of these
+     * warriors dies on depth 1 inside 369 decisions (grey mold, a
+     * centipede, a floating eye, a wild dog - a level-1 warrior meeting
+     * something it cannot see is upstream's own outcome), so the
+     * 600-decision cap carries 230 decisions of margin. */
+    const lives = chainPlannedWarriors(plan, [20, 23, 34, 49], () => 600);
+
+    /* Every boot already asserted its build from the live player (inside
+     * bootPlannedWarrior), and every boot except the first was gated on its
+     * predecessor's death (inside chainPlannedWarriors); reaching this line
+     * means four consecutive planned warriors were joined by deaths. What
+     * remains is the count: at least three deaths among the four. */
+    expect(lives).toHaveLength(4);
+    const deaths = lives.filter((life) => life.dead);
+    expect(
+      deaths.length,
+      `the session buried ${String(deaths.length)} of ${String(lives.length)} warriors ` +
+        `(${lives.map((life) => `${String(life.seed)}:${life.dead ? `died to ${life.cause ?? "?"} after ${String(life.decisions)} decisions` : `survived ${String(life.decisions)} decisions`}`).join(", ")})`,
+    ).toBeGreaterThanOrEqual(3);
+  }, 300_000);
+
+  when("refuses to boot the next warrior behind one that survived its slice", () => {
+    /* The archived #31's guard, proven on the reviewer's probe shape: a
+     * middle life capped to a single decision survives, the chain's death
+     * gate must refuse to boot its successor, and the session must fail
+     * rather than count the other lives' deaths into a chain that was
+     * broken. Seed 20 still plays its full short life so the survivor
+     * really is interior. */
+    const plan = warriorBuildPlan();
+    expect(() => chainPlannedWarriors(plan, [20, 23, 34], (seed) => (seed === 23 ? 1 : 600))).toThrow(
+      /seed 23 was still alive after its session slice/u,
+    );
+  }, 300_000);
+
+  when("births the planned warrior on every seed it is asked to", () => {
+    /* The chain above pins four seeds; this sweeps a wider set cheaply
+     * (boot-and-assert only, no play), so a pack or engine change that
+     * quietly broke the birth - a renamed race, a moved table - fails on
+     * many seeds at once instead of on whichever four the session uses. */
+    const plan = warriorBuildPlan();
+    for (const seed of [1, 7, 13, 42, 77, 99]) {
+      bootPlannedWarrior(seed, plan);
+    }
+  }, 60_000);
+
+  /* ------------------------------------------------------------------
+   * The recorded session (the archived T06): journal depths, the
+   * graveyard, and the ONE record writer's runs.json
+   * ------------------------------------------------------------------ */
+  when("records its session: journal depths, the graveyard, and the writer's runs.json", async () => {
+    /* THE SESSION, through the same driver (src/play-session.ts's pack half)
+     * whose output gets committed to docs/runs/ by tools/runs.mjs: the mod's
+     * own journal installed per character, fed by the engine's real
+     * `dungeonlevel` arrivals, its graveyard entry awaited before the next
+     * character boots - the loop's journal-before-create ordering - and the
+     * ONE record writer turning the lives into the runs.json schema
+     * (better-borg/runs@1). The seeds are the chain's first three (pinned:
+     * each dies on depth 1 well inside the cap). */
+    const seeds = [20, 23, 34];
+    const session = await playPackSession(Core, pack!, warriorPack, { seeds, capFor: () => 600 });
+
+    /* AT LEAST ONE DEATH AND ONE REBIRTH, which is this test's requirement
+     * (the chain test above pins the strict all-four-die chain on these
+     * seeds): the first character died, and its death is what booted the
+     * second one - the driver boots only behind a death, so a second life
+     * IS the rebirth. A character that survives its slice ends the session,
+     * and its life still gets every record assertion below. */
+    expect(session.lives.length).toBeGreaterThanOrEqual(2);
+    expect(session.lives[0]!.dead, "the session's first character had to die for the next one to boot").toBe(true);
+    expect(session.lives.filter((life) => life.dead).length).toBeGreaterThanOrEqual(1);
+
+    for (const life of session.lives) {
+      const journal = life.journal;
+      expect(journal, `seed ${String(life.seed)} left no journal in its character's save`).not.toBeNull();
+
+      /* THE DEPTHS ACTUALLY VISITED, read from the live game (the harness
+       * observed state.chunk.depth after every decision), not from the
+       * journal's own claims: the sets match, and no depth is doubled - the
+       * load re-fires the driver delivered for every visited depth happened
+       * BEFORE this read, so a dedup failure would show as a length gap. */
+      const depths = journal!.milestones.map((m) => m.depth);
+      expect(new Set(depths), `seed ${String(life.seed)}: journal depths vs the game's`).toEqual(new Set(life.depthsVisited));
+      expect(depths, `seed ${String(life.seed)}: a depth was recorded twice`).toHaveLength(new Set(depths).size);
+      /* The game's own deepest record agrees with both views of the run. */
+      expect(life.maxDepth).toBe(Math.max(...life.depthsVisited));
+
+      /* The stamps are the live game at the arrival, captured by the
+       * harness's own listener - the (level, turn) the character had when
+       * it arrived, not when anyone got around to asking. */
+      for (const milestone of journal!.milestones) {
+        expect({ level: milestone.level, turn: milestone.turn }).toEqual(life.arrivalStamps.get(milestone.depth));
+      }
+
+      /* THE GRAVEYARD (the archived #34): one archived entry per DEAD
+       * character, read from the INSTALL archive the driver's journal
+       * writes into - the storage that survives the character - never from
+       * the character's own bag, which the host deletes at the death. A
+       * survivor archives no entry: no run ended. */
+      if (life.dead) {
+        expect(life.graveyard).toHaveLength(1);
+        expect(life.graveyard[0]).toMatchObject({
+          outcome: "death",
+          cause: life.causeOfDeath,
+          name: expect.any(String),
+          race: life.race,
+          class: life.className,
+          baseStats: [...life.baseStats],
+          maxDepth: life.maxDepth,
+          level: life.clvl,
+          gold: life.gold,
+          turn: life.turns,
+          score: expect.any(Number),
+        });
+      } else {
+        expect(life.graveyard).toEqual([]);
+      }
+
+      /* THE CENSUS AGAINST THE COUNT, asserted independently of the
+       * driver's own enforcement: the harness counts commands as the
+       * controller issues them, and the killing decision is a decision like
+       * any other - sum(commands) === decisions on every recorded run,
+       * death or survival. */
+      const issued = Object.values(life.commands).reduce((a, b) => a + b, 0);
+      expect(issued, `seed ${String(life.seed)}: census vs decisions`).toBe(life.decisions);
+    }
+
+    /* The archived #34's REQUIRED READ, after every character's bag is
+     * gone: the session-wide install archive still retrieves EVERY ended
+     * run - each life's character slot was discarded when the next
+     * character booted, which is the harness's stand-in for the host
+     * deleting the dead character's save. */
+    const ended = session.lives.filter((life) => life.dead);
+    expect(ended.length).toBeGreaterThanOrEqual(1);
+    expect(session.graveyard).toHaveLength(ended.length);
+    for (const life of ended) {
+      const match = session.graveyard.find((entry) => entry.outcome === "death" && entry.cause === life.causeOfDeath && entry.turn === life.turns);
+      expect(match, `the ended run of seed ${String(life.seed)} is no longer retrievable from install storage`).toBeDefined();
+    }
+
+    /* THE ONE WRITER's runs.json, FIELD BY FIELD against the lives (each of
+     * which was read from the live game above) - never a snapshot of the
+     * writer's own output. This is the same mapping tools/runs.mjs makes. */
+    const record: SessionRecord = {
+      label: "t06-port-verify",
+      runner: { tool: "tools/runs.mjs", decisions: 600, seeds, lives: session.lives.length },
+      build: {
+        commit: null,
+        engine: "@rpgm-tools/neo-angband-core 1.23.0-beta.1",
+        content: PACK_DIR!,
+        borg: "warrior pack (stock parameters)",
+      },
+      recorded: "2026-11-03T00:00:00.000Z",
+      runs: session.lives.map((life) => ({
+        seed: life.seed,
+        life: life.life,
+        race: life.race,
+        class: life.className,
+        baseStats: [...life.baseStats],
+        decisions: life.decisions,
+        turns: life.turns,
+        depths: [...life.depthsVisited],
+        maxDepth: life.maxDepth,
+        clvl: life.clvl,
+        gold: life.gold,
+        kills: life.kills,
+        commands: { ...life.commands },
+        places: life.places,
+        dead: life.dead,
+        causeOfDeath: life.causeOfDeath,
+        jitter: life.jitter,
+        restedBesideMonster: life.restedBesideMonster,
+        wallClockMs: life.wallClockMs,
+      })),
+    };
+    const document = buildRunsJson(record);
+    expect(document.schema).toBe(RUNS_SCHEMA_ID);
+    expect(document.runner.seeds).toEqual(seeds);
+    expect(document.build.borg).toContain("warrior pack");
+    for (const [index, life] of session.lives.entries()) {
+      const entry = document.runs[index]!;
+      expect(entry, `runs.json entry for seed ${String(life.seed)}`).toMatchObject({
+        seed: life.seed,
+        race: life.race,
+        class: life.className,
+        baseStats: [...life.baseStats],
+        decisions: life.decisions,
+        turns: life.turns,
+        maxDepth: life.maxDepth,
+        clvl: life.clvl,
+        gold: life.gold,
+        kills: life.kills,
+        dead: life.dead,
+        causeOfDeath: life.causeOfDeath,
+        commands: life.commands,
+      });
+      /* Kills come from the game's own lore counters (per-race pkills,
+       * summed - the number the character dump prints): a count, never a
+       * guess, and never negative. */
+      expect(Number.isInteger(life.kills)).toBe(true);
+      expect(life.kills).toBeGreaterThanOrEqual(0);
+    }
+    /* The census the harness counted and the census the writer wrote are
+     * the same table: every issued command code appears, with its count. */
+    const census = session.lives.map((life) => Object.values(life.commands).reduce((a, b) => a + b, 0));
+    expect(census.every((count) => count > 0)).toBe(true);
+  }, 300_000);
 });

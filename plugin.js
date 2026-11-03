@@ -1,6 +1,43 @@
 // betterborg - generated from plugin.ts by neo-angband-mod-build
 // (@rpgm-tools/neo-angband-mod-sdk). Edit the TypeScript source, not this file.
 
+// src/birth/flag.ts
+var BIRTH_FLAG_KEY = "warriorBirth";
+function flagIsSet(value) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
+  return value[BIRTH_FLAG_KEY] === true;
+}
+function withoutFlag(value) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
+  const kept = {};
+  let any = false;
+  for (const [key, entry] of Object.entries(value)) {
+    if (key === BIRTH_FLAG_KEY) continue;
+    kept[key] = entry;
+    any = true;
+  }
+  return any ? kept : null;
+}
+async function setBirthFlag(slot) {
+  const current = await slot.get().catch(() => null);
+  const base = current !== null && current.ok && current.value !== null && typeof current.value === "object" && !Array.isArray(current.value) ? current.value : {};
+  const written = await slot.set({ ...base, [BIRTH_FLAG_KEY]: true }).catch(() => void 0);
+  return written !== void 0 && written.ok;
+}
+async function clearBirthFlag(slot) {
+  try {
+    const current = await slot.get();
+    if (!current.ok) return false;
+    if (!flagIsSet(current.value)) return true;
+    const written = await slot.set(withoutFlag(current.value));
+    if (!written.ok) return false;
+    const check = await slot.get();
+    return check.ok && !flagIsSet(check.value);
+  } catch {
+    return false;
+  }
+}
+
 // title.ts
 var TITLE_LABEL = "New Borg character";
 var TITLE_KEY = "B";
@@ -33,7 +70,9 @@ function installMemory(slot) {
     async write(ids) {
       session = [...ids];
       try {
-        await slot.set({ profileIds: session });
+        const current = await slot.get();
+        const base = current.ok && current.value !== null && typeof current.value === "object" && !Array.isArray(current.value) ? current.value : {};
+        await slot.set({ ...base, profileIds: session });
       } catch {
       }
     }
@@ -48,19 +87,48 @@ function freshName(taken) {
   if (!used.has("borg")) return "Borg";
   for (let n = 2; ; n++) if (!used.has(`borg ${String(n)}`)) return `Borg ${String(n)}`;
 }
+async function birthFlagStanding(slot) {
+  try {
+    const read = await slot.get();
+    if (!read.ok) return false;
+    const value = read.value;
+    return value !== null && typeof value === "object" && !Array.isArray(value) && value[BIRTH_FLAG_KEY] === true;
+  } catch {
+    return false;
+  }
+}
 function registerBorgTitle(ctx, memory) {
   const title = ctx.title;
   const profiles = ctx.profiles;
-  if (title === void 0 || profiles === void 0) {
-    ctx.log?.(`the Borg has no title row, because this game gives it no ${title === void 0 ? "title seam" : "profile seam"}`);
+  const slot = ctx.slot;
+  if (title === void 0 || profiles === void 0 || slot === void 0) {
+    const missing = title === void 0 ? "title seam" : profiles === void 0 ? "profile seam" : "install slot";
+    ctx.log?.(`the Borg has no title row, because this game gives it no ${missing}`);
     return false;
   }
   const self = ctx.id ?? "borg";
+  async function armBirth() {
+    const written = await setBirthFlag(slot);
+    if (written && await birthFlagStanding(slot)) return true;
+    ctx.log?.("the Borg's birth flag would not settle in storage, so the title row starts no character");
+    await ask(title, "The Borg could not start the character: its birth flag would not settle in storage.", [GIVE_UP]);
+    return false;
+  }
+  async function strand() {
+    const cleared = await clearBirthFlag(slot);
+    if (cleared) return;
+    ctx.log?.(
+      "the Borg could not durably clear its birth flag after a refused start, so the flag may still be set: the next character created after any later reload would be born as the Borg's planned warrior. The presenter still consumes-or-declines it on that page, but a human's birth could be taken once - clear the mod's install storage before letting anyone create a character here"
+    );
+  }
   async function here() {
     const listed = await profiles.list();
     const id = listed.ok ? listed.value.find((profile) => profile.active)?.id ?? null : null;
+    if (!await armBirth()) return;
     const started = await profiles.switchTo(id, ARMED);
-    if (!started.ok) await ask(title, `The Borg could not start the character: ${started.message}`, [GIVE_UP]);
+    if (started.ok) return;
+    await strand();
+    await ask(title, `The Borg could not start the character: ${started.message}`, [GIVE_UP]);
   }
   async function refused(reason) {
     const answer = await ask(title, `The Borg could not use a separate profile: ${reason}`, [FALLBACK_HERE]);
@@ -99,12 +167,15 @@ function registerBorgTitle(ctx, memory) {
         if (!enabled.ok) return refused(enabled.message);
       }
     }
+    if (!await armBirth()) return;
     const switched = await profiles.switchTo(target.id, ARMED);
-    if (!switched.ok) return refused(switched.message);
+    if (switched.ok) return;
+    await strand();
+    return refused(switched.message);
   }
   void title.registerRow({
     id: "new-character",
-    label: TITLE_LABEL,
+    label: ctx.label ?? TITLE_LABEL,
     key: TITLE_KEY,
     async run() {
       const where = await ask(title, WHERE_PROMPT, [WHERE_SEPARATE, WHERE_HERE]);
@@ -16665,6 +16736,799 @@ function createTick(bridge2, borg) {
   };
 }
 
+// src/class/warrior/plan.ts
+var WARRIOR_CLASS_NAME = "Warrior";
+var STAT_ORDER = ["STR", "INT", "WIS", "DEX", "CON"];
+var STAT_PRIORITY = ["STR", "CON", "DEX", "INT", "WIS"];
+function ladderFromCostTable(costs, base) {
+  const cap = costs.length - 1;
+  if (!Number.isInteger(base) || base < 0) {
+    throw new Error(`the cost table's base must be a non-negative integer, got ${String(base)}`);
+  }
+  if (costs.length < 2 || base >= cap) {
+    throw new Error("the cost table must offer at least one buyable value above its base");
+  }
+  const rows = [];
+  for (let v = base; v <= cap; v++) {
+    const buyCost = v < cap ? costs[v + 1] ?? 0 : null;
+    const sellRefund = v > base ? costs[v] ?? 0 : null;
+    rows.push({ buyCost, sellRefund, canBuy: buyCost !== null, canSell: sellRefund !== null });
+  }
+  return { base, rows };
+}
+function planWarriorBirth(input) {
+  const { catalogue, raceName: raceName2, costs } = input;
+  if (catalogue.stats.length !== STAT_ORDER.length || catalogue.stats.some((name, i) => name !== STAT_ORDER[i])) {
+    throw new Error(
+      `catalogue.stats must be the engine's STAT order (${STAT_ORDER.join(",")}), got ${catalogue.stats.join(",")}`
+    );
+  }
+  if (!Number.isInteger(catalogue.pointBudget) || catalogue.pointBudget < 0) {
+    throw new Error(
+      `catalogue.pointBudget must be a non-negative integer, got ${String(catalogue.pointBudget)}`
+    );
+  }
+  const cls = catalogue.classes.find((c) => c.name === WARRIOR_CLASS_NAME);
+  if (!cls) {
+    throw new Error(
+      `the catalogue has no "${WARRIOR_CLASS_NAME}" class; this plan pins it (available: ${catalogue.classes.map((c) => c.name).join(", ") || "none"})`
+    );
+  }
+  const race = catalogue.races.find((r) => r.name === raceName2);
+  if (!race) {
+    throw new Error(
+      `there is no race named "${raceName2}" in the catalogue (available: ${catalogue.races.map((r) => r.name).join(", ") || "none"})`
+    );
+  }
+  const n = catalogue.stats.length;
+  for (const [label, view] of [
+    ["race", race],
+    ["class", cls]
+  ]) {
+    if (view.statAdj.length !== n) {
+      throw new Error(
+        `the ${label} "${view.name}" needs ${String(n)} stat adjustments, got ${String(view.statAdj.length)}`
+      );
+    }
+  }
+  const { base, rows } = costs;
+  const cap = base + rows.length - 1;
+  if (rows.length === 0 || base < 0) {
+    throw new Error("the cost ladder needs a non-negative base and at least one row");
+  }
+  for (let v = base; v <= cap; v++) {
+    const row = rows[v - base];
+    if (!row) throw new Error(`the cost ladder has no row for value ${String(v)}`);
+    if (v === cap && (row.buyCost !== null || row.canBuy)) {
+      throw new Error("the cost ladder's top row must not offer a buy");
+    }
+    if (row.canBuy && row.buyCost === null) {
+      throw new Error(`the cost ladder row at ${String(v)} claims buyable with no cost`);
+    }
+  }
+  const priority = STAT_PRIORITY.map((name) => {
+    const i = catalogue.stats.indexOf(name);
+    if (i < 0) throw new Error(`catalogue.stats is missing the stat "${name}"`);
+    return i;
+  });
+  const stats = new Array(n).fill(base);
+  const pointsSpentPerStat = new Array(n).fill(0);
+  const steps = [];
+  let pointsLeft = catalogue.pointBudget;
+  for (const stat of priority) {
+    for (; ; ) {
+      const value = stats[stat] ?? 0;
+      const row = rows[value - base];
+      if (row === void 0) break;
+      if (!row.canBuy || row.buyCost === null) break;
+      if (row.buyCost > pointsLeft) break;
+      stats[stat] = value + 1;
+      pointsLeft -= row.buyCost;
+      pointsSpentPerStat[stat] = (pointsSpentPerStat[stat] ?? 0) + row.buyCost;
+      steps.push({ stat, from: value, to: value + 1, cost: row.buyCost });
+    }
+  }
+  const pointsSpent = catalogue.pointBudget - pointsLeft;
+  const effectiveStats = stats.map(
+    (value, i) => value + (race.statAdj[i] ?? 0) + (cls.statAdj[i] ?? 0)
+  );
+  return {
+    raceName: race.name,
+    className: cls.name,
+    baseStats: stats,
+    steps,
+    pointsSpent,
+    pointsLeft,
+    pointsSpentPerStat,
+    effectiveStats
+  };
+}
+
+// src/class/warrior/settings.ts
+var WARRIOR_RACE_CANDIDATES = ["Half-Troll", "Dunadan", "High-Elf", "Dwarf"];
+var RACE_CHOICE_SETTING = {
+  id: "borg.raceChoice",
+  title: "Warrior race",
+  description: "The race the Borg's planned warrior is born as when borg.raceRandom is off: 0 Half-Troll, 1 Dunadan, 2 High-Elf, 3 Dwarf - the bake-off shortlist, in this order everywhere. The default (2, High-Elf) is the bake-off's recommendation. Read at each birth, so a change applies to the next warrior.",
+  min: 0,
+  max: WARRIOR_RACE_CANDIDATES.length - 1,
+  step: 1,
+  default: 2
+};
+var RACE_RANDOM_RULE = {
+  flag: "borg.raceRandom",
+  title: "Random suited race",
+  description: "The fork's own toggle (no upstream borg_ setting): every warrior the Borg births draws its race from the bake-off shortlist - Half-Troll, Dunadan, High-Elf, Dwarf - seeded by a persisted birth counter, so an unattended line varies its race deterministically, with no clock and no random number draw. Off: borg.raceChoice pins the race.",
+  default: true,
+  requiresReload: true
+};
+function drawWarriorRaceIndex(lineage) {
+  let h = lineage >>> 0;
+  h ^= h >>> 16;
+  h = Math.imul(h, 2246822507);
+  h ^= h >>> 13;
+  h = Math.imul(h, 3266489909);
+  h ^= h >>> 16;
+  const spread = h >>> 0;
+  return Math.floor(spread / 4294967296 * WARRIOR_RACE_CANDIDATES.length);
+}
+function declaredValue(setting, stored) {
+  const raw = typeof stored === "number" && Number.isFinite(stored) ? stored : setting.default;
+  const clamped = Math.min(setting.max, Math.max(setting.min, raw));
+  let snapped = setting.min + Math.round((clamped - setting.min) / setting.step) * setting.step;
+  if (snapped > setting.max) snapped -= setting.step;
+  const places = Math.max(decimalsOf(setting.min), decimalsOf(setting.step));
+  return Number(snapped.toFixed(places));
+}
+function decimalsOf(value) {
+  const text = String(value);
+  const point = text.indexOf(".");
+  return point === -1 ? 0 : text.length - point - 1;
+}
+function resolveWarriorRace(input, log) {
+  const index = input.random ? drawWarriorRaceIndex(input.lineage) : declaredValue(RACE_CHOICE_SETTING, input.choice);
+  const named = WARRIOR_RACE_CANDIDATES[index] ?? WARRIOR_RACE_CANDIDATES[0];
+  const known = input.packRaces !== null && input.packRaces.length > 0 ? input.packRaces.includes(named) : true;
+  const fallback = WARRIOR_RACE_CANDIDATES[0];
+  const why = input.random ? `borg.raceRandom on: lineage draw ${String(input.lineage)} of the ${String(WARRIOR_RACE_CANDIDATES.length)}-race shortlist picked candidate ${String(index)}` : `borg.raceRandom off; borg.raceChoice ${String(index)} of ${String(RACE_CHOICE_SETTING.min)}-${String(RACE_CHOICE_SETTING.max)}`;
+  if (known) {
+    log(`the Borg's next warrior will be born a ${named} (${why})`);
+    return { raceName: named, index, fellBack: false, drawn: input.random };
+  }
+  log(
+    `the Borg's next warrior will be born a ${fallback} (${why} asked for ${named}, which this pack does not define, so candidate 0 is born instead)`
+  );
+  return { raceName: fallback, index, fellBack: true, drawn: input.random };
+}
+
+// src/class/warrior/lineage.ts
+var LINEAGE_KEY = "lineage";
+function lineageFrom(value) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return 0;
+  const stored = value[LINEAGE_KEY];
+  return typeof stored === "number" && Number.isInteger(stored) && stored >= 0 ? stored : 0;
+}
+async function readLineage(slot) {
+  try {
+    const read = await slot.get();
+    if (!read.ok) return 0;
+    return lineageFrom(read.value);
+  } catch {
+    return 0;
+  }
+}
+async function bumpLineage(slot) {
+  try {
+    const read = await slot.get();
+    if (!read.ok) return false;
+    const base = read.value !== null && typeof read.value === "object" && !Array.isArray(read.value) ? read.value : {};
+    const written = await slot.set({ ...base, [LINEAGE_KEY]: lineageFrom(read.value) + 1 });
+    return written.ok;
+  } catch {
+    return false;
+  }
+}
+
+// src/class/warrior/presenter.ts
+function flagIsSet2(value) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
+  return value[BIRTH_FLAG_KEY] === true;
+}
+function withoutFlag2(value) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
+  const kept = {};
+  let any = false;
+  for (const [key, entry] of Object.entries(value)) {
+    if (key === BIRTH_FLAG_KEY) continue;
+    kept[key] = entry;
+    any = true;
+  }
+  return any ? kept : null;
+}
+var PENDING = { state: "pending" };
+var messageOf = (error) => error instanceof Error ? error.message : String(error);
+function createWarriorBirthPresenter(deps) {
+  let prepared = PENDING;
+  let spent = false;
+  void (async () => {
+    let arming;
+    try {
+      arming = await deps.slot.get();
+    } catch (error) {
+      prepared = { state: "unreadable", message: messageOf(error) };
+      return;
+    }
+    if (!arming.ok) {
+      prepared = { state: "unreadable", message: arming.message };
+      return;
+    }
+    if (!flagIsSet2(arming.value)) {
+      prepared = { state: "not-ours" };
+      return;
+    }
+    const unconsumed = (message) => {
+      prepared = { state: "unconsumed", message };
+    };
+    try {
+      const current = await deps.slot.get();
+      if (!current.ok) return unconsumed(current.message);
+      if (flagIsSet2(current.value)) {
+        const written = await deps.slot.set(withoutFlag2(current.value));
+        if (!written.ok) return unconsumed(written.message);
+        const check = await deps.slot.get();
+        if (!check.ok) return unconsumed(check.message);
+        if (flagIsSet2(check.value)) return unconsumed("it was still set after being cleared");
+      }
+      prepared = { state: "armed" };
+    } catch (error) {
+      unconsumed(messageOf(error));
+    }
+  })();
+  const attempt = (what, result) => {
+    if (result.ok) return true;
+    deps.log(`the Borg's warrior birth was refused at ${what}: ${result.reason}`);
+    return false;
+  };
+  return {
+    show(session) {
+      if (prepared.state === "pending") {
+        deps.log("the Borg's birth flag has not been read yet, so it leaves this birth to the game's own screens");
+        return void 0;
+      }
+      if (prepared.state === "unreadable") {
+        deps.log(`the Borg could not read its birth flag (${prepared.message}), so it leaves this birth to the game's own screens`);
+        return void 0;
+      }
+      if (prepared.state === "unconsumed") {
+        deps.log(
+          `the Borg could not durably clear its birth flag (${prepared.message}), so it leaves this birth to the game's own screens; the flag may still be set, and every later birth re-checks and declines the same way rather than risk taking one that is not ours`
+        );
+        return void 0;
+      }
+      if (prepared.state === "not-ours" || spent) return void 0;
+      spent = true;
+      let plan;
+      try {
+        plan = planWarriorBirth({
+          catalogue: session.catalogue(),
+          raceName: deps.raceName,
+          costs: ladderFromCostTable(deps.costTable, deps.statBase)
+        });
+      } catch (error) {
+        deps.log(
+          `the Borg declines to birth its warrior: ${error instanceof Error ? error.message : String(error)}`
+        );
+        return void 0;
+      }
+      if (!attempt(`chooseRace(${plan.raceName})`, session.chooseRace(plan.raceName))) return void 0;
+      if (!attempt(`chooseClass(${plan.className})`, session.chooseClass(plan.className))) return void 0;
+      if (!attempt("reset", session.reset())) return void 0;
+      for (const step of plan.steps) {
+        if (!attempt(`buy(${String(step.stat)} at ${String(step.from)})`, session.buy(step.stat))) return void 0;
+      }
+      const draft = session.draft();
+      if (draft.race !== plan.raceName || draft.cls !== plan.className || draft.stats.length !== plan.baseStats.length || draft.stats.some((value, i) => value !== plan.baseStats[i]) || draft.pointsLeft !== plan.pointsLeft) {
+        deps.log(
+          `the Borg declines to accept a warrior it did not plan: the session's draft (${draft.race ?? "?"} ${draft.cls ?? "?"} [${draft.stats.join(",")}] left ${String(draft.pointsLeft)}) is not the plan ([${plan.baseStats.join(",")}] left ${String(plan.pointsLeft)})`
+        );
+        return void 0;
+      }
+      if (draft.name.trim() === "") {
+        if (!attempt("randomName", session.randomName())) return void 0;
+      }
+      if (!attempt("accept", session.accept())) return void 0;
+      deps.log(
+        `the Borg birthed its ${plan.raceName} ${WARRIOR_CLASS_NAME} (base stats ${plan.baseStats.map((value) => String(value)).join("/")})`
+      );
+      return true;
+    }
+  };
+}
+
+// src/class/warrior/index.ts
+function planWarriorFor(core, pack, raceName2 = WARRIOR_RACE_CANDIDATES[0]) {
+  const players = core.bindPlayer(pack.player);
+  return planWarriorBirth({
+    catalogue: {
+      races: players.races.map((race) => ({ name: race.name, statAdj: race.statAdj })),
+      classes: players.classes.map((cls) => ({ name: cls.name, statAdj: cls.statAdj })),
+      stats: ["STR", "INT", "WIS", "DEX", "CON"],
+      pointBudget: core.MAX_BIRTH_POINTS
+    },
+    raceName: raceName2,
+    costs: ladderFromCostTable(core.BIRTH_STAT_COSTS, core.BIRTH_STAT_BASE)
+  });
+}
+function warriorBirth(mod2, core) {
+  if (core === void 0) {
+    mod2.meta.log("the Borg has no engine here, so the game shows its own character creation");
+    return void 0;
+  }
+  let raceChoice = RACE_CHOICE_SETTING.default;
+  let packRaces = null;
+  const raceRandom = mod2.meta.flags[RACE_RANDOM_RULE.flag] ?? RACE_RANDOM_RULE.default;
+  let lineage = 0;
+  void readLineage(mod2.store.install).then((read) => {
+    lineage = read;
+  });
+  try {
+    if (typeof mod2.meta.settings === "function") {
+      void mod2.meta.settings().then(
+        (read) => {
+          if (read.ok) raceChoice = read.value[RACE_CHOICE_SETTING.id] ?? RACE_CHOICE_SETTING.default;
+        },
+        () => {
+        }
+      );
+    }
+    if (typeof mod2.content?.records === "function") {
+      void mod2.content.records("p_race").then(
+        (read) => {
+          if (!read.ok) return;
+          const names = read.value.map((record) => record.name).filter((name) => typeof name === "string");
+          packRaces = names.length > 0 ? names : null;
+        },
+        () => {
+        }
+      );
+    }
+  } catch {
+  }
+  return createWarriorBirthPresenter({
+    slot: mod2.store.install,
+    log: (message) => mod2.meta.log(message),
+    get raceName() {
+      const resolved = resolveWarriorRace(
+        { random: raceRandom, choice: raceChoice, lineage, packRaces },
+        (message) => mod2.meta.log(message)
+      );
+      if (resolved.drawn) {
+        void bumpLineage(mod2.store.install).then((landed) => {
+          if (!landed) {
+            mod2.meta.log("the Borg could not persist its birth counter, so the next warrior may draw this one's race again");
+          }
+        });
+      }
+      return resolved.raceName;
+    },
+    costTable: core.BIRTH_STAT_COSTS,
+    statBase: core.BIRTH_STAT_BASE
+  });
+}
+var warriorPack = {
+  id: "warrior",
+  className: WARRIOR_CLASS_NAME,
+  titleRowLabel: "New Warrior Borg character",
+  defaultRaceName: WARRIOR_RACE_CANDIDATES[0],
+  raceCandidates: WARRIOR_RACE_CANDIDATES,
+  planFor: planWarriorFor,
+  createPresenter: warriorBirth
+};
+
+// src/class/registry.ts
+var PACKS = [warriorPack];
+var CLASS_SETTING = {
+  id: "borg.class",
+  title: "Borg class",
+  description: "Which class pack the Borg plays when it births its own character: 0 Warrior - the default, and the only pack so far; the archived neowarrior-borg fork's lineage, continued here. Read at each page, so a change applies to the next birth.",
+  min: 0,
+  max: Math.max(PACKS.length - 1, 1),
+  step: 1,
+  default: 0
+};
+function packForClassValue(stored) {
+  const raw = typeof stored === "number" && Number.isFinite(stored) ? stored : CLASS_SETTING.default;
+  const clamped = Math.min(CLASS_SETTING.max, Math.max(CLASS_SETTING.min, raw));
+  const snapped = CLASS_SETTING.min + Math.round((clamped - CLASS_SETTING.min) / CLASS_SETTING.step) * CLASS_SETTING.step;
+  return PACKS[snapped] ?? PACKS[CLASS_SETTING.default];
+}
+
+// src/records/journal.ts
+var JOURNAL_FORMAT = 1;
+var GRAVEYARD_KEY = "graveyard";
+var isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+var numberOr = (value, fallback) => typeof value === "number" && Number.isFinite(value) ? value : fallback;
+var numberArrayOr = (value) => Array.isArray(value) && value.every((entry) => typeof entry === "number" && Number.isFinite(entry)) ? [...value] : null;
+function milestoneOf(value) {
+  if (!isObject(value)) return null;
+  const depth = numberOr(value["depth"], Number.NaN);
+  const levelId = numberOr(value["levelId"], Number.NaN);
+  const cause = value["cause"];
+  if (depth === null || Number.isNaN(depth) || levelId === null || Number.isNaN(levelId)) return null;
+  if (cause !== "new-game" && cause !== "load" && cause !== "change") return null;
+  return {
+    depth,
+    levelId,
+    cause,
+    arena: value["arena"] === true,
+    level: numberOr(value["level"], null),
+    turn: numberOr(value["turn"], null)
+  };
+}
+function entryOf(value) {
+  if (!isObject(value)) return null;
+  const outcome = value["outcome"];
+  if (outcome !== "death" && outcome !== "winner" && outcome !== "retired") return null;
+  const cause = value["cause"];
+  if (typeof cause !== "string") return null;
+  const name = value["name"];
+  const race = value["race"];
+  const cls = value["class"];
+  return {
+    outcome,
+    cause,
+    name: typeof name === "string" ? name : null,
+    race: typeof race === "string" ? race : null,
+    class: typeof cls === "string" ? cls : null,
+    baseStats: numberArrayOr(value["baseStats"]),
+    maxDepth: numberOr(value["maxDepth"], null),
+    level: numberOr(value["level"], null),
+    gold: numberOr(value["gold"], null),
+    turn: numberOr(value["turn"], null),
+    score: numberOr(value["score"], null)
+  };
+}
+function parseJournal(value) {
+  if (value === null || !isObject(value) || value["journal"] !== JOURNAL_FORMAT) return null;
+  const milestones = Array.isArray(value["milestones"]) ? value["milestones"].map(milestoneOf).filter((entry) => entry !== null) : [];
+  return { journal: JOURNAL_FORMAT, milestones };
+}
+function storeJournal(data) {
+  return {
+    journal: JOURNAL_FORMAT,
+    milestones: data.milestones.map((milestone) => ({
+      depth: milestone.depth,
+      levelId: milestone.levelId,
+      cause: milestone.cause,
+      arena: milestone.arena,
+      level: milestone.level,
+      turn: milestone.turn
+    }))
+  };
+}
+function archivedRunOf(value) {
+  if (!isObject(value)) return null;
+  const entry = entryOf(value);
+  if (entry === null) return null;
+  const run = value["run"];
+  return { ...entry, run: typeof run === "string" ? run : null };
+}
+function parseGraveyardArchive(value) {
+  if (value === null || !isObject(value) || value["journal"] !== JOURNAL_FORMAT) return null;
+  const runs = Array.isArray(value["runs"]) ? value["runs"].map(archivedRunOf).filter((run) => run !== null) : [];
+  return { journal: JOURNAL_FORMAT, runs };
+}
+function graveyardArchiveOf(value) {
+  return parseGraveyardArchive(value) ?? { journal: JOURNAL_FORMAT, runs: [] };
+}
+function storeArchiveRun(run) {
+  const stored = storeGraveyardEntry(run);
+  if (run.run !== null) stored["run"] = run.run;
+  return stored;
+}
+async function readJournal(slot) {
+  let read;
+  try {
+    read = await slot.get();
+  } catch {
+    return null;
+  }
+  if (!read.ok) return null;
+  return parseJournal(read.value) ?? { journal: JOURNAL_FORMAT, milestones: [] };
+}
+async function recordDepthMilestone(deps, event) {
+  const current = await readJournal(deps.slot);
+  if (current === null) return false;
+  if (current.milestones.some((milestone) => milestone.depth === event.depth)) return true;
+  let stamps = { level: null, turn: null };
+  try {
+    stamps = await deps.stamps();
+  } catch {
+  }
+  const merged = {
+    ...current,
+    milestones: [
+      ...current.milestones,
+      {
+        depth: event.depth,
+        levelId: event.levelId,
+        cause: event.cause,
+        arena: event.arena,
+        level: stamps.level,
+        turn: stamps.turn
+      }
+    ]
+  };
+  try {
+    const written = await deps.slot.set(storeJournal(merged));
+    if (!written.ok) {
+      deps.log(`the Borg could not record reaching depth ${String(event.depth)} in this character's save (${written.message})`);
+      return false;
+    }
+  } catch (error) {
+    deps.log(`the Borg could not record reaching depth ${String(event.depth)} in this character's save (${error instanceof Error ? error.message : String(error)})`);
+    return false;
+  }
+  return true;
+}
+function graveyardEntryOf(report) {
+  return {
+    outcome: report.outcome,
+    cause: report.cause,
+    name: typeof report.name === "string" ? report.name : null,
+    race: typeof report.race === "string" ? report.race : null,
+    class: typeof report.cls === "string" ? report.cls : null,
+    baseStats: Array.isArray(report.birth?.stats) ? report.birth.stats.filter((stat) => typeof stat === "number" && Number.isFinite(stat)) : null,
+    maxDepth: typeof report.maxDepth === "number" ? report.maxDepth : null,
+    level: typeof report.level === "number" ? report.level : null,
+    gold: typeof report.gold === "number" ? report.gold : null,
+    turn: typeof report.turn === "number" ? report.turn : null,
+    score: typeof report.score === "number" ? report.score : null
+  };
+}
+function storeGraveyardEntry(entry) {
+  return {
+    outcome: entry.outcome,
+    cause: entry.cause,
+    ...entry.name === null ? {} : { name: entry.name },
+    ...entry.race === null ? {} : { race: entry.race },
+    ...entry.class === null ? {} : { class: entry.class },
+    ...entry.baseStats === null ? {} : { baseStats: [...entry.baseStats] },
+    ...entry.maxDepth === null ? {} : { maxDepth: entry.maxDepth },
+    ...entry.level === null ? {} : { level: entry.level },
+    ...entry.gold === null ? {} : { gold: entry.gold },
+    ...entry.turn === null ? {} : { turn: entry.turn },
+    ...entry.score === null ? {} : { score: entry.score }
+  };
+}
+async function archiveFinishedRun(deps, report) {
+  let read;
+  try {
+    read = await deps.archive.get();
+  } catch {
+    deps.log("the Borg could not read its install storage, so the run that just ended is not archived in it");
+    return false;
+  }
+  if (!read.ok) {
+    deps.log("the Borg could not read its install storage, so the run that just ended is not archived in it");
+    return false;
+  }
+  const base = read.value !== null && typeof read.value === "object" && !Array.isArray(read.value) ? read.value : {};
+  const current = graveyardArchiveOf(base[GRAVEYARD_KEY] ?? null);
+  const entry = { run: typeof report.key === "string" ? report.key : null, ...graveyardEntryOf(report) };
+  const runs = [...current.runs];
+  const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);
+  if (at >= 0) runs[at] = entry;
+  else runs.push(entry);
+  try {
+    const written = await deps.archive.set({ ...base, [GRAVEYARD_KEY]: { journal: JOURNAL_FORMAT, runs: runs.map(storeArchiveRun) } });
+    if (!written.ok) {
+      deps.log(`the Borg could not archive the run that just ended in its install storage (${written.message})`);
+      return false;
+    }
+  } catch (error) {
+    deps.log(`the Borg could not archive the run that just ended in its install storage (${error instanceof Error ? error.message : String(error)})`);
+    return false;
+  }
+  return true;
+}
+function installBorgJournal(deps) {
+  let subscription = null;
+  let chain = Promise.resolve();
+  const enqueue = (operation) => {
+    const run = chain.then(operation, operation);
+    chain = run.catch(() => void 0);
+    return run;
+  };
+  let warned = false;
+  const warn = (message) => {
+    if (warned) return;
+    warned = true;
+    deps.log(message);
+  };
+  const subscribed = deps.events.on("dungeonlevel", (event) => {
+    const stamps = deps.stamps().catch(() => ({ level: null, turn: null }));
+    void enqueue(
+      () => recordDepthMilestone({ slot: deps.slot, log: warn, stamps: () => stamps }, event).then((recorded) => {
+        if (!recorded) warn("the Borg cannot record depth milestones in this character's save, so this run's depths will not be remembered");
+      })
+    );
+  }).then(
+    (result) => {
+      if (result.ok) {
+        subscription = result.value;
+      } else {
+        deps.log(`the Borg cannot hear the levels its character arrives on (${result.message}), so it records no depth milestones in this character's save`);
+      }
+    },
+    (error) => {
+      deps.log(`the Borg cannot hear the levels its character arrives on (${error instanceof Error ? error.message : String(error)}), so it records no depth milestones in this character's save`);
+    }
+  );
+  return {
+    get listening() {
+      return subscription !== null;
+    },
+    graveyard(report) {
+      return enqueue(() => archiveFinishedRun({ archive: deps.archive, log: deps.log }, report).then(() => void 0));
+    },
+    async stop() {
+      await subscribed;
+      const held = subscription;
+      subscription = null;
+      if (held !== null) await deps.events.off(held).catch(() => void 0);
+      await chain;
+    }
+  };
+}
+
+// src/loop/restart.ts
+var messageOf2 = (error) => error instanceof Error ? error.message : String(error);
+async function flagIsDurable(slot) {
+  try {
+    const read = await slot.get();
+    if (!read.ok) return false;
+    const value = read.value;
+    return value !== null && typeof value === "object" && !Array.isArray(value) && value[BIRTH_FLAG_KEY] === true;
+  } catch {
+    return false;
+  }
+}
+function installBorgRestart(deps) {
+  let subscription = null;
+  let spent = false;
+  let stopped = false;
+  let epoch = 0;
+  const stranded = async (why) => {
+    const cleared = await clearBirthFlag(deps.slot);
+    if (cleared) {
+      deps.log(
+        `the Borg could not start the next character (${why}); the birth flag was cleared and this run ends here rather than loop`
+      );
+      return;
+    }
+    deps.log(
+      `the Borg could not start the next character (${why}) AND could not durably clear its birth flag: the flag may still be set, and the next character created after any later reload would be born as the Borg's planned character. The presenter still consumes-or-declines it on that page, but a human's birth could be taken once - clear the mod's install storage before letting anyone create a character here`
+    );
+  };
+  const onReport = async (event) => {
+    if (stopped) return;
+    const mine = epoch;
+    const retired = () => stopped || mine !== epoch;
+    const dropped = (where) => {
+      deps.log(`the Borg's restart loop was retired while a run report was still in flight (${where}), so the report is dropped`);
+    };
+    const retireWrittenFlag = async () => {
+      const cleared = await clearBirthFlag(deps.slot);
+      if (cleared) {
+        deps.log(
+          "the Borg's restart loop was retired while a report's birth flag was written or still unproven; the flag was cleared and no next character is started"
+        );
+        return;
+      }
+      deps.log(
+        "the Borg's restart loop was retired after a report had written - or may have written - the birth flag, AND the flag could not be durably cleared: the flag may still be set, and the next character created after any later reload would be born as the Borg's planned character. The presenter still consumes-or-declines it on that page, but a human's birth could be taken once - clear the mod's install storage before letting anyone create a character here"
+      );
+    };
+    if (spent) {
+      deps.log("a second run report reached the Borg on this page; it restarts at most one character per reload, so it ignores this one");
+      return;
+    }
+    spent = true;
+    const report = event.report;
+    if (report === null) {
+      deps.log(
+        "the Borg's run ended but this game would not say how (no run report), so it starts no next character: a victory or retirement must not be buried under a restart"
+      );
+      return;
+    }
+    if (deps.graveyard !== void 0) {
+      try {
+        await deps.graveyard(report);
+      } catch (error) {
+        deps.log(`the Borg could not record the run that just ended (${messageOf2(error)}), so it restarts without a journal entry`);
+      }
+      if (retired()) return dropped("it was still recording the run that ended");
+    }
+    const diedAt = `on depth ${String(report.maxDepth)} at turn ${String(report.turn)} (${report.cause})`;
+    if (report.outcome !== "death") {
+      const endedAs = report.outcome === "winner" ? "victory" : "retirement";
+      deps.log(
+        `the Borg's run ended in ${endedAs} ${diedAt}; the session ends here - no next character is started (an owner who wants the loop to roll on past a victory flips this check in src/loop/restart.ts)`
+      );
+      return;
+    }
+    let holds = false;
+    try {
+      const owned = await deps.ownsKeyboard();
+      if (retired()) return dropped("it was still asking who holds the keyboard");
+      holds = owned.ok && owned.value === true;
+      if (!owned.ok) {
+        deps.log(`the Borg could not ask who holds the keyboard (${owned.message}), so it starts no next character`);
+      }
+    } catch (error) {
+      if (retired()) return dropped("its keyboard question had thrown");
+      deps.log(`the Borg could not ask who holds the keyboard (${messageOf2(error)}), so it starts no next character`);
+    }
+    if (!holds) {
+      deps.log(`the Borg's character died ${diedAt}, but the Borg was not the one holding the keyboard, so it starts nothing`);
+      return;
+    }
+    if (deps.create === null) {
+      deps.log(`the Borg's character died ${diedAt}, but this game gives it no character-creation seam, so the run ends here`);
+      return;
+    }
+    const written = await setBirthFlag(deps.slot);
+    const standing = written && await flagIsDurable(deps.slot);
+    if (retired()) {
+      await retireWrittenFlag();
+      return;
+    }
+    if (!standing) {
+      await stranded(written ? "the birth flag would not verify after being written" : "the birth flag's write was refused");
+      return;
+    }
+    deps.log(`the Borg's character died ${diedAt}; the Borg is starting the next one`);
+    try {
+      const made = await deps.create({ resumeAutoplayer: true });
+      if (made.ok) return;
+      await stranded(`create was refused: ${made.message}`);
+    } catch (error) {
+      await stranded(`create threw: ${messageOf2(error)}`);
+    }
+  };
+  const subscribed = deps.events.on("run-end", (event) => {
+    void onReport(event);
+  }).then(
+    (result) => {
+      if (result.ok) {
+        subscription = result.value;
+      } else {
+        deps.log(`the Borg cannot hear how its runs end (${result.message}), so a death ends the session`);
+      }
+    },
+    (error) => {
+      deps.log(`the Borg cannot hear how its runs end (${messageOf2(error)}), so a death ends the session`);
+    }
+  );
+  if (deps.create === null) {
+    deps.log("the Borg cannot restart its character on this game: it was given no character-creation seam, so a death will end the session");
+  }
+  return {
+    get listening() {
+      return subscription !== null;
+    },
+    async stop() {
+      stopped = true;
+      epoch += 1;
+      await subscribed;
+      const held = subscription;
+      subscription = null;
+      if (held !== null) await deps.events.off(held).catch(() => void 0);
+    }
+  };
+}
+
 // plugin.ts
 function characterAlreadyAutoplayed(context) {
   const state = context.engine?.state;
@@ -16693,13 +17557,35 @@ function changedFrom(cfg) {
   const stock = defaultCfg();
   return Object.entries(cfg).filter(([key, value]) => stock[key] !== value).map(([key, value]) => `${key}=${String(value)}`).sort();
 }
+var activePack = PACKS[CLASS_SETTING.default];
 var bridge;
 var running;
+var restartHandle;
+var journalHandle;
+var startEpoch = 0;
 async function begin(mod2) {
+  const mine = startEpoch;
   void bridge?.dispose();
   const made = createBridge(mod2);
   bridge = made;
   await made.prime();
+  if (mine !== startEpoch) {
+    mod2.meta.log("the Borg's start was stopped before it finished, so it installed nothing");
+    void made.dispose();
+    return null;
+  }
+  try {
+    if (typeof mod2.meta.settings === "function") {
+      void mod2.meta.settings().then(
+        (read) => {
+          if (read.ok) activePack = packForClassValue(read.value[CLASS_SETTING.id]);
+        },
+        () => {
+        }
+      );
+    }
+  } catch {
+  }
   const cfg = cfgFromFlags(mod2.meta.flags);
   setBuffTimerSafetyNet(mod2.meta.flags["bugfix.borgFixes"] ?? true);
   const borg = createBorg({ resolvers: makeCoreResolvers(made.resolverInput()), cfg });
@@ -16708,7 +17594,9 @@ async function begin(mod2) {
       id: mod2.meta.id,
       log: (message) => mod2.meta.log(message),
       ...mod2.presentation?.title ? { title: mod2.presentation.title } : {},
-      ...mod2.manage ? { profiles: mod2.manage.profiles } : {}
+      ...mod2.manage ? { profiles: mod2.manage.profiles } : {},
+      slot: mod2.store.install,
+      label: activePack.titleRowLabel
     },
     installMemory(mod2.store.install)
   );
@@ -16723,10 +17611,69 @@ async function begin(mod2) {
     grid.feat = 0;
     grid.info &= ~(BORG_MARK | BORG_VIEW);
   };
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget }) };
+  const journal = installBorgJournal({
+    slot: mod2.store.character,
+    archive: mod2.store.install,
+    log: (message) => mod2.meta.log(message),
+    events: mod2.events,
+    stamps: async () => {
+      let level = null;
+      let turn = null;
+      try {
+        if (typeof mod2.view.player === "function") {
+          const read = await mod2.view.player();
+          if (read.ok && typeof read.value.level === "number") level = read.value.level;
+        }
+      } catch {
+      }
+      try {
+        const world = await mod2.view.world();
+        if (world.ok && typeof world.value.turn === "number") turn = world.value.turn;
+      } catch {
+      }
+      return { level, turn };
+    }
+  });
+  const restart = installBorgRestart({
+    slot: mod2.store.install,
+    log: (message) => mod2.meta.log(message),
+    ownsKeyboard: () => mod2.act.controller.owns(),
+    create: mod2.manage?.saves.create ?? null,
+    events: mod2.events,
+    graveyard: journal.graveyard
+  });
+  void restartHandle?.stop();
+  restartHandle = restart;
+  void journalHandle?.stop();
+  journalHandle = journal;
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget }), restart, journal };
 }
 var definition = {
   api: ">=2.0.0 <3.0.0",
+  /* The mod's own character creation, under ui:birth.replace: the ACTIVE
+   * PACK's presenter (src/class/ - the warrior by default). Flag-gated:
+   * without the flag the presenter declines and the game's own birth screens
+   * run as before. The engine arrives as a parameter the way ctx.core
+   * arrives everywhere else; the pack's own index documents the wiring. */
+  birth: (mod2) => {
+    const core = mod2.engine?.core;
+    if (core === void 0) {
+      mod2.meta.log("the Borg has no engine here, so the game shows its own character creation");
+      return void 0;
+    }
+    return activePack.createPresenter(mod2, core);
+  },
+  /* The controller installs with onDeath: "end", not upstream's default
+   * "reincarnate". Upstream's reincarnation starts the next character in
+   * place with a RANDOM race and class and roller stats - exactly what the
+   * planned-birth packs exist not to do. "end" runs the ordinary death
+   * (tombstone, score entry, run report) and leaves this controller
+   * installed until the page reloads, which is the moment our own restart
+   * loop takes over: it hears the run report, sets the birth flag, and calls
+   * saves.create({ resumeAutoplayer: true }) so the reload lands in birth
+   * with the active pack's planned character and this controller armed on
+   * it (src/loop/restart.ts owns the protocol and its failure modes). */
+  onDeath: "end",
   async start(mod2) {
     running = begin(mod2).catch((error) => {
       mod2.meta.log(`the Borg could not start: ${error instanceof Error ? error.message : String(error)}`);
@@ -16736,9 +17683,16 @@ var definition = {
   },
   /* The game tears its mods down before it reloads, and the headless runner registers them again on the same page after a save and reload. The message listener leaves the game here, or the second registration doubles every message. */
   stop() {
+    startEpoch += 1;
     running = void 0;
     const held = bridge;
     bridge = void 0;
+    const loop = restartHandle;
+    restartHandle = void 0;
+    void loop?.stop();
+    const journal = journalHandle;
+    journalHandle = void 0;
+    void journal?.stop();
     void held?.dispose();
   },
   /* Offer to play only when this character was handed to an autoplayer before or was armed from the title row. Returning false is the normal case: the mod is installed and enabled, and this character has never been handed over, so the human keeps the keyboard. */

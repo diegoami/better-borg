@@ -4,12 +4,14 @@ For any agent or tool working in this repository (OpenCode, Codex, Claude
 Code, others):
 
 - **What this is**: the class-agnostic Borg fork - defect fixes and strength
-  improvements for every borg, staged for upstream. Class- or build-specific
-  behaviour belongs downstream (neowarrior-borg), not here.
+  improvements for every borg, staged for upstream, with per-class STRATEGY
+  PACKS under `src/class/` selected by the `borg.class` setting (pack #1 is
+  the warrior; a new class starts as a pack plus a setting, never a fork -
+  the no-N-forks doctrine, docs/process.md section 2).
 - **Rules**: [`CLAUDE.md`](CLAUDE.md), numbered and cited as "rule n".
 - **Process**: [`docs/process.md`](docs/process.md): the loop, records,
-  milestones, and the two-fork routing (what lives here vs neowarrior-borg,
-  and the cherry-pick protocol both directions).
+  milestones, and the pack doctrine (what lives in the core vs in a strategy
+  pack under `src/class/`, and the upstream cherry-pick protocol).
 - **Tasks**: [`docs/tasks/README.md`](docs/tasks/README.md); the issue's
   `status:*` label is the status.
 - **Plan**: [`docs/plans/getting-stronger.md`](docs/plans/getting-stronger.md)

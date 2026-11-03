@@ -33,7 +33,10 @@ describe("the two version sites", () => {
     expect(normalized.version).toBe(document.data.version);
     expect(normalized.version).toBe("0.1.0");
     expect(normalized.capabilities).toEqual(document.data.capabilities);
-    expect(normalized.capabilities).toHaveLength(17);
+    /* The restart loop's event:run-end, the journal's event:dungeonlevel and
+     * the birth presenter's ui:birth.replace (the M2 unification, #15, ported
+     * from the archived fork's T04/T06/T03), over upstream's 17. */
+    expect(normalized.capabilities).toHaveLength(20);
     expect(normalized.rules).toEqual(document.data.rules);
     expect(normalized.rules!.length).toBeGreaterThan(0);
   });

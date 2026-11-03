@@ -11,7 +11,7 @@ cohort. Items become tasks when B02's measurements say what to reach for.
    delta follow the release. The single biggest measured lever so far: seed 99
    went from dying at 124 decisions to playing all 1500 on the patched engine.
 
-## Moved from neowarrior-borg (class-agnostic, two-fork routing)
+## Moved from neowarrior-borg (pre-unification)
 
 2. **Diving: munchkin stair-scum and depth pacing** - [#9](https://github.com/diegoami/better-borg/issues/9).
    The depth lever itself.

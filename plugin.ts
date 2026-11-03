@@ -5,7 +5,19 @@
  * between the game's API and the port: everything else under src/ is the port,
  * carried over from the game's repository. This file's job is to satisfy the
  * mod API, read the game's content once, and take a decision at each input wait.
- * title.ts adds the title screen's "New Borg character" row.
+ * title.ts adds the title screen's "New Borg character" row - the label the
+ * active class pack owns - which also arms the planned birth through the
+ * pack's race settings.
+ *
+ * THE M2 UNIFICATION (#15): since this release the mod is ONE class-agnostic
+ * core with per-class STRATEGY PACKS (src/class/), selected by the
+ * `borg.class` setting; the default is the warrior (pack 0), whose lineage
+ * continues here from the archived neowarrior-borg fork. What that adds to
+ * this file, ported from the archived fork at v0.1.0 (e1ec1b7): the birth
+ * presenter under `ui:birth.replace` (the pack's), the restart loop
+ * (src/loop/restart.ts) with `onDeath: "end"`, and the journal and graveyard
+ * (src/records/journal.ts) - the unattended line: birth, play, die, record,
+ * restart.
  *
  * ------------------------------------------------------------------
  * WHY BORG IS A MOD AT ALL
@@ -44,13 +56,14 @@
  * WHY THIS DECLARES NO HOOKS
  * ------------------------------------------------------------------
  *
- * Borg changes no rule, adds no record, and overrides no system. It plays
- * the game exactly as a player can, through commands the engine already accepts.
+ * Borg changes no rule, adds no record, and overrides no system. It plays the
+ * game exactly as a player can, through commands the engine already accepts.
  * It adds only the title row, and only when the host grants the title and
  * profile seams (title.ts).
  */
 
-import type { Api2ControllerContext, Api2InputState, Api2ModDefinition, ModApi2 } from "@rpgm-tools/neo-angband-mod-sdk";
+import type { Api2ControllerContext, Api2InputState, Api2ModDefinition, Api2BirthPresenter, ModApi2 } from "@rpgm-tools/neo-angband-mod-sdk";
+import type * as Core from "@rpgm-tools/neo-angband-core";
 import { installMemory, registerBorgTitle } from "./title.js";
 import { NOSCORE_BORG } from "./src/activate.js";
 import { createBorg } from "./src/controller.js";
@@ -59,6 +72,10 @@ import { defaultCfg, setBuffTimerSafetyNet, type BorgCfg } from "./src/trait/con
 import { createBridge, type Bridge } from "./src/api2/host.js";
 import { createTick, type Tick } from "./src/api2/controller.js";
 import { BORG_MARK, BORG_VIEW } from "./src/world/grid.js";
+import { CLASS_SETTING, PACKS, packForClassValue } from "./src/class/registry.js";
+import type { StrategyPack } from "./src/class/pack.js";
+import { installBorgJournal, type BorgJournal } from "./src/records/journal.js";
+import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
 
 /**
  * Whether this character has already handed the keyboard to an autoplayer.
@@ -72,9 +89,10 @@ import { BORG_MARK, BORG_VIEW } from "./src/world/grid.js";
  * Offering to play from an unmarked save would reintroduce a boot-time confirm
  * every launch merely because the mod is enabled.
  *
- * The one other way in is the title row: a character started from "New Borg
- * character" arrives armed, and choosing the row was the player's consent for
- * that character.
+ * The one other way in is the title row: a character started from the row
+ * arrives armed - and born as the active pack's planned character (title.ts
+ * sets the birth flag at its commit point) - because choosing the row was
+ * already the player's consent for that character.
  */
 function characterAlreadyAutoplayed(context: Api2ControllerContext): boolean {
   const state = context.engine?.state as { readonly actor?: { readonly player?: { readonly noscore?: number } } } | undefined;
@@ -202,29 +220,100 @@ function changedFrom(cfg: Partial<BorgCfg>): string[] {
 interface Running {
   readonly bridge: Bridge;
   readonly tick: Tick;
+  /** The restart loop, so a stop can retire it with the bridge. */
+  readonly restart: BorgRestart;
+  /** The journal, retired with the loop and the bridge. */
+  readonly journal: BorgJournal;
 }
+
+/**
+ * The active strategy pack. `borg.class` (the numeric pack selector, the
+ * `borg.raceChoice` convention over PACKS) is read from the host's persisted
+ * settings at each page and resolved through the declared range below - the
+ * same per-page lifetime the pack's own race settings keep, so a change
+ * applies to the NEXT rebirth. The manifest ROW arrives together with the
+ * second pack, because the host's setting schema requires a numeric range
+ * wider than one value (`min < max` strictly) and a warrior-only 0-0 row is
+ * not a manifest the SDK validates - src/class/registry.ts holds the
+ * declaration ready, its max computed from PACKS, and registry.test.ts pins
+ * both halves. The wiring is live NOW: a stored `borg.class` is honored
+ * (missing, non-numeric or out-of-range values resolve to the declared
+ * default), so the parameter is persisted and read, never an internal
+ * constant.
+ */
+let activePack: StrategyPack = PACKS[CLASS_SETTING.default]!;
 
 let bridge: Bridge | undefined;
 let running: Promise<Running | null> | undefined;
+/* The restart loop's handle, retired in stop() with the bridge. */
+let restartHandle: BorgRestart | undefined;
+/* The journal's handle, retired the same way. Module-level for the same
+ * reason: a stop can land before `running` settles. */
+let journalHandle: BorgJournal | undefined;
+/**
+ * The installation epoch (ported from the archived fork's #30). stop() bumps
+ * it SYNCHRONOUSLY; a begin that was still starting when stop ran finds the
+ * epoch it captured stale at its checkpoint and installs NOTHING - no title
+ * row, no restart listener, no handles published - disposing the bridge it
+ * made. A begin that starts AFTER a stop captures the bumped epoch and
+ * installs normally: stop retires starts in flight, it does not forbid new
+ * ones, and a stopped older start resolving late must not disturb whatever a
+ * newer start installed.
+ */
+let startEpoch = 0;
 
 async function begin(mod: ModApi2): Promise<Running | null> {
+  /* Captured before this start's first await, so a stop landing while it is
+   * still starting invalidates it. */
+  const mine = startEpoch;
   /* A start always gets a bridge of its own, so a second start on the same page reads this game and never the one before it. */
   void bridge?.dispose();
   const made = createBridge(mod);
   bridge = made;
   await made.prime();
+  if (mine !== startEpoch) {
+    /* Stopped mid-start: dispose what THIS start made and publish nothing -
+     * its own bridge only, because the module-level handles may already
+     * belong to a newer start and must not be touched from here. */
+    mod.meta.log("the Borg's start was stopped before it finished, so it installed nothing");
+    void made.dispose();
+    return null;
+  }
+  /* The class pack this page plays: read from the persisted settings and
+   * resolved through the declared range - fire-and-forget here (the settings
+   * call is async), settled long before any birth is offered, exactly the
+   * way the pack's own race settings are read. A host with no settings seam,
+   * or a failed read, keeps the declared default: warrior. */
+  try {
+    if (typeof mod.meta.settings === "function") {
+      void mod.meta.settings().then(
+        (read) => {
+          if (read.ok) activePack = packForClassValue(read.value[CLASS_SETTING.id]);
+        },
+        () => {
+          /* Kept at the declared default pack. */
+        },
+      );
+    }
+  } catch {
+    /* Kept at the declared default pack. */
+  }
   const cfg = cfgFromFlags(mod.meta.flags);
   /* Cross-mod, deliberately outside RULE_CFG and cfg itself: see
    * config.ts's setBuffTimerSafetyNet for why. */
   setBuffTimerSafetyNet(mod.meta.flags["bugfix.borgFixes"] ?? true);
   const borg = createBorg({ resolvers: makeCoreResolvers(made.resolverInput()), cfg });
-  /* The title row needs ui:title and profiles:manage; without both there is no row. */
+  /* The title row needs ui:title, profiles:manage and the install slot (the
+   * row sets the birth flag there); without all three there is no row. The
+   * LABEL is the active pack's - the one presentation bit a pack owns. */
   registerBorgTitle(
     {
       id: mod.meta.id,
       log: (message) => mod.meta.log(message),
       ...(mod.presentation?.title ? { title: mod.presentation.title } : {}),
       ...(mod.manage ? { profiles: mod.manage.profiles } : {}),
+      slot: mod.store.install,
+      label: activePack.titleRowLabel,
     },
     installMemory(mod.store.install),
   );
@@ -241,11 +330,108 @@ async function begin(mod: ModApi2): Promise<Running | null> {
     grid.feat = 0;
     grid.info &= ~(BORG_MARK | BORG_VIEW);
   };
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget }) };
+  /* The journal, installed BEFORE the restart loop so the loop can be handed
+   * the graveyard writer it awaits ahead of its flag/create sequence. Every
+   * piece is a slice of this mod's own context: the character's slot in its
+   * own save (the host scopes it to the character, which is what "stored
+   * under ctx.character.key()" means in API 2) carries the LIVING character's
+   * depth milestones, and the INSTALL slot carries the graveyard archive -
+   * the substrate whose lifetime survives the character, because the host's
+   * death order deletes the character's save (markDead) before the run report
+   * even publishes, and a graveyard written only to the character's bag was a
+   * record no later page could read (the archived fork's #34 finding). The
+   * same shared value carries the pack's lineage counter and the birth flag,
+   * so the archive's writes preserve siblings. The log, the event domain the
+   * level arrivals arrive on (the manifest's event:dungeonlevel grant), and
+   * the cheap stamps - the character's level from the player read the mod
+   * already holds, the turn from the world snapshot it already reads per
+   * decision - complete it. The protocol and the dedup rule are documented in
+   * src/records/journal.ts. */
+  const journal = installBorgJournal({
+    slot: mod.store.character,
+    archive: mod.store.install,
+    log: (message) => mod.meta.log(message),
+    events: mod.events,
+    stamps: async () => {
+      /* Neither read may exist on a given host (the fake game has no player
+       * seam); a milestone without stamps is still a milestone. */
+      let level: number | null = null;
+      let turn: number | null = null;
+      try {
+        if (typeof mod.view.player === "function") {
+          const read = await mod.view.player();
+          if (read.ok && typeof read.value.level === "number") level = read.value.level;
+        }
+      } catch {
+        /* Kept null; the milestone still records the arrival. */
+      }
+      try {
+        const world = await mod.view.world();
+        if (world.ok && typeof world.value.turn === "number") turn = world.value.turn;
+      } catch {
+        /* Kept null. */
+      }
+      return { level, turn };
+    },
+  });
+  /* The restart loop, with the journal's graveyard writer: the record of the
+   * run that ended is awaited inside the report path BEFORE the birth flag
+   * and the create, so the page teardown a successful create causes can
+   * never lose it. Every piece is a slice of this mod's own context: the
+   * install slot the birth flag lives in, the log, the keyboard-ownership
+   * question, the roster's create (absent on a host that gives this mod no
+   * manage seam - the loop says so and the run ends at its death), and the
+   * event domain the run report arrives on. The protocol it implements -
+   * death, report, journal, flag, create, reload, presenter, armed
+   * controller - and every failure mode's landing place are documented in
+   * src/loop/restart.ts. */
+  const restart = installBorgRestart({
+    slot: mod.store.install,
+    log: (message) => mod.meta.log(message),
+    ownsKeyboard: () => mod.act.controller.owns(),
+    create: mod.manage?.saves.create ?? null,
+    events: mod.events,
+    graveyard: journal.graveyard,
+  });
+  /* Module-level so stop() can retire them even before `running` settles,
+   * and retired here the same way the bridge is, so a second start on the
+   * same page (a start without a stop) never leaves two loops listening for
+   * one report. */
+  void restartHandle?.stop();
+  restartHandle = restart;
+  void journalHandle?.stop();
+  journalHandle = journal;
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget }), restart, journal };
 }
 
 const definition: Api2ModDefinition = {
   api: ">=2.0.0 <3.0.0",
+
+  /* The mod's own character creation, under ui:birth.replace: the ACTIVE
+   * PACK's presenter (src/class/ - the warrior by default). Flag-gated:
+   * without the flag the presenter declines and the game's own birth screens
+   * run as before. The engine arrives as a parameter the way ctx.core
+   * arrives everywhere else; the pack's own index documents the wiring. */
+  birth: (mod) => {
+    const core = (mod.engine as { readonly core?: typeof Core } | undefined)?.core;
+    if (core === undefined) {
+      mod.meta.log("the Borg has no engine here, so the game shows its own character creation");
+      return undefined;
+    }
+    return activePack.createPresenter(mod, core);
+  },
+
+  /* The controller installs with onDeath: "end", not upstream's default
+   * "reincarnate". Upstream's reincarnation starts the next character in
+   * place with a RANDOM race and class and roller stats - exactly what the
+   * planned-birth packs exist not to do. "end" runs the ordinary death
+   * (tombstone, score entry, run report) and leaves this controller
+   * installed until the page reloads, which is the moment our own restart
+   * loop takes over: it hears the run report, sets the birth flag, and calls
+   * saves.create({ resumeAutoplayer: true }) so the reload lands in birth
+   * with the active pack's planned character and this controller armed on
+   * it (src/loop/restart.ts owns the protocol and its failure modes). */
+  onDeath: "end",
 
   async start(mod) {
     running = begin(mod).catch((error: unknown) => {
@@ -257,9 +443,25 @@ const definition: Api2ModDefinition = {
 
   /* The game tears its mods down before it reloads, and the headless runner registers them again on the same page after a save and reload. The message listener leaves the game here, or the second registration doubles every message. */
   stop() {
+    /* Invalidate every start still in flight, synchronously, before any
+     * teardown: a begin suspended in its bridge's prime will find its epoch
+     * stale at the checkpoint and install nothing, instead of installing a
+     * live restart listener into a mod the host has already stopped. */
+    startEpoch += 1;
     running = undefined;
     const held = bridge;
     bridge = undefined;
+    /* The restart loop's run-report listener leaves with the rest, for the
+     * same reason: a re-registration on the same page must not leave two
+     * loops listening for one report. Torn down before the bridge (reverse
+     * of begin's order); the journal's arrival listener leaves with them,
+     * for the same reason again. */
+    const loop = restartHandle;
+    restartHandle = undefined;
+    void loop?.stop();
+    const journal = journalHandle;
+    journalHandle = undefined;
+    void journal?.stop();
     void held?.dispose();
   },
 

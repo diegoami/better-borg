@@ -11,43 +11,47 @@ neowarrior-borg (which is malpaco's, which is Geoclick2027's).
 Play harness: sibling checkout of `neo-angband` at `../neo-angband`, or
 `NEO_ANGBAND_REPO`. Optional: `gh`.
 
-## 2. The two-fork routing
+## 2. The pack doctrine (was: the two-fork routing)
 
-Three repositories, one rule each:
+Two repositories now, one rule each (the M2 unification, #15, closed the
+three-repository era on 2026-11-03):
 
 | Repo | Takes |
 | --- | --- |
 | `neostryder/neo-angband-mod-borg` (upstream) | defect fixes, offered as PRs from here |
-| `diegoami/better-borg` (this repo) | everything class-agnostic: defects, improvements, the strength roadmap |
-| `diegoami/neowarrior-borg` | warrior-only behaviour: birth, race defaults, warrior valuation |
+| `diegoami/better-borg` (this repo) | everything: the class-agnostic core AND the per-class strategy packs under `src/class/` |
 
-**Found a generic improvement while working downstream?** File it here (issue
-or PR) - do not fix it in a class fork. **Dupe-check first** (owner rule,
-2026-11-02): before working any issue, check upstream's consolidated tracker
-(OPEN AND CLOSED, `repo:mod-borg` / `repo:neo-angband`) for the same ground -
-ours may be a duplicate, or theirs may already carry the fix (the watchlist,
-`docs/UPSTREAM.md`, is the index). **Landed something here that a
-downstream fork needs?** The downstream session cherry-picks it (same import
-boundary, `70145c5` ↔ neowarrior's `301abd7`); its merge message names this
-repo's SHA. **Fixed a port defect here?** Open the upstream PR from this
-repo's branch; if upstream changes the approach, adopt theirs here and the
-downstream forks cherry-pick the corrected version.
+**History**: `diegoami/neowarrior-borg` was the single class fork, wound
+down at M2 open exactly as the owner decided (2026-11-02): its
+class-agnostic instruments (restart loop, session driver, journal/graveyard,
+records) moved here, its warrior-specific code became strategy pack #1
+(`src/class/warrior/`, the `borg.class` default), and its committed run
+records moved with it (docs/runs/ - see that README's Provenance). The
+repository is archived; its history is the immutable record and remains
+readable, but nothing writes there and no new class forks it.
 
-**Class forks do not multiply** (owner decision, 2026-11-02): there will be
-no mage-borg, ranger-borg, or any further per-class repository. The endgame
-is ONE class-agnostic core - this repo - with per-class strategy packs
-(birth plan, race shortlist, valuation weights) selected by settings, and
-per-class lineages isolated by install slots (T06 slot persistence already
-provides that). `neowarrior-borg` is the single special case and is wound
-down at a milestone boundary, not "when the warrior is done" (deepest-depth
-is asymptotic; the lineage runs forever): at M2 open, its class-agnostic
-instruments (restart loop, session driver, journal/graveyard, records)
-move here - ending the play-session/session.ts duplication - its
-warrior-specific code becomes strategy pack #1, and the repository archives
-with its records preserved. A new class starts as a pack plus a setting,
-never a fork. After the unification (B15) the unified mod RENAMES to
-**Mandos** - the keeper of the dead who sends them back (#19) - before the
-next tag.
+**Found a generic improvement while working in a pack?** Move it out of
+`src/class/` into the core and offer it upstream if it is a defect fix (a
+pack may not grow core machinery of its own). **Dupe-check first** (owner
+rule, 2026-11-02): before working any issue, check upstream's consolidated
+tracker (OPEN AND CLOSED, `repo:mod-borg` / `repo:neo-angband`) for the same
+ground - ours may be a duplicate, or theirs may already carry the fix (the
+watchlist, `docs/UPSTREAM.md`, is the index). **Landed something in the core
+that a pack needs?** Packs live in the same tree now - they import it; the
+cross-repo cherry-pick protocol (`70145c5` here ↔ neowarrior's `301abd7`,
+same import boundary) is retired with the fork. **Fixed a port defect
+here?** Open the upstream PR from this repo's branch; if upstream changes
+the approach, adopt theirs here.
+
+**A new class starts as a pack plus a setting, never a fork**: a module
+under `src/class/<name>/` implementing the StrategyPack interface
+(`src/class/pack.ts` - the plan, the presenter, the uniform race pair, the
+title-row label), an entry in the registry's ordered `PACKS` array (which
+widens the `borg.class` range and lands its manifest row in the same
+change), and its own tests. Per-class lineages are isolated by install
+slots; per-class valuation weights, when they exist, are pack data. After
+the unification (B15) the unified mod RENAMES to **Mandos** - the keeper
+of the dead who sends them back (#19) - before the next tag.
 
 ## 3. Task files and the loop
 

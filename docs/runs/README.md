@@ -1,6 +1,7 @@
 # Run records
 
-The project's number is **the deepest depth a warrior reaches**. Every claim
+The project's number is **the deepest depth a Borg reaches** (any class -
+the warrior pack's lineage is the one measured so far). Every claim
 about it traces to a directory here. Records are append-only: a completed
 session is never edited, and a changed harness or changed build writes a new
 directory whose notes say what changed (rule 5 in `docs/process.md`).
@@ -13,8 +14,9 @@ One directory per measured session: `YYYY-MM-DD-<label>/` containing:
   character: build (race, class, base stats), seed, decisions, turns, max
   depth, character level, kills, gold, cause of death, and the command
   census (what the decision loop actually did).
-- `summary.md` - the computed layer the runner (B02+, `tools/sweep.mjs`)
-  writes beside it: the per-run table and the cohort statistics (median and
+- `summary.md` - the computed layer the runners (`tools/sweep.mjs` for
+  stock sessions, `tools/runs.mjs` for pack sessions - both B02+) write
+  beside it: the per-run table and the cohort statistics (median and
   mean maxDepth, deaths, kills) derived FROM `runs.json`. Derived numbers
   live here, never in the primary record - a run record's raw facts are
   never pre-interpreted.
@@ -48,7 +50,51 @@ field list is a contract, not a suggestion:
 
 Earlier records (`2026-11-02-import`, `2026-11-02-door-close`) predate the
 runner and use the diagnosis-session shape their READMEs describe; the
-schema above is what every session from B02 on carries.
+schema above is what every session from B02 on carries - and, since the M2
+unification (#15), the ONE schema both runners write; the ported
+neowarrior-borg records below it keep the archived fork's own shape (see
+Provenance).
+
+## Provenance
+
+Three directories were moved here from the archived fork
+`diegoami/neowarrior-borg` at its v0.1.0 tag (`e1ec1b7`,
+"T08 review round 1", 2026-11-02) when its class-agnostic instruments merged
+into this repository (#15, the M2 unification; the doctrine is docs/
+process.md section 2). Each is unchanged, byte for byte, as it was committed
+there:
+
+| Directory | Committed there at | What it is |
+| --- | --- | --- |
+| `2026-11-02-import-neowarrior/` | `301abd7` (the import boundary; directory named `2026-11-02-import` in the source repo) | The archived fork's own import baseline - renamed on the move because this repository already carries ITS import baseline as `2026-11-02-import/` (both forks imported upstream at the same boundary; both baselines stay) |
+| `2026-11-02-t06-first-warrior-session/` | `task/T06-run-records` (mod 0.1.0) | The first measured warrior session: four planned Half-Troll warriors, all died on depth 1 |
+| `2026-11-02-bakeoff/` | `task/T07-bakeoff` (mod 0.1.0) | The race bake-off: 4 candidate races x 8 fixed seeds x cap 600 x 2 engine variants, byte-proven applied and reverted |
+
+The archived repository's history is the immutable record of how those
+numbers were produced; this table is how a reader here finds them.
+
+### Which schema wins going forward
+
+`better-borg/runs@1` (the schema above) is the ONE shape every session from
+the unification on is written in - by `tools/sweep.mjs` for stock-Borg
+sessions and by `tools/runs.mjs` for pack sessions, both through the ONE
+record writer (`src/run-record.ts`, asserted by `src/run-record.test.ts`).
+It wins because it is the schema this repository's committed B02 record
+already carried, and because its provenance bundling (`build.commit`,
+`build.engine`, `build.content`, `build.borg`) is what Phase 2's fitness
+evaluator needs to attribute a column without re-running.
+
+The ported directories predate that decision and keep their own shapes
+exactly as committed: the archived fork's reporter format (a `build` block
+of `mod`/`engine`/`content`/`seeds`/`caps`, one entry per character; the
+bake-off adds per-run `variant` and `deathDepth` fields and a `variants`
+declaration). Nothing here parses them - they are history, read by humans -
+and one counting difference matters when comparing them against later
+records: the archived fork's fix for its review issue #36 (count the killing
+decision) is the rule the unified session runs on, so a dying run in a
+post-unification record shows one MORE decision than the archived reporter
+would have written for the same play (B02's committed seed-7 entry is the
+in-repo example: 1228 recorded, 1229 issued).
 
 ## Standing metrics
 
@@ -71,3 +117,7 @@ schema above is what every session from B02 on carries.
 | `2026-11-02-import/` | import commit `70145c5` + rebrand | Same upstream suite state as neowarrior-borg's import (same pin, same machine): 420/421, the one failure the seed-1 door-closing defect - B01's subject, not a tolerated exception here (rule 7) |
 | `2026-11-02-door-close/` | mod unchanged from `main` | B01's diagnosis: the defect is in the ENGINE (`setFeat`'s live path drops `square_note_spot`, cave-square.c:1261); mod faithful at every step; one engine line flips seed 1 to green (771 closes → 0), reverted byte-identical; PR draft in `docs/upstream-prs/B01.md` |
 | `2026-11-02-b02-verify/` | B02's runner on B02's own tree | The extracted instrument reproduces B01's pristine record exactly (seed 1 close 771, turns 8691; seeds 7 and 42 bit-for-bit) - suite and runner share one session loop; `kills`/`gold`/`causeOfDeath` columns arrive with the runner |
+| `2026-11-02-import-neowarrior/` | moved from neowarrior-borg `301abd7` | The archived fork's starting point: the same upstream suite state on the same pin and machine (its README describes its one recorded play-harness failure). Renamed on the move; this repository's own import baseline stands beside it as `2026-11-02-import/` |
+| `2026-11-02-t06-first-warrior-session/` | moved from neowarrior-borg `task/T06-run-records` | The first measured warrior session: four planned Half-Troll warriors, all died on depth 1; the journal and reporter this record came from were that task's own acceptance |
+| `2026-11-02-bakeoff/` | moved from neowarrior-borg `task/T07-bakeoff` | The race bake-off: 4 candidate races x 8 fixed seeds x cap 600 x 2 engine variants (pin vs the noteSpot patch, byte-proven applied and reverted) - median depth ties at 1 everywhere; High-Elf reaches depth 2 on the most seeds in both variants, Dunadan survives the pin best, the incumbent Half-Troll worst on both rates; the fix is neutral for planned warriors at this budget. Its recommendation (High-Elf, default 2) is the warrior pack's `borg.raceChoice` default today |
+| `2026-11-03-b15-verify/` | B15's unified runner on B15's own tree | The unified session module reproduces B02's record field-for-field on the same cohort (seed 1 close 771, turns 8691; seed 42 identical) - the stock path did not move; seed 7's `decisions` is 1229 against B02's 1228, the adopted #36 counting rule (count the killing decision) and the only difference |
