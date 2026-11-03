@@ -3,8 +3,8 @@
 For any agent or tool working in this repository (OpenCode, Codex, Claude
 Code, others):
 
-**Start at [`docs/STATE.md`](docs/STATE.md)**: the owner's standing order,
-the queue, what is in flight, and the traps - rewritten at every handover.
+**Start at [`docs/BACKLOG.md`](docs/BACKLOG.md)'s "Now"** (the owner's
+queue) and [`docs/process.md`](docs/process.md) section 1's working notes.
 
 - **What this is**: Mandos (formerly better-borg) — the class-agnostic Borg
   fork: defect fixes and strength
@@ -12,7 +12,7 @@ the queue, what is in flight, and the traps - rewritten at every handover.
   PACKS under `src/class/` selected by the `borg.class` setting (pack #1 is
   the warrior; a new class starts as a pack plus a setting, never a fork -
   the no-N-forks doctrine, docs/process.md section 2).
-- **Rules**: [`CLAUDE.md`](CLAUDE.md), numbered and cited as "rule n".
+- **Rules**: [`RULES.md`](RULES.md), numbered and cited as "rule n".
 - **Process**: [`docs/process.md`](docs/process.md): the loop, records,
   milestones, and the pack doctrine. Before upstream work: run
   `node tools/upstream-watch.mjs` - movement on our threads means engage;

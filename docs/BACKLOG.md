@@ -3,9 +3,33 @@
 The queue lives as GitHub issues (label `backlog`); this file is the ranked
 index. **Defects outrank features, always** (owner rule, 2026-11-03), upstream
 defects first; among features, the order is expected effect on reach-rate at
-the chosen stage (#25, rule 1). The live queue - what is being worked and
-what comes next - is [`STATE.md`](STATE.md); this file is the longer list
-behind it.
+the chosen stage (#25, rule 1). The issue's `status:*` label and latest
+status comment say where each item stands.
+
+## Now (owner-ordered, 2026-11-03)
+
+The standing priority is the audit (#34): find issues in the original borg
+across all classes, strategies and configuration options, each with its
+provenance (C design / inherited port defect at `70145c5` / our defect /
+engine gap). Nothing may force warrior play. Defects found along the way
+preempt everything below (rule 11).
+
+1. [#17](https://github.com/diegoami/mandos/issues/17) - the generic pack with
+   a NEUTRAL default (candidate: a per-birth class draw mirroring
+   `raceRandom`); first test: the two-pack settings/birth ordering.
+2. [#16](https://github.com/diegoami/mandos/issues/16) - race pinning for all
+   11 races (roster: neo-angband `packages/content/pack/p_race.json`).
+3. [#34](https://github.com/diegoami/mandos/issues/34) audit passes, step 1 =
+   [#31](https://github.com/diegoami/mandos/issues/31) (the class x seed
+   reach-rate grid at stage 1).
+4. [#30](https://github.com/diegoami/mandos/issues/30) home curation,
+   [#33](https://github.com/diegoami/mandos/issues/33) the deferred human rail.
+
+Parked: [#28](https://github.com/diegoami/mandos/issues/28) (inventory
+reviewer) - a nice-to-have behind every defect; its status comment says
+where the branch stands.
+
+## The longer list
 
 ## Upstream follow-through
 

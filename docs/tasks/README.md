@@ -1,7 +1,7 @@
 # Tasks
 
 One file per task, `B<nn>.md`. The issue's `status:*` label is the status.
-The current queue and what is in flight: [`../STATE.md`](../STATE.md).
+The current queue: [`../BACKLOG.md`](../BACKLOG.md)'s "Now".
 
 ## M1 - The ceiling rises
 
