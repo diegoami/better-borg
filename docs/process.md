@@ -150,7 +150,10 @@ manifest id (`mandos`) - clone into a folder called exactly that.
 `NEO_ANGBAND_DATA` names the data base (the dev shape of data-dir.ts's four:
 keeps saves/mods out of `node_modules` and out of the user profile - make it
 a stable folder you own; ours is `~/projects/angband/mandos-lab-data`). Mods
-come from `<data>/mods/`, no folder picker. In-app ONCE: mods menu → enable
+come from `<data>/mods/`, no folder picker. **Updating the mod** is a plain
+`git pull` inside `<data>/mods/mandos` (the committed plugin.js is current on
+every merge - `pnpm check` is the merge gate), then restart the app; install
+storage (graveyard, lineage counter) survives the update. In-app ONCE: mods menu → enable
 Mandos → title row "New Mandos warrior character" → answer the game's confirm.
 Everything (saves, graveyard, settings) then lives under `<data>` - portable;
 delete it to reset. The lab branch's first-party entry + the switch carry the
