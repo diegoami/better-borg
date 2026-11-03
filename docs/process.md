@@ -5,8 +5,56 @@ neowarrior-borg (which is malpaco's, which is Geoclick2027's).
 
 ## 1. Setup
 
+### A new computer, from nothing
+
+Everything below comes from GitHub; nothing is copied from another machine.
+Needs: git with SSH access to GitHub, `gh` authenticated (`gh auth login`)
+with read access to `diegoami/mandos`, nvm. Toolchain: Node 22+ (CI uses
+22; the lab machine runs 24), pnpm as pinned by `packageManager` in
+`package.json` (`corepack enable` picks it up).
+
+    mkdir -p ~/projects/angband && cd ~/projects/angband
+    # this repository (the folder name is historical; scripts assume siblings)
+    git clone git@github.com:diegoami/mandos.git better-borg
+    # the engine: upstream's repo, our fork as the push remote, the lab branch
+    git clone git@github.com:neostryder/neo-angband.git neo-angband
+    git -C neo-angband remote add fork git@github.com:diegoami/neo-angband.git
+    git -C neo-angband fetch fork
+    git -C neo-angband checkout -b neowarrior-lab --track fork/neowarrior-lab
+    # upstream's borg mod, pristine at our import pin (read-only reference)
+    git clone git@github.com:neostryder/neo-angband-mod-borg.git neo-angband-mod-borg
+    git -C neo-angband-mod-borg remote add fork git@github.com:diegoami/neo-angband-mod-borg.git
+    git -C neo-angband-mod-borg checkout 1fa2f8d
+    # optional reference: upstream's squire mod (Phase 3 ideas)
+    git clone https://github.com/neostryder/neo-angband-mod-squire.git neo-angband-mod-squire
+
+    cd better-borg
     pnpm install --frozen-lockfile
+    git config core.hooksPath "$(cd ../neo-angband/.githooks && pwd)"   # privacy pre-commit
     pnpm verify                 # typecheck, suite, plugin.js currency
+
+Check it worked: the engine fingerprint below; `pnpm verify` runs
+`src/play.test.ts` rather than skipping it (a skip means no content pack -
+#46); `node tools/upstream-watch.mjs` lists every thread; `node
+tools/checkpoint.mjs` prints the snapshot. Then read the checkpoint issue.
+The desktop lab build is section 8.
+
+### What lives outside this repository, and where it is safe
+
+| Thing | Where | Safe because |
+| --- | --- | --- |
+| Our engine fixes | one PR branch each in `diegoami/neo-angband` (`pr/square-note-spot`, `pr/disturb-input-flush`, `pr/expose-master-seed`) | pushed; they are the PR heads and the single source of each fix |
+| The lab branch (our engine fixes + the lab-trust commits, for the desktop build) | `diegoami/neo-angband:neowarrior-lab` | pushed 2026-11-03 |
+| Our borg fixes offered upstream | in this repo's `src/`; PR branches in `diegoami/neo-angband-mod-borg` (`pr/track-step`) | pushed |
+| Run records, dossiers, task files | `docs/runs/`, `docs/tasks/` | committed (rule 8) |
+| Queue, status, decisions in flight | issues: labels, the checkpoint issue, `upstream` tracking issues | on GitHub |
+| `artifacts/` (probe runs, bulky by-products) | this checkout, ignored | scratch by definition (rule 8): anything worth keeping becomes a record |
+| `.upstream-watch.json` | this checkout, ignored | a cache: the first run on a new machine re-baselines it |
+| The lab data base (saves, graveyard, settings, the mod clone, the browser profile) | `~/projects/angband/mandos-lab-data` | NOT backed up: recreatable from section 8 (delete it to reset). If kept saves start to matter (the #26 ladder), they need a backup before they are relied on |
+| `core.hooksPath` | each clone's git config | set by the setup line above |
+| Claude Code's memory for this project | the user's Claude profile | a convenience only: every rule and decision it holds is also in CLAUDE.md or these docs |
+
+### Day to day
 
 Play harness: sibling checkout of `neo-angband` at `../neo-angband`, or
 `NEO_ANGBAND_REPO`. Required: `gh` with read access to `diegoami/mandos` -
@@ -221,8 +269,18 @@ they accept.
    If they decline, the tracking issue records the decision and the carried
    fix becomes a marked choice of ours.
 
-The local game checkout's `neowarrior-lab` branch (environment patches) is a
-different thing entirely: never pushed, deleted when a fixed release lands.
+**Where the carried engine fixes live** (owner, 2026-11-03): each fix's
+single source is its PR branch in our engine fork (`diegoami/neo-angband`,
+`pr/<slug>`, cut from upstream master - the vehicle above). Two consumers
+are built from those branches, never edited by hand:
+- **this repository's `patches/`**: one patch per fix against the published
+  engine package, wired through `pnpm.patchedDependencies` so `pnpm install`
+  applies it everywhere - the headless harness, CI and every run record
+  (#40 sets this up; until it lands the harness runs WITHOUT them);
+- **the lab branch** `neowarrior-lab` in the engine checkout, pushed to the
+  fork: the same commits, plus the lab-trust commits the desktop build
+  needs (#418 is the upstream answer to those).
+Each tracking issue's **Carried** line names its patch file and lab commit.
 
 ## 7. Keeping current with upstream
 
@@ -252,10 +310,11 @@ upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
 4. The GitHub forks (`diegoami/neo-angband`, `diegoami/neo-angband-mod-borg`)
    are PR vehicles only: `gh repo sync` them on demand when cutting a §6 PR.
    No working trees; never ahead of upstream except a PR branch.
-5. The local game checkout: `master` follows upstream, ff-only. The local
-   `neowarrior-lab` branch rebases onto it and shrinks as upstream ships our
-   fixes - the noteSpot line dies the day a release carries #428, and the
-   branch is deleted once empty.
+5. The local game checkout: `master` follows upstream, ff-only. The
+   `neowarrior-lab` branch (pushed to `fork`) rebases onto it and shrinks as
+   upstream ships our fixes - the noteSpot line dies the day a release
+   carries #428, and the branch is deleted once empty. After a rebase,
+   `git push --force-with-lease fork neowarrior-lab` (owner-run).
 
 ## 8. Watched runs (lab builds)
 
