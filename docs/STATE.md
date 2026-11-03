@@ -20,7 +20,7 @@ comes later. Nothing may force warrior play.
 rule, 2026-11-03): a crash, a harness failure or a defect in the borg or the
 engine preempts any feature work in flight - park the feature, chase the bug.
 Features (e.g. #28 inventory review) are nice-to-have and re-queue behind
-every open defect.
+every open defect. A bug always wins over any new feature.
 
 **A defect found mid-task** gets its own issue on our tracker at once, and
 is fixed before the task resumes (or the owner is asked) - the feature is

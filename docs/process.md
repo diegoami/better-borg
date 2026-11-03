@@ -62,7 +62,14 @@ committed into existing records, rule 7).
 `task/B<nn>-<slug>`, squash-merged by the main session after its own
 Done-when verification. Implementer contract as neowarrior's: build only what
 the task asks, fail-before/pass-after for every new test, report out-of-scope
-defects, update wronged documents, no status written into documents.
+defects, update wronged documents, no status written into documents (the
+issue's label and status comment carry it). The one exception is `docs/STATE.md`, the session-start
+snapshot: the main session rewrites it at every handover, and it points at
+the issues rather than replacing them.
+
+**A bug always wins over a new feature** (owner rule, 2026-11-03). A defect
+found mid-task gets its own issue at once and is fixed before the feature
+resumes (or the owner is asked); stability and upstream defects first.
 
 ## 4. Reviews
 
