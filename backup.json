@@ -1,9 +1,9 @@
 {
-  "//": "Where local-only state is backed up (process.md section 1). The folder is the owner's private Google Drive folder; rclone does the transfer. rcloneAccount is any rclone Drive remote authorised for the owner's account - the folder is forced by folderId, so the remote's own root does not matter. A dedicated remote is better: rclone config create mandosdrive drive scope=drive root_folder_id=<folderId> (needs a browser login once), then set rcloneAccount to mandosdrive.",
+  "//": "Where local-only state is backed up (process.md section 1). The folder is the owner's private Google Drive folder; rclone does the transfer. rcloneAccount is any rclone Drive remote authorised for the owner's account - the folder is forced by folderId, so the remote's own root does not matter. This repo's own remote is mandosdrive (rclone config create mandosdrive drive scope=drive root_folder_id=<folderId>; a browser login once - on WSL open the printed 127.0.0.1:53682 link in the Windows browser).",
   "drive": {
     "folderUrl": "https://drive.google.com/drive/folders/1kfadlRMNeNvoESt8YikS7bTrqmPtQlso",
     "folderId": "1kfadlRMNeNvoESt8YikS7bTrqmPtQlso",
-    "rcloneAccount": "goal2drive"
+    "rcloneAccount": "mandosdrive"
   },
   "sets": {
     "mandos-lab-data": {
