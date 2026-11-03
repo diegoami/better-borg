@@ -39,6 +39,13 @@ directory), the minimal fix "exactly upstream". PR: per process.md section 6
 change / evidence incl. tests and "tsc: zero new"), labels only SUGGESTED
 (maintainer's call).
 
+**What goes upstream for the borg** (owner, 2026-11-03): their mod is a
+PORT of the 4.2.6 C borg, so only a PORT DEFECT is in scope there - the port
+diverges from what the C does (track_step, mod-borg#21/#22, is the model).
+A weak strategy that the C itself plays is an IMPROVEMENT: out of scope
+upstream, kept here as a `FORK:`-marked choice (rule 3). Attribute against
+the C first; the attribution decides whether it goes upstream at all.
+
 **Dispatch nothing without the owner's "go".** Model choice on this project:
 the owner picks; for reviews, hand the owner a ready-to-paste prompt, don't
 dispatch one.
