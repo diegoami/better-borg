@@ -27,7 +27,7 @@ import { reachRate } from "./measure/bakeoff.js";
 /** Identifies the runs.json shape; bump when the schema gains a field. */
 export const RUNS_SCHEMA_ID = "better-borg/runs@1";
 /* ^ Deliberately NOT renamed with the mod (#19): this is a FORMAT identifier
- * committed byte-identically into existing records (rule 7), not branding.
+ * committed byte-identically into existing records (rule 8), not branding.
  * New records keep carrying it; a future format change bumps the @n. */
 
 /** Which tool drove the cohort, at what shape. */

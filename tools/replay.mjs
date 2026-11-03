@@ -134,7 +134,7 @@ function contentId() {
 
 const outRoot = join(recordDir, "postmortem");
 if (existsSync(outRoot)) {
-  fail(`${outRoot} already exists. The dossier ladder is committed evidence (rule 7: append-only); delete nothing - write to a fresh record or move the directory aside by hand if you know why.`);
+  fail(`${outRoot} already exists. The dossier ladder is committed evidence (rule 8: append-only); delete nothing - write to a fresh record or move the directory aside by hand if you know why.`);
 }
 
 const recordLabel = typeof document.label === "string" ? document.label : basename(recordDir);

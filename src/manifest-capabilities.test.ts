@@ -28,7 +28,7 @@ describe("manifest capabilities", () => {
        id, name, repository - strands a player's install, so the trio is
        pinned here. The run-record schema id is NOT part of this: it is a
        format identifier committed into existing records and deliberately
-       keeps the better-borg name (rule 7). */
+       keeps the better-borg name (rule 8). */
     const data = JSON.parse(readFileSync(join(repoRoot, "manifest.json"), "utf8")) as { data: { id: string; name: string; repository: string } };
     expect(data.data.id).toBe("mandos");
     expect(data.data.name).toBe("Mandos");

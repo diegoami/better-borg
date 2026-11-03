@@ -21,7 +21,7 @@
  * content). Every section is pure text, every order is fixed, and no section
  * reads a clock: the same replay on the same engine and content produces
  * byte-identical output, which is what makes a committed dossier comparable
- * against a later one (rule 7's spirit, applied to a new artifact kind).
+ * against a later one (rule 8's spirit, applied to a new artifact kind).
  *
  * TWO LAYERS, on purpose. `capturePostmortem` reads the LIVE game at a
  * decision boundary - engine-shaped, observation-only, draws no RNG - and

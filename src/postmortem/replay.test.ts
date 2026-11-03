@@ -21,7 +21,7 @@
  * point: the record, the replay and the dossier ladder stay one story.
  * That is also this test's lifecycle: the record it points at is the
  * CURRENT baseline, and a deliberate behaviour change retires the previous
- * one (byte-immutable, rule 7) and re-points these constants - B32 did
+ * one (byte-immutable, rule 8) and re-points these constants - B32 did
  * exactly that (the caution/attack fix moved seed 34 from a grey-mold
  * death to a stage retirement and seed 20 to a later, different death, so
  * the exactness rider moved from 2026-11-03-stage-baseline-c2d1's seed 34

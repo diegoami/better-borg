@@ -27,6 +27,10 @@ on:
 
 jobs:
   publish:
+    # Inherited from upstream at the import (70145c5): the Nexus listing is
+    # THEIR mod's. This fork never publishes there, so the job runs only in
+    # upstream's own repository, whatever variables appear here.
+    if: github.repository == 'neostryder/neo-angband-mod-borg'
     runs-on: ubuntu-latest
     steps:
       - name: Check Nexus configuration

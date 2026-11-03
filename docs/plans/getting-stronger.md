@@ -70,8 +70,10 @@ Tuning parameters against a broken policy spends compute measuring the bug.
 - Port upstream's formula engine (`borg_uses_dynamic_calcs`, borg-formulas.c):
   the natural genome - upstream's own knob-set for power/depth/restock math.
   Plus the cfg toggles and numeric settings as the rest of the chromosome.
-- The runner from B02 becomes the fitness evaluator: fitness = median maxDepth
-  (town-death penalty), N lives per candidate to beat the noise.
+- The runner from B02 becomes the fitness evaluator: fitness = reach-rate at
+  the target stage (#25, rule 1), N lives per candidate to beat the noise.
+  (Written before #25 as median maxDepth with a town-death penalty; depth
+  survives as the ladder's axis, not the fitness.)
 - Search: random search / CEM before a GA - with tens of dimensions CEM often
   matches a GA at a fraction of the code. Add the GA (and lineage naming)
   only if it pays.
@@ -95,6 +97,8 @@ patches, but the mod never ships one.
 
 ## Where work lives
 
-Everything in this roadmap is class-agnostic: it lives HERE. Downstream forks
-(neowarrior-borg) cherry-pick. See `docs/process.md` §2 for the routing and
-the cherry-pick protocol.
+Everything lives HERE. Class-agnostic work goes in the core; class-specific
+work is a strategy pack under `src/class/` (`docs/process.md` section 2) -
+there are no downstream forks to cherry-pick to (neowarrior-borg is
+archived). Upstream receives port-defect and engine-gap PRs only, per
+section 6.

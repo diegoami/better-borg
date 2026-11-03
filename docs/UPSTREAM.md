@@ -7,7 +7,7 @@ every milestone close; date each pass. When WE file upstream (the #428
 pattern): we cannot apply labels on their tracker (maintainer-only, verified
 2026-11-02) - suggest them in the issue body as a footer, in their vocabulary
 (`bug`/`effort:*`/`priority:*`/`repo:*`/`source:community`/`area:*`). Relevant upstream fixes are
-cherry-picked with the floor-bump rule (process §2); upstream issues we can
+cherry-picked with the floor-bump rule (process §7, step 3); upstream issues we can
 advance become B-tasks here, diagnosed and branched in OUR fork, then offered
 upstream (#428 is the pattern).
 
@@ -80,11 +80,11 @@ from the repo root (`tsc -b`) for the true count; master is genuinely clean.
 
 - **neo-angband#418** (`area:seams`, effort:S) — headless runner cannot run
   first-party mods holding first-party-only capabilities. This is the engine-side answer to our lab-trust workaround
-  (#28 in neowarrior-borg): when it lands, first-party-tier harness tests
+  (neowarrior-borg#28): when it lands, first-party-tier harness tests
   run without the local patch.
 - **neo-angband#385** (`area:seams`, priority:med) — run-ended notification
   and STORAGE THAT OUTLIVES A CHARACTER. That seam is exactly the substrate
-  better-borg's Phase 3 knowledge base needs; its shape should be tracked
+  Mandos's Phase 3 knowledge base needs; its shape should be tracked
   before we design our format around `ctx.character.key()`.
 - **neo-angband#414** (`repo:neo-angband`) — `disturb()` never emits the
   input-flush event; autoplayer interrupt flows may depend on it.

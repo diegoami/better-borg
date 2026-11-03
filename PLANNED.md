@@ -1,3 +1,7 @@
+> **Inherited from upstream** (neostryder/neo-angband-mod-borg) at the import
+> `70145c5`: their mod's planning history, kept as reference. It is not
+> Mandos's plan - that is `docs/plans/getting-stronger.md`.
+
 # Borg playability: implementation record and remaining work
 
 **Opened 2026-08-21. Target: full functionality, validated by several successful

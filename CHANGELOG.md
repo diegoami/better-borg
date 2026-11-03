@@ -65,7 +65,7 @@ matching git tag that an install pins itself to.
   with visible monsters), the message-log tail, the pack AND the home, the
   recent decisions with the census, and provenance - all diffable,
   committed under the record's own `postmortem/` directory (new files
-  only, rule 7). The AI post-mortem workflow (docs/postmortem.md) turns a
+  only, rule 8). The AI post-mortem workflow (docs/postmortem.md) turns a
   dossier into a diagnosis artifact; the baseline's seed-34 grey-mold
   death is the committed example (the Borg oscillated between backing
   away from a 1-hp mold and flowing back toward the up-stair beyond it -
@@ -98,14 +98,14 @@ matching git tag that an install pins itself to.
   retirement; the mod's own stage settings are the consent, retirement
   being unattended by design). Run records gain per-run `stageAttained` /
   `retired` fields and a `runner.stage` block — additive, the schema id
-  stays `better-borg/runs@1` (rule 7).
+  stays `better-borg/runs@1` (rule 8).
 - [Visible] **The mod is now Mandos** (formerly better-borg). New mod id
   (`mandos`), name, repository and description — the purpose line now names
   the grind: play unattended, reach a chosen stage reliably, retire each
   success into a kept, loadable save. The title row reads "New Mandos warrior
   character". Folder name = manifest id: install from a folder called
   `mandos`. The run-record schema id stays `better-borg/runs@1` — a format
-  identifier committed into existing records, not branding (rule 7).
+  identifier committed into existing records, not branding (rule 8).
   INSTALL-STORAGE COST (accepted, #19): a mod's storage is keyed by its id,
   so the browser lineage's graveyard and lineage counter start fresh under
   `mandos`.

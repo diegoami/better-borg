@@ -11,7 +11,7 @@ valuable when it happens, but nothing waits on it.
 ## The loop
 
 1. **A run dies** in a harness session (`tools/runs.mjs`); the record lands
-   under `docs/runs/<session>/` (append-only, rule 7).
+   under `docs/runs/<session>/` (append-only, rule 8).
 2. **The dossier ladder is generated** beside the record:
 
        node tools/replay.mjs --record docs/runs/<session>

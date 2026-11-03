@@ -38,7 +38,7 @@
  *                   journaled, never fabricated.
  *
  * The unsure point is JSON-clean (no live objects): it lands in the run
- * record (additive fields, schema id frozen - rule 7) and in the on-death
+ * record (additive fields, schema id frozen - rule 8) and in the on-death
  * report beside B29's post-mortem facts, with sibling field names (turn,
  * depth, at) so #28's ledger can read both without translation.
  */

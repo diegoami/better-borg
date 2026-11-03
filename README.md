@@ -23,11 +23,10 @@ records) merged here at M2 open and whose run records moved with them
   never in the core and never in a fork of this repository; a new class
   starts as a pack plus a setting.
 
-Current focus, in order: the seed-1 door-closing defect (half a session spent
-closing doors, reproduced bit-for-bit on pristine upstream), the unported
-swap subsystem, then the strength roadmap in
-[docs/plans/getting-stronger.md](docs/plans/getting-stronger.md) (formula
-engine, offline parameter evolution, accumulated knowledge).
+What is being worked on, and why: the dated priority paragraph in
+[docs/plans/getting-stronger.md](docs/plans/getting-stronger.md), and the
+latest comment on the pinned
+[checkpoint issue](https://github.com/diegoami/mandos/issues?q=is%3Aissue+is%3Aopen+label%3Acheckpoint).
 
 ## Layout
 

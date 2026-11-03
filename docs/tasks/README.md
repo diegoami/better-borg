@@ -2,6 +2,8 @@
 
 One file per task, `B<nn>.md`. The issue's `status:*` label is the status.
 The queue and where work stands: the open `checkpoint` issue (process.md section 3).
+A task file is written on its branch and lands with the merge, so the table
+lists finished tasks; queued work (the audit era, #34 onward) is on the issues.
 
 ## M1 - The ceiling rises
 
@@ -20,8 +22,10 @@ muscle.
 | [B27](B27.md) | The human trainer loop, phase 1: the uncertainty journal (phases 2-3 deferred) | Medium | #27 | 08b09ed (B25's stage rail and B29's replay rail, both undisturbed) |
 | [B32](B32.md) | Caution vs attack: the one-hit blocker, the bounce guard's health gate, and the missing track_step | Medium | #32 | 82523a8 (B25/B29/B27 rails all landed) |
 
-## Later phases
+## The audit era (from 2026-11-03)
 
-Phase 2 (formula engine, parameter evolution) and Phase 3 (knowledge
-accumulation) are planned in the roadmap; tasks are cut when B02's
-measurements say what to reach for.
+The owner's pivot (#34) puts the full-space audit first: every class,
+strategy and configuration option, each finding with its provenance. Its
+tasks land here as they merge. Phase 2 (formula engine, parameter
+evolution) and Phase 3 (knowledge) stay planned in the roadmap, behind the
+audit's findings.

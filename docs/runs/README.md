@@ -10,7 +10,7 @@ the reach-rate (or a proxy the record names) and is measured by the harness
 before it merges. Every claim about either number traces to a directory
 here. Records are append-only: a completed session is never edited, and a
 changed harness or changed build writes a new
-directory whose notes say what changed (rule 5 in `docs/process.md`).
+directory whose notes say what changed (rule 8 in `CLAUDE.md`).
 
 ## Format
 
@@ -38,7 +38,7 @@ flee, shop, rest, descend, die, and start again.
 ### The post-mortem dossier ladder (#29)
 
 A record with dead runs grows a `postmortem/` subdirectory - NEW files
-only, never an edit to the session's own (append-only, rule 7): a `README.md`
+only, never an edit to the session's own (append-only, rule 8): a `README.md`
 ladder table and one `seed-<n>/offset-<k>.md` dossier per dead run x rung
 of the replay ladder (5/10/15/20 turns before death by default), written by
 
@@ -56,7 +56,7 @@ artifact (`seed-<n>/diagnosis.md`) lands beside the dossiers it was written
 from - the baseline's seed-34 grey-mold diagnosis is the committed example.
 
 Bulky by-products (screenshots, video, long traces) live outside git in
-`artifacts/` and are linked by path, never committed (rule 7). Dossiers are
+`artifacts/` and are linked by path, never committed (rule 8). Dossiers are
 the deliberate exception by design: each is a few KB of text, committed,
 diffable - the whole point of the format.
 
@@ -89,7 +89,7 @@ no `unsure` key; a reader treats absence as `{ total: 0, points: [] }`.
 
 The stage fields are #25's ADDITION, and the schema id string stays
 `better-borg/runs@1` (a format identifier committed byte-identically into
-existing records, rule 7): `runner.stage` names the rung a cohort ground
+existing records, rule 8): `runner.stage` names the rung a cohort ground
 toward (`{clvl, depth}`) or `null` when the session played none, and each
 run carries `stageAttained` (the predicate - character level AND first
 arrival depth both past the thresholds) beside `retired` (the bookkeeping -

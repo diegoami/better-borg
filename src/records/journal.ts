@@ -122,7 +122,7 @@ export interface GraveyardEntry {
  * demonstrations) ride beside the report's own fields under optional keys: an
  * archive written before #27 carries none of them, and a reader treats
  * absence as empty - the same additive rule the run-record schema keeps
- * (rule 7's spirit; this archive's format id is its `journal` field).
+ * (rule 8's spirit; this archive's format id is its `journal` field).
  */
 export interface ArchivedRun extends GraveyardEntry {
   /** The run's key as the report carried it (`report.key`); null when the report carried none - an unknown run is still a run. */

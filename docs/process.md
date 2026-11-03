@@ -9,7 +9,9 @@ neowarrior-borg (which is malpaco's, which is Geoclick2027's).
     pnpm verify                 # typecheck, suite, plugin.js currency
 
 Play harness: sibling checkout of `neo-angband` at `../neo-angband`, or
-`NEO_ANGBAND_REPO`. Optional: `gh` (the local folder is still named
+`NEO_ANGBAND_REPO`. Required: `gh` with read access to `diegoami/mandos` -
+the queue and the checkpoint live on its issues, so without it there is no
+queue (the local folder is still named
 `better-borg`; the repo is `diegoami/mandos` - pass `--repo diegoami/mandos`).
 
 Working notes (each one cost a session time):
@@ -77,11 +79,16 @@ the unification (B15) the unified mod RENAMED to **Mandos** - the keeper
 of the dead who sends them back (#19, landed 2026-11-03: id `mandos`,
 folder `mandos`, repo `diegoami/mandos`; the run-record schema id
 `better-borg/runs@1` deliberately keeps its old name - a format identifier
-committed into existing records, rule 7).
+committed into existing records, rule 8).
 
 ## 3. Task files and the loop
 
-`docs/tasks/B<nn>.md` (B for better-borg). One branch per task,
+**The issue is the task** until work starts: its body and the dispatch
+brief on it are what an implementer reads, so a queued issue has no task
+file and none is expected. The task file `docs/tasks/B<nn>.md` (B for
+better-borg) is written ON the task branch and lands with the squash merge:
+the Done-whens as built, the semantic choices, and the verification record.
+One branch per task,
 `task/B<nn>-<slug>`, squash-merged by the main session after its own
 Done-when verification. Implementer contract as neowarrior's: build only what
 the task asks, fail-before/pass-after for every new test, report out-of-scope
@@ -95,7 +102,11 @@ not yet assessed, `backlog` for later. Where work stands is the latest
 comment on the ONE open issue labelled `checkpoint`: the current order of
 the queue, what is in flight (branch, head, pushed or not), what is blocked
 and why, and the next action. Post one before stopping, after a merge, when
-a long run starts or ends, and when a blocker is found. A checkpoint records
+a long run starts or ends, and when a blocker is found:
+`node tools/checkpoint.mjs` prints the snapshot (branches with ahead/behind,
+stashes, the engine fingerprint, open PRs, the labelled queue), and
+`--post "<next action>" [--notes FILE]` posts it, refusing a body that names
+a home directory (the comment is public). A checkpoint records
 state, not decisions - decisions go into these documents and CLAUDE.md.
 
 **A bug always wins over a new feature** (rule 11). A defect found mid-task
@@ -114,7 +125,7 @@ crash, 1x usage limit - and committed state saved the work every time):
 - Commit early and often; on a mid-flight death, secure a WIP commit FIRST.
 - One background agent or heavy run at a time (WSL crashed twice under
   memory pressure).
-- Determinism (rule 5) and immutable records (rule 7, additive fields only).
+- Determinism (rule 5) and immutable records (rule 8, additive fields only).
 - The sole tolerated red: the seed-1 door-close (771/1500, upstream #428).
 - Merge gates, main session only: fast loop, full verify, a hand-run
   mutation, `pnpm check`, the engine fingerprint -> squash-merge, close the
@@ -123,8 +134,10 @@ crash, 1x usage limit - and committed state saved the work every time):
 ## 4. Reviews
 
 One review per milestone: the big review of everything since the previous
-tag, owner-launched with a prompt from `docs/review-prompt.md` (copied from
-neowarrior-borg's when this repo needs it; adapt the issue numbers). The
+tag, owner-launched with a prompt from `docs/review-prompt.md` (a common head
+plus one body per kind: a task branch, the repository's structure, an
+upstream draft). The owner picks the model; the main session fills the
+slots and hands the prompt over. The
 reviewer posts findings and its verdict to GitHub itself and never edits the
 repository. A task merges on main-session verification; per-task reviews only
 on owner request or a flagged high risk.
@@ -235,7 +248,7 @@ keeps saves/mods out of `node_modules` and out of the user profile - make it
 a stable folder you own; ours is `~/projects/angband/mandos-lab-data`). Mods
 come from `<data>/mods/`, no folder picker. **Updating the mod** is a plain
 `git pull` inside `<data>/mods/mandos` (the committed plugin.js is current on
-every merge - `pnpm check` is the merge gate), then restart the app; install
+every merge - `pnpm check`, part of `pnpm verify`, keeps it so), then restart the app; install
 storage (graveyard, lineage counter) survives the update. In-app ONCE: mods menu → enable
 Mandos → title row "New Mandos warrior character" → answer the game's confirm.
 Everything (saves, graveyard, settings) then lives under `<data>` - portable;
