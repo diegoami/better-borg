@@ -14462,6 +14462,15 @@ function borgBackAway(ctx, flow, posDanger, nasty, surrounded) {
   if (ctx.world.clock - fs.tAntisummon < 50) return null;
   if (trait3(ctx, 114 /* ISCONFUSED */)) return null;
   if (trait3(ctx, 27 /* CURHP */) >= 500) return null;
+  if (!trait3(ctx, 113 /* ISAFRAID */) && !trait3(ctx, 186 /* CRSFEAR */)) {
+    for (const [i, kill] of ctx.world.kills.entries()) {
+      if (kill.when < ctx.world.clock - 2) continue;
+      if (distance(kill.pos.y, kill.pos.x, self.c.y, self.c.x) !== 1) continue;
+      if (!trait3(ctx, 105 /* CDEPTH */) && !kill.awake) continue;
+      const d = borgThrustDamageOne(ctx, i);
+      if (d > 0 && d >= kill.power) return null;
+    }
+  }
   let bI = -1;
   let bF = -1;
   let bK = surrounded ? idiv(posDanger * 12, 10) : posDanger;
@@ -14478,7 +14487,7 @@ function borgBackAway(ctx, flow, posDanger, nasty, surrounded) {
     if (featIsShop(ag.feat)) continue;
     if (ag.trap && !ag.glyph) break;
     const st2 = flow.step;
-    const bouncing = trait3(ctx, 27 /* CURHP */) >= idiv(trait3(ctx, 28 /* MAXHP */) * 7, 10) && st2.num > 2 && st2.y[st2.num - 2] === y && st2.x[st2.num - 2] === x && st2.y[st2.num - 3] === self.c.y && st2.x[st2.num - 3] === self.c.x;
+    const bouncing = st2.num > 2 && st2.y[st2.num - 2] === y && st2.x[st2.num - 2] === x && st2.y[st2.num - 3] === self.c.y && st2.x[st2.num - 3] === self.c.x;
     if (bouncing || self.timeThisPanel >= 300) continue;
     for (const [, kill] of ctx.world.kills.entries()) {
       if (kill.when < ctx.world.clock - 2) continue;
@@ -16112,6 +16121,19 @@ function createBorg(opts = {}) {
       kindCost: session.resolvers.kindCost,
       junked: session.junked
     });
+    {
+      const track = session.flow.state.step;
+      track.x[track.num] = world.self.c.x;
+      track.y[track.num] = world.self.c.y;
+      track.num += 1;
+      if (track.num >= 75) {
+        for (let i = 0; i <= 75; i++) {
+          track.x[i] = track.x[i + 1];
+          track.y[i] = track.y[i + 1];
+        }
+        track.num = 75;
+      }
+    }
     primeSession(session, ctx);
     borgFollowMissingKills(ctx, session.flow.state);
     borgUpdateMonsterFear(ctx);

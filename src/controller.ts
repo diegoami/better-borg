@@ -185,6 +185,29 @@ export function createBorg(opts: BorgOptions = {}): Borg {
       junked: session.junked,
     });
 
+    /* 3a. Mark this grid as having been stepped on (borg-update.c:2466-2475,
+     * immediately after borg_update_map inside borg_update). track_step is
+     * what the back-away bounce detection (caution.ts, caution.c:1725) and
+     * borg_happy_grid's recently-stepped check read; it had never been
+     * written here, so both guards were reading an empty track - the bounce
+     * guard could not fire at ANY health. The cap compacts exactly as the C:
+     * at 75 entries shift the oldest out and reset the count to 75 (the
+     * 100-slot array makes the [i+1] read inside the shift safe). */
+    {
+      const track = session.flow.state.step;
+      track.x[track.num] = world.self.c.x;
+      track.y[track.num] = world.self.c.y;
+      track.num += 1;
+      if (track.num >= 75) {
+        for (let i = 0; i <= 75; i++) {
+          /* i+1 <= 76 is always inside the 100-slot, zero-filled track. */
+          track.x[i] = track.x[i + 1]!;
+          track.y[i] = track.y[i + 1]!;
+        }
+        track.num = 75;
+      }
+    }
+
     /* 3b. The tail of borg_update, in its own order. The wiring session is
      * primed first because both steps need the host's monster-race resolver;
      * think() primes it again, which is idempotent.

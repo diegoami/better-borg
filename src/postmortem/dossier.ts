@@ -205,7 +205,17 @@ export function capturePostmortem(
         row += seen.ch;
         continue;
       }
-      const remembered = core.knownFeat(state, { x, y });
+      /* B32: a rung boundary near the level edge puts parts of the fixed
+       * 33x17 window outside the chunk; core.knownFeat indexes the known
+       * map without a bounds check (gi = y*width+x), so an out-of-bounds
+       * read surfaces here as features.get(undefined). Out-of-bounds is
+       * unknown terrain: render the blank, exactly as remembered < 0 does.
+       * Found by the seed-34 replay the moment the fixed borg stood where
+       * the recorded run never did (the diverged-replay-dossier promise,
+       * B29's semantic choice 5, holds again). */
+      const remembered = state.chunk.inBoundsFully({ x, y })
+        ? core.knownFeat(state, { x, y })
+        : -1;
       if (remembered < 0) {
         row += " ";
         continue;

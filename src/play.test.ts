@@ -388,7 +388,7 @@ suite("the pack restart chain, headless", () => {
     return lives;
   }
 
-  when("plays a session of consecutive planned warriors, each reborn on the last one's death", () => {
+  when("boots the next warrior behind a death and stops behind a survivor (the loop's chain rule)", async () => {
     const plan = warriorBuildPlan();
     /* The plan is what the pack's walk makes of the stock table: STR 18, CON
      * 17, the rest at base, no points left - asserted here rather than
@@ -397,27 +397,33 @@ suite("the pack restart chain, headless", () => {
     expect(plan.baseStats).toEqual([18, 10, 10, 10, 17]);
     expect(plan.pointsLeft).toBe(0);
 
-    /* THE SESSION: boot warriors in a chain, each behind its predecessor's
-     * death, exactly as the loop's create would. The seeds are pinned (the
-     * engine is deterministic): probed on the pinned engine, each of these
-     * warriors dies on depth 1 inside 369 decisions (grey mold, a
-     * centipede, a floating eye, a wild dog - a level-1 warrior meeting
-     * something it cannot see is upstream's own outcome), so the
-     * 600-decision cap carries 230 decisions of margin. */
-    const lives = chainPlannedWarriors(plan, [20, 23, 34, 49], () => 600);
-
-    /* Every boot already asserted its build from the live player (inside
-     * bootPlannedWarrior), and every boot except the first was gated on its
-     * predecessor's death (inside chainPlannedWarriors); reaching this line
-     * means four consecutive planned warriors were joined by deaths. What
-     * remains is the count: at least three deaths among the four. */
-    expect(lives).toHaveLength(4);
-    const deaths = lives.filter((life) => life.dead);
-    expect(
-      deaths.length,
-      `the session buried ${String(deaths.length)} of ${String(lives.length)} warriors ` +
-        `(${lives.map((life) => `${String(life.seed)}:${life.dead ? `died to ${life.cause ?? "?"} after ${String(life.decisions)} decisions` : `survived ${String(life.decisions)} decisions`}`).join(", ")})`,
-    ).toBeGreaterThanOrEqual(3);
+    /* THE SESSION, through the same driver (src/play-session.ts) whose
+     * output gets committed to docs/runs/ by tools/runs.mjs. REBASED AT B32:
+     * this test once pinned four consecutive deaths (every standard-grid
+     * warrior died on depth 1 inside 369 decisions) - the caution/attack fix
+     * removed three of those four deaths (seed 34's grey-mold death became a
+     * stage retirement; 23 and 49 survive their slices grinding at clvl 2 -
+     * docs/runs/2026-11-03-b32-stage-c2d1/). The chain RULE did not change:
+     * a death boots the successor, a survivor ends the session without
+     * booting one. On the fixed tree that is exactly two lives: seed 20
+     * dies (to a grey mushroom patch, on depth 2), its death boots seed 23,
+     * and seed 23's survival stops the loop before seed 34 - the same rule
+     * the strict gate test below proves at the unit level. */
+    const session = await playPackSession(Core, pack!, warriorPack, {
+      seeds: [20, 23, 34, 49],
+      capFor: () => 600,
+    });
+    expect(session.lives).toHaveLength(2);
+    expect(session.lives[0]!.seed).toBe(20);
+    expect(session.lives[0]!.dead, "seed 20's death is what booted seed 23").toBe(true);
+    expect(session.lives[1]!.seed).toBe(23);
+    expect(session.lives[1]!.dead, "seed 23 survived its slice, so no third boot").toBe(false);
+    /* The census the harness counted balances the decisions on every life,
+     * ended or not (#36's rule). */
+    for (const life of session.lives) {
+      const issued = Object.values(life.commands).reduce((a, b) => a + b, 0);
+      expect(issued, `seed ${String(life.seed)}: census vs decisions`).toBe(life.decisions);
+    }
   }, 300_000);
 
   when("refuses to boot the next warrior behind one that survived its slice", () => {
@@ -455,8 +461,11 @@ suite("the pack restart chain, headless", () => {
      * `dungeonlevel` arrivals, its graveyard entry awaited before the next
      * character boots - the loop's journal-before-create ordering - and the
      * ONE record writer turning the lives into the runs.json schema
-     * (better-borg/runs@1). The seeds are the chain's first three (pinned:
-     * each dies on depth 1 well inside the cap). */
+     * (better-borg/runs@1). Seeds [20, 23, 34] (REBASED AT B32: since the
+     * caution/attack fix only seed 20 dies on this grid - at 250 decisions -
+     * so the session is a death, a rebirth, and a survivor's slice that
+     * ends it; every assertion below is shape-agnostic about which lives
+     * ended). */
     const seeds = [20, 23, 34];
     const session = await playPackSession(Core, pack!, warriorPack, { seeds, capFor: () => 600 });
 
@@ -655,25 +664,40 @@ suite("the pack restart chain, headless", () => {
   }, 300_000);
 
   when("plays a stage it cannot attain exactly as it played without one", async () => {
-    /* The unattained stage is observationally neutral: seed 34's pinned
-     * death (grey mold, 45 decisions, the T06 record's own numbers) is
-     * byte-for-byte what it was, and the life records attainment false with
-     * no library entry - the stage cannot quietly change the play it never
-     * touched. */
-    const session = await playPackSession(Core, pack!, warriorPack, {
+    /* The unattained stage is observationally neutral - proven here as the
+     * DIRECT byte-compare the name always claimed. REBASED AT B32: this
+     * test once pinned seed 34's grey-mold death (45 decisions, the T06
+     * record's numbers) as its neutrality evidence; the caution/attack fix
+     * removed that death (seed 34 now survives its slice - the unit case of
+     * docs/runs/2026-11-03-b32-stage-c2d1/), so the proof is now the two
+     * runs themselves: the same seed, once with no stage and once with a
+     * stage it cannot attain, must produce the SAME life - decisions,
+     * turns, the whole census, the same end - and the staged run records
+     * attainment false with no library entry. A stage that never fires
+     * cannot quietly change the play it never touched. */
+    const plain = await playPackSession(Core, pack!, warriorPack, {
+      seeds: [34],
+      capFor: () => 600,
+    });
+    const staged = await playPackSession(Core, pack!, warriorPack, {
       seeds: [34],
       capFor: () => 600,
       stage: { clvl: 50, depth: 100 },
     });
-    const life = session.lives[0]!;
-    expect(life.dead).toBe(true);
-    expect(life.causeOfDeath).toBe("grey mold");
-    expect(life.decisions).toBe(45);
-    expect(life.stageAttained).toBe(false);
-    expect(life.retired).toBe(false);
-    expect(session.library).toEqual([]);
-    const issued = Object.values(life.commands).reduce((a, b) => a + b, 0);
-    expect(issued).toBe(life.decisions);
+    expect(plain.lives).toHaveLength(1);
+    expect(staged.lives).toHaveLength(1);
+    const a = plain.lives[0]!;
+    const b = staged.lives[0]!;
+    expect(b.decisions, "the unattained stage changed the decision count").toBe(a.decisions);
+    expect(b.turns, "the unattained stage changed the turns").toBe(a.turns);
+    expect(b.commands, "the unattained stage changed the census").toEqual(a.commands);
+    expect(b.dead).toBe(a.dead);
+    expect(b.causeOfDeath).toBe(a.causeOfDeath);
+    expect(b.stageAttained).toBe(false);
+    expect(b.retired).toBe(false);
+    expect(staged.library).toEqual([]);
+    const issued = Object.values(b.commands).reduce((x, y) => x + y, 0);
+    expect(issued).toBe(b.decisions);
   }, 300_000);
 
   when("records stock attainment without keeping saves (the sweep's stage)", () => {

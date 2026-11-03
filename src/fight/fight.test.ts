@@ -260,40 +260,41 @@ describe("borgCaution (caution.c:799)", () => {
  * an adjacent monster, the first candidate always does. Backing away is a
  * corridor manoeuvre in practice. That is upstream 4.2.6, warts kept.
  */
-describe("borgBackAway (caution.c:1664)", () => {
-  /** Borg at (10,3) in a one-square-high corridor, a monster at (11,3). */
-  function corridor(): BorgContext {
-    const cells: Record<string, { feat: number }> = {};
-    for (let x = 1; x < 19; x++) cells[`${String(x)},3`] = { feat: FEAT.FLOOR };
-    const ctx = makeCtx(
-      {
-        width: 20,
-        height: 7,
-        floorFeat: FEAT.GRANITE,
-        cells,
-        player: { grid: { x: 10, y: 3 } },
-        monsters: [{ grid: { x: 11, y: 3 } }],
-      },
-      /* LIGHT matters: an unlit borg is "nasty" (caution.c:810) and nasty
-       * refuses to give up a square, so a scenario without it tests nothing. */
-      { CURHP: 20, MAXHP: 20, CLEVEL: 1, MAXCLEVEL: 1, CDEPTH: 1, SPEED: 110, LIGHT: 1 },
-    );
-    ctx.world.self.c = { x: 10, y: 3 };
-    /* Past the anti-summon quiet period (caution.c:1676) and short of the
-     * 200-turn restock grace (caution.c:1064). */
-    ctx.world.clock = 100;
-    const k = ctx.world.kills.at(1);
-    k.power = 30;
-    k.awake = true;
-    k.speed = 110;
-    k.when = ctx.world.clock;
-    ctx.world.map.at(11, 3).info |= 0x08 | 0x20; /* BORG_OKAY | BORG_VIEW */
-    getDangerGlobals(ctx.world).avoidance = 20;
-    getDangerGlobals(ctx.world).resolveFacts = () =>
-      facts({ blows: [{ dice: 3, sides: 6, effect: MONBLOW.HURT }] });
-    return ctx;
-  }
+/** Borg at (10,3) in a one-square-high corridor, a monster at (11,3). Shared
+ * by the back-away suites (module scope: the B32 suites below reuse it). */
+function corridor(): BorgContext {
+  const cells: Record<string, { feat: number }> = {};
+  for (let x = 1; x < 19; x++) cells[`${String(x)},3`] = { feat: FEAT.FLOOR };
+  const ctx = makeCtx(
+    {
+      width: 20,
+      height: 7,
+      floorFeat: FEAT.GRANITE,
+      cells,
+      player: { grid: { x: 10, y: 3 } },
+      monsters: [{ grid: { x: 11, y: 3 } }],
+    },
+    /* LIGHT matters: an unlit borg is "nasty" (caution.c:810) and nasty
+     * refuses to give up a square, so a scenario without it tests nothing. */
+    { CURHP: 20, MAXHP: 20, CLEVEL: 1, MAXCLEVEL: 1, CDEPTH: 1, SPEED: 110, LIGHT: 1 },
+  );
+  ctx.world.self.c = { x: 10, y: 3 };
+  /* Past the anti-summon quiet period (caution.c:1676) and short of the
+   * 200-turn restock grace (caution.c:1064). */
+  ctx.world.clock = 100;
+  const k = ctx.world.kills.at(1);
+  k.power = 30;
+  k.awake = true;
+  k.speed = 110;
+  k.when = ctx.world.clock;
+  ctx.world.map.at(11, 3).info |= 0x08 | 0x20; /* BORG_OKAY | BORG_VIEW */
+  getDangerGlobals(ctx.world).avoidance = 20;
+  getDangerGlobals(ctx.world).resolveFacts = () =>
+    facts({ blows: [{ dice: 3, sides: 6, effect: MONBLOW.HURT }] });
+  return ctx;
+}
 
+describe("borgBackAway (caution.c:1664)", () => {
   it("steps away from an adjacent monster down a corridor", () => {
     const ctx = corridor();
     const cmd = borgCaution(ctx, makeFlowState());
@@ -321,5 +322,92 @@ describe("borgBackAway (caution.c:1664)", () => {
     const ctx = corridor();
     ctx.world.self.trait[BI.ISCONFUSED] = 1;
     expect(borgCaution(ctx, makeFlowState())).toBeNull();
+  });
+});
+
+/*
+ * B32: caution vs attack - the one-hit blocker and the bounce guard's health
+ * gate, both from the seed-34 grey-mold death (the postmortem diagnosis in
+ * docs/runs/2026-11-03-stage-baseline-c2d1/postmortem/seed-34/): a hurt
+ * heal-less warrior oscillated between back-away and the flee flow toward the
+ * up-stair beyond a 1-hp mold and died without ever evaluating the one dagger
+ * thrust that would have cleared the path. The C-fidelity check (docs/tasks/
+ * B32.md) found the port FAITHFUL on both diagnosed halves - 4.2.6 runs
+ * caution's back-away before the attack stage (borg-think-dungeon.c:1540 vs
+ * :1596) and arms its bounce guard only "at good health" (borg-caution.c:1725)
+ * - so both fixes here are fork choices, FORK-marked at their source; the
+ * third fix (the step track, below) restores a missing C behaviour.
+ */
+describe("borgBackAway vs the one-hit blocker (B32)", () => {
+  /** The corridor monster, but killable in one average dagger thrust. */
+  function blocker(): BorgContext {
+    const ctx = corridor();
+    /* A dagger (1d4, THN 100): the thrust estimate is 1 (2 * 95% chance), the
+     * chooser's own numbers (borg-fight-attack.c:1330 d >= kill->power). */
+    ctx.world.self.trait[BI.WDD] = 1;
+    ctx.world.self.trait[BI.WDS] = 4;
+    ctx.world.self.trait[BI.BLOWS] = 1;
+    ctx.world.self.trait[BI.THN] = 100;
+    ctx.world.kills.at(1).power = 1;
+    return ctx;
+  }
+
+  it("yields to the attack stage when one thrust kills the adjacent blocker", () => {
+    const ctx = blocker();
+    /* Before B32: the walk-west retreat fired and the thrust was never
+     * evaluated - the seed-34 interlock. The appraisal itself changes no
+     * command; it only stops back-away from pre-empting the chooser. */
+    expect(borgCaution(ctx, makeFlowState())).toBeNull();
+  });
+
+  it("still backs away when the blocker would survive the average thrust", () => {
+    const ctx = blocker();
+    ctx.world.kills.at(1).power = 2; /* d=1 < 2: not a kill-shot */
+    const cmd = borgCaution(ctx, makeFlowState());
+    expect(cmd?.code).toBe("walk");
+    expect(cmd?.dir).toBe(4);
+  });
+
+  it("does not yield while afraid - the chooser could not thrust anyway", () => {
+    const ctx = blocker();
+    ctx.world.self.trait[BI.ISAFRAID] = 1;
+    const cmd = borgCaution(ctx, makeFlowState());
+    expect(cmd?.code).toBe("walk");
+    expect(cmd?.dir).toBe(4);
+  });
+});
+
+describe("borgBackAway bounce guard at low health (B32)", () => {
+  /** The corridor at 6/23 hp - the seed-34 posture, far under the old
+   * CURHP >= MAXHP * 7 / 10 gate (caution.c:1725) that used to disarm the
+   * oscillation detector exactly when oscillation turned lethal. */
+  function hurt(): { ctx: BorgContext; flow: ReturnType<typeof createFlowState> } {
+    const ctx = corridor();
+    ctx.world.self.trait[BI.CURHP] = 6;
+    ctx.world.self.trait[BI.MAXHP] = 23;
+    const flow = makeFlowState();
+    return { ctx, flow };
+  }
+
+  it("refuses the bounced grid below the old health gate", () => {
+    const { ctx, flow } = hurt();
+    /* The oscillation trail, track_step's exact signature: stood at (9,3)
+     * two steps ago and back at (10,3) three steps ago. */
+    flow.step.add(3, 10);
+    flow.step.add(3, 9);
+    flow.step.add(3, 10);
+    /* Before B32: the health gate disarmed the detector and the west grid
+     * was re-taken forever. */
+    expect(borgCaution(ctx, flow)).toBeNull();
+  });
+
+  it("still takes the west grid when the trail shows no oscillation", () => {
+    const { ctx, flow } = hurt();
+    flow.step.add(3, 10);
+    flow.step.add(3, 10);
+    flow.step.add(3, 10);
+    const cmd = borgCaution(ctx, flow);
+    expect(cmd?.code).toBe("walk");
+    expect(cmd?.dir).toBe(4);
   });
 });

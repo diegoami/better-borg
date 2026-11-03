@@ -6,6 +6,34 @@ matching git tag that an install pins itself to.
 
 ## Unreleased
 
+- [Visible] **Caution vs attack: the one-hit blocker and the bounce
+  guard** (#32; both diagnosed halves verified FAITHFUL to 4.2.6 - C lines
+  in docs/tasks/B32.md - so both changes are fork choices, marked at their
+  source; the reach-rate at the default stage c2d1 moved **50% → 75%**).
+  Three changes: (1) back-away yields to the attack stage when an
+  adjacent, currently-seen monster would die to ONE average thrust (the
+  chooser's own idiom, `d >= kill->power`, borg-fight-attack.c:1330 -
+  attacking the blocker IS the retreat); the appraisal changes no command,
+  it only stops back-away from pre-empting the chooser, and it stays out of
+  afraid and confused postures where the chooser could not thrust anyway.
+  (2) The bounce guard's health gate (`CURHP >= MAXHP*7/10`,
+  borg-caution.c:1725) is dropped: an oscillating grid is refused at ANY
+  health - upstream's gate disarmed oscillation detection exactly when
+  oscillation turned lethal (the seed-34 grey-mold death looped on it).
+  (3) DEFECT toward the C: `track_step` was never written anywhere in the
+  port, so the bounce guard (and the happy-grid recently-stepped check)
+  read an empty track at any health; restored verbatim after every map
+  update (borg-update.c:2466-2475, compact-at-75). Also fixed: the
+  postmortem dossier's fixed 33x17 window crashed rendering a boundary
+  near the level edge (knownFeat indexes without a bounds check) - found
+  by the seed-34 replay the moment the fixed borg stood where the recorded
+  run never did; diverged replays write their dossiers again (B29's
+  semantic choice 5). The measurement is
+  docs/runs/2026-11-03-b32-stage-c2d1/: seed 34's grey-mold death became
+  a stage retirement (the unit case), seed 20's floating-eye oscillation
+  (same family) became a later death at depth 2, seed 49 byte-identical;
+  the replay-exactness test rides the new record.
+
 - [Visible] **The uncertainty journal: the Borg knows its own doubts** (#27,
   phase 1 as scoped by the owner 2026-11-03; the question and demonstration
   phases are deferred). Two deterministic signals, always on, needing no

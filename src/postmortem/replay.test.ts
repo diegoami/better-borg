@@ -3,11 +3,11 @@
  * dead run, replayed, must reproduce the recorded death line EXACTLY.
  *
  * The determinism contract is only a contract if something fails when it
- * breaks. This test replays the stage baseline's grey-mold death (seed 34 -
- * the same run the committed example diagnosis under
- * docs/runs/2026-11-03-stage-baseline-c2d1/postmortem/ was written from)
- * from the record's own facts: same seed, same planned birth, the same
- * observing controller, the same drive. It asserts:
+ * breaks. This test replays the CURRENT stage baseline's dead run (seed 20
+ * - the same run the committed dossiers under
+ * docs/runs/2026-11-03-b32-stage-c2d1/postmortem/ were written from) from
+ * the record's own facts: same seed, same planned birth, the same observing
+ * controller, the same drive. It asserts:
  *
  *   - the replayed death line equals the record's: cause, turn, decisions,
  *     and the WHOLE command census (the census/turn stamps match the record);
@@ -19,6 +19,13 @@
  * A change to the decision code, the engine pin, or the content pack that
  * moves ANY recorded decision lands here as a red exactness - which is the
  * point: the record, the replay and the dossier ladder stay one story.
+ * That is also this test's lifecycle: the record it points at is the
+ * CURRENT baseline, and a deliberate behaviour change retires the previous
+ * one (byte-immutable, rule 7) and re-points these constants - B32 did
+ * exactly that (the caution/attack fix moved seed 34 from a grey-mold
+ * death to a stage retirement and seed 20 to a later, different death, so
+ * the exactness rider moved from 2026-11-03-stage-baseline-c2d1's seed 34
+ * to this record's seed 20).
  *
  * Skips out loud without the game's checkout (the content pack is the
  * game's), exactly as the play suite does. Each driving test carries the
@@ -39,9 +46,10 @@ import type { DossierHeader } from "./dossier.js";
 const PACK_DIR = packRoot();
 const suite = PACK_DIR ? describe : describe.skip;
 
-/** The committed baseline record this test replays from. */
-const RECORD_DIR = "docs/runs/2026-11-03-stage-baseline-c2d1";
-const SEED = 34;
+/** The committed baseline record this test replays from (B32's baseline:
+ * the caution/attack fix's own session; its dead run is seed 20). */
+const RECORD_DIR = "docs/runs/2026-11-03-b32-stage-c2d1";
+const SEED = 20;
 
 interface RecordedRun {
   readonly seed: number;
@@ -100,7 +108,7 @@ function factsOf(run: RecordedRun, cap: number, stage: { clvl: number; depth: nu
 suite("the death replay (#29)", () => {
   const pack = PACK_DIR ? loadPack(PACK_DIR) : null;
 
-  it(`reproduces the baseline's recorded death line exactly (seed ${String(SEED)}, the grey mold)`, async () => {
+  it(`reproduces the baseline's recorded death line exactly (seed ${String(SEED)}, the grey mushroom patch)`, async () => {
     const { run, header } = recordedRun();
     const replay = await replayDeadRun(
       Core,
@@ -121,14 +129,14 @@ suite("the death replay (#29)", () => {
     expect(replay.verification.replayed.decisions).toBe(run.decisions);
     expect(replay.verification.replayed.commands).toEqual(run.commands);
     /* Every rung is accounted for: captured or MISSED. A rung is missed
-     * when a single decision (this record's killing decision spends the
-     * last 8 turns) crossed the rung's target whole - there was never a
-     * live moment at T-N to capture, and a post-mortem snapshot is not a
-     * release point. That is the honest set semantics, and the ladder
+     * when a single decision crosses the rung's target whole - there was
+     * never a live moment at T-N to capture, and a post-mortem snapshot is
+     * not a release point. That is the honest set semantics, and the ladder
      * README names it (`none`). NON-VACUITY: the widest rung must capture
-     * on this record (its target sits 20 turns before a death whose last
-     * decisions spend ~10 turns each, so a live boundary exists at it) -
-     * an empty rungs list here would mean the visit hook never fired. */
+     * on this record (its target sits 20 turns before a death whose
+     * decisions spend a handful of turns each, so a live boundary exists at
+     * it) - an empty rungs list here would mean the visit hook never
+     * fired. */
     expect(replay.rungs.length + replay.missed.length).toBe([...DEFAULT_OFFSETS].length);
     expect(replay.rungs.length).toBeGreaterThan(0);
     expect(replay.rungs.map((r) => r.offset)).toContain(20);

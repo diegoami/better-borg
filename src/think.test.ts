@@ -9,6 +9,7 @@
 import { describe, expect, it } from "vitest";
 import { FEAT } from "@rpgm-tools/neo-angband-core";
 import { createBorg } from "./controller.js";
+import { getThinkSession } from "./think-session.js";
 import { makeScenarioView, makeFakeActions } from "./harness.js";
 
 describe("borg_think dispatch", () => {
@@ -84,5 +85,52 @@ describe("ladder priorities", () => {
     world.self.goal.fleeing = true;
     const cmd = controller(view, makeFakeActions());
     expect(cmd).not.toBeNull();
+  });
+});
+
+/*
+ * track_step (borg-update.c:2466-2475, B32): the C records the stood-on grid
+ * into track_step after every map update, and the back-away bounce guard
+ * (caution.c:1725) plus borg_happy_grid's recently-stepped check read it. The
+ * port never wrote the track - both guards were reading an empty list, so the
+ * bounce guard could not fire at ANY health. Restored in the decide pass.
+ */
+describe("track_step (B32, borg-update.c:2466)", () => {
+  it("records the stood-on grid on every decide pass", () => {
+    const { world, controller } = createBorg();
+    controller(
+      makeScenarioView({ player: { grid: { x: 5, y: 5 }, depth: 2 } }),
+      makeFakeActions(),
+    );
+    const step = getThinkSession(world).flow.state.step;
+    expect(step.num).toBe(1);
+    expect(step.x[0]).toBe(5);
+    expect(step.y[0]).toBe(5);
+  });
+
+  it("compacts at 75 entries by shifting the oldest out, as the C does", () => {
+    const { world, controller } = createBorg();
+    for (let i = 0; i < 80; i++) {
+      controller(
+        makeScenarioView({ player: { grid: { x: 5, y: 5 }, depth: 2 } }),
+        makeFakeActions(),
+      );
+    }
+    const step = getThinkSession(world).flow.state.step;
+    expect(step.num).toBe(75);
+  });
+
+  it("wipes the track on a level change (the new-level reset, step 1b)", () => {
+    const { world, controller } = createBorg();
+    controller(
+      makeScenarioView({ player: { grid: { x: 5, y: 5 }, depth: 2 } }),
+      makeFakeActions(),
+    );
+    controller(
+      makeScenarioView({ player: { grid: { x: 5, y: 5 }, depth: 3 } }),
+      makeFakeActions(),
+    );
+    const step = getThinkSession(world).flow.state.step;
+    expect(step.num).toBe(1);
   });
 });

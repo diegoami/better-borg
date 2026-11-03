@@ -34,6 +34,7 @@ import {
   featIsShop,
 } from "../flow/flow-consts.js";
 import { distance } from "../danger/geometry.js";
+import { borgThrustDamageOne } from "./attack.js";
 import type { FlowState } from "../flow/flow.js";
 import { borgPrepLeaveLevelSpells } from "../flow/flow-stairs.js";
 import { borgRestock } from "../trait/prepared.js";
@@ -665,6 +666,34 @@ export function borgBackAway(
   if (trait(ctx, BI.ISCONFUSED)) return null;
   if (trait(ctx, BI.CURHP) >= 500) return null;
 
+  /* FORK (Mandos #32): the one-hit blocker. Upstream's ladder runs this
+   * back-away before the attack stage (borg-think-dungeon.c:1540 vs :1596),
+   * so while a back-away grid exists an adjacent monster that would die to
+   * ONE average thrust is never even offered to the attack chooser - the
+   * seed-34 death oscillated on exactly that (hurt heal-less warrior, 1-hp
+   * grey mold blocking the only stair, back-away/flow interlock to the
+   * death). The chooser's own numbers decide it (borg-fight-attack.c:1330
+   * "Extra 'bonus' if attack kills": d >= kill->power): d is the thrust
+   * estimate (borg_thrust_damage_one, attack.ts borgThrustDamageOne),
+   * kill.power the monster's CURRENT estimated hp (borg-flow-kill.c:171-173,
+   * the health-bar percent). When one average thrust clears the blocker,
+   * attacking it IS the retreat - it removes the danger back-away is
+   * fleeing and opens the grid the flow wants. This yields (null) so the
+   * ladder's own attack stage takes the thrust through its own gates; the
+   * two guards here mirror the chooser's hard early-outs (afraid, and the
+   * town-asleep skip, attack.ts auxThrust). */
+  if (!trait(ctx, BI.ISAFRAID) && !trait(ctx, BI.CRSFEAR)) {
+    for (const [i, kill] of ctx.world.kills.entries()) {
+      /* Current knowledge only, like the adjacent scan below. */
+      if (kill.when < ctx.world.clock - 2) continue;
+      /* Adjacent (Chebyshev distance 1) - a thrust's only range. */
+      if (distance(kill.pos.y, kill.pos.x, self.c.y, self.c.x) !== 1) continue;
+      if (!trait(ctx, BI.CDEPTH) && !kill.awake) continue;
+      const d = borgThrustDamageOne(ctx, i);
+      if (d > 0 && d >= kill.power) return null;
+    }
+  }
+
   let bI = -1;
   let bF = -1;
   /* Fake the danger up when surrounded so any step looks like an improvement. */
@@ -688,11 +717,19 @@ export function borgBackAway(
     if (ag.trap && !ag.glyph) break;
 
     /* Bounce detection: standing here two steps ago and there three steps ago
-     * is an oscillation, so refuse it while healthy. time_this_panel running
-     * long is the same signal by a different route. */
+     * is an oscillation, so refuse the grid. time_this_panel running long is
+     * the same signal by a different route.
+     *
+     * FORK (Mandos #32): upstream gates the bounce test on good health
+     * (borg-caution.c:1725 `CURHP >= MAXHP * 7 / 10`, its own comment
+     * "Try to avoid pillar dancing if at good health"), which DISARMS
+     * oscillation detection exactly when an oscillation turns lethal - below
+     * 70% hp the seed-34 death looped back-away/flow until the spores killed
+     * it. Re-armed at any health: the bounced grid is refused, so after one
+     * cycle the interlock exhausts it and the borg stands, re-routes, or
+     * fights instead of looping. */
     const st = flow.step;
     const bouncing =
-      trait(ctx, BI.CURHP) >= idiv(trait(ctx, BI.MAXHP) * 7, 10) &&
       st.num > 2 &&
       st.y[st.num - 2] === y &&
       st.x[st.num - 2] === x &&
