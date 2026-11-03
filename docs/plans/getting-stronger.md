@@ -1,8 +1,14 @@
 # Getting stronger - the roadmap
 
-The goal: **a Borg of any class that reaches deeper**, measured as median
-deepest depth over a fixed seed cohort. Three phases in dependency order, and
-one standing constraint that shapes all of them.
+The goal, redirected by the owner on 2026-11-03: **a Borg that helps with the
+grind.** It concentrates on reaching a chosen STAGE reliably — reach-rate over
+a fixed seed cohort replaces median deepest depth as the number — retires
+each successful run into a kept, loadable save (#25), climbs a ladder of
+stages by resuming from the previous stage's saves instead of re-grinding
+proven ground (#26), and treats the human as TRAINER: unsure decision points
+become questions, demonstration play is logged and fed back offline (#27).
+Reaching deeper survives as the ladder's axis. Three phases in dependency
+order, and one standing constraint that shapes all of them.
 
 ## The constraint: determinism (rule 5)
 

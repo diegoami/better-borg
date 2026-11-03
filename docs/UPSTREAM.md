@@ -19,9 +19,10 @@ Prior pass: 2026-11-02, same result.
 ## Ours, waiting upstream
 
 - **neo-angband#428** — the `noteSpot` engine gap (our B01; run record
-  `docs/runs/2026-11-02-door-close/`). Our PR offer stands; the local lab
-  branch and the patched-engine sweep variant carry us until a release.
-  Tracked in #13.
+  `docs/runs/2026-11-02-door-close/`). **PR #429 opened 2026-11-03** (one-line
+  `noteSpot` restore on the hook; trap 20/20, known suites 74/74, zero new
+  tsc errors, close 771→0). When a release carries it: drop the lab branch's
+  fix commit and raise the engine floor (§7). Tracked in #13.
 
 ## Touched by us, worth closing the loop
 
