@@ -50,6 +50,7 @@ const RUN_KEYS = [
   "stageAttained",
   "retired",
   "unsure",
+  "stopped",
   "meta",
 ] as const;
 
@@ -76,6 +77,7 @@ function fixtureRun(overrides: Partial<RunReport>): RunReport {
     stageAttained: false,
     retired: false,
     unsure: { total: 0, points: [] },
+    stopped: null,
     wallClockMs: 21094,
     ...overrides,
   };

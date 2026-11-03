@@ -213,6 +213,7 @@ const record = {
     stageAttained: life.stageAttained,
     retired: life.retired,
     unsure: { total: life.unsure.total, points: [...life.unsure.points] },
+    stopped: life.stopped,
     wallClockMs: life.wallClockMs,
   })),
 };
@@ -242,6 +243,6 @@ for (const life of session.lives) {
     `  seed ${String(life.seed).padStart(3)}  depth ${String(life.maxDepth).padStart(2)}  clvl ${String(life.clvl).padStart(2)}  ` +
       `decisions ${String(life.decisions).padStart(4)}  turns ${String(life.turns).padStart(6)}  kills ${String(life.kills).padStart(3)}  ` +
       `gold ${String(life.gold).padStart(5)}  ` +
-      `${life.retired ? "retired into the library" : life.stageAttained ? "attained (keep refused)" : life.dead ? `died to ${life.causeOfDeath ?? "?"}` : "survived its slice"}`,
+      `${life.retired ? "retired into the library" : life.stageAttained ? "attained (keep refused)" : life.dead ? `died to ${life.causeOfDeath ?? "?"}` : life.stopped !== null ? `STOPPED: ${life.stopped}` : "survived its slice"}`,
   );
 }

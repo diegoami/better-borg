@@ -108,6 +108,13 @@ interface RunEntry {
    * `unsure` key; a reader treats absence as `{ total: 0, points: [] }`.
    */
   unsure: { total: number; points: UnknownPoint[] };
+  /**
+   * #35, additive: why the Borg stopped playing before its budget ran out
+   * and without dying - the C's borg_oops (the Borg stops, borg_active
+   * false), taken as the end of the life - or null when it did not. Records
+   * before B35 carry no `stopped` key; a reader treats absence as null.
+   */
+  stopped: string | null;
   meta: { wallClockMs: number };
 }
 
@@ -169,6 +176,7 @@ function runEntry(run: RunReport): RunEntry {
         aim: point.aim === null ? null : { x: point.aim.x, y: point.aim.y },
       })),
     },
+    stopped: run.stopped,
     meta: { wallClockMs: run.wallClockMs },
   };
 }
@@ -261,6 +269,10 @@ export function buildSummary(record: SessionRecord): string {
   lines.push(`- ${String(deaths)} of ${String(record.runs.length)} runs died`);
   lines.push(`- mean turns: ${meanTurns.toFixed(0)}`);
   lines.push(`- kills: ${String(kills)}`);
+  const stopped = record.runs.filter((r) => r.stopped !== null);
+  if (stopped.length > 0) {
+    lines.push(`- ${String(stopped.length)} of ${String(record.runs.length)} runs STOPPED (the Borg yielded; #35): ${stopped.map((r) => `${String(r.seed)}.${String(r.life)} ${r.stopped ?? ""}`).join("; ")}`);
+  }
   lines.push(`- unsure points (#27): ${String(unsure)} across the cohort - decisions the Borg could not separate (attack-valuation ties) or made against terrain it had never seen`);
   if (record.runner.stage !== null) {
     const attained = record.runs.filter((r) => r.stageAttained).length;
