@@ -50,3 +50,9 @@
     what qualifies and how it is shaped.
 13. **A question is not a request to edit files.** Answer it; propose any
     fix and wait (the rule the owner's other projects carry).
+14. **No AI-attribution trailer, ever** (owner, 2026-11-04; upstream's own
+    policy). No commit message or PR body carries a "Co-Authored-By:
+    Claude" line or a "Generated with Claude Code" footer - here, in our
+    forks, or upstream. AI use is disclosed in one place,
+    `AI_USAGE_POLICY.md`. The `commit-msg` hook (process section 1's
+    `core.hooksPath`) refuses such a message.
