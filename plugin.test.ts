@@ -176,8 +176,11 @@ describe("the built plugin.js", () => {
      * retirements wait a microtask each for their subscription handles to
      * settle, so both land after the message listener. Which of the two
      * lands first is not a property anything depends on, so the assertion is
-     * the set: all four gone, nothing else touched. */
-    expect([...game.unsubscribed].sort()).toEqual(["dungeonlevel", "message", "player-command", "run-end"]);
+     * the set: all four gone, nothing else touched. The fifth unsubscribe is
+     * #28's inventory ledger, which holds its OWN "message" listener beside
+     * the feed's (the feed drains for the Borg's perceive; the ledger only
+     * reads) and retires with the rest. */
+    expect([...game.unsubscribed].sort()).toEqual(["dungeonlevel", "message", "message", "player-command", "run-end"]);
   });
 
   it("restarts its dead character through the roster seam, once, flagged first", async () => {

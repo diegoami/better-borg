@@ -108,6 +108,14 @@ interface RunEntry {
    * `unsure` key; a reader treats absence as `{ total: 0, points: [] }`.
    */
   unsure: { total: number; points: UnknownPoint[] };
+  /**
+   * #28, additive: the inventory ledger - how many discard moments the run
+   * produced (pack under capacity pressure + an item leaving by the Borg's
+   * own command) and the bounded tail of the moments themselves. Records
+   * before B28 carry no `inventory` key; a reader treats absence as
+   * `{ total: 0, moments: [] }`.
+   */
+  inventory: { total: number; moments: UnknownDiscard[] };
   meta: { wallClockMs: number };
 }
 
@@ -121,6 +129,20 @@ interface UnknownPoint {
   chosen: string;
   candidates: { method: string; score: number }[];
   aim: { x: number; y: number } | null;
+}
+
+/** One journaled discard moment as runs.json carries it (the raw shape, verbatim). */
+interface UnknownDiscard {
+  turn: number;
+  depth: number;
+  way: string;
+  command: string;
+  slotsUsed: number;
+  packSize: number;
+  left: { handle: number; desc: string; kind: string; tval: number; sval: number; number: number; value: number | null };
+  gone: number;
+  stayed: Array<{ handle: number; desc: string; kind: string; tval: number; sval: number; number: number; value: number | null }>;
+  said: string[];
 }
 
 /** The runs.json document (key order fixed: it is a record, and diffable). */
@@ -167,6 +189,21 @@ function runEntry(run: RunReport): RunEntry {
         chosen: point.chosen,
         candidates: point.candidates.map((one) => ({ method: one.method, score: one.score })),
         aim: point.aim === null ? null : { x: point.aim.x, y: point.aim.y },
+      })),
+    },
+    inventory: {
+      total: run.inventory.total,
+      moments: run.inventory.moments.map((moment) => ({
+        turn: moment.turn,
+        depth: moment.depth,
+        way: moment.way,
+        command: moment.command,
+        slotsUsed: moment.slotsUsed,
+        packSize: moment.packSize,
+        left: { ...moment.left },
+        gone: moment.gone,
+        stayed: moment.stayed.map((row) => ({ ...row })),
+        said: [...moment.said],
       })),
     },
     meta: { wallClockMs: run.wallClockMs },
@@ -255,6 +292,7 @@ export function buildSummary(record: SessionRecord): string {
     depths.length > 0 ? depths.reduce((a, b) => a + b, 0) / depths.length : 0;
   const kills = record.runs.reduce((a, r) => a + r.kills, 0);
   const unsure = record.runs.reduce((a, r) => a + r.unsure.total, 0);
+  const discards = record.runs.reduce((a, r) => a + r.inventory.total, 0);
   lines.push(`- runs: ${String(record.runs.length)}`);
   lines.push(`- median maxDepth: ${String(median(depths))}`);
   lines.push(`- mean maxDepth: ${meanDepth.toFixed(2)}`);
@@ -262,6 +300,7 @@ export function buildSummary(record: SessionRecord): string {
   lines.push(`- mean turns: ${meanTurns.toFixed(0)}`);
   lines.push(`- kills: ${String(kills)}`);
   lines.push(`- unsure points (#27): ${String(unsure)} across the cohort - decisions the Borg could not separate (attack-valuation ties) or made against terrain it had never seen`);
+  lines.push(`- discard moments (#28): ${String(discards)} across the cohort - items the Borg gave up (dropped, sold, or stashed) with the pack under capacity pressure`);
   if (record.runner.stage !== null) {
     const attained = record.runs.filter((r) => r.stageAttained).length;
     const stage = record.runner.stage;
