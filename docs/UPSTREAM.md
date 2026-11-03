@@ -23,6 +23,12 @@ Prior pass: 2026-11-02, same result.
   `noteSpot` restore on the hook; trap 20/20, known suites 74/74, zero new
   tsc errors, close 771→0). When a release carries it: drop the lab branch's
   fix commit and raise the engine floor (§7). Tracked in #13.
+- **neo-angband#430** — `ModSaves.load` cannot resume a mod's controller (the
+  arming gate requires a fresh birth). Filed 2026-11-03 after a clean
+  dupe-check: proposal `load(id, {resumeAutoplay})` after `create`'s exact
+  precedent and consent pattern. Gates the unattended half of our stage
+  ladder (#26); attended reuse (load + Ctrl-Z) works today. A `copy`/snapshot
+  seam is noted there as a possible separate follow-up.
 
 ## Touched by us, worth closing the loop
 
