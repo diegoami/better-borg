@@ -11,7 +11,9 @@ Code, others):
   the no-N-forks doctrine, docs/process.md section 2).
 - **Rules**: [`CLAUDE.md`](CLAUDE.md), numbered and cited as "rule n".
 - **Process**: [`docs/process.md`](docs/process.md): the loop, records,
-  milestones, and the pack doctrine (what lives in the core vs in a strategy
+  milestones, and the pack doctrine. Before upstream work: run
+  `node tools/upstream-watch.mjs` - movement on our threads means engage;
+  silence means carry in the fork (what lives in the core vs in a strategy
   pack under `src/class/`, and the upstream cherry-pick protocol).
 - **Tasks**: [`docs/tasks/README.md`](docs/tasks/README.md); the issue's
   `status:*` label is the status.

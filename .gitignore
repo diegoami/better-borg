@@ -7,3 +7,6 @@ package-lock.json
 
 # Run by-products that are too bulky for git (rule 8)
 artifacts/
+
+# the upstream watch's local baseline (tools/upstream-watch.mjs)
+.upstream-watch.json

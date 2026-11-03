@@ -110,6 +110,14 @@ different thing entirely: never pushed, deleted when a fixed release lands.
 Cadence: a sync pass at every milestone close, plus ad hoc whenever an
 upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
 
+0. **The upstream watch** (`node tools/upstream-watch.mjs`, owner routine
+   2026-11-03): the state of every thread we hold upstream, with what MOVED
+   since the last look. Movement on our threads means the maintainer is
+   processing us - engage in the same pass (address feedback, answer
+   questions) and upstream work continues beside the fork; silence means
+   carry in the fork per the doctrine. Run it before any upstream work, not
+   just at sync passes; `--reset` re-baselines.
+
 1. `git fetch upstream` in each pristine checkout; compare our pins (the mod
    import boundary, and the engine floor in `package.json`) against
    `upstream/master`. Zero ahead = nothing to adopt (2026-11-02: both
