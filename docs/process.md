@@ -182,7 +182,8 @@ crash, 1x usage limit - and committed state saved the work every time):
 - One background agent or heavy run at a time (WSL crashed twice under
   memory pressure).
 - Determinism (rule 5) and immutable records (rule 8, additive fields only).
-- The sole tolerated red: the seed-1 door-close (771/1500, upstream #428).
+- No tolerated red: the seed-1 door-close (upstream #428) is green since B40
+  carried #429 (`29efa52`). Any red is a defect (rule 11).
 - Merge gates, main session only: fast loop, full verify, a hand-run
   mutation, `pnpm check`, the engine fingerprint -> squash-merge, close the
   issue with the verification record, delete the branch.

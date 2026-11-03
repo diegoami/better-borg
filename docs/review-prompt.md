@@ -58,8 +58,9 @@ Check, in this order:
    you checked (a hand-run mutation is the proof).
 7. Scope (rule 9): every changed file is one the task needs; documents the
    change makes wrong are updated.
-8. Gates: engine fingerprint (process.md section 1), `pnpm verify` with the
-   seed-1 door-close as the only tolerated red.
+8. Gates: engine fingerprint (process.md section 1), `pnpm verify` fully
+   green (no tolerated red since B40), and the play suite actually RUN, not
+   skipped (`src/play.test.ts` needs the content pack - #46).
 
 Comment on issue #<n>:
   gh issue comment <n> --repo diegoami/mandos --body-file <file>
