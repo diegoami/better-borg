@@ -21,6 +21,9 @@
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const REPO_ROOT = resolve(fileURLToPath(new URL("./", import.meta.url)), "..");
 
 const USAGE = `usage: node tools/inventory-export.mjs <record-dir> [--out <file>]
 
@@ -52,6 +55,17 @@ if (!existsSync(runsPath)) fail(`no runs.json in ${dir} - is that a session dire
 
 /** The record's own raw facts, read once. */
 const record = JSON.parse(readFileSync(runsPath, "utf8"));
+
+/**
+ * One exported constant, read from the source that defines it - the
+ * definition the page shows is the implemented one, never a copy here.
+ */
+function sourceConstant(file, name) {
+  const text = readFileSync(join(REPO_ROOT, file), "utf8");
+  const found = new RegExp(`export const ${name} = (\\d+);`).exec(text);
+  if (found === null) fail(`could not read ${name} from ${file}`);
+  return Number(found[1]);
+}
 
 /* --- the projection ------------------------------------------------------ */
 
@@ -89,8 +103,8 @@ const doc = {
    * page shows the threshold beside every moment, from here - never its
    * own copy, which would drift. */
   definition: {
-    packSize: 23,
-    pressureFreeSlots: 2,
+    packSize: sourceConstant("src/store/store.ts", "PACK_SIZE"),
+    pressureFreeSlots: sourceConstant("src/inventory.ts", "PRESSURE_FREE_SLOTS"),
     ways: ["drop", "sell", "stash"],
     said: "the message lines the game printed while the discard command ran, oldest first",
   },

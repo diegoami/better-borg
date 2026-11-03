@@ -178,8 +178,8 @@ interface LifeObservation {
    * exactly what it was.
    */
   readonly inventory: {
-    total: number;
-    moments: DiscardMoment[];
+    readonly total: number;
+    readonly moments: DiscardMoment[];
   };
   /** Arm the Borg for the next decision (the host's latch, main.ts). */
   arm(): void;
@@ -355,7 +355,16 @@ export function observingLife(
     places,
     depths,
     unsure,
-    inventory: { total: inventory.total, moments: [...inventory.moments] },
+    /* Live reads, not a copy: this object is built at install, before the
+     * first decision, so a snapshot here would always be the empty ledger. */
+    inventory: {
+      get total(): number {
+        return inventory.total;
+      },
+      get moments(): DiscardMoment[] {
+        return [...inventory.moments];
+      },
+    },
     get restedBesideMonster(): number {
       return restedBesideMonster;
     },
