@@ -16,6 +16,12 @@ provenance - C design (faithful) / inherited port defect (at the import
 boundary `70145c5`, neostryder's) / our defect / engine gap. Everything else
 comes later. Nothing may force warrior play.
 
+**Stability and bug fixing always come first, upstream above all** (owner
+rule, 2026-11-03): a crash, a harness failure or a defect in the borg or the
+engine preempts any feature work in flight - park the feature, chase the bug.
+Features (e.g. #28 inventory review) are nice-to-have and re-queue behind
+every open defect.
+
 **Dispatch nothing without the owner's "go".** Model choice on this project:
 the owner picks; for reviews, hand the owner a ready-to-paste prompt, don't
 dispatch one.
