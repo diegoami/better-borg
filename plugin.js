@@ -16969,6 +16969,7 @@ function createTick(bridge2, borg) {
     idle = 0;
     const unsure = borg.trainer?.assess(world, command) ?? null;
     if (unsure !== null) borg.trainer?.note(unsure);
+    borg.inventory?.observe(world, command);
     const scene = sceneOf(world);
     const key = JSON.stringify(command);
     stalls = scene === lastScene && key === lastCommand ? stalls + 1 : 0;
@@ -17420,16 +17421,128 @@ function packForClassValue(stored) {
   return PACKS[snapped] ?? PACKS[CLASS_SETTING.default];
 }
 
+// src/inventory.ts
+var PRESSURE_FREE_SLOTS = 2;
+var MAX_MOMENTS_KEPT = 200;
+var MAX_SAID_KEPT = 8;
+function underPressure(slotsUsed) {
+  return slotsUsed >= PACK_SIZE - PRESSURE_FREE_SLOTS;
+}
+function discardWayOf(command) {
+  if (command.code === "drop" || command.code === "destroy") return "drop";
+  if (command.code === "shop-sell") return command.shop === BORG_HOME ? "stash" : "sell";
+  return null;
+}
+function kindLabel(tval) {
+  for (const [name, value] of Object.entries(TV)) {
+    if (value === tval) return name.toLowerCase();
+  }
+  return `tval${String(tval)}`;
+}
+function inventoryLedger() {
+  let pending = null;
+  const moments = [];
+  let total = 0;
+  return {
+    get total() {
+      return total;
+    },
+    get moments() {
+      return moments;
+    },
+    observe(rows, command, stamp, said) {
+      let moment = null;
+      const was = pending;
+      if (was !== null) {
+        const way = discardWayOf(was.command);
+        const handle = was.command.handle;
+        if (way !== null && handle !== null) {
+          const before = was.rows.find((row) => row.handle === handle);
+          if (before !== void 0 && underPressure(was.rows.length)) {
+            const after = rows.find((row) => row.handle === handle);
+            const gone = after === void 0 ? before.number : before.number - after.number;
+            if (gone > 0) {
+              moment = {
+                turn: was.stamp.turn,
+                depth: was.stamp.depth,
+                way,
+                command: was.command.code,
+                slotsUsed: was.rows.length,
+                packSize: PACK_SIZE,
+                left: before,
+                gone,
+                stayed: [...rows],
+                said: said.slice(-MAX_SAID_KEPT)
+              };
+              total += 1;
+              moments.push(moment);
+              if (moments.length > MAX_MOMENTS_KEPT) moments.shift();
+            }
+          }
+        }
+      }
+      pending = { rows: [...rows], command, stamp };
+      return moment;
+    }
+  };
+}
+var isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+var numberOr = (value) => typeof value === "number" && Number.isFinite(value) ? value : null;
+function rowOf(value) {
+  if (!isObject(value)) return null;
+  const handle = numberOr(value["handle"]);
+  const tval = numberOr(value["tval"]);
+  const sval = numberOr(value["sval"]);
+  const number = numberOr(value["number"]);
+  if (handle === null || tval === null || sval === null || number === null) return null;
+  if (typeof value["desc"] !== "string" || typeof value["kind"] !== "string") return null;
+  const price = value["value"];
+  return {
+    handle,
+    desc: value["desc"],
+    kind: value["kind"],
+    tval,
+    sval,
+    number,
+    value: price === null ? null : numberOr(price)
+  };
+}
+function readDiscardMoment(value) {
+  if (!isObject(value)) return null;
+  const way = value["way"];
+  if (way !== "drop" && way !== "sell" && way !== "stash") return null;
+  const turn = numberOr(value["turn"]);
+  const depth = numberOr(value["depth"]);
+  const slotsUsed = numberOr(value["slotsUsed"]);
+  const packSize2 = numberOr(value["packSize"]);
+  const gone = numberOr(value["gone"]);
+  if (turn === null || depth === null || slotsUsed === null || packSize2 === null || gone === null || gone < 1) return null;
+  if (typeof value["command"] !== "string") return null;
+  const left = rowOf(value["left"]);
+  if (left === null) return null;
+  const stayedRaw = value["stayed"];
+  if (!Array.isArray(stayedRaw)) return null;
+  const stayed = [];
+  for (const one of stayedRaw) {
+    const row = rowOf(one);
+    if (row === null) return null;
+    stayed.push(row);
+  }
+  const saidRaw = value["said"];
+  if (!Array.isArray(saidRaw) || saidRaw.some((line) => typeof line !== "string")) return null;
+  return { turn, depth, way, command: value["command"], slotsUsed, packSize: packSize2, left, gone, stayed, said: [...saidRaw] };
+}
+
 // src/records/journal.ts
 var JOURNAL_FORMAT = 1;
 var GRAVEYARD_KEY = "graveyard";
-var isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
-var numberOr = (value, fallback) => typeof value === "number" && Number.isFinite(value) ? value : fallback;
+var isObject2 = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+var numberOr2 = (value, fallback) => typeof value === "number" && Number.isFinite(value) ? value : fallback;
 var numberArrayOr = (value) => Array.isArray(value) && value.every((entry) => typeof entry === "number" && Number.isFinite(entry)) ? [...value] : null;
 function milestoneOf(value) {
-  if (!isObject(value)) return null;
-  const depth = numberOr(value["depth"], Number.NaN);
-  const levelId = numberOr(value["levelId"], Number.NaN);
+  if (!isObject2(value)) return null;
+  const depth = numberOr2(value["depth"], Number.NaN);
+  const levelId = numberOr2(value["levelId"], Number.NaN);
   const cause = value["cause"];
   if (depth === null || Number.isNaN(depth) || levelId === null || Number.isNaN(levelId)) return null;
   if (cause !== "new-game" && cause !== "load" && cause !== "change") return null;
@@ -17438,12 +17551,12 @@ function milestoneOf(value) {
     levelId,
     cause,
     arena: value["arena"] === true,
-    level: numberOr(value["level"], null),
-    turn: numberOr(value["turn"], null)
+    level: numberOr2(value["level"], null),
+    turn: numberOr2(value["turn"], null)
   };
 }
 function entryOf(value) {
-  if (!isObject(value)) return null;
+  if (!isObject2(value)) return null;
   const outcome = value["outcome"];
   if (outcome !== "death" && outcome !== "winner" && outcome !== "retired") return null;
   const cause = value["cause"];
@@ -17458,15 +17571,15 @@ function entryOf(value) {
     race: typeof race === "string" ? race : null,
     class: typeof cls === "string" ? cls : null,
     baseStats: numberArrayOr(value["baseStats"]),
-    maxDepth: numberOr(value["maxDepth"], null),
-    level: numberOr(value["level"], null),
-    gold: numberOr(value["gold"], null),
-    turn: numberOr(value["turn"], null),
-    score: numberOr(value["score"], null)
+    maxDepth: numberOr2(value["maxDepth"], null),
+    level: numberOr2(value["level"], null),
+    gold: numberOr2(value["gold"], null),
+    turn: numberOr2(value["turn"], null),
+    score: numberOr2(value["score"], null)
   };
 }
 function parseJournal(value) {
-  if (value === null || !isObject(value) || value["journal"] !== JOURNAL_FORMAT) return null;
+  if (value === null || !isObject2(value) || value["journal"] !== JOURNAL_FORMAT) return null;
   const milestones = Array.isArray(value["milestones"]) ? value["milestones"].map(milestoneOf).filter((entry) => entry !== null) : [];
   return { journal: JOURNAL_FORMAT, milestones };
 }
@@ -17484,29 +17597,49 @@ function storeJournal(data) {
   };
 }
 function archivedRunOf(value) {
-  if (!isObject(value)) return null;
+  if (!isObject2(value)) return null;
   const entry = entryOf(value);
   if (entry === null) return null;
   const run = value["run"];
   const unsure = unsureOf(value["unsure"]);
-  return { ...entry, run: typeof run === "string" ? run : null, ...unsure === null ? {} : { unsure } };
+  const inventory = inventoryOf(value["inventory"]);
+  return {
+    ...entry,
+    run: typeof run === "string" ? run : null,
+    ...unsure === null ? {} : { unsure },
+    ...inventory === null ? {} : { inventory }
+  };
+}
+function inventoryOf(value) {
+  if (value === void 0 || !isObject2(value)) return null;
+  const total = value["total"];
+  if (typeof total !== "number" || !Number.isFinite(total) || total < 0) return null;
+  const raw = value["moments"];
+  if (!Array.isArray(raw)) return null;
+  const moments = [];
+  for (const one of raw) {
+    const moment = readDiscardMoment(one);
+    if (moment === null) return null;
+    moments.push(moment);
+  }
+  return { total, moments };
 }
 function gridOf(value) {
   if (value === void 0) return void 0;
   if (value === null) return null;
-  if (!isObject(value) || typeof value["x"] !== "number" || typeof value["y"] !== "number") return INVALID;
+  if (!isObject2(value) || typeof value["x"] !== "number" || typeof value["y"] !== "number") return INVALID;
   return { x: value["x"], y: value["y"] };
 }
 var INVALID = { x: Number.NaN, y: Number.NaN };
 function unsureOf(value) {
-  if (value === void 0 || !isObject(value)) return null;
+  if (value === void 0 || !isObject2(value)) return null;
   const total = value["total"];
   if (typeof total !== "number" || !Number.isFinite(total) || total < 0) return null;
   const raw = value["points"];
   if (!Array.isArray(raw)) return null;
   const points = [];
   for (const point of raw) {
-    if (!isObject(point)) return null;
+    if (!isObject2(point)) return null;
     const kind = point["kind"];
     if (kind !== "valuation-tie" && kind !== "known-world-gap") return null;
     const turn = point["turn"];
@@ -17522,7 +17655,7 @@ function unsureOf(value) {
     if (!Array.isArray(candidates)) return null;
     const read = [];
     for (const one of candidates) {
-      if (!isObject(one) || typeof one["method"] !== "string" || typeof one["score"] !== "number") return null;
+      if (!isObject2(one) || typeof one["method"] !== "string" || typeof one["score"] !== "number") return null;
       read.push({ method: one["method"], score: one["score"] });
     }
     points.push({ kind, turn, depth, hp, chosen, at, candidates: read, aim: aim ?? null });
@@ -17530,7 +17663,7 @@ function unsureOf(value) {
   return { total, points };
 }
 function parseGraveyardArchive(value) {
-  if (value === null || !isObject(value) || value["journal"] !== JOURNAL_FORMAT) return null;
+  if (value === null || !isObject2(value) || value["journal"] !== JOURNAL_FORMAT) return null;
   const runs = Array.isArray(value["runs"]) ? value["runs"].map(archivedRunOf).filter((run) => run !== null) : [];
   return { journal: JOURNAL_FORMAT, runs };
 }
@@ -17555,7 +17688,35 @@ function storeArchiveRun(run) {
       }))
     };
   }
+  if (run.inventory !== void 0) {
+    stored["inventory"] = {
+      total: run.inventory.total,
+      moments: run.inventory.moments.map((moment) => ({
+        turn: moment.turn,
+        depth: moment.depth,
+        way: moment.way,
+        command: moment.command,
+        slotsUsed: moment.slotsUsed,
+        packSize: moment.packSize,
+        left: storeLedgerRow(moment.left),
+        gone: moment.gone,
+        stayed: moment.stayed.map(storeLedgerRow),
+        said: [...moment.said]
+      }))
+    };
+  }
   return stored;
+}
+function storeLedgerRow(row) {
+  return {
+    handle: row.handle,
+    desc: row.desc,
+    kind: row.kind,
+    tval: row.tval,
+    sval: row.sval,
+    number: row.number,
+    value: row.value
+  };
 }
 async function readJournal(slot) {
   let read;
@@ -17649,7 +17810,8 @@ async function archiveFinishedRun(deps, report, dossier = {}) {
   const entry = {
     run: typeof report.key === "string" ? report.key : null,
     ...graveyardEntryOf(report),
-    ...dossier.unsure === void 0 ? {} : { unsure: dossier.unsure }
+    ...dossier.unsure === void 0 ? {} : { unsure: dossier.unsure },
+    ...dossier.inventory === void 0 ? {} : { inventory: dossier.inventory }
   };
   const runs = [...current.runs];
   const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);
@@ -18110,6 +18272,8 @@ var restartHandle;
 var journalHandle;
 var replayLogHandle = null;
 var replayLogOff = null;
+var inventoryLogHandle = null;
+var inventoryLogOff = null;
 var startEpoch = 0;
 async function begin(mod2) {
   const mine = startEpoch;
@@ -18205,15 +18369,16 @@ async function begin(mod2) {
     ownsKeyboard: () => mod2.act.controller.owns(),
     create: mod2.manage?.saves.create ?? null,
     events: mod2.events,
-    /* The graveyard write carries the ended run's uncertainty journal in the
-     * SAME archived entry (#27): where the run was unsure, beside the facts
-     * the report itself carries - the on-death report's "where I was not
-     * sure" half. Nothing journaled means no dossier: the entry keeps its
-     * pre-#27 shape. */
-    graveyard: (report) => journal.graveyard(
-      report,
-      unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {}
-    ),
+    /* The graveyard write carries the ended run's uncertainty journal AND
+     * inventory ledger in the SAME archived entry (#27, #28): where the run
+     * was unsure and what it chose to keep when the pack was too full -
+     * beside the facts the report itself carries. Nothing journaled means
+     * no dossier: the entry keeps its pre-#27 shape. The closure runs at
+     * report time, long after the collectors below are initialized. */
+    graveyard: (report) => journal.graveyard(report, {
+      ...unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {},
+      ...inventory.total > 0 ? { inventory: { total: inventory.total, moments: [...inventory.moments] } } : {}
+    }),
     save: mod2.manage?.session?.save ?? null,
     listSaves: mod2.manage?.saves.list ?? null,
     rename: mod2.manage?.saves.rename ?? null
@@ -18225,6 +18390,40 @@ async function begin(mod2) {
       unsure.total += 1;
       unsure.points.push(point);
       if (unsure.points.length > MAX_UNSURE_KEPT) unsure.points.shift();
+    }
+  };
+  const inventory = inventoryLedger();
+  const saidRing = [];
+  let saidCount = 0;
+  let saidMark = 0;
+  const SAID_RING = 32;
+  const saidWindow = () => {
+    const fresh = saidCount - saidMark;
+    saidMark = saidCount;
+    return fresh <= 0 ? [] : saidRing.slice(-Math.min(fresh, saidRing.length));
+  };
+  const inventoryRail = {
+    observe: (world, command) => {
+      const rows = world.view.inventory().map((item) => ({
+        handle: item.handle,
+        desc: item.name ?? item.label,
+        kind: kindLabel(item.tval),
+        tval: item.tval,
+        sval: item.sval,
+        number: item.number,
+        value: item.value ?? null
+      }));
+      const handle = command.args?.handle;
+      inventory.observe(
+        rows,
+        {
+          code: command.code,
+          handle: typeof handle === "number" ? handle : null,
+          shop: world.facts.shopnum
+        },
+        { turn: world.view.turn(), depth: world.view.player().depth },
+        saidWindow()
+      );
     }
   };
   let attainmentSeen = false;
@@ -18278,11 +18477,25 @@ async function begin(mod2) {
       `the Borg cannot log the replayed commands (${replayLog.message}); the release still works, the demonstration log does not`
     );
   }
+  if (inventoryLogHandle !== null && inventoryLogOff !== null) {
+    const held = inventoryLogHandle;
+    inventoryLogHandle = null;
+    await inventoryLogOff(held).catch(() => void 0);
+  }
+  inventoryLogOff = mod2.events.off;
+  const inventoryLog = await mod2.events.on("message", (event) => {
+    saidCount += 1;
+    saidRing.push(event.text);
+    if (saidRing.length > SAID_RING) saidRing.shift();
+  });
+  if (inventoryLog.ok) {
+    inventoryLogHandle = inventoryLog.value;
+  }
   void restartHandle?.stop();
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail, inventory: inventoryRail }), restart, journal };
 }
 var definition = {
   api: ">=2.0.0 <3.0.0",
@@ -18334,6 +18547,11 @@ var definition = {
     replayLogHandle = null;
     replayLogOff = null;
     if (replayLog !== null && replayOff !== null) void replayOff(replayLog).catch(() => void 0);
+    const inventoryLog = inventoryLogHandle;
+    const inventoryOff = inventoryLogOff;
+    inventoryLogHandle = null;
+    inventoryLogOff = null;
+    if (inventoryLog !== null && inventoryOff !== null) void inventoryOff(inventoryLog).catch(() => void 0);
     void held?.dispose();
   },
   /* Offer to play only when this character was handed to an autoplayer before or was armed from the title row. Returning false is the normal case: the mod is installed and enabled, and this character has never been handed over, so the human keeps the keyboard. */

@@ -117,6 +117,19 @@ export interface Decider {
     assess(world: World, command: AgentCommand): UnsurePoint | null;
     note(point: UnsurePoint): void;
   };
+  /**
+   * THE INVENTORY LEDGER RAIL (#28): one observation per wait, after the
+   * command is final and before anything is submitted. `observe` receives
+   * the SAME world the decision read - whose pack is the PREVIOUS command's
+   * result - and the command this wait is about to carry, so the wiring can
+   * diff consecutive packs and journal the discard moments the issue
+   * defines (src/inventory.ts). Observation-only: the rail may read the
+   * world, never move it. Not asked at a prompt, a foreign phase, or an
+   * idle wait (no command, no discard to attribute).
+   */
+  readonly inventory?: {
+    observe(world: World, command: AgentCommand): void;
+  };
 }
 
 /** What a command's aim is, for the commands that name a direction. */
@@ -202,6 +215,12 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
      * the point but the journal. */
     const unsure = borg.trainer?.assess(world, command) ?? null;
     if (unsure !== null) borg.trainer?.note(unsure);
+
+    /* The inventory ledger (#28), the same standing: one observation per
+     * wait, the pack the previous command left and the command about to
+     * run - the diff that turns two pack snapshots into a discard moment
+     * is the wiring's (src/inventory.ts), and it only reads. */
+    borg.inventory?.observe(world, command);
 
     /* The same command against the same scene, again and again, is a command the
      * game takes and does nothing with. */
