@@ -36,6 +36,13 @@ export interface SweepArgs {
   seeds: number[];
   lives: number;
   decisions: number;
+  /**
+   * The stage this sweep ground toward (#25), or null for none: with a
+   * stage, an attained life ends there and its run records
+   * `stageAttained` - the reach-rate's y/n. The stock driver keeps no
+   * saves (measurement only); the pack runner keeps the library.
+   */
+  stage: { clvl: number; depth: number } | null;
   /** Absolute directory for this session's record (the shim checked it is fresh). */
   dir: string;
   /**
@@ -79,6 +86,7 @@ export function runSweep(args: SweepArgs): SweepResult {
       seed,
       decisions: args.decisions,
       lives: args.lives,
+      ...(args.stage === null ? {} : { stage: args.stage }),
     });
     for (const run of session.runs) {
       /* Progress, one line per life: the cohort is minutes of compute, and a
@@ -88,7 +96,8 @@ export function runSweep(args: SweepArgs): SweepResult {
         `[sweep] seed ${String(seed)} life ${String(run.life)}: ` +
           `${String(run.decisions)} decisions, turns ${String(run.turns)}, ` +
           `maxDepth ${String(run.maxDepth)}, clvl ${String(run.clvl)}, ` +
-          `kills ${String(run.kills)}, ${run.dead ? `died (${run.causeOfDeath ?? "?"})` : "alive"}, ` +
+          `kills ${String(run.kills)}, ${run.dead ? `died (${run.causeOfDeath ?? "?"})` : "alive"}` +
+          `${run.stageAttained ? `, ATTAINED the stage` : ""}, ` +
           `top command ${top ? `${top[0]} x${String(top[1])}` : "-"}`,
       );
       runs.push(run);
@@ -102,6 +111,7 @@ export function runSweep(args: SweepArgs): SweepResult {
       decisions: args.decisions,
       seeds: args.seeds,
       lives: args.lives,
+      stage: args.stage,
     },
     build: args.build,
     recorded: args.recorded,

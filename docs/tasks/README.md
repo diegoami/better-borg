@@ -14,6 +14,7 @@ muscle.
 | [B02](B02.md) | The bake-off runner (measurement instrument, then fitness evaluator) | Medium | #3 | B01 |
 | [B03](B03.md) | The swap subsystem (rings + weapon/armour, one valuation seam) | Hard | #4 | B02 |
 | [B15](B15.md) | Unify repositories at M2 open: the warrior becomes strategy pack #1 | Medium | #15 | B14 (M1 close) |
+| [B25](B25.md) | Stage-grind: retire-on-attainment saves and reach-rate as the number | Medium | #25 | #19 (the Mandos rename) |
 
 ## Later phases
 

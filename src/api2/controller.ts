@@ -71,6 +71,20 @@ export interface Decider {
   rewind(): void;
   /** Drop what the Borg's own map believes about one grid, so the next decision treats it as unknown. */
   forget?(x: number, y: number): void;
+  /**
+   * THE STAGE WATCH (#25), asked once per wait after the world is read and
+   * before any decision is made. `attained` sees the same world the
+   * decision would; when it answers true the tick submits NOTHING for this
+   * wait - the retire the caller starts owns what happens next - and hands
+   * the world to `onAttained`. The WATCHER (not the tick) owns the one-shot
+   * latch: attainment is a sticky fact, so a watcher that keeps answering
+   * true would stall the game, and a watcher that latches (the wiring's
+   * does) lets a failed retire's run keep playing on the next wait.
+   */
+  readonly stage?: {
+    attained(world: World): boolean;
+    onAttained(world: World): void;
+  };
 }
 
 /** What a command's aim is, for the commands that name a direction. */
@@ -103,6 +117,14 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
     if (input.phase !== "play" && input.phase !== "store") return;
     const world = await bridge.readWorld();
     if (world === null) return;
+
+    /* The stage watch before any decision (#25): an attained character
+     * spends no further decision - the retire protocol owns the next move.
+     * The watcher latches, so this asks at most once per page per life. */
+    if (borg.stage !== undefined && borg.stage.attained(world)) {
+      borg.stage.onAttained(world);
+      return;
+    }
 
     let facade = createActFacade();
     let command = borg.controller(world.view, facade.act);

@@ -125,6 +125,20 @@ export function assertBakeoffBuild(life: BakeoffLifeLook, plan: BakeoffPlanLook,
 }
 
 /**
+ * The REACH-RATE (#25, the project's number since the purpose redirect):
+ * the fraction of a cohort that attained its stage. The same rule as the
+ * bake-off's median: one number computed ONCE, from per-run y/n facts, that
+ * a table or a README may quote but never re-derive differently.
+ *
+ * @throws Error on an empty cohort - a reach-rate of nothing is a grid the
+ * sweep failed to fill, and it should fail loudly rather than read as 0.
+ */
+export function reachRate(attained: readonly boolean[]): number {
+  if (attained.length === 0) throw new Error("a reach-rate of nothing is a cohort the sweep failed to fill");
+  return attained.filter((yes) => yes).length / attained.length;
+}
+
+/**
  * The median of the measured values, sorted: the middle of an odd count, the
  * mean of the two middles of an even count. The README's tables argue from
  * this number because one lucky seed must not pick the default race

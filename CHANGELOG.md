@@ -6,6 +6,25 @@ matching git tag that an install pins itself to.
 
 ## Unreleased
 
+- [Visible] **The stage-grind: retire-on-attainment, and reach-rate as the
+  number** (#25, the purpose redirect's first rail). Two new numeric
+  settings — `borg.stageClvl` (default 2) and `borg.stageDepth` (default 1)
+  — define the stage a lineage grinds toward: character level at least the
+  one, a first arrival at least as deep as the other. A character that
+  attains is RETIRED: the mod saves it, renames the save into a library
+  name (`M s<seed> c2d1` from the harness; `M n<lineage> c2d1` in the mod —
+  the host caps save names at 15 characters, and a mod cannot know the game
+  seed), and starts the next character unattended. A refused save or rename
+  is logged and the run KEEPS PLAYING — never a death loop. The defaults
+  are calibrated, not guessed (docs/runs/2026-11-03-stage-baseline: the
+  strongest rung today's Borg attains on half the standard seed grid); the
+  owner's destination — roughly character level 20 at moderate depth — is
+  what the settings climb toward as the strength work lands. New grant:
+  `session:control` (one call: `session.save()`, the keep-a-save of a
+  retirement; the mod's own stage settings are the consent, retirement
+  being unattended by design). Run records gain per-run `stageAttained` /
+  `retired` fields and a `runner.stage` block — additive, the schema id
+  stays `better-borg/runs@1` (rule 7).
 - [Visible] **The mod is now Mandos** (formerly better-borg). New mod id
   (`mandos`), name, repository and description — the purpose line now names
   the grind: play unattended, reach a chosen stage reliably, retire each

@@ -1,0 +1,189 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-03T11:26:24.196Z",
+  "label": "stage-baseline-c2d1",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      20,
+      23,
+      34,
+      49
+    ],
+    "lives": 4,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B25-stage-grind@315e489e (dirty)",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.1",
+    "content": "neo-angband@b53ff5f0b",
+    "borg": "warrior pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 20,
+      "life": 1,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 364,
+      "turns": 5049,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 146,
+      "kills": 4,
+      "places": 111,
+      "dead": true,
+      "causeOfDeath": "floating eye",
+      "commands": {
+        "descend": 6,
+        "walk": 346,
+        "ascend": 5,
+        "rest": 5,
+        "quaff": 1,
+        "pickup": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "meta": {
+        "wallClockMs": 5652
+      }
+    },
+    {
+      "seed": 23,
+      "life": 2,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 359,
+      "turns": 3497,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 162,
+      "kills": 11,
+      "places": 205,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 9,
+        "ascend": 8,
+        "walk": 333,
+        "open": 8,
+        "quaff": 1
+      },
+      "jitter": 34,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "meta": {
+        "wallClockMs": 5511
+      }
+    },
+    {
+      "seed": 34,
+      "life": 3,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 45,
+      "turns": 1365,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 149,
+      "kills": 1,
+      "places": 31,
+      "dead": true,
+      "causeOfDeath": "grey mold",
+      "commands": {
+        "descend": 1,
+        "walk": 40,
+        "quaff": 1,
+        "open": 3
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "meta": {
+        "wallClockMs": 729
+      }
+    },
+    {
+      "seed": 49,
+      "life": 4,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 143,
+      "turns": 1405,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 140,
+      "kills": 1,
+      "places": 91,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 5,
+        "walk": 128,
+        "ascend": 4,
+        "quaff": 1,
+        "pickup": 1,
+        "open": 4
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "meta": {
+        "wallClockMs": 2231
+      }
+    }
+  ]
+}

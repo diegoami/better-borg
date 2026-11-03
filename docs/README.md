@@ -26,17 +26,19 @@ switch has no flag of its own, the game knows it by its section id instead.
 | Random suited race | `borg.raceRandom` | on | The warrior pack's own toggle (no upstream borg_ setting): every warrior the Borg births draws its race from the bake-off shortlist - Half-Troll, Dunadan, High-Elf, Dwarf - seeded by a persisted birth counter, so an unattended line varies its race deterministically, with no clock and no random number draw. Off: borg.raceChoice pins the race. |
 
 The Mods screen also carries the mod's numeric settings, each one number a
-player can move. The Borg reads them when they matter, not at load time. This
-one is the warrior pack's own, carried from the archived neowarrior-borg fork.
-The `borg.class` pack selector is the same kind of parameter (a persisted
+player can move. The Borg reads them when they matter, not at load time. The
+`borg.class` pack selector is the same kind of parameter (a persisted
 value over the installed packs, read at each page so a change applies to the
 next rebirth); its Mods-screen row appears together with the second class
 pack, because the host's setting rows need a range wider than one value - see
-[SETTINGS.md](../SETTINGS.md) for it and the pinned-lineage recipe.
+[SETTINGS.md](../SETTINGS.md) for it, the stage settings below, and the
+pinned-lineage recipe.
 
 | Setting | Identifier | Default | Range | What it does |
 | --- | --- | --- | --- | --- |
 | Warrior race | `borg.raceChoice` | 2 | 0-3 | The race the Borg's planned warrior is born as when `borg.raceRandom` is off: 0 Half-Troll, 1 Dunadan, 2 High-Elf, 3 Dwarf - the bake-off shortlist, in this order everywhere. The default (2, High-Elf) is the bake-off's recommendation. Read at each birth, so a change applies to the next warrior. |
+| Stage character level | `borg.stageClvl` | 2 | 0-50 | The character level a run must reach for the Borg to count it as having attained its target stage, together with `borg.stageDepth`. A run that attains is saved under a library name and the next character starts. The default is the stage baseline's calibration (2026-11-03); raise it as the Borg grows stronger. Read once per page, so a change applies to the next birth. |
+| Stage depth | `borg.stageDepth` | 1 | 0-100 | The dungeon depth a run must have arrived on (0 is the town) for the Borg to count it as having attained its target stage, together with `borg.stageClvl`. The owner's destination is a moderate depth at character level around 20, which the settings reach as the Borg grows stronger. Read once per page, so a change applies to the next birth. |
 
 ## What it needs
 
@@ -44,7 +46,7 @@ pack, because the host's setting rows need a range wider than one value - see
 - **Mod API:** `>=2.0.0 <3.0.0`
 - **Shape:** `plugin`
 - **Facets:** `plugin`
-- **Capabilities:** `command:add`, `state:player.read`, `state:monsters.read`, `state:map.read`, `state:inventory.read`, `state:floor.read`, `state:stores.read`, `state:spells.read`, `state:turn.read`, `state:monsters-actual.read`, `state:interaction.read`, `input:intent`, `input:prompt.reply`, `event:message`, `event:run-end`, `event:dungeonlevel`, `ui:title`, `ui:birth.replace`, `profiles:manage`, `saves:manage`
+- **Capabilities:** `command:add`, `state:player.read`, `state:monsters.read`, `state:map.read`, `state:inventory.read`, `state:floor.read`, `state:stores.read`, `state:spells.read`, `state:turn.read`, `state:monsters-actual.read`, `state:interaction.read`, `input:intent`, `input:prompt.reply`, `event:message`, `event:run-end`, `event:dungeonlevel`, `ui:title`, `ui:birth.replace`, `profiles:manage`, `saves:manage`, `session:control`
 
 Only `state:monsters-actual.read` lets the Borg see past what the character has found. It uses that for two things: the exact hit points of monsters the character can perceive, and those monsters' race records. The game leaves it off unless you switch it on, and without it the Borg plays from what the character knows. See [How the Borg runs on mod API 2](API2-MIGRATION.md).
 

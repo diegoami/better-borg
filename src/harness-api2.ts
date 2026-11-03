@@ -13,6 +13,7 @@ import type {
   Api2InputState,
   Api2Intent,
   Api2PromptAnswer,
+  Api2SaveEntry,
   JsonRecord,
   KnownItem,
   KnownMonster,
@@ -50,6 +51,13 @@ export interface FakeGameOptions {
    * manage domain.
    */
   readonly saves?: "ok" | "refused" | "absent";
+  /**
+   * How `manage.session.save` answers (#25's retire path): "ok" (default,
+   * as for a game that granted session:control), "refused" (the save
+   * fails), or "absent" - the host gives this mod no session seam at all,
+   * so an attained run can only play on.
+   */
+  readonly session?: "ok" | "refused" | "absent";
   /** How `act.submit` answers a command. Default: accepts everything. */
   readonly submit?: (intent: Api2Intent) => boolean;
   /**
@@ -77,6 +85,17 @@ export interface FakeGame {
   readonly characterSlot: { value: unknown };
   /** The create options the mod passed the roster seam, if it ever did. */
   readonly created: unknown[];
+  /**
+   * The character roster the manage seam models (#25): one ALIVE slot for
+   * the character in play, mirroring the scenario player. `session.save`
+   * stamps it newest; `saves.rename` renames it in place - synchronously
+   * visible in this array the moment the call's promise resolves, the way
+   * the host's rename of the character in play lands inside the call
+   * (saves-facade.ts: "renames live and saves").
+   */
+  readonly roster: Api2SaveEntry[];
+  /** How many times `session.save` answered ok. */
+  readonly savesMade: () => number;
   /** The input wait the game would hand the controller. */
   input(over?: Partial<Api2InputState>): Api2InputState;
 }
@@ -178,6 +197,27 @@ export function fakeGame(options: FakeGameOptions = {}): FakeGame {
   const created: unknown[] = [];
   const noscore = options.noscore ?? 0;
 
+  /* The roster (#25): one alive slot for the character in play, mirroring
+   * the scenario player the known world is built from. The play clock is a
+   * plain counter - never the wall clock - so `session.save` can stamp the
+   * just-saved slot newest (the host's own rule, saves-facade.ts) while the
+   * fake stays deterministic. */
+  const startPlayer = view.player();
+  const roster: Api2SaveEntry[] = [
+    {
+      id: "slot-1",
+      name: "Borg",
+      race: startPlayer.race,
+      cls: startPlayer.cls,
+      level: startPlayer.level,
+      depth: startPlayer.depth,
+      dead: false,
+      lastPlayed: 0,
+    },
+  ];
+  let playClock = 0;
+  let savesMade = 0;
+
   const input = (over: Partial<Api2InputState> = {}): Api2InputState =>
     ({ token: TOKEN, driver: "mod", phase: "play", messagePending: false, prompt: null, resting: null, running: false, repeating: false, repeatsLeft: 0, unignoring: false, messages: null, storeStatus: null, ...over }) as unknown as Api2InputState;
 
@@ -249,7 +289,10 @@ export function fakeGame(options: FakeGameOptions = {}): FakeGame {
     },
     /* The roster seam (manage.saves), present by default as for a game that
      * granted saves:manage. "absent" leaves the whole manage domain off, the
-     * way a host that gives this mod no first-party seam does. */
+     * way a host that gives this mod no first-party seam does. rename
+     * mirrors the host's own rules (saves-facade.ts + charsheet.ts:250): a
+     * name over 15 characters or an unknown id is REFUSED, and the rename
+     * of the slot in play applies synchronously inside the call. */
     ...(options.saves ?? "ok") === "absent"
       ? {}
       : {
@@ -262,12 +305,51 @@ export function fakeGame(options: FakeGameOptions = {}): FakeGame {
                   ? refused("the roster is busy")
                   : ok(null)) as ReturnType<NonNullable<ModApi2["manage"]>["saves"]["create"]>;
               },
+              list: (): ReturnType<NonNullable<ModApi2["manage"]>["saves"]["list"]> =>
+                ok(structuredClone(roster)),
+              rename: (id: string, name: string): ReturnType<NonNullable<ModApi2["manage"]>["saves"]["rename"]> => {
+                if (name.length > 15 || name.trim().length === 0) {
+                  return refused("Enter a name of 1 to 15 characters.");
+                }
+                const at = roster.findIndex((entry) => entry.id === id);
+                if (at === -1) return refused("Character not found.");
+                roster[at] = { ...roster[at]!, name };
+                return ok(null);
+              },
+              load: (): ReturnType<NonNullable<ModApi2["manage"]>["saves"]["load"]> =>
+                refused("the fake game does not model loading"),
+              delete: (): ReturnType<NonNullable<ModApi2["manage"]>["saves"]["delete"]> =>
+                refused("the fake game does not model deletion"),
             },
+            /* The session seam (manage.session, under session:control -
+             * #25's retire path): "absent" leaves it off. A save syncs the
+             * live slot with the player the known world carries and stamps
+             * it newest, exactly the fact the retire path's find-the-slot
+             * leg depends on. */
+            ...((options.session ?? "ok") === "absent"
+              ? {}
+              : {
+                  session: {
+                    save: (): ReturnType<NonNullable<NonNullable<ModApi2["manage"]>["session"]>["save"]> => {
+                      if ((options.session ?? "ok") === "refused") return refused("the save is busy");
+                      const player = view.player();
+                      playClock += 1;
+                      savesMade += 1;
+                      roster[0] = {
+                        ...roster[0]!,
+                        level: player.level,
+                        depth: player.depth,
+                        lastPlayed: 1000 + playClock,
+                      };
+                      return ok(null);
+                    },
+                  },
+                }),
           },
         },
     ...(truth === undefined ? {} : { truth }),
   } as unknown as ModApi2;
 
   void (null as unknown as LoadoutSimulation);
-  return { mod, view, logs, submitted, answered, released, truthCalls, listeners, unsubscribed, installSlot, characterSlot, created, input };
+  return { mod, view, logs, submitted, answered, released, truthCalls, listeners, unsubscribed, installSlot, characterSlot, created, roster, savesMade: () => savesMade, input };
 }

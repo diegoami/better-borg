@@ -58,6 +58,19 @@ describe("manifest capabilities", () => {
     expect(capabilities()).toContain("event:dungeonlevel");
   });
 
+  it("declares session:control for the retire path, and nothing wider", () => {
+    /* #25: the ONLY thing this mod does with the session domain is
+     * session.save() - the one call a retire-on-attainment makes to keep
+     * the character's save before renaming it into the library. The host's
+     * own game-menu rows confirm before these calls; the mod makes no
+     * dialog because retirement is unattended BY DESIGN - the stage
+     * settings the owner set are the consent, and exitToTitle/quit (the
+     * rest of what session:control permits) are never called. The grant is
+     * as narrow as the host's vocabulary allows: there is no save-only
+     * capability to ask for. */
+    expect(capabilities()).toContain("session:control");
+  });
+
   it("holds the title seams the New Borg character row needs", () => {
     for (const grant of ["ui:title", "profiles:manage"]) expect(capabilities()).toContain(grant);
   });

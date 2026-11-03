@@ -543,7 +543,7 @@ suite("the pack restart chain, headless", () => {
      * writer's own output. This is the same mapping tools/runs.mjs makes. */
     const record: SessionRecord = {
       label: "t06-port-verify",
-      runner: { tool: "tools/runs.mjs", decisions: 600, seeds, lives: session.lives.length },
+      runner: { tool: "tools/runs.mjs", decisions: 600, seeds, lives: session.lives.length, stage: null },
       build: {
         commit: null,
         engine: "@rpgm-tools/neo-angband-core 1.23.0-beta.1",
@@ -570,6 +570,8 @@ suite("the pack restart chain, headless", () => {
         causeOfDeath: life.causeOfDeath,
         jitter: life.jitter,
         restedBesideMonster: life.restedBesideMonster,
+        stageAttained: life.stageAttained,
+        retired: life.retired,
         wallClockMs: life.wallClockMs,
       })),
     };
@@ -604,5 +606,83 @@ suite("the pack restart chain, headless", () => {
      * the same table: every issued command code appears, with its count. */
     const census = session.lives.map((life) => Object.values(life.commands).reduce((a, b) => a + b, 0));
     expect(census.every((count) => count > 0)).toBe(true);
+  }, 300_000);
+
+  /* ------------------------------------------------------------------
+   * #25 - the stage-grind: attainment ends a life into the LIBRARY,
+   * and the #36 counting rule holds on a retiring run
+   * ------------------------------------------------------------------ */
+
+  when("retires a life that attains its stage into the library, and boots the next seed behind it", async () => {
+    /* THE RAIL'S SESSION SHAPE: the stage is the calibrated default's
+     * bracket rung (character level 1, first arrival at depth 1) - a rung
+     * every one of the pinned seeds reaches on its way down, so each life
+     * attains DURING play and stops there: kept (a library slot named with
+     * the seed), not dead, well under the cap, and the session chains to
+     * the next seed behind the retirement exactly as it chains behind a
+     * death. */
+    const seeds = [20, 23];
+    const session = await playPackSession(Core, pack!, warriorPack, {
+      seeds,
+      capFor: () => 600,
+      stage: { clvl: 1, depth: 1 },
+    });
+
+    expect(session.lives).toHaveLength(2);
+    for (const life of session.lives) {
+      expect(life.stageAttained, `seed ${String(life.seed)} attained the stage`).toBe(true);
+      expect(life.retired, `seed ${String(life.seed)} was retired into the library`).toBe(true);
+      expect(life.dead).toBe(false); /* a retirement is not a death */
+      expect(life.causeOfDeath).toBeNull();
+      expect(life.decisions, `seed ${String(life.seed)} stopped at attainment`).toBeLessThan(600);
+      /* THE #36 RULE ON A RETIRING RUN: attainment is observed after the
+       * decision completes (exactly as death is), so the census the
+       * controller issued balances the decisions the driver counted. */
+      const issued = Object.values(life.commands).reduce((a, b) => a + b, 0);
+      expect(issued, `seed ${String(life.seed)}: census vs decisions on a retiring run`).toBe(life.decisions);
+    }
+
+    /* THE LIBRARY: one kept slot per retired run, named with the seed -
+     * the name the ladder (#26) maps its per-seed cohorts by. */
+    expect(session.library).toEqual([
+      { name: "M s20 c1d1", seed: 20 },
+      { name: "M s23 c1d1", seed: 23 },
+    ]);
+  }, 300_000);
+
+  when("plays a stage it cannot attain exactly as it played without one", async () => {
+    /* The unattained stage is observationally neutral: seed 34's pinned
+     * death (grey mold, 45 decisions, the T06 record's own numbers) is
+     * byte-for-byte what it was, and the life records attainment false with
+     * no library entry - the stage cannot quietly change the play it never
+     * touched. */
+    const session = await playPackSession(Core, pack!, warriorPack, {
+      seeds: [34],
+      capFor: () => 600,
+      stage: { clvl: 50, depth: 100 },
+    });
+    const life = session.lives[0]!;
+    expect(life.dead).toBe(true);
+    expect(life.causeOfDeath).toBe("grey mold");
+    expect(life.decisions).toBe(45);
+    expect(life.stageAttained).toBe(false);
+    expect(life.retired).toBe(false);
+    expect(session.library).toEqual([]);
+    const issued = Object.values(life.commands).reduce((a, b) => a + b, 0);
+    expect(issued).toBe(life.decisions);
+  }, 300_000);
+
+  when("records stock attainment without keeping saves (the sweep's stage)", () => {
+    /* The STOCK driver measures the stage - the reach-rate's y/n - but
+     * keeps no library: that flow belongs to the pack driver and the mod.
+     * Seed 20 attains c1d1 on its way down and the run STOPS there, under
+     * the 1500-decision budget a stage-less run would have spent dying. */
+    const run = playRun(Core, pack!, 20, 1500, { clvl: 1, depth: 1 });
+    expect(run.stageAttained).toBe(true);
+    expect(run.retired).toBe(false); /* measurement only: no kept save */
+    expect(run.dead).toBe(false);
+    expect(run.decisions).toBeLessThan(1500);
+    const issued = Object.values(run.commands).reduce((a, b) => a + b, 0);
+    expect(issued).toBe(run.decisions);
   }, 300_000);
 });

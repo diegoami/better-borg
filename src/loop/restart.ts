@@ -1,5 +1,6 @@
 /**
- * THE RESTART LOOP: every death, the same planned character again.
+ * THE RESTART LOOP: every death, the same planned character again - and,
+ * since #25, every ATTAINED STAGE, a kept save and the next one.
  *
  * Ported from neowarrior-borg's src/loop/restart.ts (T04, issue #7 there;
  * hardened by its review rounds #29, #34, #35; shipped in v0.1.0 e1ec1b7)
@@ -16,6 +17,40 @@
  * controller with `onDeath: "end"` instead: the ordinary death flow runs
  * (tombstone, score entry, run report), and what happens NEXT becomes this
  * loop's business.
+ *
+ * THE RETIRE PATH (#25, the purpose redirect's first rail): the mod's main
+ * job is the grind, so a character that ATTAINS ITS STAGE is retired into a
+ * kept, loadable save and the next one starts - the library, beside the
+ * graveyard the deaths go to. The trigger is NOT an event the host pushes:
+ * attainment is a fact about the live character (level and max first-arrival
+ * depth, the sticky facts - src/loop/stage.ts), so the decision tick, which
+ * already reads the world every wait, watches for it and calls this loop's
+ * `retire()` the moment it turns true. The protocol (`retireAtStage`, ONE
+ * implementation the headless driver shares):
+ *
+ *   attain -> session.save -> find the saved slot -> saves.rename
+ *          -> birth flag (verified) -> create({resumeAutoplay: true})
+ *
+ * THE RETIRE FAIL-SAFE, absolute (#25): a refused save or rename is LOGGED
+ * and the run KEEPS PLAYING - never a create without a kept save (that
+ * would be the death loop this path exists to avoid), never a retry storm
+ * (one retire attempt per page, the same one-shot discipline as the report
+ * path's `spent`). A create that is refused after a successful save+rename
+ * leaves the kept save standing under its library name, clears the
+ * stranded flag, and lets the run play on; its eventual death still runs
+ * the ordinary death path below.
+ *
+ * THE SEAMS the retire path needs beyond the death path's: `session.save`
+ * (under the manifest's `session:control`; the host's own game menu rows
+ * confirm before these - retirement is unattended BY DESIGN, and the mod's
+ * own policy, the stage settings the owner set, is the consent),
+ * `saves.list` and `saves.rename` (under `saves:manage`). The slot to
+ * rename is FOUND, not guessed: after our own save answers ok, the roster's
+ * alive entry whose level and depth match the live facts and whose
+ * lastPlayed is greatest is the one just saved (the host stamps it newest,
+ * saves-facade.ts) - no match is a refused rename, not a wrong rename. The
+ * name fits the host's 1-15 character rule (src/loop/stage.ts builds it; a
+ * longer name is refused outright, charsheet.ts:250).
  *
  * THE WHOLE LOOP, AS A PROTOCOL, leg by leg:
  *
@@ -100,10 +135,15 @@
  *   - `create` answers ok: the page is going away. The presenter consumes
  *     the flag on the next page; there is nothing to undo here.
  *   - A second run report on the same page: ignored (`spent`). One restart
- *     per reload; the host owes one report per page.
+ *     per reload; the host owes one report per page. A retire and a death
+ *     each keep their own latch: a refused retire must leave the death path
+ *     fully armed for the same page's later death.
  *   - The host gives no roster seam at all (`manage.saves` absent - a
  *     third-party install of this mod, or the event grant refused): the loop
- *     logs at install and the run simply ends at its death.
+ *     logs at install and the run simply ends at its death. The retire path
+ *     needs one seam more (`manage.session`, `session:control`): without it
+ *     an attained run plays on, loudly, and the stage grinds nowhere on
+ *     that host.
  *
  * Rule 5: no wall clock, no network, no engine reads - the loop is pure
  * orchestration over the host's own calls, and the decision code never sees
@@ -115,6 +155,7 @@ import type {
   Api2CreateCharacter,
   Api2Events,
   Api2RunEndEvent,
+  Api2SaveEntry,
   Api2Slot,
   Api2Subscription,
   RunReport,
@@ -143,6 +184,24 @@ export interface BorgRestartDeps {
    */
   readonly create: ((options?: Api2CreateCharacter) => Api2Call<null>) | null;
   /**
+   * The host's save call (mod.manage?.session.save, under the manifest's
+   * `session:control`), or null when this game gives the mod no session
+   * seam. The retire path's first leg; the death path never needs it.
+   */
+  readonly save?: (() => Api2Call<null>) | null;
+  /**
+   * The host's roster read (mod.manage?.saves.list), or null without the
+   * seam. The retire path lists the roster AFTER its own save to find the
+   * slot it just stamped newest.
+   */
+  readonly listSaves?: (() => Api2Call<readonly Api2SaveEntry[]>) | null;
+  /**
+   * The host's roster rename (mod.manage?.saves.rename), or null without
+   * the seam. The retire path renames the kept save into its library name
+   * (src/loop/stage.ts builds the name inside the host's 15 characters).
+   */
+  readonly rename?: ((id: string, name: string) => Api2Call<null>) | null;
+  /**
    * The event domain (mod.events): the run report arrives as its "run-end"
    * event, needing the manifest's `event:run-end` grant.
    */
@@ -165,6 +224,22 @@ export interface BorgRestartDeps {
 export interface BorgRestart {
   /** Whether the loop is listening for run reports. */
   readonly listening: boolean;
+  /**
+   * Retire the live character into a kept save and start the next one
+   * (#25). Fire-and-forget by design: the caller is the decision tick,
+   * which must not await host calls; every failure is contained and logged
+   * exactly as the report path's are. ONE attempt per page (a refused leg
+   * leaves the run playing; the watcher never asks twice), and the epoch
+   * discipline of the report path applies to every await inside.
+   *
+   * `facts.clvl` and `facts.depth` are the live facts at attainment (the
+   * character's level and the depth it stands on - what the just-saved
+   * roster entry will carry, and what the log should say);
+   * `facts.slotName` is the library name the caller built (src/loop/
+   * stage.ts: the caller knows the stage, and the identity the name
+   * carries - seed in the harness, lineage counter in the mod).
+   */
+  retire(facts: { readonly clvl: number; readonly depth: number; readonly slotName: string }): void;
   /**
    * Stop listening. The host tears its mods down before the reload anyway;
    * this is for a mod stop that keeps the page (the headless runner's
@@ -189,6 +264,175 @@ async function flagIsDurable(slot: Slot): Promise<boolean> {
 }
 
 /**
+ * THE STRANDED-FLAG CLEAR, shared by the death path and the retire path: the
+ * page is NOT going away, so a standing birth flag must be durably cleared
+ * (verified by clearBirthFlag's own read-back) - or, when even the clear
+ * will not verify, the log keeps the loud warning that names the
+ * consequence, because the hazard is the same whoever failed to start the
+ * next character. `aftermath` is the one word the two paths differ on: a
+ * death ends the run, a failed retire keeps playing.
+ */
+async function clearStrandedFlag(
+  slot: Slot,
+  log: (message: string) => void,
+  why: string,
+  aftermath: string,
+): Promise<void> {
+  const cleared = await clearBirthFlag(slot);
+  if (cleared) {
+    log(`the Borg could not start the next character (${why}); the birth flag was cleared and ${aftermath}`);
+    return;
+  }
+  log(
+    `the Borg could not start the next character (${why}) AND could not durably clear its birth flag: ` +
+      `the flag may still be set, and the next character created after any later reload would be born as the Borg's ` +
+      `planned character. The presenter still consumes-or-declines it on that page, but a human's birth could be taken ` +
+      `once - clear the mod's install storage before letting anyone create a character here`,
+  );
+}
+
+/**
+ * THE RETIRE PROTOCOL (#25): save the live character, rename the kept slot
+ * into its library name, arm the birth flag, and start the next character -
+ * or, at the first leg that refuses, log and answer "refused" so the caller
+ * can keep playing. ONE implementation for both callers: the loop's `retire`
+ * entry (wired from the decision tick) and the headless driver (the harness
+ * models the roster over the same protocol). Never throws and never
+ * rejects; `cancelled` is the caller's stop discipline (the loop's epoch;
+ * the driver passes nothing), checked before every side effect - a cancelled
+ * retire produces no new side effect, and a birth flag it had written (or
+ * may have written, #35's lesson) is still durably cleared.
+ */
+export async function retireAtStage(
+  deps: Pick<BorgRestartDeps, "slot" | "log" | "create" | "save" | "listSaves" | "rename">,
+  facts: { readonly clvl: number; readonly depth: number; readonly slotName: string },
+  cancelled: () => boolean = (): boolean => false,
+): Promise<"retired" | "refused"> {
+  const dropped = (where: string): void => {
+    deps.log(`the Borg's retire was cancelled while it was still ${where}, so it is dropped`);
+  };
+  const keepPlaying = (what: string, why: string): void => {
+    deps.log(`the Borg ${what} (${why}); it keeps playing`);
+  };
+
+  const save = deps.save ?? null;
+  const listSaves = deps.listSaves ?? null;
+  const rename = deps.rename ?? null;
+  const create = deps.create;
+  if (save === null || listSaves === null || rename === null || create === null) {
+    deps.log(
+      "the Borg cannot retire a character that attains its stage on this game: it was given no session seam, " +
+        "so an attained run keeps playing",
+    );
+    return "refused";
+  }
+
+  /* Leg 1: the save. A refusal, throw or rejection here is the fail-safe's
+   * headline case: nothing renamed, nothing created, the run plays on. */
+  let saved = false;
+  try {
+    const result = await save();
+    saved = result.ok;
+    if (!result.ok) keepPlaying("could not keep a save of the character that attained its stage", result.message);
+  } catch (error: unknown) {
+    keepPlaying("could not keep a save of the character that attained its stage", messageOf(error));
+  }
+  if (cancelled()) {
+    dropped("saving");
+    return "refused";
+  }
+  if (!saved) return "refused";
+
+  /* Leg 2: find the slot the save just wrote - the roster's ALIVE entry
+   * matching the live facts (level and depth) with the greatest lastPlayed
+   * (our own save stamped it newest). No match is a refused rename, never a
+   * guessed one: renaming a stranger's slot would eat someone else's save. */
+  let slotId: string | null = null;
+  try {
+    const read = await listSaves();
+    if (!read.ok) {
+      keepPlaying("saved the character that attained its stage but cannot tell which roster slot is its own", read.message);
+    } else {
+      let best = -1;
+      const entries = [...read.value];
+      for (let at = 0; at < entries.length; at++) {
+        const entry = entries[at]!;
+        if (entry.dead) continue;
+        if (entry.level !== facts.clvl || entry.depth !== facts.depth) continue;
+        if (best === -1 || entry.lastPlayed >= entries[best]!.lastPlayed) best = at;
+      }
+      if (best === -1) {
+        deps.log(
+          `the Borg saved the character that attained its stage but the roster carries no matching slot ` +
+            `(alive, level ${String(facts.clvl)}, depth ${String(facts.depth)}); it keeps playing`,
+        );
+      } else {
+        slotId = entries[best]!.id;
+      }
+    }
+  } catch (error: unknown) {
+    keepPlaying("saved the character that attained its stage but cannot tell which roster slot is its own", messageOf(error));
+  }
+  if (cancelled()) {
+    dropped("looking for the saved slot");
+    return "refused";
+  }
+  if (slotId === null) return "refused";
+
+  /* Leg 3: the library name. The save is KEPT whatever happens here; a
+   * refused rename costs the name, not the save. */
+  let renamed = false;
+  try {
+    const result = await rename(slotId, facts.slotName);
+    renamed = result.ok;
+    if (!result.ok) {
+      keepPlaying(`saved the character that attained its stage but could not rename its slot to "${facts.slotName}"`, result.message);
+    }
+  } catch (error: unknown) {
+    keepPlaying(`saved the character that attained its stage but could not rename its slot to "${facts.slotName}"`, messageOf(error));
+  }
+  if (cancelled()) {
+    dropped("renaming the kept slot");
+    return "refused";
+  }
+  if (!renamed) return "refused";
+  deps.log(`the Borg kept a save of the character that attained its stage, renamed to "${facts.slotName}" in the library`);
+
+  /* Leg 4: the birth flag, BEFORE create, behind a read-back - the same
+   * contract as the death path's (#25's swallowed-write lesson). */
+  const written = await setBirthFlag(deps.slot);
+  const standing = written && (await flagIsDurable(deps.slot));
+  if (cancelled()) {
+    /* The stop may have landed anywhere inside the flag work; VERIFIED
+     * cleanup runs whenever the flag step was reached (#35), because a
+     * standing flag beside a live page strands whoever births next. */
+    await clearStrandedFlag(deps.slot, deps.log, "the retire's flag would not outlive the stop", "no next character is started");
+    return "refused";
+  }
+  if (!standing) {
+    await clearStrandedFlag(
+      deps.slot,
+      deps.log,
+      written ? "the retire's birth flag would not verify after being written" : "the retire's birth flag's write was refused",
+      "the character that attained its stage keeps playing",
+    );
+    return "refused";
+  }
+
+  /* Leg 5: the create. A failure here leaves the kept save standing (a
+   * library entry the owner can load), clears the stranded flag, and the
+   * run plays on - its eventual death still runs the ordinary death path. */
+  try {
+    const made = await create({ resumeAutoplayer: true });
+    if (made.ok) return "retired";
+    await clearStrandedFlag(deps.slot, deps.log, `create was refused: ${made.message}`, "the character that attained its stage keeps playing");
+  } catch (error: unknown) {
+    await clearStrandedFlag(deps.slot, deps.log, `create threw: ${messageOf(error)}`, "the character that attained its stage keeps playing");
+  }
+  return "refused";
+}
+
+/**
  * Install the loop. Subscribes at once; every decision happens later, inside
  * the report. Never throws and never rejects: a loop that cannot arm says so
  * in the log and leaves the run to end at its death.
@@ -198,6 +442,12 @@ export function installBorgRestart(deps: BorgRestartDeps): BorgRestart {
   /* One restart per page: the report arrives once, and one birth per reload
    * is the contract the presenter's one-shot arming already carries. */
   let spent = false;
+  /* One RETIRE attempt per page (#25): a refused leg leaves the run
+   * playing, and the watcher never asks twice - the same one-shot
+   * discipline as `spent`, deliberately a SEPARATE latch so a refused
+   * retire leaves the death path fully armed for the same page's later
+   * death. */
+  let retireSpent = false;
   /* THE RETIREMENT EPOCH (#29). `stopped` turns away anything that enters
    * after the stop; the counter invalidates everything already inside. Each
    * report captures it at entry and re-checks after every await, before the
@@ -206,22 +456,10 @@ export function installBorgRestart(deps: BorgRestartDeps): BorgRestart {
   let epoch = 0;
 
   /* The flag is standing but the page is NOT going away: clear it, verified,
-   * and say what happened at full volume either way. */
-  const stranded = async (why: string): Promise<void> => {
-    const cleared = await clearBirthFlag(deps.slot);
-    if (cleared) {
-      deps.log(
-        `the Borg could not start the next character (${why}); the birth flag was cleared and this run ends here rather than loop`,
-      );
-      return;
-    }
-    deps.log(
-      `the Borg could not start the next character (${why}) AND could not durably clear its birth flag: ` +
-        `the flag may still be set, and the next character created after any later reload would be born as the Borg's ` +
-        `planned character. The presenter still consumes-or-declines it on that page, but a human's birth could be taken ` +
-        `once - clear the mod's install storage before letting anyone create a character here`,
-    );
-  };
+   * and say what happened at full volume either way. The death path's
+   * aftermath - the run has ended, so nothing plays on. */
+  const stranded = (why: string): Promise<void> =>
+    clearStrandedFlag(deps.slot, deps.log, why, "this run ends here rather than loop");
 
   /** The report path: the only place create is ever called from. */
   const onReport = async (event: Api2RunEndEvent): Promise<void> => {
@@ -392,6 +630,21 @@ export function installBorgRestart(deps: BorgRestartDeps): BorgRestart {
   return {
     get listening(): boolean {
       return subscription !== null;
+    },
+    retire(facts) {
+      /* Fire-and-forget by design: the caller is the decision tick, which
+       * must not await host calls. The epoch discipline applies inside
+       * (retireAtStage re-checks before every side effect), and the latch is
+       * consumed SYNCHRONOUSLY here, before the first await, so an
+       * attainment seen twice starts at most one retire. */
+      if (stopped || retireSpent) return;
+      retireSpent = true;
+      const mine = epoch;
+      deps.log(
+        `the Borg's character attained its stage (character level ${String(facts.clvl)}, first arrival at depth ` +
+          `${String(facts.depth)}); the Borg is keeping a save and starting the next one`,
+      );
+      void retireAtStage(deps, facts, (): boolean => stopped || mine !== epoch);
     },
     async stop(): Promise<void> {
       /* Invalidate FIRST and synchronously (#29): from this moment no

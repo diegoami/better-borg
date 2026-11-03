@@ -76,6 +76,8 @@ import { CLASS_SETTING, PACKS, packForClassValue } from "./src/class/registry.js
 import type { StrategyPack } from "./src/class/pack.js";
 import { installBorgJournal, type BorgJournal } from "./src/records/journal.js";
 import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
+import { librarySlotName, stageAttained, stageOf, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING, type StageDefinition } from "./src/loop/stage.js";
+import { readLineage } from "./src/class/warrior/lineage.js";
 
 /**
  * Whether this character has already handed the keyboard to an autoplayer.
@@ -243,6 +245,27 @@ interface Running {
  */
 let activePack: StrategyPack = PACKS[CLASS_SETTING.default]!;
 
+/**
+ * The stage THIS page's character grinds toward (#25): `borg.stageClvl` x
+ * `borg.stageDepth`, read from the persisted settings at each page - the
+ * same per-page lifetime `borg.class` keeps, so a change applies to the
+ * NEXT birth (rule 5: no mid-life policy shifts; the stage check a life
+ * runs against is fixed at its own page). The declared defaults - the stage
+ * baseline's calibration, docs/runs/2026-11-03-stage-baseline/ - serve
+ * until the settings read lands, which is long before any character can
+ * attain anything; a host with no settings seam plays the defaults.
+ */
+let activeStage: StageDefinition = stageOf({});
+/**
+ * The install slot's lineage counter as this page read it (#25): the
+ * mod-side library name's identity segment. A mod cannot know the game
+ * seed - no host seam carries it - so the kept save is named by the birth
+ * counter instead (the harness, which owns the seed, names by the seed;
+ * src/loop/stage.ts documents the split). Read once per page, fire and
+ * forget like the settings read; null until it lands.
+ */
+let lineageAtPage: number | null = null;
+
 let bridge: Bridge | undefined;
 let running: Promise<Running | null> | undefined;
 /* The restart loop's handle, retired in stop() with the bridge. */
@@ -283,21 +306,39 @@ async function begin(mod: ModApi2): Promise<Running | null> {
    * resolved through the declared range - fire-and-forget here (the settings
    * call is async), settled long before any birth is offered, exactly the
    * way the pack's own race settings are read. A host with no settings seam,
-   * or a failed read, keeps the declared default: warrior. */
+   * or a failed read, keeps the declared default: warrior. THE STAGE rides
+   * the same read (#25): both stage settings resolve through their declared
+   * ranges (stageOf), so a moved number applies to the next birth. */
   try {
     if (typeof mod.meta.settings === "function") {
       void mod.meta.settings().then(
         (read) => {
-          if (read.ok) activePack = packForClassValue(read.value[CLASS_SETTING.id]);
+          if (read.ok) {
+            activePack = packForClassValue(read.value[CLASS_SETTING.id]);
+            activeStage = stageOf({
+              clvl: read.value[STAGE_CLVL_SETTING.id],
+              depth: read.value[STAGE_DEPTH_SETTING.id],
+            });
+          }
         },
         () => {
-          /* Kept at the declared default pack. */
+          /* Kept at the declared default pack and stage. */
         },
       );
     }
   } catch {
-    /* Kept at the declared default pack. */
+    /* Kept at the declared default pack and stage. */
   }
+  /* The lineage counter for this page's library names: same fire-and-forget
+   * lifetime, same settled-long-before-it-matters property. */
+  void readLineage(mod.store.install).then(
+    (counter) => {
+      lineageAtPage = counter;
+    },
+    () => {
+      /* Kept null; the name degrades to the stage alone. */
+    },
+  );
   const cfg = cfgFromFlags(mod.meta.flags);
   /* Cross-mod, deliberately outside RULE_CFG and cfg itself: see
    * config.ts's setBuffTimerSafetyNet for why. */
@@ -381,9 +422,12 @@ async function begin(mod: ModApi2): Promise<Running | null> {
    * install slot the birth flag lives in, the log, the keyboard-ownership
    * question, the roster's create (absent on a host that gives this mod no
    * manage seam - the loop says so and the run ends at its death), and the
-   * event domain the run report arrives on. The protocol it implements -
-   * death, report, journal, flag, create, reload, presenter, armed
-   * controller - and every failure mode's landing place are documented in
+   * event domain the run report arrives on. THE RETIRE SEAMS (#25) ride
+   * along: the session save (session:control) and the roster's list and
+   * rename (saves:manage) - absent on a host without them, in which case an
+   * attained run plays on, loudly. The protocol it implements - death,
+   * report, journal, flag, create, reload, presenter, armed controller -
+   * and every failure mode's landing place are documented in
    * src/loop/restart.ts. */
   const restart = installBorgRestart({
     slot: mod.store.install,
@@ -392,7 +436,41 @@ async function begin(mod: ModApi2): Promise<Running | null> {
     create: mod.manage?.saves.create ?? null,
     events: mod.events,
     graveyard: journal.graveyard,
+    save: mod.manage?.session?.save ?? null,
+    listSaves: mod.manage?.saves.list ?? null,
+    rename: mod.manage?.saves.rename ?? null,
   });
+  /* THE STAGE WATCH (#25): the tick asks it after every world read; it
+   * answers from the sticky facts (level, maxDepth) against the page's
+   * stage, ONCE - attainment never un-happens, so the latch costs nothing
+   * and buys the fail-safe's property: a retire whose save was refused
+   * leaves the run playing, and the watch never asks again. The retire call
+   * hands the loop the live facts (the roster entry the save just wrote
+   * will carry them) and the library name (this page's stage, and the
+   * lineage counter as the identity - the seed is not a thing a mod can
+   * know). */
+  let attainmentSeen = false;
+  const stageWatch: NonNullable<Parameters<typeof createTick>[1]>["stage"] = {
+    attained: (world) => {
+      if (attainmentSeen) return false;
+      const player = world.view.player();
+      if (!stageAttained(activeStage, { clvl: player.level, maxDepth: player.maxDepth })) return false;
+      attainmentSeen = true;
+      return true;
+    },
+    onAttained: (world) => {
+      const player = world.view.player();
+      mod.meta.log(
+        `the Borg's stage for this character is ${String(activeStage.clvl)}/${String(activeStage.depth)} ` +
+          `(character level and first-arrival depth), from borg.stageClvl and borg.stageDepth`,
+      );
+      restart.retire({
+        clvl: player.level,
+        depth: player.depth,
+        slotName: librarySlotName(activeStage, { seed: null, lineage: lineageAtPage }),
+      });
+    },
+  };
   /* Module-level so stop() can retire them even before `running` settles,
    * and retired here the same way the bridge is, so a second start on the
    * same page (a start without a stop) never leaves two loops listening for
@@ -401,7 +479,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch }), restart, journal };
 }
 
 const definition: Api2ModDefinition = {

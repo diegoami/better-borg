@@ -5,7 +5,10 @@ of them requires a reload before the controller uses the new value. The birth
 settings are different: `borg.class` and `borg.raceRandom` are read once per
 page (every armed birth follows the reload its writer issues, so each birth
 sees the then-current value) and `borg.raceChoice` at each birth, so all
-three apply to the next rebirth without waiting on anything else.
+three apply to the next rebirth without waiting on anything else. The stage
+settings (`borg.stageClvl`, `borg.stageDepth`) keep the same next-birth
+lifetime: one stage per life, read once per page - a mid-run stage change
+would be a mid-life policy shift, which determinism forbids (rule 5).
 
 | Flag | Default | What it does | Reload required |
 | --- | --- | --- | --- |
@@ -37,3 +40,31 @@ semantics (`raceChoice` indexes the ACTIVE pack's candidate list;
 set the class, turn the draw off, set the race index. With the draw ON the
 line varies its race over the pack's shortlist deterministically instead -
 the owner's default for an unattended line.
+
+## The stage: what the grind keeps a save at
+
+Since the purpose redirect (#25), the mod's main job is the grind: it plays
+unattended, and when a run reaches its target stage it KEEPS A SAVE of that
+run (renamed into the library - the picker's `M ...` names, beside the
+ordinary ones) and starts the next character. Two numeric settings define
+the stage, both read once per page so a change applies to the NEXT birth:
+
+1. `borg.stageClvl` = 2 (the character level a run must reach),
+2. `borg.stageDepth` = 1 (the depth a run must have arrived on; 0 is town).
+
+The defaults are CALIBRATED, not guessed: the stage baseline
+(`docs/runs/2026-11-03-stage-baseline/`) measured today's Borg on the
+standard seed grid and found the frontier at character level 2, depth 1 -
+attained by half the grid, one rung deeper by none. That is the strongest
+rung today's strength can grind at, and it ships as the default so the
+number has somewhere to climb from. The owner's destination - roughly
+character level 20 at moderate depth, reachable in a watched evening - is
+where the strength work (the swap subsystem, the upstream door-close PR)
+is headed; move the two settings as it lands. The ladder (#26) climbs the
+same settings: stage N+1's lineage resumes from stage N's kept saves.
+
+A retired save's name is short because the host caps save names at 15
+characters: `M s20 c2d1` from the harness (the seed is the name's identity
+- the ladder maps its per-seed cohorts by it) or `M n17 c2d1` in the mod
+(the lineage counter - a mod cannot know the game seed). The date a slot
+was kept is the roster's own last-played column.

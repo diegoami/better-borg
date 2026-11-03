@@ -53,6 +53,7 @@ import type {
   Api2Call,
   Api2CreateCharacter,
   Api2Events,
+  Api2SaveEntry,
   Api2Slot,
   JsonValue,
   RunOutcome,
@@ -60,6 +61,7 @@ import type {
 } from "@rpgm-tools/neo-angband-mod-sdk";
 import { BIRTH_FLAG_KEY } from "../birth/flag.js";
 import { createWarriorBirthPresenter } from "../class/warrior/presenter.js";
+import { librarySlotName } from "./stage.js";
 import { installBorgRestart } from "./restart.js";
 
 /* ==================================================================
@@ -857,5 +859,344 @@ describe("the restart loop", () => {
     expect(said).toContain("report is dropped");
     expect(said).not.toContain("starting the next one");
     expect(said).not.toContain("could not start the next character");
+  });
+});
+
+/* ==================================================================
+ * #25 - the retire path: save, rename into the library, create
+ * ================================================================== */
+
+/** One roster slot, the shape the host's saves.list answers with. */
+interface FakeSlotEntry {
+  id: string;
+  name: string;
+  race: string;
+  cls: string;
+  level: number;
+  depth: number;
+  dead: boolean;
+  lastPlayed: number;
+}
+
+type SaveMode = "ok" | "refused" | "throw" | "reject";
+
+/** The three retire seams the protocol drives, each recording its calls. */
+interface FakeSeams {
+  readonly calls: { save: number; list: number; renames: Array<{ id: string; name: string }> };
+  readonly slots: FakeSlotEntry[];
+  readonly save: (() => Api2Call<null>) | null;
+  readonly listSaves: () => Api2Call<readonly Api2SaveEntry[]>;
+  readonly rename: (id: string, name: string) => Api2Call<null>;
+}
+
+/**
+ * The fake the retire path drives: a roster in memory (ONE alive slot for
+ * the character in play, the way the host's roster shows it) plus the three
+ * seams the protocol calls - session.save, saves.list, saves.rename - each
+ * recording its calls. `save` stamps the live slot's lastPlayed NEWEST (the
+ * host stamps the just-saved slot newest, saves-facade.ts); `rename` applies
+ * SYNCHRONOUSLY, mirroring the host's rename of the character in play
+ * ("renames live and saves"), and refuses a name over the host's own
+ * 15-character limit (charsheet.ts:250) or an unknown id.
+ */
+function rosterSeas(options: { save?: SaveMode | "absent"; rename?: SaveMode; list?: SaveMode } = {}): FakeSeams {
+  const clock = { ticks: 0 };
+  const slots: FakeSlotEntry[] = [{ id: "slot-7", name: "Bergil", race: "High-Elf", cls: "Warrior", level: 20, depth: 8, dead: false, lastPlayed: 0 }];
+  const calls: FakeSeams["calls"] = { save: 0, list: 0, renames: [] };
+  const ok = <T,>(value: T) => Promise.resolve({ ok: true as const, value });
+  const refused = (message: string) => Promise.resolve({ ok: false as const, reason: "refused" as const, code: "refused", message });
+  const save = options.save ?? "ok";
+  const rename = options.rename ?? "ok";
+  const list = options.list ?? "ok";
+  const saveSeam: FakeSeams["save"] = save === "absent"
+    ? null
+    : (): Api2Call<null> => {
+        calls.save += 1;
+        if (save === "refused") return refused("the save is busy");
+        if (save === "throw") throw new Error("save exploded");
+        if (save === "reject") return Promise.reject(new Error("save rejected"));
+        clock.ticks += 1;
+        slots[0]!.lastPlayed = 1000 + clock.ticks; /* newest, always */
+        return ok(null);
+      };
+  return {
+    calls,
+    slots,
+    save: saveSeam,
+    listSaves: (): Api2Call<readonly Api2SaveEntry[]> => {
+      calls.list += 1;
+      if (list === "refused") return refused("the roster is busy");
+      return ok(structuredClone(slots) as readonly Api2SaveEntry[]);
+    },
+    rename: (id: string, name: string): Api2Call<null> => {
+      calls.renames.push({ id, name });
+      if (rename === "refused") return refused("the name is pinned");
+      if (rename === "throw") throw new Error("rename exploded");
+      if (rename === "reject") return Promise.reject(new Error("rename rejected"));
+      if (name.length > 15) return refused("Enter a name of 1 to 15 characters.");
+      const at = slots.findIndex((entry) => entry.id === id);
+      if (at === -1) return refused("Character not found.");
+      slots[at]!.name = name;
+      return ok(null);
+    },
+  };
+}
+
+/** Install the loop with the retire seams, defaults being the happy path. */
+async function retireable(options: {
+  readonly seams?: FakeSeams;
+  readonly slot?: Api2Slot & { held(): JsonValue | null };
+  readonly create?: ReturnType<typeof createRecorder> | null;
+} = {}): Promise<Fixture & {
+  readonly retire: (facts: { clvl: number; depth: number; slotName: string }) => void;
+  readonly seams: FakeSeams;
+}> {
+  const logs: string[] = [];
+  const theSlot = options.slot ?? slot({ profileIds: ["p1"] });
+  const seams = options.seams ?? rosterSeas();
+  const recorder = options.create === undefined ? createRecorder("ok", theSlot) : options.create;
+  const bus = eventBus();
+  const restart = installBorgRestart({
+    slot: theSlot,
+    log: (message) => logs.push(message),
+    ownsKeyboard: owns({ ok: true, value: true }),
+    create: recorder === null ? null : recorder.fn,
+    events: bus.api,
+    save: seams.save,
+    listSaves: seams.listSaves,
+    rename: seams.rename,
+  });
+  await settle();
+  return {
+    restart,
+    logs: () => logs,
+    held: theSlot.held,
+    created: recorder === null ? () => [] : recorder.calls,
+    slotAtCreate: recorder === null ? () => [] : recorder.slotAtCall,
+    bus,
+    retire: (facts) => restart.retire(facts),
+    seams,
+  };
+}
+
+describe("the retire path (#25: save, rename into the library, create)", () => {
+  it("keeps a save, renames the slot into the library, flags, and starts the next one", async () => {
+    const f = await retireable();
+    const seen = await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(seen).toEqual([]);
+
+    /* The protocol's whole happy shape, in order: one save, one rename of
+     * the just-saved slot to the LIBRARY name (the seed segment is the
+     * ladder's per-seed key, #26), the flag standing when create ran, and
+     * exactly one create with resumeAutoplayer - the same resume the death
+     * path asks for. */
+    expect(f.seams.calls.save).toBe(1);
+    expect(f.seams.calls.renames).toEqual([{ id: "slot-7", name: "M s42 c20d8" }]);
+    expect(f.seams.slots[0]!.name).toBe("M s42 c20d8");
+    expect(f.created()).toEqual([{ resumeAutoplayer: true }]);
+    const atCreate = f.slotAtCreate()[0] as Record<string, unknown> | null;
+    expect(atCreate?.[BIRTH_FLAG_KEY]).toBe(true);
+    expect(atCreate?.["profileIds"]).toEqual(["p1"]);
+    const said = f.logs().join(" ");
+    expect(said).toContain("attained its stage");
+    expect(said).toContain("keeping a save");
+  });
+
+  it("names by the lineage counter when the caller knows no seed", async () => {
+    /* The mod cannot know the game seed; the name carries the lineage
+     * counter instead (src/loop/stage.ts documents the split). The roster's
+     * slot matches the facts (level 2, depth 1) so the found-slot leg runs. */
+    const seams = rosterSeas();
+    seams.slots[0] = { id: "slot-7", name: "Bergil", race: "High-Elf", cls: "Warrior", level: 2, depth: 1, dead: false, lastPlayed: 0 };
+    const f = await retireable({ seams });
+    await unhandledRejections(() => f.retire({ clvl: 2, depth: 1, slotName: librarySlotName({ clvl: 2, depth: 1 }, { lineage: 5 }) }));
+    expect(f.seams.slots[0]!.name).toBe("M n5 c2d1");
+  });
+
+  it("CONTINUES PLAYING when the save is refused: no rename, no create, one loud line", async () => {
+    /* THE FAIL-SAFE (#25's absolute rule): a refused retire must never
+     * become a death loop - nothing is renamed, nothing is created, the run
+     * plays on, and the retire is attempted at most once per page. */
+    const f = await retireable({ seams: rosterSeas({ save: "refused" }) });
+    const seen = await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(seen).toEqual([]);
+    expect(f.seams.calls.save).toBe(1);
+    expect(f.seams.calls.renames).toEqual([]);
+    expect(f.seams.slots[0]!.name).toBe("Bergil");
+    expect(f.created()).toEqual([]);
+    expect(f.held()).toEqual({ profileIds: ["p1"] });
+    const said = f.logs().join(" ");
+    expect(said).toContain("could not keep a save");
+    expect(said).toContain("keeps playing");
+    /* And once only: the second call is latched away. */
+    await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(f.seams.calls.save).toBe(1);
+  });
+
+  for (const mode of ["throw", "reject"] as const) {
+    it(`contains a save ${mode === "throw" ? "throw" : "rejection"} the same way`, async () => {
+      const f = await retireable({ seams: rosterSeas({ save: mode }) });
+      const seen = await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+      expect(seen).toEqual([]);
+      expect(f.created()).toEqual([]);
+      expect(f.logs().join(" ")).toContain("keeps playing");
+    });
+  }
+
+  it("keeps playing when the roster cannot be read or the saved slot cannot be recognised", async () => {
+    /* A refused list, and the shape where the roster does not carry an
+     * alive slot matching the live facts (level and depth at the save): both
+     * are a refused retire - the save stands under its old name, nothing is
+     * created, and the log says which way it failed. */
+    const refusedList = await retireable({ seams: rosterSeas({ list: "refused" }) });
+    await unhandledRejections(() => refusedList.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(refusedList.created()).toEqual([]);
+    expect(refusedList.seams.slots[0]!.name).toBe("Bergil");
+    expect(refusedList.logs().join(" ")).toContain("keeps playing");
+
+    const stranger = rosterSeas();
+    stranger.slots[0] = { id: "slot-9", name: "Another", race: "Human", cls: "Mage", level: 3, depth: 1, dead: false, lastPlayed: 5 };
+    const mismatched = await retireable({ seams: stranger });
+    await unhandledRejections(() => mismatched.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(mismatched.seams.calls.renames).toEqual([]);
+    expect(mismatched.created()).toEqual([]);
+    expect(mismatched.logs().join(" ")).toContain("keeps playing");
+  });
+
+  it("keeps playing when the rename is refused: the save stands under its old name", async () => {
+    for (const mode of ["refused", "throw", "reject"] as const) {
+      const f = await retireable({ seams: rosterSeas({ rename: mode }) });
+      const seen = await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+      expect(seen).toEqual([]);
+      expect(f.seams.calls.save).toBe(1); /* the save DID land */
+      expect(f.seams.slots[0]!.name).toBe("Bergil"); /* the name did not */
+      expect(f.created()).toEqual([]);
+      expect(f.held()).toEqual({ profileIds: ["p1"] });
+      const said = f.logs().join(" ");
+      expect(said).toContain("could not rename");
+      expect(said).toContain("keeps playing");
+    }
+  });
+
+  it("clears a stranded flag and keeps playing when create is refused after the save and rename", async () => {
+    /* The half-landed retire: the save is kept and the slot renamed (a
+     * library entry the owner can load), but the next character cannot be
+     * started - so the standing flag is durably cleared and the run plays
+     * on; a later death still runs the ordinary death path. */
+    const theSlot = slot({ profileIds: ["p1"] });
+    const f = await retireable({ slot: theSlot, create: createRecorder("refused", theSlot) });
+    const seen = await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(seen).toEqual([]);
+    expect(f.seams.slots[0]!.name).toBe("M s42 c20d8"); /* kept */
+    expect(f.created()).toHaveLength(1); /* attempted once */
+    expect(f.held()).toEqual({ profileIds: ["p1"] }); /* flag cleared */
+    const said = f.logs().join(" ");
+    expect(said).toContain("could not start the next character");
+    expect(said).toContain("keeps playing");
+    /* And the death path still works on the same page: the report runs. */
+    await unhandledRejections(() => f.bus.report({ key: "cedar", report: report("death") }));
+    expect(f.created()).toHaveLength(2);
+  });
+
+  it("does not reload into a flag that did not durably land, and keeps playing", async () => {
+    const f = await retireable({ slot: refusingSetSlot({ profileIds: ["p1"] }) });
+    await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(f.created()).toEqual([]);
+    expect(f.logs().join(" ")).toContain("write was refused");
+  });
+
+  it("says so and plays on when the game gives it no session seam", async () => {
+    const f = await retireable({ seams: rosterSeas({ save: "absent" }) });
+    await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(f.seams.calls.save).toBe(0);
+    expect(f.created()).toEqual([]);
+    expect(f.logs().join(" ")).toContain("no session seam");
+    expect(f.logs().join(" ")).toContain("keeps playing");
+  });
+
+  it("retires at most one character per page, however often attainment is seen", async () => {
+    const f = await retireable();
+    await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    await unhandledRejections(() => f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) }));
+    expect(f.seams.calls.save).toBe(1);
+    expect(f.created()).toHaveLength(1);
+  });
+
+  it("drops a retire the loop's stop retires mid-flight, and clears a flag it had written", async () => {
+    /* The #29 discipline, on the retire path: a stop invalidates the
+     * continuation - no rename, no flag, no create - and a flag the
+     * cancelled retire had written (or may have written, #35) is still
+     * durably cleared, exactly as a cancelled report's is. */
+    let releaseSave!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      releaseSave = resolve;
+    });
+    const base = rosterSeas();
+    const parkingSave = (): Api2Call<null> => gate.then(() => Promise.resolve({ ok: true as const, value: null }));
+    const f = await retireable({ seams: { ...base, save: parkingSave } });
+    f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) });
+    await settle(8); /* parked inside the save */
+    await f.restart.stop();
+
+    const seen = await unhandledRejections(() => {
+      releaseSave();
+    });
+    await settle();
+    expect(seen).toEqual([]);
+    expect(f.seams.calls.renames).toEqual([]); /* no further side effect */
+    expect(f.created()).toEqual([]);
+    expect(f.held()).toEqual({ profileIds: ["p1"] });
+    const said = f.logs().join(" ");
+    expect(said).toContain("cancelled");
+    expect(said).toContain("dropped");
+  });
+
+  it("still clears the flag when the stop lands inside the retire's flag work", async () => {
+    /* The retire's legs before the flag are immediate, so a stop issued
+     * after them lands inside the flag work (written, read-back pending):
+     * VERIFIED cleanup still runs (#35's lesson on the retire path), no
+     * create is issued, and the kept save stands renamed - the library
+     * entry is real even though the page never reloaded. */
+    const theSlot = slot({ profileIds: ["p1"] });
+    const f = await retireable({ slot: theSlot, create: createRecorder("ok", theSlot) });
+
+    f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) });
+    await settle(8); /* save, list, rename done; inside the flag's write/read-back */
+    await f.restart.stop();
+    await settle();
+
+    expect(f.created()).toEqual([]); /* no new side effect after the stop */
+    expect(f.held()).toEqual({ profileIds: ["p1"] }); /* flag durably cleared */
+    expect(f.seams.slots[0]!.name).toBe("M s42 c20d8"); /* the kept save stands */
+    const said = f.logs().join(" ");
+    expect(said).toContain("retire");
+    expect(said).toContain("cleared");
+  });
+
+  it("lets a retire create that already succeeded stand when the loop stops inside it", async () => {
+    /* The report path's deferred-create shape, on the retire path: the
+     * create was ISSUED by the live loop and is parked on the host; the stop
+     * lands; the call's ok outcome still stands (the page is going away -
+     * the next page's presenter consumes the flag), and nothing new starts. */
+    let releaseCreate!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      releaseCreate = resolve;
+    });
+    const theSlot = slot({ profileIds: ["p1"] });
+    const f = await retireable({ slot: theSlot, create: createRecorder("ok", theSlot, gate) });
+
+    f.retire({ clvl: 20, depth: 8, slotName: librarySlotName({ clvl: 20, depth: 8 }, { seed: 42 }) });
+    await settle(16); /* renamed, flagged, verified; create issued and parked */
+    expect(f.created()).toEqual([{ resumeAutoplayer: true }]);
+    expect((f.held() as Record<string, unknown>)[BIRTH_FLAG_KEY]).toBe(true);
+    await f.restart.stop();
+
+    const seen = await unhandledRejections(() => {
+      releaseCreate();
+    });
+    await settle();
+    expect(seen).toEqual([]);
+    expect((f.held() as Record<string, unknown>)[BIRTH_FLAG_KEY]).toBe(true); /* the page is going away */
+    expect(f.seams.slots[0]!.name).toBe("M s42 c20d8");
   });
 });

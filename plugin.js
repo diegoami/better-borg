@@ -1,4 +1,4 @@
-// betterborg - generated from plugin.ts by neo-angband-mod-build
+// mandos - generated from plugin.ts by neo-angband-mod-build
 // (@rpgm-tools/neo-angband-mod-sdk). Edit the TypeScript source, not this file.
 
 // src/birth/flag.ts
@@ -16674,6 +16674,10 @@ function createTick(bridge2, borg) {
     if (input.phase !== "play" && input.phase !== "store") return;
     const world = await bridge2.readWorld();
     if (world === null) return;
+    if (borg.stage !== void 0 && borg.stage.attained(world)) {
+      borg.stage.onAttained(world);
+      return;
+    }
     let facade = createActFacade();
     let command = borg.controller(world.view, facade.act);
     for (let pass = 0; pass < MAX_EXTRA_PASSES && bridge2.loadoutsPending(); pass++) {
@@ -17118,7 +17122,7 @@ function warriorBirth(mod2, core) {
 var warriorPack = {
   id: "warrior",
   className: WARRIOR_CLASS_NAME,
-  titleRowLabel: "New Warrior Borg character",
+  titleRowLabel: "New Mandos warrior character",
   defaultRaceName: WARRIOR_RACE_CANDIDATES[0],
   raceCandidates: WARRIOR_RACE_CANDIDATES,
   planFor: planWarriorFor,
@@ -17394,23 +17398,123 @@ async function flagIsDurable(slot) {
     return false;
   }
 }
+async function clearStrandedFlag(slot, log, why, aftermath) {
+  const cleared = await clearBirthFlag(slot);
+  if (cleared) {
+    log(`the Borg could not start the next character (${why}); the birth flag was cleared and ${aftermath}`);
+    return;
+  }
+  log(
+    `the Borg could not start the next character (${why}) AND could not durably clear its birth flag: the flag may still be set, and the next character created after any later reload would be born as the Borg's planned character. The presenter still consumes-or-declines it on that page, but a human's birth could be taken once - clear the mod's install storage before letting anyone create a character here`
+  );
+}
+async function retireAtStage(deps, facts, cancelled = () => false) {
+  const dropped = (where) => {
+    deps.log(`the Borg's retire was cancelled while it was still ${where}, so it is dropped`);
+  };
+  const keepPlaying = (what, why) => {
+    deps.log(`the Borg ${what} (${why}); it keeps playing`);
+  };
+  const save = deps.save ?? null;
+  const listSaves = deps.listSaves ?? null;
+  const rename = deps.rename ?? null;
+  const create = deps.create;
+  if (save === null || listSaves === null || rename === null || create === null) {
+    deps.log(
+      "the Borg cannot retire a character that attains its stage on this game: it was given no session seam, so an attained run keeps playing"
+    );
+    return "refused";
+  }
+  let saved = false;
+  try {
+    const result = await save();
+    saved = result.ok;
+    if (!result.ok) keepPlaying("could not keep a save of the character that attained its stage", result.message);
+  } catch (error) {
+    keepPlaying("could not keep a save of the character that attained its stage", messageOf2(error));
+  }
+  if (cancelled()) {
+    dropped("saving");
+    return "refused";
+  }
+  if (!saved) return "refused";
+  let slotId = null;
+  try {
+    const read = await listSaves();
+    if (!read.ok) {
+      keepPlaying("saved the character that attained its stage but cannot tell which roster slot is its own", read.message);
+    } else {
+      let best = -1;
+      const entries = [...read.value];
+      for (let at = 0; at < entries.length; at++) {
+        const entry = entries[at];
+        if (entry.dead) continue;
+        if (entry.level !== facts.clvl || entry.depth !== facts.depth) continue;
+        if (best === -1 || entry.lastPlayed >= entries[best].lastPlayed) best = at;
+      }
+      if (best === -1) {
+        deps.log(
+          `the Borg saved the character that attained its stage but the roster carries no matching slot (alive, level ${String(facts.clvl)}, depth ${String(facts.depth)}); it keeps playing`
+        );
+      } else {
+        slotId = entries[best].id;
+      }
+    }
+  } catch (error) {
+    keepPlaying("saved the character that attained its stage but cannot tell which roster slot is its own", messageOf2(error));
+  }
+  if (cancelled()) {
+    dropped("looking for the saved slot");
+    return "refused";
+  }
+  if (slotId === null) return "refused";
+  let renamed = false;
+  try {
+    const result = await rename(slotId, facts.slotName);
+    renamed = result.ok;
+    if (!result.ok) {
+      keepPlaying(`saved the character that attained its stage but could not rename its slot to "${facts.slotName}"`, result.message);
+    }
+  } catch (error) {
+    keepPlaying(`saved the character that attained its stage but could not rename its slot to "${facts.slotName}"`, messageOf2(error));
+  }
+  if (cancelled()) {
+    dropped("renaming the kept slot");
+    return "refused";
+  }
+  if (!renamed) return "refused";
+  deps.log(`the Borg kept a save of the character that attained its stage, renamed to "${facts.slotName}" in the library`);
+  const written = await setBirthFlag(deps.slot);
+  const standing = written && await flagIsDurable(deps.slot);
+  if (cancelled()) {
+    await clearStrandedFlag(deps.slot, deps.log, "the retire's flag would not outlive the stop", "no next character is started");
+    return "refused";
+  }
+  if (!standing) {
+    await clearStrandedFlag(
+      deps.slot,
+      deps.log,
+      written ? "the retire's birth flag would not verify after being written" : "the retire's birth flag's write was refused",
+      "the character that attained its stage keeps playing"
+    );
+    return "refused";
+  }
+  try {
+    const made = await create({ resumeAutoplayer: true });
+    if (made.ok) return "retired";
+    await clearStrandedFlag(deps.slot, deps.log, `create was refused: ${made.message}`, "the character that attained its stage keeps playing");
+  } catch (error) {
+    await clearStrandedFlag(deps.slot, deps.log, `create threw: ${messageOf2(error)}`, "the character that attained its stage keeps playing");
+  }
+  return "refused";
+}
 function installBorgRestart(deps) {
   let subscription = null;
   let spent = false;
+  let retireSpent = false;
   let stopped = false;
   let epoch = 0;
-  const stranded = async (why) => {
-    const cleared = await clearBirthFlag(deps.slot);
-    if (cleared) {
-      deps.log(
-        `the Borg could not start the next character (${why}); the birth flag was cleared and this run ends here rather than loop`
-      );
-      return;
-    }
-    deps.log(
-      `the Borg could not start the next character (${why}) AND could not durably clear its birth flag: the flag may still be set, and the next character created after any later reload would be born as the Borg's planned character. The presenter still consumes-or-declines it on that page, but a human's birth could be taken once - clear the mod's install storage before letting anyone create a character here`
-    );
-  };
+  const stranded = (why) => clearStrandedFlag(deps.slot, deps.log, why, "this run ends here rather than loop");
   const onReport = async (event) => {
     if (stopped) return;
     const mine = epoch;
@@ -17518,6 +17622,15 @@ function installBorgRestart(deps) {
     get listening() {
       return subscription !== null;
     },
+    retire(facts) {
+      if (stopped || retireSpent) return;
+      retireSpent = true;
+      const mine = epoch;
+      deps.log(
+        `the Borg's character attained its stage (character level ${String(facts.clvl)}, first arrival at depth ${String(facts.depth)}); the Borg is keeping a save and starting the next one`
+      );
+      void retireAtStage(deps, facts, () => stopped || mine !== epoch);
+    },
     async stop() {
       stopped = true;
       epoch += 1;
@@ -17527,6 +17640,57 @@ function installBorgRestart(deps) {
       if (held !== null) await deps.events.off(held).catch(() => void 0);
     }
   };
+}
+
+// src/loop/stage.ts
+var STAGE_CLVL_SETTING = {
+  id: "borg.stageClvl",
+  title: "Stage character level",
+  description: "The character level a run must reach for the Borg to count it as having attained its target stage, together with borg.stageDepth. A run that attains is saved under a library name and the next character starts. The default (2) is the stage baseline's calibration (2026-11-03): the strongest rung today's Borg attains on half the standard seed grid; raise it as the Borg grows stronger. Read once per page, so a change applies to the next birth.",
+  min: 0,
+  max: 50,
+  step: 1,
+  default: 2
+};
+var STAGE_DEPTH_SETTING = {
+  id: "borg.stageDepth",
+  title: "Stage depth",
+  description: "The dungeon depth a run must have arrived on (0 is the town) for the Borg to count it as having attained its target stage, together with borg.stageClvl. The default (1) is the stage baseline's calibration (2026-11-03); the owner's destination is a moderate depth at character level around 20, which the settings reach as the Borg grows stronger. Read once per page, so a change applies to the next birth.",
+  min: 0,
+  max: 100,
+  step: 1,
+  default: 1
+};
+function stageOf(stored) {
+  return { clvl: stageValue(STAGE_CLVL_SETTING, stored.clvl), depth: stageValue(STAGE_DEPTH_SETTING, stored.depth) };
+}
+function stageValue(setting, stored) {
+  const raw = typeof stored === "number" && Number.isFinite(stored) ? stored : setting.default;
+  const clamped = Math.min(setting.max, Math.max(setting.min, raw));
+  let snapped = setting.min + Math.round((clamped - setting.min) / setting.step) * setting.step;
+  if (snapped > setting.max) snapped -= setting.step;
+  const places = Math.max(decimalsOf2(setting.min), decimalsOf2(setting.step));
+  return Number(snapped.toFixed(places));
+}
+function decimalsOf2(value) {
+  const text = String(value);
+  const point = text.indexOf(".");
+  return point === -1 ? 0 : text.length - point - 1;
+}
+function stageAttained(stage, facts) {
+  return facts.clvl >= stage.clvl && facts.maxDepth >= stage.depth;
+}
+function stageLabel(stage) {
+  return `c${String(stage.clvl)}d${String(stage.depth)}`;
+}
+var STAGE_NAME_LIMIT = 15;
+function librarySlotName(stage, identity) {
+  const label = stageLabel(stage);
+  const tag = identity.seed !== void 0 && identity.seed !== null ? `s${String(identity.seed)}` : identity.lineage !== void 0 && identity.lineage !== null ? `n${String(identity.lineage)}` : null;
+  const full = tag === null ? `M ${label}` : `M ${tag} ${label}`;
+  if (full.length <= STAGE_NAME_LIMIT) return full;
+  const identityOnly = tag === null ? `M ${label}` : `M ${tag}`;
+  return identityOnly.length <= STAGE_NAME_LIMIT ? identityOnly : identityOnly.slice(0, STAGE_NAME_LIMIT);
 }
 
 // plugin.ts
@@ -17558,6 +17722,8 @@ function changedFrom(cfg) {
   return Object.entries(cfg).filter(([key, value]) => stock[key] !== value).map(([key, value]) => `${key}=${String(value)}`).sort();
 }
 var activePack = PACKS[CLASS_SETTING.default];
+var activeStage = stageOf({});
+var lineageAtPage = null;
 var bridge;
 var running;
 var restartHandle;
@@ -17578,7 +17744,13 @@ async function begin(mod2) {
     if (typeof mod2.meta.settings === "function") {
       void mod2.meta.settings().then(
         (read) => {
-          if (read.ok) activePack = packForClassValue(read.value[CLASS_SETTING.id]);
+          if (read.ok) {
+            activePack = packForClassValue(read.value[CLASS_SETTING.id]);
+            activeStage = stageOf({
+              clvl: read.value[STAGE_CLVL_SETTING.id],
+              depth: read.value[STAGE_DEPTH_SETTING.id]
+            });
+          }
         },
         () => {
         }
@@ -17586,6 +17758,13 @@ async function begin(mod2) {
     }
   } catch {
   }
+  void readLineage(mod2.store.install).then(
+    (counter) => {
+      lineageAtPage = counter;
+    },
+    () => {
+    }
+  );
   const cfg = cfgFromFlags(mod2.meta.flags);
   setBuffTimerSafetyNet(mod2.meta.flags["bugfix.borgFixes"] ?? true);
   const borg = createBorg({ resolvers: makeCoreResolvers(made.resolverInput()), cfg });
@@ -17640,13 +17819,37 @@ async function begin(mod2) {
     ownsKeyboard: () => mod2.act.controller.owns(),
     create: mod2.manage?.saves.create ?? null,
     events: mod2.events,
-    graveyard: journal.graveyard
+    graveyard: journal.graveyard,
+    save: mod2.manage?.session?.save ?? null,
+    listSaves: mod2.manage?.saves.list ?? null,
+    rename: mod2.manage?.saves.rename ?? null
   });
+  let attainmentSeen = false;
+  const stageWatch = {
+    attained: (world) => {
+      if (attainmentSeen) return false;
+      const player = world.view.player();
+      if (!stageAttained(activeStage, { clvl: player.level, maxDepth: player.maxDepth })) return false;
+      attainmentSeen = true;
+      return true;
+    },
+    onAttained: (world) => {
+      const player = world.view.player();
+      mod2.meta.log(
+        `the Borg's stage for this character is ${String(activeStage.clvl)}/${String(activeStage.depth)} (character level and first-arrival depth), from borg.stageClvl and borg.stageDepth`
+      );
+      restart.retire({
+        clvl: player.level,
+        depth: player.depth,
+        slotName: librarySlotName(activeStage, { seed: null, lineage: lineageAtPage })
+      });
+    }
+  };
   void restartHandle?.stop();
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch }), restart, journal };
 }
 var definition = {
   api: ">=2.0.0 <3.0.0",

@@ -47,6 +47,8 @@ const RUN_KEYS = [
   "commands",
   "jitter",
   "restedBesideMonster",
+  "stageAttained",
+  "retired",
   "meta",
 ] as const;
 
@@ -70,6 +72,8 @@ function fixtureRun(overrides: Partial<RunReport>): RunReport {
     commands: { walk: 659, close: 771, descend: 21 },
     jitter: 12,
     restedBesideMonster: 0,
+    stageAttained: false,
+    retired: false,
     wallClockMs: 21094,
     ...overrides,
   };
@@ -78,7 +82,7 @@ function fixtureRun(overrides: Partial<RunReport>): RunReport {
 function fixtureSession(): SessionRecord {
   return {
     label: "schema-test",
-    runner: { tool: "tools/sweep.mjs", decisions: 1500, seeds: [1, 7], lives: 1 },
+    runner: { tool: "tools/sweep.mjs", decisions: 1500, seeds: [1, 7], lives: 1, stage: null },
     build: {
       commit: "deadbeef0 (dirty)",
       engine: "@rpgm-tools/neo-angband-core 1.23.0-beta.1",
@@ -136,6 +140,7 @@ describe("buildRunsJson", () => {
       "decisions",
       "seeds",
       "lives",
+      "stage",
     ]);
     expect(Object.keys(doc["build"] as object)).toEqual([
       "commit",
@@ -148,6 +153,7 @@ describe("buildRunsJson", () => {
       decisions: 1500,
       seeds: [1, 7],
       lives: 1,
+      stage: null,
     });
   });
 
@@ -185,6 +191,8 @@ describe("buildRunsJson", () => {
       expect(run["commands"]).toEqual(given.commands);
       expect(run["jitter"]).toBe(given.jitter);
       expect(run["restedBesideMonster"]).toBe(given.restedBesideMonster);
+      expect(run["stageAttained"]).toBe(given.stageAttained);
+      expect(run["retired"]).toBe(given.retired);
       expect((run["meta"] as { wallClockMs: number })["wallClockMs"]).toBe(
         given.wallClockMs,
       );
@@ -231,6 +239,29 @@ describe("buildSummary", () => {
 
   it("says where the raw record lives", () => {
     expect(buildSummary(fixtureSession())).toContain("runs.json");
+  });
+
+  it("states the reach-rate as the cohort's headline when a stage was in play (#25)", () => {
+    /* The purpose redirect's number: the fraction of the cohort that
+     * attained the session's stage, named WITH the rung so two records at
+     * two stages never get compared by accident. The fixture's runs sit at
+     * clvl 1 and 2 over maxDepth 1, so a c2d1 rung is attained by exactly
+     * one of the two. */
+    const session = fixtureSession();
+    session.runner = { ...session.runner, stage: { clvl: 2, depth: 1 } };
+    session.runs = session.runs.map((run, at) => ({
+      ...run,
+      stageAttained: at === 1,
+      retired: at === 1,
+    }));
+    const summary = buildSummary(session);
+    expect(summary).toContain("reach-rate (stage c2d1): 1/2 runs attained (50.0%)");
+    expect(summary).toContain("library: 1 kept save");
+    /* And a stage-less session keeps the old shape exactly: no rate, no
+     * library line - a pre-#25 reader sees a pre-#25 summary. */
+    const bare = buildSummary(fixtureSession());
+    expect(bare).not.toContain("reach-rate");
+    expect(bare).not.toContain("library");
   });
 });
 

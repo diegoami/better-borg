@@ -19,8 +19,9 @@ Code, others):
   - the strength roadmap (ceiling fixes, formula engine, parameter evolution,
   knowledge). **Backlog**: GitHub issues labelled `backlog`, ranked in
   [`docs/BACKLOG.md`](docs/BACKLOG.md).
-- **Run records**: [`docs/runs/README.md`](docs/runs/README.md) - depth is the
-  number; a change without a record is an unmeasured change.
+- **Run records**: [`docs/runs/README.md`](docs/runs/README.md) - reach-rate
+  at the chosen stage is the number (#25); a change without a record is an
+  unmeasured change.
 
 Upstream is `neostryder/neo-angband-mod-borg`; the import commit `70145c5` is
 the boundary, and it is the SAME boundary commit neowarrior-borg imported at,

@@ -24,7 +24,7 @@
 
 import { describe, expect, it } from "vitest";
 import { WARRIOR_RACE_CANDIDATES } from "../class/warrior/settings.js";
-import { assertBakeoffBuild, bakeoffCells, bakeoffMedian } from "./bakeoff.js";
+import { assertBakeoffBuild, bakeoffCells, bakeoffMedian, reachRate } from "./bakeoff.js";
 
 /** The bake-off's own seed list: the four T06 pinned seeds plus the four the play tests own. */
 const SEEDS = [1, 7, 20, 23, 34, 42, 49, 99] as const;
@@ -82,5 +82,15 @@ describe("the bake-off sweep's parameterization", () => {
     expect(bakeoffMedian([4])).toBe(4);
     expect(bakeoffMedian([3, 1, 2])).toBe(2);
     expect(() => bakeoffMedian([])).toThrow(/median of nothing/u);
+  });
+
+  it("reach-rate: the fraction of a cohort that attained, loud on an empty one (#25)", () => {
+    /* The purpose redirect's number (rule 1): per-run y/n in, one fraction
+     * out - the same computed-once discipline the median keeps. */
+    expect(reachRate([true, true, true, true])).toBe(1);
+    expect(reachRate([false, false, false, false])).toBe(0);
+    expect(reachRate([true, false, false, true])).toBe(0.5);
+    expect(reachRate([true])).toBe(1);
+    expect(() => reachRate([])).toThrow(/reach-rate of nothing/u);
   });
 });

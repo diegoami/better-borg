@@ -22,6 +22,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { RunReport } from "./play-session.js";
+import { reachRate } from "./measure/bakeoff.js";
 
 /** Identifies the runs.json shape; bump when the schema gains a field. */
 export const RUNS_SCHEMA_ID = "better-borg/runs@1";
@@ -39,6 +40,12 @@ export interface SessionRunner {
   seeds: number[];
   /** Lives played per seed. */
   lives: number;
+  /**
+   * The stage the cohort ground toward (#25) - the reach-rate's rung - or
+   * null when the session played none. ADDITIVE: records before B25 carry
+   * no `stage` key at all, and a reader treats absence as null.
+   */
+  stage: { readonly clvl: number; readonly depth: number } | null;
 }
 
 /** What was playing: the build a later comparison must be able to name. */
@@ -90,6 +97,10 @@ interface RunEntry {
   commands: Record<string, number>;
   jitter: number;
   restedBesideMonster: number;
+  /** #25, additive: whether this run attained the session's stage (the schema id stays `@1`; records before B25 carry no such key). */
+  stageAttained: boolean;
+  /** #25, additive: whether the retire flow kept a save of this run (the library). */
+  retired: boolean;
   meta: { wallClockMs: number };
 }
 
@@ -124,6 +135,8 @@ function runEntry(run: RunReport): RunEntry {
     commands: { ...run.commands },
     jitter: run.jitter,
     restedBesideMonster: run.restedBesideMonster,
+    stageAttained: run.stageAttained,
+    retired: run.retired,
     meta: { wallClockMs: run.wallClockMs },
   };
 }
@@ -165,7 +178,10 @@ function topCommand(run: RunReport): string {
 /**
  * Build the computed layer: the table a curated README is written from, with
  * the cohort statistics derived from the raw facts. This is the ONLY place
- * those numbers exist - runs.json stays raw.
+ * those numbers exist - runs.json stays raw. Since #25 the cohort's headline
+ * is the REACH-RATE at the session's stage (the fraction of runs that
+ * attained), with the depth statistics kept beside it: depth stays the
+ * ladder's axis, reach-rate is the number.
  */
 export function buildSummary(record: SessionRecord): string {
   const lines: string[] = [];
@@ -180,17 +196,17 @@ export function buildSummary(record: SessionRecord): string {
   lines.push("## Runs");
   lines.push("");
   lines.push(
-    "| run | race/class | decisions | turns | maxDepth | clvl | kills | gold | places | dead | top command | cause of death |",
+    "| run | race/class | decisions | turns | maxDepth | clvl | kills | gold | places | dead | attained | top command | cause of death |",
   );
   lines.push(
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
   );
   for (const run of record.runs) {
     lines.push(
       `| ${String(run.seed)}.${String(run.life)} | ${run.race} ${run.class} | ` +
         `${String(run.decisions)} | ${String(run.turns)} | ${String(run.maxDepth)} | ` +
         `${String(run.clvl)} | ${String(run.kills)} | ${String(run.gold)} | ` +
-        `${String(run.places)} | ${run.dead ? "yes" : "no"} | ${topCommand(run)} | ` +
+        `${String(run.places)} | ${run.dead ? "yes" : "no"} | ${run.stageAttained ? "yes" : "no"} | ${topCommand(run)} | ` +
         `${run.causeOfDeath ?? "-"} |`,
     );
   }
@@ -212,6 +228,17 @@ export function buildSummary(record: SessionRecord): string {
   lines.push(`- ${String(deaths)} of ${String(record.runs.length)} runs died`);
   lines.push(`- mean turns: ${meanTurns.toFixed(0)}`);
   lines.push(`- kills: ${String(kills)}`);
+  if (record.runner.stage !== null) {
+    const attained = record.runs.filter((r) => r.stageAttained).length;
+    const stage = record.runner.stage;
+    lines.push(
+      `- reach-rate (stage c${String(stage.clvl)}d${String(stage.depth)}): ` +
+        `${String(attained)}/${String(record.runs.length)} runs attained ` +
+        `(${(reachRate(record.runs.map((r) => r.stageAttained)) * 100).toFixed(1)}%)`,
+    );
+    const kept = record.runs.filter((r) => r.retired).length;
+    lines.push(`- library: ${String(kept)} kept save${kept === 1 ? "" : "s"}`);
+  }
   return `${lines.join("\n")}\n`;
 }
 

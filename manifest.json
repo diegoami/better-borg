@@ -38,7 +38,8 @@
       "ui:title",
       "ui:birth.replace",
       "profiles:manage",
-      "saves:manage"
+      "saves:manage",
+      "session:control"
     ],
     "description": "Mandos, formerly better-borg: a class-agnostic Borg - a hard fork of Angband's automatic player (the borg in Angband 4.2.6, as ported to Neo Angband by neostryder) carrying defect fixes and strength improvements for every class. The class it plays is a strategy pack - the default is the warrior, the archived neowarrior-borg fork's lineage, selected by the borg.class setting. It grinds for you: it plays unattended, concentrates on reaching a chosen stage reliably, retires each successful run into a kept, loadable save, and starts the next character when one dies. Deterministic, plays by the same rules as the stock Borg. Port defects are staged here as upstream pull requests; improvements upstream declines still live here.\n\nInstalling and enabling it does not give it your character. Start it from the title screen's New Mandos warrior character row, or press Ctrl-Z in play to hand over the keyboard, as with the stock Borg.",
     "author": "diegoami",
@@ -129,6 +130,24 @@
         "max": 3,
         "step": 1,
         "default": 2
+      },
+      {
+        "id": "borg.stageClvl",
+        "title": "Stage character level",
+        "description": "The character level a run must reach for the Borg to count it as having attained its target stage, together with borg.stageDepth. A run that attains is saved under a library name and the next character starts. The default (2) is the stage baseline's calibration (2026-11-03): the strongest rung today's Borg attains on half the standard seed grid; raise it as the Borg grows stronger. Read once per page, so a change applies to the next birth.",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "default": 2
+      },
+      {
+        "id": "borg.stageDepth",
+        "title": "Stage depth",
+        "description": "The dungeon depth a run must have arrived on (0 is the town) for the Borg to count it as having attained its target stage, together with borg.stageClvl. The default (1) is the stage baseline's calibration (2026-11-03); the owner's destination is a moderate depth at character level around 20, which the settings reach as the Borg grows stronger. Read once per page, so a change applies to the next birth.",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 1
       }
     ]
   }

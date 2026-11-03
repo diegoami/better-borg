@@ -37,12 +37,14 @@ const REPO_ROOT = join(HERE, "..");
 const ENGINE_PKG = join("node_modules", "@rpgm-tools", "neo-angband-core");
 
 const USAGE = `usage: node tools/sweep.mjs --label <name> --seeds 1,7,42 [--lives 1]
-                [--decisions 1500] [--out docs/runs]
+                [--decisions 1500] [--stage 20,8] [--out docs/runs]
 
   --label       session label; the record lands in <out>/<date>-<label>/
   --seeds       comma-separated game seeds (the fixed cohort)
   --lives       characters per seed (default 1; see src/play-session.ts)
   --decisions   decision budget per life (default 1500)
+  --stage       clvl,depth - the stage a life must attain (#25); an attained
+                life ends there and the record carries the reach-rate
   --out         records root (default <repo>/docs/runs)
 
 The runner plays the stock Borg on the published engine pin, writes
@@ -68,6 +70,7 @@ for (let i = 0; i < argv.length; i++) {
   else if (flag === "--seeds") args.seeds = value;
   else if (flag === "--lives") args.lives = Number(value);
   else if (flag === "--decisions") args.decisions = Number(value);
+  else if (flag === "--stage") args.stage = value;
   else if (flag === "--out") args.out = value;
   else fail(`unknown argument ${String(flag)}\n\n${USAGE}`);
   i++;
@@ -90,6 +93,16 @@ if (!Number.isInteger(args.lives) || args.lives < 1) {
 }
 if (!Number.isInteger(args.decisions) || args.decisions < 1) {
   fail(`--decisions must be a positive integer, got ${String(args.decisions)}`);
+}
+/* --stage clvl,depth (#25): the reach-rate's rung. Parsed here so a bad
+ * value fails before any compute is spent. */
+let stage = null;
+if (args.stage !== undefined) {
+  const parts = args.stage.split(",").map((text) => Number(text.trim()));
+  if (parts.length !== 2 || parts.some((n) => !Number.isInteger(n) || n < 0)) {
+    fail(`--stage must be clvl,depth (two non-negative integers), got ${JSON.stringify(args.stage)}`);
+  }
+  stage = { clvl: parts[0], depth: parts[1] };
 }
 
 /* The default records root is anchored at the repository, so running the tool
@@ -195,6 +208,7 @@ try {
     seeds,
     lives: args.lives,
     decisions: args.decisions,
+    stage,
     dir,
     packDir,
     build: buildInfo,

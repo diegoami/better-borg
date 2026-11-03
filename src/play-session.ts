@@ -70,6 +70,8 @@ import { createBorg } from "./controller.js";
 import { bindCore, coreIsBound } from "./core-api.js";
 import { makeCoreResolvers } from "./resolvers.js";
 import { installBorgJournal, parseJournal, GRAVEYARD_KEY, graveyardArchiveOf, type ArchivedRun, type BorgJournalData } from "./records/journal.js";
+import { retireAtStage } from "./loop/restart.js";
+import { librarySlotName, stageAttained, type StageDefinition } from "./loop/stage.js";
 import type { StrategyPack } from "./class/pack.js";
 import { warriorPack } from "./class/warrior/index.js";
 import type { GameEvents, DungeonLevelEventData } from "@rpgm-tools/neo-angband-core";
@@ -257,16 +259,32 @@ function driveLife(
   decisions: number,
   life: LifeObservation,
   seed: number,
-): { dead: boolean; taken: number } {
+  stage: StageDefinition | undefined = undefined,
+): { dead: boolean; taken: number; attained: boolean } {
   const state: GameState = game.state;
   let dead = false;
+  let attained = false;
   let taken = 0;
+  /** The stage watch (#25): the same sticky facts the mod's tick reads -
+   * level and maxDepth from the LIVE player - asked before each decision
+   * the way the tick asks before it decides, so the first wait of an
+   * already-attained life retires at once and a mid-life attainment spends
+   * no further decision. */
+  const attainedNow = (): boolean =>
+    stage !== undefined && stageAttained(stage, { clvl: state.actor.player.lev, maxDepth: state.actor.player.maxDepth });
   for (; taken < decisions; ) {
+    if (attainedNow()) {
+      attained = true;
+      break;
+    }
     life.arm();
     const status = core.runGameLoop(state, game.registry);
     /* The decision is counted WHEN IT COMPLETES, whatever its outcome
      * (#36): a death breaks out AFTER the killing decision is counted, so
-     * the record never disagrees with the census (asserted below). */
+     * the record never disagrees with the census (asserted below). A
+     * retirement is counted the same way - attainment is observed after
+     * the decision completes, so a RETIRING run's census balances exactly
+     * as a dying run's does. */
     taken += 1;
     life.places.add(
       `${String(state.chunk.depth)}:${String(state.actor.grid.x)},${String(state.actor.grid.y)}`,
@@ -286,6 +304,11 @@ function driveLife(
       life.depths.add(state.chunk.depth);
     }
   }
+  /* Attainment noticed only after the budget ran out (the last decision
+   * completed it) still counts: the mod's next wait would retire it. A
+   * DEAD run never does - death breaks the loop first and the killing
+   * decision cannot newly complete an attainment. */
+  if (!attained && !dead && attainedNow()) attained = true;
 
   /* The census, counted independently of `taken` (it counts commands as
    * the controller issues them, not loop iterations), must agree with it:
@@ -298,7 +321,7 @@ function driveLife(
       `seed ${String(seed)}: the census counts ${String(issued)} commands over ${String(taken)} decisions - the record would disagree with the game`,
     );
   }
-  return { dead, taken };
+  return { dead, taken, attained };
 }
 
 /**
@@ -378,6 +401,19 @@ export interface RunReport {
   /** Decisions on which the Borg chose to sit still with a monster adjacent. */
   restedBesideMonster: number;
   /**
+   * Whether this run attained the session's stage (#25): character level
+   * and first-arrival depth both at or past its thresholds. False when the
+   * session played no stage.
+   */
+  stageAttained: boolean;
+  /**
+   * Whether the retire flow kept a save of this run (#25): the pack driver
+   * runs the protocol and renames the slot into the library; the STOCK
+   * driver measures attainment only and never keeps saves, so its runs
+   * always record false here even when they attained.
+   */
+  retired: boolean;
+  /**
    * Wall-clock time the life took. METADATA, never a fact: it varies with the
    * machine and never influences a number above (rule 5).
    */
@@ -397,6 +433,14 @@ export interface PlaySessionOptions {
   lives?: number;
   /** Decision budget per life. */
   decisions: number;
+  /**
+   * The stage this session measures (#25), if any. With a stage, a life
+   * that attains ENDS THERE (the analog of the mod's retire: the stock
+   * driver keeps no saves, it measures) and its run records
+   * `stageAttained: true`; without one the loop is exactly what B02 shipped
+   * and every run records `stageAttained: false`.
+   */
+  stage?: StageDefinition;
 }
 
 /**
@@ -450,7 +494,7 @@ export function playSession(
     const turnStart = state.turn;
     const startedAt = Date.now();
 
-    const { dead, taken } = driveLife(core, game, opts.decisions, observed, opts.seed);
+    const { dead, taken, attained } = driveLife(core, game, opts.decisions, observed, opts.seed, opts.stage);
 
     const player = state.actor.player;
     const depthsSorted = [...observed.depths].sort((a, b) => a - b);
@@ -473,13 +517,18 @@ export function playSession(
       causeOfDeath: dead ? player.diedFrom : null,
       jitter: jitterOf(observed),
       restedBesideMonster: observed.restedBesideMonster,
+      stageAttained: attained,
+      retired: false,
       wallClockMs: Date.now() - startedAt,
     });
     tally.kills = 0;
 
     /* The next life rolls a fresh character in this same session. uninstall
      * first so the controller seam is clean (the engine restores the previous
-     * provider; installing over an install would chain two borgs). */
+     * provider; installing over an install would chain two borgs). An
+     * attained life ends the same way a death does here: the stock driver
+     * measures the stage, it does not keep saves - the mod's retire keeps
+     * those. */
     observed.uninstall();
     if (life < lives) game.reincarnate();
   }
@@ -489,15 +538,18 @@ export function playSession(
 
 /**
  * One life of one seed - the shape the suite's per-seed tests want. Exactly
- * playSession with lives 1, returning the single run.
+ * playSession with lives 1, returning the single run. The optional stage
+ * (#25) is the reach-rate's rung: an attained life stops at attainment and
+ * records it.
  */
 export function playRun(
   core: typeof Core,
   pack: GamePack,
   seed: number,
   decisions: number,
+  stage?: StageDefinition,
 ): RunReport {
-  return playSession(core, pack, { seed, decisions, lives: 1 }).runs[0]!;
+  return playSession(core, pack, { seed, decisions, lives: 1, ...(stage === undefined ? {} : { stage }) }).runs[0]!;
 }
 
 /* ==================================================================
@@ -667,6 +719,21 @@ export interface SessionLife {
   /** The journal as it stood in the character's slot at the end of the life. */
   readonly journal: BorgJournalData | null;
   /**
+   * Whether this life attained the session's stage (#25): character level
+   * and first-arrival depth both at or past its thresholds. False when the
+   * session played no stage.
+   */
+  readonly stageAttained: boolean;
+  /**
+   * Whether the retire protocol KEPT a save of this life (#25): the slot
+   * was renamed into its library name and the next character starts, the
+   * same protocol the mod's restart loop runs. An attained life whose
+   * protocol refused (a refused save, here as in the mod) records
+   * `stageAttained: true, retired: false` - the honest split between the
+   * fact and the bookkeeping.
+   */
+  readonly retired: boolean;
+  /**
    * The graveyard entries this life's report added to the INSTALL archive
    * (#34): empty for a survivor, one entry for a character that died. Read
    * from the install slot - the storage that survives the character - never
@@ -679,6 +746,12 @@ export interface SessionLife {
 export interface SessionOutcome {
   readonly lives: readonly SessionLife[];
   /**
+   * The LIBRARY (#25): one entry per retired life - the kept, renamed
+   * roster slot, named with the seed the ladder (#26) maps its per-seed
+   * cohorts by. The graveyard's mirror: failures below, successes here.
+   */
+  readonly library: readonly LibrarySlot[];
+  /**
    * The install archive as it stands after the session: every ended run,
    * still readable now that every character's own bag is gone - the property
    * #34 exists to give the record (#34's required read is exactly this one,
@@ -687,14 +760,30 @@ export interface SessionOutcome {
   readonly graveyard: readonly ArchivedRun[];
 }
 
+/** One kept save of a retired run (#25), as the harness's roster modeled it. */
+export interface LibrarySlot {
+  /** The slot's library name (`M s<seed> <stage>`; src/loop/stage.ts). */
+  readonly name: string;
+  /** The seed the run played under - the name's identity segment. */
+  readonly seed: number;
+}
+
 /** How a pack session is asked for. */
 export interface PackSessionOptions {
-  /** The seeds to play, in order; each character boots only behind its predecessor's death. */
+  /** The seeds to play, in order; each character boots only behind its predecessor's death or retirement. */
   readonly seeds: readonly number[];
   /** The decision cap for each life. */
   readonly capFor: (seed: number) => number;
   /** The race to birth; the pack's default candidate when omitted. */
   readonly raceName?: string;
+  /**
+   * The stage this session's lineage grinds toward (#25). Without it the
+   * session is exactly what B15 ported: play to death or cap, no retire.
+   * With it, an attained life runs the retire protocol (save, rename into
+   * the library, next character) - the same `retireAtStage` the mod's loop
+   * runs - and the lives record attainment.
+   */
+  readonly stage?: StageDefinition;
   /** Where the harness's log lines go (the mod's own log when it has one). */
   readonly log?: (message: string) => void;
 }
@@ -733,9 +822,19 @@ export async function playPackSession(
       ? (install.held() as Record<string, JsonValue>)[GRAVEYARD_KEY] ?? null
       : null)).runs;
 
+  /* THE ROSTER the retire protocol drives (#25): the harness's model of the
+   * host's save slots. One alive slot per character, fresh per life (the
+   * host's create makes a new one); `session.save` stamps the live slot
+   * newest and `saves.rename` renames it in place - the same behavior
+   * harness-api2.ts models for the plugin tests, kept in one shape so the
+   * protocol's find-the-slot leg is exercised identically in both. The
+   * play clock is a counter, never the wall clock (rule 5). */
+  const library: LibrarySlot[] = [];
+  let playClock = 0;
+
   for (const seed of options.seeds) {
     const previous = lives[lives.length - 1];
-    if (previous !== undefined && !previous.dead) {
+    if (previous !== undefined && !previous.dead && !previous.retired) {
       say(`the session stops at seed ${String(previous.seed)}: that character survived its slice, so the loop would never have booted seed ${String(seed)}`);
       break;
     }
@@ -784,7 +883,57 @@ export async function playPackSession(
 
     const observed = observingLife(core, game, seed);
     const startedAt = Date.now();
-    const { dead, taken } = driveLife(core, game, options.capFor(seed), observed, seed);
+    const { dead, taken, attained } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
+
+    /* THE RETIRE PROTOCOL (#25) for a life that attained: the same
+     * `retireAtStage` the mod's loop runs, over this harness's roster
+     * model - save the live slot, rename it into its library name (the
+     * seed is the name's identity segment: the ladder, #26, maps its
+     * per-seed cohorts by it), arm the birth flag in the shared install
+     * slot, and answer whether the keep landed. A death needs none of
+     * this: the graveyard entry below is its record. */
+    let retired = false;
+    if (attained && options.stage !== undefined) {
+      const saveSlot = {
+        id: `slot-${String(lives.length + 1)}`,
+        name: "Borg",
+        race: state.actor.player.race.name,
+        cls: strategy.className,
+        level: state.actor.player.lev,
+        depth: state.chunk.depth,
+        dead: false,
+        lastPlayed: 0,
+      };
+      const outcome = await retireAtStage(
+        {
+          slot: install,
+          log: say,
+          create: () => Promise.resolve({ ok: true as const, value: null }),
+          save: () => {
+            playClock += 1;
+            saveSlot.level = state.actor.player.lev;
+            saveSlot.depth = state.chunk.depth;
+            saveSlot.lastPlayed = 1000 + playClock; /* newest, always */
+            return Promise.resolve({ ok: true as const, value: null });
+          },
+          listSaves: () => Promise.resolve({ ok: true as const, value: [structuredClone(saveSlot)] }),
+          rename: (id: string, name: string) => {
+            if (id !== saveSlot.id || name.length > 15) {
+              return Promise.resolve({ ok: false as const, reason: "refused" as const, code: "refused", message: "the roster refused" });
+            }
+            saveSlot.name = name;
+            return Promise.resolve({ ok: true as const, value: null });
+          },
+        },
+        {
+          clvl: state.actor.player.lev,
+          depth: state.chunk.depth,
+          slotName: librarySlotName(options.stage, { seed }),
+        },
+      );
+      retired = outcome === "retired";
+      if (retired) library.push({ name: saveSlot.name, seed });
+    }
 
     /* The graveyard entry for this life, BEFORE anything that would stand in
      * for the loop's create (here: the next iteration's startGame) - the
@@ -831,10 +980,12 @@ export async function playPackSession(
       wallClockMs: Date.now() - startedAt,
       arrivalStamps,
       journal: parseJournal(slot.held()),
+      stageAttained: attained,
+      retired,
       graveyard: archived.slice(archivedBefore.length),
     });
     observed.uninstall();
   }
 
-  return { lives, graveyard: archivedSoFar() };
+  return { lives, library, graveyard: archivedSoFar() };
 }

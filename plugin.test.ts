@@ -359,6 +359,87 @@ describe("the built plugin.js", () => {
     expect(game.truthCalls.filter((call) => call !== "monsters" && !call.startsWith("race "))).toEqual([]);
   });
 
+  /* ------------------------------------------------------------------
+   * #25 - retire-on-attainment: the stage watch in the tick, the loop's
+   * retire, and the fail-safe
+   * ------------------------------------------------------------------ */
+
+  /* A character at the DECLARED default stage (clvl 2, first arrival at
+   * depth 1 - the calibration the baseline record chose), standing on the
+   * depth it arrived at: attainment is a fact of the world the tick reads. */
+  const ATTAINED: Scenario = {
+    player: { grid: { x: 5, y: 5 }, level: 2, maxDepth: 1, depth: 1 },
+  };
+
+  it("retires a character that attains its stage: saves, renames the slot into the library, starts the next one", async () => {
+    /* THE RAIL ITSELF (#25), driven through the BUILT bundle the way the
+     * game drives it: the tick reads a world whose character has attained,
+     * submits NO further command, and the loop keeps a save, renames the
+     * roster slot to the library name (M, the lineage counter as the
+     * identity, the stage's thresholds), arms the birth flag, and creates
+     * the next character with resumeAutoplayer - unattended, no prompt, the
+     * mod's own stage settings being the consent. */
+    const game = await begin({ scenario: ATTAINED });
+    await tick(game);
+    expect(game.submitted).toEqual([]); /* no decision spent on an attained life */
+    for (let i = 0; i < 32; i++) await Promise.resolve();
+
+    expect(game.savesMade()).toBe(1);
+    expect(game.roster[0]!.name).toBe("M n0 c2d1"); /* lineage 0: a fresh install */
+    expect(game.created).toEqual([{ resumeAutoplayer: true }]);
+    const install = game.installSlot.value as Record<string, unknown>;
+    expect(install[BIRTH_FLAG_KEY]).toBe(true); /* standing for the next page's presenter */
+    expect(said(game)).toContain("attained its stage");
+    expect(said(game)).toContain("keeping a save");
+  });
+
+  it("CONTINUES PLAYING when the save is refused: nothing renamed, nothing created, the next wait decides", async () => {
+    /* #25's absolute fail-safe at the bundle level: a refused save must
+     * never become a death loop. The retire is attempted once, nothing is
+     * renamed or created, the log says the run keeps playing - and the very
+     * next wait is an ORDINARY DECISION (the watch latched), so the
+     * character plays on rather than stalling. */
+    const game = await begin({ scenario: ATTAINED, session: "refused" });
+    await tick(game);
+    for (let i = 0; i < 32; i++) await Promise.resolve();
+
+    expect(game.savesMade()).toBe(0);
+    expect(game.roster[0]!.name).toBe("Borg"); /* unchanged */
+    expect(game.created).toEqual([]);
+    expect((game.installSlot.value as Record<string, unknown> | null)?.[BIRTH_FLAG_KEY]).toBeUndefined();
+    expect(said(game)).toContain("could not keep a save");
+    expect(said(game)).toContain("keeps playing");
+
+    /* The next wait decides normally: the attained world is still attained
+     * (the facts are sticky), but the watch fired once and never again. */
+    await tick(game);
+    expect(game.submitted).toHaveLength(1);
+  });
+
+  it("plays an attained run on when the game gives it no session seam", async () => {
+    /* A host without session:control cannot be retired into: the loop says
+     * so once, nothing is saved or created, and the run plays on. */
+    const game = await begin({ scenario: ATTAINED, session: "absent" });
+    await tick(game);
+    for (let i = 0; i < 32; i++) await Promise.resolve();
+    expect(game.created).toEqual([]);
+    expect(said(game)).toContain("no session seam");
+    await tick(game);
+    expect(game.submitted).toHaveLength(1);
+  });
+
+  it("does not retire a character below its stage, however long it plays", async () => {
+    /* The non-vacuity guard: the same world, one level short of the stage,
+     * never triggers the retire - the saves pile up only for runs that
+     * actually attained. */
+    const game = await begin({ scenario: FIGHT });
+    for (let turn = 0; turn < 4; turn++) await tick(game);
+    for (let i = 0; i < 32; i++) await Promise.resolve();
+    expect(game.savesMade()).toBe(0);
+    expect(game.created).toEqual([]);
+    expect(game.submitted.length).toBeGreaterThanOrEqual(4);
+  });
+
   it("plays the known world when the game gives it no truth domain", async () => {
     const game = await begin({ truth: false });
     await tick(game);
