@@ -22,6 +22,10 @@ engine preempts any feature work in flight - park the feature, chase the bug.
 Features (e.g. #28 inventory review) are nice-to-have and re-queue behind
 every open defect.
 
+**A defect found mid-task** gets its own issue on our tracker at once, and
+is fixed before the task resumes (or the owner is asked) - the feature is
+nowhere near as important (owner, 2026-11-03).
+
 **Dispatch nothing without the owner's "go".** Model choice on this project:
 the owner picks; for reviews, hand the owner a ready-to-paste prompt, don't
 dispatch one.
