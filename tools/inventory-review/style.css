@@ -38,13 +38,13 @@ h2 { font-size: 1.15rem; margin: 0 0 8px; }
 .tagline, .hint, footer { color: var(--muted); }
 code, pre { font-family: ui-monospace, monospace; font-size: 0.9em; }
 .panel, #record, #run { margin-top: 20px; }
-.drop {
+.dropzone {
   border: 2px dashed var(--line);
   border-radius: 8px;
   padding: 20px;
   text-align: center;
 }
-.drop.over { border-color: var(--sell); }
+.dropzone.over { border-color: var(--sell); }
 .error { color: var(--bad); }
 .facts { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 0 0 12px; }
 .facts dt { color: var(--muted); }
