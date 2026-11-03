@@ -26,6 +26,19 @@ every open defect.
 is fixed before the task resumes (or the owner is asked) - the feature is
 nowhere near as important (owner, 2026-11-03).
 
+**GitHub writes** (owner, 2026-11-03): our tracker (diegoami/mandos) -
+the main session writes freely (issues, comments). Upstream - we are not
+maintainers, but we may post issues and PRs, **preferably with the owner's
+approval first**: draft the body, show it, post on approval. Shape them like
+the ones already posted (the references): engine issue
+neostryder/neo-angband#428 and its PR #429, also #430/#431/#432/#433 and
+mod-borg #21/#22. Issue: Summary with the C cited `file:line`, the port's
+code cited, Consequence, the measured repro (seed, decisions, our run-record
+directory), the minimal fix "exactly upstream". PR: per process.md section 6
+(fork branch off upstream master, `Fixes #n`; gap / why it matters / the
+change / evidence incl. tests and "tsc: zero new"), labels only SUGGESTED
+(maintainer's call).
+
 **Dispatch nothing without the owner's "go".** Model choice on this project:
 the owner picks; for reviews, hand the owner a ready-to-paste prompt, don't
 dispatch one.
