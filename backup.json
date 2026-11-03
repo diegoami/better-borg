@@ -1,0 +1,23 @@
+{
+  "//": "Where local-only state is backed up (process.md section 1). The folder is the owner's private Google Drive folder; rclone does the transfer. rcloneAccount is any rclone Drive remote authorised for the owner's account - the folder is forced by folderId, so the remote's own root does not matter. A dedicated remote is better: rclone config create mandosdrive drive scope=drive root_folder_id=<folderId> (needs a browser login once), then set rcloneAccount to mandosdrive.",
+  "drive": {
+    "folderUrl": "https://drive.google.com/drive/folders/1kfadlRMNeNvoESt8YikS7bTrqmPtQlso",
+    "folderId": "1kfadlRMNeNvoESt8YikS7bTrqmPtQlso",
+    "rcloneAccount": "goal2drive"
+  },
+  "sets": {
+    "mandos-lab-data": {
+      "local": "../mandos-lab-data",
+      "what": "the desktop lab build's data base: saves, graveyard and lineage (install storage in the browser profile), settings, logs",
+      "include": [
+        "user/**",
+        "logs/**",
+        "chromium/IndexedDB/**",
+        "chromium/Local Storage/**",
+        "chromium/WebStorage/**",
+        "chromium/Preferences",
+        "chromium/Local State"
+      ]
+    }
+  }
+}

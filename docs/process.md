@@ -33,6 +33,11 @@ with read access to `diegoami/mandos`, nvm. Toolchain: Node 22+ (CI uses
     git config core.hooksPath "$(cd ../neo-angband/.githooks && pwd)"   # privacy pre-commit
     pnpm verify                 # typecheck, suite, plugin.js currency
 
+Restore the lab data base (saves, graveyard) if this machine is to run the
+desktop build: install rclone, authorise a Drive remote for the owner's
+account (`rclone config`; name it in `backup.json`'s `rcloneAccount`), then
+`node tools/backup.mjs pull mandos-lab-data`.
+
 Check it worked: the engine fingerprint below; `pnpm verify` runs
 `src/play.test.ts` rather than skipping it (a skip means no content pack -
 #46); `node tools/upstream-watch.mjs` lists every thread; `node
@@ -50,7 +55,7 @@ The desktop lab build is section 8.
 | Queue, status, decisions in flight | issues: labels, the checkpoint issue, `upstream` tracking issues | on GitHub |
 | `artifacts/` (probe runs, bulky by-products) | this checkout, ignored | scratch by definition (rule 8): anything worth keeping becomes a record |
 | `.upstream-watch.json` | this checkout, ignored | a cache: the first run on a new machine re-baselines it |
-| The lab data base (saves, graveyard, settings, the mod clone, the browser profile) | `~/projects/angband/mandos-lab-data` | NOT backed up: recreatable from section 8 (delete it to reset). If kept saves start to matter (the #26 ladder), they need a backup before they are relied on |
+| The lab data base (saves, graveyard and lineage in the browser profile's IndexedDB/Local Storage, settings, logs) | `~/projects/angband/mandos-lab-data` | backed up to the owner's private Drive folder: `node tools/backup.mjs push` (after a lab session; `backup.json` says what travels - never the caches or the mod clone, which is a git checkout). Each push keeps what it replaces under `archive/<stamp>` |
 | `core.hooksPath` | each clone's git config | set by the setup line above |
 | Claude Code's memory for this project | the user's Claude profile | a convenience only: every rule and decision it holds is also in CLAUDE.md or these docs |
 
