@@ -1,0 +1,14 @@
+#!/bin/sh
+# Mandos's commit-msg: runs the engine checkout's own hook (the privacy scan and the
+# no-AI-trailer check, CLAUDE.md rule 14). Upstream stores its hooks without
+# the executable bit (100644), so pointing core.hooksPath straight at them
+# runs nothing on Linux; this executable wrapper calls them with sh instead,
+# and keeps the engine checkout untouched. Setup: process.md section 1.
+TOP=$(git rev-parse --show-toplevel)
+ENGINE=${NEO_ANGBAND_REPO:-$TOP/../neo-angband}
+HOOK="$ENGINE/.githooks/commit-msg"
+if [ ! -f "$HOOK" ]; then
+  echo "commit-msg: no engine checkout hook at $HOOK (set NEO_ANGBAND_REPO or clone ../neo-angband)" >&2
+  exit 1
+fi
+exec sh "$HOOK" "$@"

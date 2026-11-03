@@ -30,7 +30,7 @@ with read access to `diegoami/mandos`, nvm. Toolchain: Node 22+ (CI uses
 
     cd better-borg
     pnpm install --frozen-lockfile
-    git config core.hooksPath "$(cd ../neo-angband/.githooks && pwd)"   # privacy pre-commit
+    git config core.hooksPath .githooks   # privacy scan + no-AI-trailer (rule 14)
     pnpm verify                 # typecheck, suite, plugin.js currency
 
 Restore the lab data base (saves, graveyard) if this machine is to run the
@@ -56,7 +56,7 @@ The desktop lab build is section 8.
 | `artifacts/` (probe runs, bulky by-products) | this checkout, ignored | scratch by definition (rule 8): anything worth keeping becomes a record |
 | `.upstream-watch.json` | this checkout, ignored | a cache: the first run on a new machine re-baselines it |
 | The lab data base (saves, graveyard and lineage in the browser profile's IndexedDB/Local Storage, settings, logs) | `~/projects/angband/mandos-lab-data` | backed up to the owner's private Drive folder: `node tools/backup.mjs push` (after a lab session; `backup.json` says what travels - never the caches or the mod clone, which is a git checkout). Each push keeps what it replaces under `archive/<stamp>` |
-| `core.hooksPath` | each clone's git config | set by the setup line above |
+| `core.hooksPath` | each clone's git config | set by the setup line above. It points at this repo's `.githooks/`, executable wrappers that run the engine checkout's own hooks with `sh` (upstream stores them non-executable, so pointing at them directly runs nothing on Linux) |
 | Claude Code's memory for this project | the user's Claude profile | a convenience only: every rule and decision it holds is also in CLAUDE.md or these docs |
 
 ### Day to day

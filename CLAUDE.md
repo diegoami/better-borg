@@ -54,5 +54,5 @@
     policy). No commit message or PR body carries a "Co-Authored-By:
     Claude" line or a "Generated with Claude Code" footer - here, in our
     forks, or upstream. AI use is disclosed in one place,
-    `AI_USAGE_POLICY.md`. The `commit-msg` hook (process section 1's
-    `core.hooksPath`) refuses such a message.
+    `AI_USAGE_POLICY.md`. The `commit-msg` hook (`.githooks/`, process
+    section 1) refuses such a message.
