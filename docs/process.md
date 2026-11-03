@@ -45,7 +45,9 @@ instruments (restart loop, session driver, journal/graveyard, records)
 move here - ending the play-session/session.ts duplication - its
 warrior-specific code becomes strategy pack #1, and the repository archives
 with its records preserved. A new class starts as a pack plus a setting,
-never a fork.
+never a fork. After the unification (B15) the unified mod RENAMES to
+**Mandos** - the keeper of the dead who sends them back (#19) - before the
+next tag.
 
 ## 3. Task files and the loop
 
