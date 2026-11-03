@@ -190,6 +190,37 @@ the evidence (tests, "tsc: zero new"); labels only suggested. Before writing
 either, read the code region and verify against the pristine trees - two
 assumptions bit us on 2026-11-03, one corrected publicly on the issue.
 
+**After posting: track it, carry it, keep working** (owner, 2026-11-03).
+We do not stop and wait for upstream, and we do not wait to learn whether
+they accept.
+
+1. **Track.** Every upstream post gets a tracking issue here the same day,
+   labelled `upstream`, in the shape `docs/UPSTREAM.md` describes
+   (Threads / What / Kind / Carried / On release). The upstream watch reads
+   its thread list from these issues.
+2. **Carry.** For an obvious bug - a port defect in the borg or a gap in
+   the engine - we work on the assumption that our PR is accepted, and we
+   carry the fix ourselves meanwhile:
+   - a borg port defect: in the core, faithful to the C (B32's
+     `track_step` is the model);
+   - an engine gap: a patch of the published engine package that
+     `pnpm install` applies, so the headless harness, CI and every run
+     record play on it, plus the same commit on the local lab branch for
+     the desktop build (#40 sets this up; until then #429 lives on the lab
+     branch only). The mod itself never ships engine code (rule 5). A run
+     record names the engine as the published pin plus the carried patch
+     list.
+   A seam request (a new capability rather than a bug) is NOT assumed: the
+   feature waits, or takes a legitimate mod-side fallback, and the tracking
+   issue says which.
+3. **Monitor and decide case by case.** The upstream watch shows movement.
+   When they review, address the feedback in the same pass; if they prefer
+   a different fix, adopt theirs and drop ours. When a release carries it,
+   do the tracking issue's **On release** (drop the carried patch or lab
+   commit, raise the floor - section 7, step 3 - re-baseline) and close it.
+   If they decline, the tracking issue records the decision and the carried
+   fix becomes a marked choice of ours.
+
 The local game checkout's `neowarrior-lab` branch (environment patches) is a
 different thing entirely: never pushed, deleted when a fixed release lands.
 

@@ -20,11 +20,13 @@
    `src/class/` (process section 2) - never into the core, and never into a
    fork. When in doubt, ask: would the stock Borg, playing any class, want
    this? If yes, it is core.
-5. **The mod plays by the rules.** No engine changes, no privileged reads
-   beyond upstream's declarations, no wall clock or network in the
-   controller. Determinism is a guarantee. Learning and optimization happen
-   OFFLINE in tools/ and ship as frozen parameters or versioned read-only
-   data (see the roadmap).
+5. **The mod plays by the rules.** The mod ships no engine code and makes no
+   privileged reads beyond upstream's declarations. (Our fixes TO the
+   engine, offered upstream, are carried in the harness and the lab build
+   until a release carries them - process section 6.) No wall clock or
+   network in the controller. Determinism is a guarantee. Learning and
+   optimization happen OFFLINE in tools/ and ship as frozen parameters or
+   versioned read-only data (see the roadmap).
 6. **`pnpm verify` is the gate.** Play-harness runs need the sibling game
    checkout (`../neo-angband` or `NEO_ANGBAND_REPO`) and skip out loud
    without it.
