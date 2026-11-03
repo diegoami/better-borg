@@ -3,6 +3,9 @@
 For any agent or tool working in this repository (OpenCode, Codex, Claude
 Code, others):
 
+**Start at [`docs/STATE.md`](docs/STATE.md)**: the owner's standing order,
+the queue, what is in flight, and the traps - rewritten at every handover.
+
 - **What this is**: Mandos (formerly better-borg) — the class-agnostic Borg
   fork: defect fixes and strength
   improvements for every borg, staged for upstream, with per-class STRATEGY
