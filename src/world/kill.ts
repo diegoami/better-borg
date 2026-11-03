@@ -113,9 +113,17 @@ export class BorgKills {
   /** Index of a known summoner on the level, 0 for none. */
   summoner = 0;
 
-  /** The record at index i (i >= 1). */
+  /**
+   * The record at index i (i >= 1). DEFECT fix toward the C (#48): upstream's
+   * borg_kills is a FIXED array, so &borg_kills[i] is always a record and a
+   * wiped or never-used slot reads r_idx == 0 (borg-flow.c:738-742 abandons
+   * the step on exactly that). This list grows and wipe() truncates it, so a
+   * goal grid still naming a pre-wipe index read undefined and crashed
+   * borgPlayStep. A slot the list does not hold reads as an empty record -
+   * a fresh one, not stored, so nothing written through it can survive.
+   */
   at(i: number): BorgKill {
-    return this.list[i]!;
+    return this.list[i] ?? makeBorgKill();
   }
 
   /** True when index i holds a live record. */

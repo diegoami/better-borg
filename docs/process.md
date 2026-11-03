@@ -87,7 +87,10 @@ Working notes (each one cost a session time):
   `../neo-angband/reference/src/borg/`.
 - Engine fingerprint, at the start and end of every task: `md5sum
   node_modules/@rpgm-tools/neo-angband-core/dist/game/trap.js` =
-  `c89b1b08474b1692b352f8d0b64823f4`.
+  `34c27241f96aceff581bcb186a9d898f` - the published 1.23.0-beta.1 PLUS our
+  carried patch (`patches/`, #40). The published package alone was
+  `c89b1b08474b1692b352f8d0b64823f4` (the value in task files before B40).
+  A third value means the patch did not apply, or the package changed.
 
 ## 2. The pack doctrine (was: the two-fork routing)
 

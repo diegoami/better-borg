@@ -1,0 +1,46 @@
+diff --git a/dist/game/player-path.js b/dist/game/player-path.js
+index 025c970ac255c2f5c2203a2f0e8c491ceb68352f..7d5280e28f0a866e79496544d534bf88a1c44a62 100644
+--- a/dist/game/player-path.js
++++ b/dist/game/player-path.js
+@@ -89,6 +89,17 @@ export function disturb(state) {
+         delete state.resting;
+     if (state.cmdQueue)
+         state.cmdQueue.length = 0;
++    /* Mandos carries neostryder/neo-angband PR #432 (fixes #414; tracked in
++     * diegoami/mandos#41): disturb() signals EVENT_INPUT_FLUSH
++     * (player-util.c:1674). Drop when a release carries it. */
++    if (state.events) {
++        try {
++            state.events.signal("input-flush");
++        }
++        catch (error) {
++            state.onEventFault?.("input-flush", error);
++        }
++    }
+ }
+ /**
+  * see_wall: a "known wall" in the given direction from grid. Webs count as
+diff --git a/dist/game/trap.js b/dist/game/trap.js
+index a5779bf154427c9a7e321ed288a91e1ab182dd55..7c7f5ec6612d8683b75f6b87a9f1364ee0564085 100644
+--- a/dist/game/trap.js
++++ b/dist/game/trap.js
+@@ -31,7 +31,7 @@ import { emitMotion } from "./resolved-events.js";
+ import { floorPile } from "./floor.js";
+ import { buildObjectEffectChain } from "./obj-cmd.js";
+ import { buildEffectContext } from "./effect-env.js";
+-import { squareIsKnown } from "./known.js";
++import { squareIsKnown, noteSpot } from "./known.js";
+ import { attachGameEnv } from "./effect-game-env.js";
+ import { gearGet } from "./gear.js";
+ /** player_is_trapsafe (player-util.c:1073-1077). */
+@@ -132,6 +132,10 @@ export function squareSetFeatTrapSideEffect(state, grid) {
+ export function installChunkFeatHook(state) {
+     state.chunk.onFeatSet = (grid) => {
+         squareSetFeatTrapSideEffect(state, grid);
++        /* Mandos carries neostryder/neo-angband PR #429 (fixes #428; tracked in
++         * diegoami/mandos#13): square_set_feat's square_note_spot
++         * (cave-square.c:1261). Drop when a release carries it. */
++        noteSpot(state, grid);
+     };
+ }
+ /** square_trap_specific: a trap of the exact kind index here? */

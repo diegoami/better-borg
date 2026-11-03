@@ -405,17 +405,19 @@ suite("the pack restart chain, headless", () => {
      * stage retirement; 23 and 49 survive their slices grinding at clvl 2 -
      * docs/runs/2026-11-03-b32-stage-c2d1/). The chain RULE did not change:
      * a death boots the successor, a survivor ends the session without
-     * booting one. On the fixed tree that is exactly two lives: seed 20
-     * dies (to a grey mushroom patch, on depth 2), its death boots seed 23,
-     * and seed 23's survival stops the loop before seed 34 - the same rule
-     * the strict gate test below proves at the unit level. */
+     * booting one. REBASED AGAIN AT B40 (#40): carrying our engine fixes
+     * saved seed 20 (#429 noteSpot), so the chain now opens on seed 14,
+     * which still dies inside 600 decisions (grey mold, depth 1, 348
+     * decisions); its death boots seed 23, and seed 23's survival stops the
+     * loop before seed 34 - the same rule the strict gate test below proves
+     * at the unit level. */
     const session = await playPackSession(Core, pack!, warriorPack, {
-      seeds: [20, 23, 34, 49],
+      seeds: [14, 23, 34, 49],
       capFor: () => 600,
     });
     expect(session.lives).toHaveLength(2);
-    expect(session.lives[0]!.seed).toBe(20);
-    expect(session.lives[0]!.dead, "seed 20's death is what booted seed 23").toBe(true);
+    expect(session.lives[0]!.seed).toBe(14);
+    expect(session.lives[0]!.dead, "seed 14's death is what booted seed 23").toBe(true);
     expect(session.lives[1]!.seed).toBe(23);
     expect(session.lives[1]!.dead, "seed 23 survived its slice, so no third boot").toBe(false);
     /* The census the harness counted balances the decisions on every life,
@@ -431,10 +433,10 @@ suite("the pack restart chain, headless", () => {
      * middle life capped to a single decision survives, the chain's death
      * gate must refuse to boot its successor, and the session must fail
      * rather than count the other lives' deaths into a chain that was
-     * broken. Seed 20 still plays its full short life so the survivor
-     * really is interior. */
+     * broken. Seed 14 (seed 20 before B40) still plays its full short life
+     * so the survivor really is interior. */
     const plan = warriorBuildPlan();
-    expect(() => chainPlannedWarriors(plan, [20, 23, 34], (seed) => (seed === 23 ? 1 : 600))).toThrow(
+    expect(() => chainPlannedWarriors(plan, [14, 23, 34], (seed) => (seed === 23 ? 1 : 600))).toThrow(
       /seed 23 was still alive after its session slice/u,
     );
   }, 300_000);
@@ -465,8 +467,9 @@ suite("the pack restart chain, headless", () => {
      * caution/attack fix only seed 20 dies on this grid - at 250 decisions -
      * so the session is a death, a rebirth, and a survivor's slice that
      * ends it; every assertion below is shape-agnostic about which lives
-     * ended). */
-    const seeds = [20, 23, 34];
+     * ended). REBASED AT B40: seed 20 survives on the engine with our
+     * carried patches; seed 14 is the opening death now. */
+    const seeds = [14, 23, 34];
     const session = await playPackSession(Core, pack!, warriorPack, { seeds, capFor: () => 600 });
 
     /* AT LEAST ONE DEATH AND ONE REBIRTH, which is this test's requirement

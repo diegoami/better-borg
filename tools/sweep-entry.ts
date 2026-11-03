@@ -8,10 +8,10 @@
  * type-stripping does not rewrite them. tools/sweep.mjs therefore bundles
  * THIS file with esbuild (an existing devDependency; the plugin builder uses
  * it the same way) into a self-contained ESM file and imports that. The
- * bundle pins the PUBLISHED engine from node_modules, which is the only one a
- * measurement is allowed to run on: no engine patching, no local-core alias -
- * patched-engine confirmation sweeps are a separate, labelled thing
- * (docs/runs/2026-11-02-door-close is the precedent).
+ * bundle pins the engine from node_modules: the published package plus the
+ * fixes this repository carries as a pnpm patch (#40, process.md section 6),
+ * which `pnpm install` applies everywhere and the record names. No
+ * local-core alias.
  *
  * This entry is the runner's half of the two-caller contract: it binds the
  * engine the way the host does (bindCore, exactly what src/test-bind-core.ts

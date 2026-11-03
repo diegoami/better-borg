@@ -1,0 +1,69 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-03T22:03:35.192Z",
+  "label": "b40-long-seed34",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 60000,
+    "seeds": [
+      34
+    ],
+    "lives": 1,
+    "stage": null
+  },
+  "build": {
+    "commit": "task/B40-carry-engine-fixes@affb55db (dirty)",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.1 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "neo-angband@8b1169799",
+    "borg": "warrior pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 34,
+      "life": 1,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 637,
+      "turns": 9830,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 3,
+      "gold": 203,
+      "kills": 8,
+      "places": 375,
+      "dead": true,
+      "causeOfDeath": "crow",
+      "commands": {
+        "descend": 17,
+        "walk": 571,
+        "quaff": 3,
+        "open": 13,
+        "ascend": 15,
+        "rest": 9,
+        "pickup": 8,
+        "read": 1
+      },
+      "jitter": 32,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 10372
+      }
+    }
+  ]
+}

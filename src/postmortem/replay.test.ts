@@ -3,10 +3,9 @@
  * dead run, replayed, must reproduce the recorded death line EXACTLY.
  *
  * The determinism contract is only a contract if something fails when it
- * breaks. This test replays the CURRENT stage baseline's dead run (seed 20
- * - the same run the committed dossiers under
- * docs/runs/2026-11-03-b32-stage-c2d1/postmortem/ were written from) from
- * the record's own facts: same seed, same planned birth, the same observing
+ * breaks. This test replays the CURRENT baseline's dead run (see RECORD_DIR
+ * below; the lifecycle paragraph says how it moves) from the record's own
+ * facts: same seed, same planned birth, the same observing
  * controller, the same drive. It asserts:
  *
  *   - the replayed death line equals the record's: cause, turn, decisions,
@@ -25,7 +24,10 @@
  * exactly that (the caution/attack fix moved seed 34 from a grey-mold
  * death to a stage retirement and seed 20 to a later, different death, so
  * the exactness rider moved from 2026-11-03-stage-baseline-c2d1's seed 34
- * to this record's seed 20).
+ * to that record's seed 20). B40 did it again: carrying our engine fixes
+ * (#429 noteSpot) saved seed 20, and the c2d1 cohort has no death left, so
+ * the rider moved to 2026-11-03-b40-long-seed34 (seed 34, no stage, the
+ * life #35 could not record, dying to a crow).
  *
  * Skips out loud without the game's checkout (the content pack is the
  * game's), exactly as the play suite does. Each driving test carries the
@@ -46,10 +48,10 @@ import type { DossierHeader } from "./dossier.js";
 const PACK_DIR = packRoot();
 const suite = PACK_DIR ? describe : describe.skip;
 
-/** The committed baseline record this test replays from (B32's baseline:
- * the caution/attack fix's own session; its dead run is seed 20). */
-const RECORD_DIR = "docs/runs/2026-11-03-b32-stage-c2d1";
-const SEED = 20;
+/** The committed record this test replays from (B40's: the first engine
+ * with our carried patches; its dead run is seed 34, killed by a crow). */
+const RECORD_DIR = "docs/runs/2026-11-03-b40-long-seed34";
+const SEED = 34;
 
 interface RecordedRun {
   readonly seed: number;
@@ -108,7 +110,7 @@ function factsOf(run: RecordedRun, cap: number, stage: { clvl: number; depth: nu
 suite("the death replay (#29)", () => {
   const pack = PACK_DIR ? loadPack(PACK_DIR) : null;
 
-  it(`reproduces the baseline's recorded death line exactly (seed ${String(SEED)}, the grey mushroom patch)`, async () => {
+  it(`reproduces the baseline's recorded death line exactly (seed ${String(SEED)}, the crow)`, async () => {
     const { run, header } = recordedRun();
     const replay = await replayDeadRun(
       Core,

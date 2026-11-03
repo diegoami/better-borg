@@ -20,9 +20,10 @@
  *
  * Determinism (rule 5): seeds are named on the command line, the runner adds
  * no randomness of its own, and wall-clock durations are recorded as metadata
- * only. The PUBLISHED engine pin is the only one measured here; no config
- * files, no environment-dependent behaviour beyond where the content pack is
- * found.
+ * only. The engine measured is the published pin plus the fixes this repo
+ * carries as a pnpm patch (#40, process.md section 6) - exactly what `pnpm
+ * install` gives every machine, and the record names both. No config files,
+ * no environment-dependent behaviour beyond where the content pack is found.
  */
 
 import { build } from "esbuild";
@@ -31,10 +32,10 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { enginePin } from "./engine-pin.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(HERE, "..");
-const ENGINE_PKG = join("node_modules", "@rpgm-tools", "neo-angband-core");
 
 const USAGE = `usage: node tools/sweep.mjs --label <name> --seeds 1,7,42 [--lives 1]
                 [--decisions 1500] [--stage 20,8] [--out docs/runs]
@@ -137,14 +138,6 @@ const dirty = git(["status", "--porcelain"], REPO_ROOT);
 const commit =
   head !== null ? `${branch ?? "?"}@${head.slice(0, 8)}${dirty ? " (dirty)" : ""}` : null;
 
-function engineVersion() {
-  try {
-    const pkg = JSON.parse(readFileSync(join(REPO_ROOT, ENGINE_PKG, "package.json"), "utf8"));
-    return `@rpgm-tools/neo-angband-core ${String(pkg["version"])}`;
-  } catch {
-    return "@rpgm-tools/neo-angband-core (version unknown)";
-  }
-}
 
 /* The content pack's directory: the sibling checkout or NEO_ANGBAND_REPO,
  * resolved HERE because the bundled entry's import.meta.url points at a
@@ -177,7 +170,7 @@ function contentId() {
 
 const buildInfo = {
   commit,
-  engine: engineVersion(),
+  engine: enginePin(REPO_ROOT),
   content: contentId(),
   borg: "stock",
 };

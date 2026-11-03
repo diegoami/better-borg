@@ -31,7 +31,8 @@ import { fileURLToPath } from "node:url";
 const ROOT = resolve(fileURLToPath(new URL("./", import.meta.url)), "..");
 const REPO = "diegoami/mandos";
 const LABEL = "checkpoint";
-const FINGERPRINT = "c89b1b08474b1692b352f8d0b64823f4";
+/** trap.js md5: the published 1.23.0-beta.1 + our carried patch (#40). */
+const FINGERPRINT = "34c27241f96aceff581bcb186a9d898f";
 const TRAP = "node_modules/@rpgm-tools/neo-angband-core/dist/game/trap.js";
 /** The privacy scan's user-home-path rule, close enough to refuse on. */
 const HOME_PATH = /(?:\/home\/|\/Users\/|[A-Za-z]:\\Users\\)[A-Za-z0-9._-]+/;
@@ -98,7 +99,7 @@ if (stashes > 0) lines.push("", `**Stashes**: ${String(stashes)}.`);
 
 const trapPath = join(ROOT, TRAP);
 const md5 = existsSync(trapPath) ? createHash("md5").update(readFileSync(trapPath)).digest("hex") : null;
-lines.push("", `**Engine fingerprint**: ${md5 === null ? "trap.js missing (run pnpm install)" : md5 === FINGERPRINT ? `\`${md5}\` (pristine)` : `\`${md5}\` - CHANGED from \`${FINGERPRINT}\``}.`);
+lines.push("", `**Engine fingerprint**: ${md5 === null ? "trap.js missing (run pnpm install)" : md5 === FINGERPRINT ? `\`${md5}\` (published + carried patch)` : `\`${md5}\` - CHANGED from \`${FINGERPRINT}\``}.`);
 
 const prs = gh(["pr", "list", "--state", "open", "--json", "number,title,headRefName,isDraft,labels"]);
 lines.push("", "**Open PRs**:");

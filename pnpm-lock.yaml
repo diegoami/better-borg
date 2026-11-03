@@ -162,13 +162,16 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@rpgm-tools/neo-angband-core@1.23.0-beta.1': c001fda49cbf555f0e9fab647ed26bfc62c8a993203a9fe2e739bee6d359de23
+
 importers:
 
   .:
     devDependencies:
       '@rpgm-tools/neo-angband-core':
         specifier: 1.23.0-beta.1
-        version: 1.23.0-beta.1
+        version: 1.23.0-beta.1(patch_hash=c001fda49cbf555f0e9fab647ed26bfc62c8a993203a9fe2e739bee6d359de23)
       '@rpgm-tools/neo-angband-mod-sdk':
         specifier: 1.23.0-beta.1
         version: 1.23.0-beta.1
@@ -911,7 +914,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@rpgm-tools/neo-angband-core@1.23.0-beta.1':
+  '@rpgm-tools/neo-angband-core@1.23.0-beta.1(patch_hash=c001fda49cbf555f0e9fab647ed26bfc62c8a993203a9fe2e739bee6d359de23)':
     dependencies:
       '@rpgm-tools/neo-angband-mod-sdk': 1.23.0-beta.1
 

@@ -41,6 +41,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as Core from "@rpgm-tools/neo-angband-core";
+import { enginePin } from "./engine-pin.mjs";
 
 const HERE = fileURLToPath(new URL("./", import.meta.url));
 const REPO_ROOT = resolve(HERE, "..");
@@ -138,15 +139,6 @@ const branch = git(["rev-parse", "--abbrev-ref", "HEAD"]);
 const dirty = git(["status", "--porcelain"]);
 const commit = head !== null ? `${branch ?? "?"}@${head.slice(0, 8)}${dirty ? " (dirty)" : ""}` : null;
 
-function enginePin() {
-  try {
-    const pkg = JSON.parse(readFileSync(join(REPO_ROOT, "package.json"), "utf8"));
-    const pinned = pkg.devDependencies?.["@rpgm-tools/neo-angband-core"];
-    return typeof pinned === "string" ? `@rpgm-tools/neo-angband-core ${pinned}` : "@rpgm-tools/neo-angband-core (unpinned)";
-  } catch {
-    return "@rpgm-tools/neo-angband-core (unpinned)";
-  }
-}
 
 function contentId() {
   /* packDir is <checkout>/packages/content/pack; the checkout root is three levels up. */
@@ -186,7 +178,7 @@ const record = {
   },
   build: {
     commit,
-    engine: enginePin(),
+    engine: enginePin(REPO_ROOT),
     content: contentId(),
     borg: `${strategy.id} pack (stock parameters)`,
   },
