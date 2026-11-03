@@ -25,6 +25,18 @@ Code, others):
   at the chosen stage is the number (#25); a change without a record is an
   unmeasured change.
 
+**Who is who** (owner rule, 2026-11-03): WE are **diegoami**. **neostryder**
+is ANOTHER DEVELOPER (upstream) - never "us", never conflated with our
+forks. Four repos, two each: `neostryder/neo-angband` (upstream ENGINE) and
+`neostryder/neo-angband-mod-borg` (upstream MOD - the 4.2.6 borg PORT our
+fork imported; "the port" means THEIRS unless qualified) versus
+`diegoami/neo-angband` and `diegoami/neo-angband-mod-borg` (OUR forks -
+PR vehicles only, never working trees). A defect found in our tree that
+also exists at the import boundary `70145c5` is INHERITED FROM THEIR port,
+not ours; verify against the pristine checkouts before attributing (the
+B32 `track_step` finding is the case study: first reported as "ours",
+actually theirs - mod-borg#21).
+
 Upstream is `neostryder/neo-angband-mod-borg`; the import commit `70145c5` is
 the boundary, and it is the SAME boundary commit neowarrior-borg imported at,
 so cherry-picks between the forks are trivial.
