@@ -167,6 +167,21 @@ interface LifeObservation {
     total: number;
     points: UnsurePoint[];
   };
+  /**
+   * Decisions the Borg was ASKED for and answered with no command (#35): the
+   * C's `borg_oops` - the Borg stops, `borg_active` goes false - or any
+   * other yield. Counted beside the census, from the same seam, so the two
+   * together account for every armed decision. The unarmed null the latch
+   * returns while the loop waits is not a decision and is not counted.
+   */
+  readonly yields: number;
+  /**
+   * Why the FIRST yield happened, worded for the run record; null while
+   * there has been none. A clock at 30000 is the port's `borg_oops("clock
+   * overflow")` (think-ladder.ts, borg-think-dungeon.c:1209); any other
+   * null is named as what it is, a decision with no command.
+   */
+  readonly yieldReason: string | null;
   /** Arm the Borg for the next decision (the host's latch, main.ts). */
   arm(): void;
   /** Remove the controller (the engine restores the previous provider). */
@@ -223,6 +238,9 @@ export function observingLife(
   const places = new Set<string>();
   const depths = new Set<number>([state.chunk.depth]);
   let restedBesideMonster = 0;
+  /* The yield tally (#35), observation-only like the census. */
+  let yields = 0;
+  let yieldReason: string | null = null;
   /* The uncertainty journal (#27): observation-only, the same standing the
    * census and the trail keep. assessUncertainty draws nothing - it reads the
    * valuation the attack chooser already recorded and the world model the
@@ -235,6 +253,13 @@ export function observingLife(
       armed = false;
       const cmd = borg.controller(view, act);
       if (cmd) commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
+      if (cmd === null) {
+        yields += 1;
+        yieldReason ??=
+          borg.world.clock >= 30000
+            ? `the Borg stopped: clock overflow (borg_t ${String(borg.world.clock)}; borg_oops, borg-think-dungeon.c:1209)`
+            : `the Borg stopped: it answered a decision with no command (borg_t ${String(borg.world.clock)})`;
+      }
       if (cmd !== null) {
         const point = assessUncertainty(borg.world, view, cmd);
         if (point !== null) {
@@ -274,6 +299,12 @@ export function observingLife(
     get restedBesideMonster(): number {
       return restedBesideMonster;
     },
+    get yields(): number {
+      return yields;
+    },
+    get yieldReason(): string | null {
+      return yieldReason;
+    },
     arm: () => {
       armed = true;
     },
@@ -300,10 +331,11 @@ export function driveLife(
   seed: number,
   stage: StageDefinition | undefined = undefined,
   visit: (() => void) | undefined = undefined,
-): { dead: boolean; taken: number; attained: boolean } {
+): { dead: boolean; taken: number; attained: boolean; stopped: string | null } {
   const state: GameState = game.state;
   let dead = false;
   let attained = false;
+  let stopped: string | null = null;
   let taken = 0;
   /** The stage watch (#25): the same sticky facts the mod's tick reads -
    * level and maxDepth from the LIVE player - asked before each decision
@@ -331,6 +363,17 @@ export function driveLife(
       `${String(state.chunk.depth)}:${String(state.actor.grid.x)},${String(state.actor.grid.y)}`,
     );
     life.depths.add(state.chunk.depth);
+    /* THE BORG YIELDED (#35): it was asked for a decision and answered with
+     * no command - the C's borg_oops, "the Borg stops" (borg_active false,
+     * borg-think.c:66). The host would be left waiting for a human, so the
+     * honest end of the life is HERE, recorded as stopped, not another
+     * 28000 empty iterations that the census guard below would then have to
+     * condemn. The yielding decision stays counted in `taken` (it completed)
+     * and in `life.yields`, so the census still balances exactly. */
+    if (life.yields > 0) {
+      stopped = life.yieldReason;
+      break;
+    }
     if (status === core.LOOP_STATUS.DEAD) {
       dead = true;
       break;
@@ -357,12 +400,12 @@ export function driveLife(
    * is to fail the session rather than commit it (#36's required assertion,
    * in the driver so every caller - test, runners, sweeps - inherits it). */
   const issued = Object.values(life.commands).reduce((total, count) => total + count, 0);
-  if (issued !== taken) {
+  if (issued + life.yields !== taken) {
     throw new Error(
-      `seed ${String(seed)}: the census counts ${String(issued)} commands over ${String(taken)} decisions - the record would disagree with the game`,
+      `seed ${String(seed)}: the census counts ${String(issued)} commands and ${String(life.yields)} yields over ${String(taken)} decisions - the record would disagree with the game`,
     );
   }
-  return { dead, taken, attained };
+  return { dead, taken, attained, stopped };
 }
 
 /**
@@ -455,6 +498,14 @@ export interface RunReport {
    */
   stageAttained: boolean;
   /**
+   * Why the Borg stopped without dying or running out its budget (#35): the
+   * C's `borg_oops` taken as the end of the life, worded as the driver saw
+   * it ("the Borg stopped: clock overflow ..."). Null for a life that died,
+   * attained, or used its whole budget. ADDITIVE: records before B35 carry
+   * no such key and a reader treats absence as null.
+   */
+  stopped: string | null;
+  /**
    * Whether the retire flow kept a save of this run (#25): the pack driver
    * runs the protocol and renames the slot into the library; the STOCK
    * driver measures attainment only and never keeps saves, so its runs
@@ -542,7 +593,7 @@ export function playSession(
     const turnStart = state.turn;
     const startedAt = Date.now();
 
-    const { dead, taken, attained } = driveLife(core, game, opts.decisions, observed, opts.seed, opts.stage);
+    const { dead, taken, attained, stopped } = driveLife(core, game, opts.decisions, observed, opts.seed, opts.stage);
 
     const player = state.actor.player;
     const depthsSorted = [...observed.depths].sort((a, b) => a - b);
@@ -567,6 +618,7 @@ export function playSession(
       restedBesideMonster: observed.restedBesideMonster,
       unsure: { total: observed.unsure.total, points: [...observed.unsure.points] },
       stageAttained: attained,
+      stopped,
       retired: false,
       wallClockMs: Date.now() - startedAt,
     });
@@ -778,6 +830,8 @@ export interface SessionLife {
    * session played no stage.
    */
   readonly stageAttained: boolean;
+  /** Why the Borg stopped without dying or exhausting its budget (#35); null otherwise. Same meaning as RunReport.stopped. */
+  readonly stopped: string | null;
   /**
    * Whether the retire protocol KEPT a save of this life (#25): the slot
    * was renamed into its library name and the next character starts, the
@@ -889,7 +943,7 @@ export async function playPackSession(
   for (const seed of options.seeds) {
     const previous = lives[lives.length - 1];
     if (previous !== undefined && !previous.dead && !previous.retired) {
-      say(`the session stops at seed ${String(previous.seed)}: that character survived its slice, so the loop would never have booted seed ${String(seed)}`);
+      say(`the session stops at seed ${String(previous.seed)}: that character ${previous.stopped === null ? "survived its slice" : "stopped (the Borg yielded)"}, so the loop would never have booted seed ${String(seed)}`);
       break;
     }
 
@@ -937,7 +991,7 @@ export async function playPackSession(
 
     const observed = observingLife(core, game, seed);
     const startedAt = Date.now();
-    const { dead, taken, attained } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
+    const { dead, taken, attained, stopped } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
 
     /* THE RETIRE PROTOCOL (#25) for a life that attained: the same
      * `retireAtStage` the mod's loop runs, over this harness's roster
@@ -1036,6 +1090,7 @@ export async function playPackSession(
       arrivalStamps,
       journal: parseJournal(slot.held()),
       stageAttained: attained,
+      stopped,
       retired,
       graveyard: archived.slice(archivedBefore.length),
     });

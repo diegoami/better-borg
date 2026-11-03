@@ -582,6 +582,7 @@ suite("the pack restart chain, headless", () => {
         stageAttained: life.stageAttained,
         retired: life.retired,
         unsure: { total: life.unsure.total, points: [...life.unsure.points] },
+        stopped: life.stopped,
         wallClockMs: life.wallClockMs,
       })),
     };
