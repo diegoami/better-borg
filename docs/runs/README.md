@@ -73,8 +73,8 @@ field list is a contract, not a suggestion:
   `baseStats` (birth stats in the pack's order), `decisions`, `turns`,
   `depths` (every depth stood on), `maxDepth`, `clvl`, `gold`, `kills`,
   `places`, `dead`, `causeOfDeath`, `commands` (the census), `jitter`,
-  `restedBesideMonster`, `stageAttained`, `retired`, `unsure`, and
-  `meta.wallClockMs` - wall clock is metadata and never influences a result
+  `restedBesideMonster`, `stageAttained`, `retired`, `unsure`, `inventory`,
+  and `meta.wallClockMs` - wall clock is metadata and never influences a result
   (rule 5).
 
 The `unsure` field is #27's ADDITION (the schema id stays `better-borg/runs@1`,
@@ -86,6 +86,46 @@ beside what was chosen) and `known-world-gap` (a command acting on terrain the
 Borg's own map never observed, the grid named). Raw facts: any aggregation over
 them lives in `summary.md` or a post-mortem. Records written before #27 carry
 no `unsure` key; a reader treats absence as `{ total: 0, points: [] }`.
+
+The `inventory` field is #28's ADDITION (same additive rule, schema id
+unchanged): the inventory ledger, `{ total, moments }`. A DISCARD MOMENT is
+capacity pressure plus an item leaving by the Borg's own command:
+
+- **pressure**: the pack held at least `PACK_SIZE - PRESSURE_FREE_SLOTS`
+  rows (21 of 23) BEFORE the item left - `src/inventory.ts` explains the 2;
+- **leaving**: the command was `drop`/`destroy` (way `drop`) or `shop-sell`
+  (way `sell` in a store, `stash` in the home), and the gear handle it named
+  is gone or its stack shrank at the next observation. A refused command, or
+  a different item vanishing, journals nothing.
+
+`total` counts every moment; `moments` is the bounded tail (200 newest), each
+`{ turn, depth, way, command, slotsUsed, packSize, left, gone, stayed, said }`:
+`turn`/`depth` of the decision, `slotsUsed` the pressure as a count, `left`
+the item before it left, `gone` how many of its stack departed, `stayed` the
+pack the next observation found, `said` the engine's message lines over the
+command (newest 8). `left` and each `stayed` row are `{ handle, desc, kind,
+tval, sval, number, value }` (`desc` the game's own description, `kind` the
+tval's name, `value` the view's price or `null`). The mod's journal archives
+the same block in its graveyard entry beside `unsure` when a run had any.
+Records written before #28 carry no `inventory` key; a reader treats absence
+as `{ total: 0, moments: [] }`.
+
+**Reviewing them** (deferred batch review, offline): `node
+tools/inventory-export.mjs docs/runs/<session>` writes
+`<session>/decisions.json` (schema `mandos/inventory-decisions@1`: the
+`record` it came from, the `definition` read from the source constants, and
+per run its identity, outcome, `total` and `moments` verbatim; deterministic,
+so a re-export diffs clean). Open `tools/inventory-review/index.html` in a
+browser (a static file - no server), load the export, mark each moment good
+or bad with an optional note, and export `feedback.json` (schema
+`mandos/inventory-feedback@1`): `{ schema, decisions: { schema, directory,
+recorded, commit }, marks: [{ seed, life, turn, handle, way, item, mark,
+note }] }` - marked moments only, in record order; `(seed, life, turn,
+handle)` joins a mark to its moment. Loading a feedback file on top of its
+decisions resumes the review. Commit it beside the record as
+`feedback-<reviewer>-<YYYY-MM-DD>.json` (new files only, rule 7). Applying a
+corpus of these to valuation weights is a later task; curation is the
+deliverable for now.
 
 The stage fields are #25's ADDITION, and the schema id string stays
 `better-borg/runs@1` (a format identifier committed byte-identically into
@@ -163,6 +203,7 @@ in-repo example: 1228 recorded, 1229 issued).
 | `jitter` | Fewest squares in any monster-free 60-decision stretch (999 = none) |
 | `restedBesideMonster` | Rest decisions taken with a monster adjacent (0 is the assertion) |
 | `unsure.total` | Decisions that marked themselves unsure (#27): attack-valuation ties (top two methods within 5%) plus commands acting on never-observed terrain |
+| `inventory.total` | Discard moments (#28): items the Borg dropped, sold or stashed with the pack at 21+ of 23 slots |
 
 ## Baselines
 
