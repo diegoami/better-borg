@@ -2,7 +2,7 @@
   "name": "mandos",
   "version": "0.1.0",
   "private": true,
-  "description": "Better Borg: a class-agnostic fork of the Borg mod - defect fixes and strength improvements for every borg, staged for upstream",
+  "description": "Mandos: a class-agnostic fork of the Borg mod - defect fixes and strength improvements for every borg, staged for upstream",
   "license": "GPL-2.0-only",
   "author": "diegoami",
   "homepage": "https://github.com/diegoami/mandos",

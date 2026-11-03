@@ -16,7 +16,7 @@
  * THE DRAW (T09, #33): with `borg.raceRandom` on (the owner's default), each
  * automated birth draws ONE race uniformly from the full four-race suited
  * shortlist instead of playing the pinned `borg.raceChoice`. The draw is
- * DETERMINISTIC (rule 4: determinism is a guarantee, not a preference): no
+ * DETERMINISTIC (rule 5: determinism is a guarantee, not a preference): no
  * wall clock, no game RNG, and the Borg's decision RNG stream untouched -
  * its await-counts are load-bearing pacing pinned by T05/T06's tests, so
  * the draw seeds from the install slot's persisted `lineage` counter
@@ -111,7 +111,7 @@ export const RACE_RANDOM_RULE: PackRule = {
  * THE ONE-DRAW HASH (T09, #33): murmur3's 32-bit finalizer over the lineage
  * counter, taking the hash's TOP bits scaled to the shortlist. This is the
  * draw's only source of variety, and it is a pure function of the counter:
- * same counter, same race, on every machine and every run (rule 4). The
+ * same counter, same race, on every machine and every run (rule 5). The
  * finalizer's bit-avalanche spreads sequential counters (0, 1, 2, ...)
  * across the word - a plain `counter mod 4` would cycle the shortlist in
  * order, which is not a draw; the top bits (rather than the low word's

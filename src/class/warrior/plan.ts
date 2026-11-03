@@ -12,7 +12,7 @@
  * point-buy cost/refund rows in Api2BirthDraftView.statCosts's entry shape.
  *
  * GAME-FREE BY CONTRACT. This module imports nothing, reads nothing, and rolls
- * nothing (rule 4: determinism is a guarantee, not a preference). Every game
+ * nothing (rule 5: determinism is a guarantee, not a preference). Every game
  * fact it uses is handed in - the races/classes with their stat adjustments
  * and the point budget through the catalogue, the cost and refund rules
  * through the ladder below. It never re-derives a cost or invents a rule: the

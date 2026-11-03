@@ -248,9 +248,9 @@ keeps saves/mods out of `node_modules` and out of the user profile - make it
 a stable folder you own; ours is `~/projects/angband/mandos-lab-data`). Mods
 come from `<data>/mods/`, no folder picker. **Updating the mod** is a plain
 `git pull` inside `<data>/mods/mandos` (the committed plugin.js is current on
-every merge - `pnpm check`, part of `pnpm verify`, keeps it so), then restart the app; install
-storage (graveyard, lineage counter) survives the update. In-app ONCE: mods menu → enable
-Mandos → title row "New Mandos warrior character" → answer the game's confirm.
+every merge - `pnpm check`, part of `pnpm verify`, keeps it so), then
+restart the app; install storage (graveyard, lineage counter) survives the
+update. In-app ONCE: mods menu → enable Mandos → title row "New Mandos warrior character" → answer the game's confirm.
 Everything (saves, graveyard, settings) then lives under `<data>` - portable;
 delete it to reset. The lab branch's first-party entry + the switch carry the
 trust.

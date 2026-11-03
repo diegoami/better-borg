@@ -84,9 +84,11 @@ const branches = run("git", ["for-each-ref", "--format=%(refname:short) %(upstre
 const local = branches.ok ? branches.out.split("\n").filter(Boolean) : [];
 const notable = [];
 for (const row of local) {
-  const [name, upstream, ...track] = row.split(" ");
-  if (name === "main" && track.length === 0) continue;
-  const where = upstream === undefined || upstream === "" ? "no upstream (local only)" : `${upstream} ${track.join(" ") || "[in sync]"}`;
+  const [name, upstream, ...rest] = row.split(" ");
+  /* for-each-ref emits every separator, so an in-sync row ends in "". */
+  const track = rest.filter(Boolean).join(" ");
+  if (name === "main" && upstream !== "" && track === "") continue;
+  const where = upstream === undefined || upstream === "" ? "no upstream (local only)" : `${upstream} ${track || "[in sync]"}`;
   notable.push(`- \`${name}\`: ${where}`);
 }
 if (notable.length > 0) lines.push("", "**Local branches**:", ...notable);

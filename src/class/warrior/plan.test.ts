@@ -9,7 +9,7 @@
  * the very loop generatePlayer runs for a point-based birthStats array). A
  * test that hardcoded 12 for the cost of STR 18 would pass on any table; one
  * that asks pointBuyCost knows the plan is legal under the table a player
- * actually runs (rule 4: the mod plays by the game's rules, never its own).
+ * actually runs (rule 5: the mod plays by the game's rules, never its own).
  *
  * WHY THIS SKIPS WITHOUT THE GAME'S CHECKOUT, exactly as src/play.test.ts
  * does: the races and classes are the game's content, not this repository's,

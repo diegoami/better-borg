@@ -30,7 +30,7 @@
  *   values rather than picking one.
  *
  * GAME-FREE like src/birth: structural shapes only, no engine import, no
- * clock, no RNG (rule 4). The tool reaches this through the same esbuild
+ * clock, no RNG (rule 5). The tool reaches this through the same esbuild
  * bundle it drives the session driver through, so the committed record and
  * the smoke test cannot drift apart on two implementations.
  */
