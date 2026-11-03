@@ -32,7 +32,7 @@ const THREADS = [
   { repo: "neostryder/neo-angband", kind: "pr", num: 433, what: "RunReport carries the seed (fixes #431)" },
   { repo: "neostryder/neo-angband", kind: "issue", num: 418, what: "watchlist seam we depend on" },
   { repo: "neostryder/neo-angband", kind: "issue", num: 385, what: "watchlist seam we depend on" },
-  { repo: "neostryder/neo-angband-mod-borg", kind: "issue", num: 21, what: "our track_step finding (the bounce guard was never ported)" },
+  { repo: "neostryder/neo-angband", kind: "issue", num: 434, what: "our track_step finding (moved from mod-borg#21, labeled bug)" },
 ];
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));

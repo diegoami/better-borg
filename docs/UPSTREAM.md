@@ -46,6 +46,13 @@ Prior pass: 2026-11-02, same result.
   verified from our side - our ported awareness test passes on the current
   line (comment posted 2026-11-03).
 
+- **neo-angband#434** — OUR finding, moved by the maintainer from mod-borg#21
+  to the engine tracker (their consolidation home for mod-borg items) and
+  labeled `bug` (2026-11-03): `track_step` was never ported — the bounce guard
+  has been inert since the import. Our fix is measured on the fork (2/4 → 3/4);
+  the PR offer stands (#34's audit continues this pattern: every inherited
+  port defect is an upstream candidate).
+
 **Tracker convention (learned 2026-11-03)**: open != unfixed here - issues stay
 open until a stable release carries the fix (#371/#372/#415/#377). Check the
 maintainer's dedup/release comments before treating an open issue as work.
