@@ -3,8 +3,9 @@
 For any agent or tool working in this repository (OpenCode, Codex, Claude
 Code, others):
 
-**Start at [`docs/BACKLOG.md`](docs/BACKLOG.md)'s "Now"** (the owner's
-queue) and [`docs/process.md`](docs/process.md) section 1's working notes.
+**Start at the open issue labelled `checkpoint`**: its latest comment says
+where work stands and what comes next (process.md section 3). The queue is
+the issues' labels: `status:ready` and `priority:*`.
 
 - **What this is**: Mandos (formerly better-borg) — the class-agnostic Borg
   fork: defect fixes and strength
@@ -12,7 +13,7 @@ queue) and [`docs/process.md`](docs/process.md) section 1's working notes.
   PACKS under `src/class/` selected by the `borg.class` setting (pack #1 is
   the warrior; a new class starts as a pack plus a setting, never a fork -
   the no-N-forks doctrine, docs/process.md section 2).
-- **Rules**: [`RULES.md`](RULES.md), numbered and cited as "rule n".
+- **Rules**: [`CLAUDE.md`](CLAUDE.md), numbered and cited as "rule n".
 - **Process**: [`docs/process.md`](docs/process.md): the loop, records,
   milestones, and the pack doctrine. Before upstream work: run
   `node tools/upstream-watch.mjs` - movement on our threads means engage;
@@ -22,8 +23,8 @@ queue) and [`docs/process.md`](docs/process.md) section 1's working notes.
   `status:*` label is the status.
 - **Plan**: [`docs/plans/getting-stronger.md`](docs/plans/getting-stronger.md)
   - the strength roadmap (ceiling fixes, formula engine, parameter evolution,
-  knowledge). **Backlog**: GitHub issues labelled `backlog`, ranked in
-  [`docs/BACKLOG.md`](docs/BACKLOG.md).
+  knowledge). **Backlog**: GitHub issues labelled `backlog`, ranked by their
+  `priority:*` labels.
 - **Run records**: [`docs/runs/README.md`](docs/runs/README.md) - reach-rate
   at the chosen stage is the number (#25); a change without a record is an
   unmeasured change.

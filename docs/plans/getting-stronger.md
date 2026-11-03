@@ -85,6 +85,13 @@ per-monster observed threat (what actually killed borgs, at what depth),
 per-depth pacing priors, item value tables learned from shop outcomes. The
 Borg consults it at birth; within a life it is deterministic data, not a live
 learner. Every entry cites the runs that produced it.
+Reference: the squire mod's journal taxonomy (lessons, grudges, lineage,
+calibration) at `../neo-angband-mod-squire` (read-only clone; ideas, not
+code - its runtime learning model cannot cross into a deterministic borg).
+
+**Engine changes are not fork policy**: engine needs are filed upstream
+(neo-angband); the local game checkout's lab branch may carry diagnostic
+patches, but the mod never ships one.
 
 ## Where work lives
 

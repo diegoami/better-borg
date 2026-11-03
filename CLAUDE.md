@@ -1,7 +1,6 @@
-# Working rules
+@AGENTS.md
 
-Cited as "rule n" everywhere in this repository. Every agent reads these
-(AGENTS.md points here; a local CLAUDE.md imports this file).
+# Working rules
 
 1. **The number is reach-rate at the chosen stage** (#25; redirected
    2026-11-03) - the fraction of a fixed seed cohort that attains the target

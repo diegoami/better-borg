@@ -2,7 +2,6 @@ node_modules/
 *.tsbuildinfo
 .neo-angband/
 .claude/
-CLAUDE.md
 package-lock.json
 
 # Run by-products that are too bulky for git (rule 8)

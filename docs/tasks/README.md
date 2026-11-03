@@ -1,7 +1,7 @@
 # Tasks
 
 One file per task, `B<nn>.md`. The issue's `status:*` label is the status.
-The current queue: [`../BACKLOG.md`](../BACKLOG.md)'s "Now".
+The queue and where work stands: the open `checkpoint` issue (process.md section 3).
 
 ## M1 - The ceiling rises
 

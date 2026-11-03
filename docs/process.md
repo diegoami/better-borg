@@ -1,6 +1,6 @@
 # Process
 
-`RULES.md` holds the rules; this file says how work runs. Same system as
+`CLAUDE.md` holds the rules; this file says how work runs. Same system as
 neowarrior-borg (which is malpaco's, which is Geoclick2027's).
 
 ## 1. Setup
@@ -86,7 +86,17 @@ committed into existing records, rule 7).
 Done-when verification. Implementer contract as neowarrior's: build only what
 the task asks, fail-before/pass-after for every new test, report out-of-scope
 defects, update wronged documents, no status written into documents (the
-issue's label and status comment carry it; the queue is `docs/BACKLOG.md`).
+issue's label and status comment carry it).
+
+**The queue and where work stands live on GitHub**, the way the owner's
+other projects run them. The queue is labels: `status:ready` for what can
+start, `priority:{high,med,low}` for the order, `triage:needed` for a bug
+not yet assessed, `backlog` for later. Where work stands is the latest
+comment on the ONE open issue labelled `checkpoint`: the current order of
+the queue, what is in flight (branch, head, pushed or not), what is blocked
+and why, and the next action. Post one before stopping, after a merge, when
+a long run starts or ends, and when a blocker is found. A checkpoint records
+state, not decisions - decisions go into these documents and CLAUDE.md.
 
 **A bug always wins over a new feature** (rule 11). A defect found mid-task
 gets its own issue at once and is fixed before the feature resumes (or the
