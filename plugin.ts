@@ -62,7 +62,7 @@
  * profile seams (title.ts).
  */
 
-import type { Api2ControllerContext, Api2InputState, Api2ModDefinition, Api2BirthPresenter, ModApi2 } from "@rpgm-tools/neo-angband-mod-sdk";
+import type { Api2ControllerContext, Api2Events, Api2InputState, Api2ModDefinition, Api2BirthPresenter, Api2Subscription, ModApi2 } from "@rpgm-tools/neo-angband-mod-sdk";
 import type * as Core from "@rpgm-tools/neo-angband-core";
 import { installMemory, registerBorgTitle } from "./title.js";
 import { NOSCORE_BORG } from "./src/activate.js";
@@ -77,6 +77,7 @@ import type { StrategyPack } from "./src/class/pack.js";
 import { installBorgJournal, type BorgJournal } from "./src/records/journal.js";
 import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
 import { librarySlotName, stageAttained, stageOf, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING, type StageDefinition } from "./src/loop/stage.js";
+import { replayBanner, replayModeOf, REPLAY_DEATH_SETTING, REPLAY_RELEASE_SETTING, type ReplayMode } from "./src/loop/replay.js";
 import { readLineage } from "./src/class/warrior/lineage.js";
 
 /**
@@ -257,6 +258,16 @@ let activePack: StrategyPack = PACKS[CLASS_SETTING.default]!;
  */
 let activeStage: StageDefinition = stageOf({});
 /**
+ * THE REPLAY MODE this page runs (#29, the trainer's human path): the two
+ * `borg.replay*` settings, read from the persisted settings at each page -
+ * the same per-page lifetime the stage keeps, for the same reason (rule 5:
+ * the release point is fixed for the life that plays it; a mid-life move of
+ * the rung would move the goalposts under a running replay). The defaults
+ * (both 0) keep the mode OFF: nothing about the grind changes until an
+ * owner deliberately arms a replay from a dossier's rung line.
+ */
+let activeReplay: ReplayMode = replayModeOf({});
+/**
  * The install slot's lineage counter as this page read it (#25): the
  * mod-side library name's identity segment. A mod cannot know the game
  * seed - no host seam carries it - so the kept save is named by the birth
@@ -273,6 +284,16 @@ let restartHandle: BorgRestart | undefined;
 /* The journal's handle, retired the same way. Module-level for the same
  * reason: a stop can land before `running` settles. */
 let journalHandle: BorgJournal | undefined;
+/**
+ * The replay demonstration log's event subscription (#29): module-level for
+ * the same reason as the handles above - a stop must retire it even mid-
+ * start, or a re-registration on the same page would log every command
+ * twice. The events domain it was subscribed through is held beside it
+ * because `stop()` receives no mod - only the off seam is kept, nothing
+ * wider.
+ */
+let replayLogHandle: Api2Subscription | null = null;
+let replayLogOff: Api2Events["off"] | null = null;
 /**
  * The installation epoch (ported from the archived fork's #30). stop() bumps
  * it SYNCHRONOUSLY; a begin that was still starting when stop ran finds the
@@ -318,6 +339,10 @@ async function begin(mod: ModApi2): Promise<Running | null> {
             activeStage = stageOf({
               clvl: read.value[STAGE_CLVL_SETTING.id],
               depth: read.value[STAGE_DEPTH_SETTING.id],
+            });
+            activeReplay = replayModeOf({
+              release: read.value[REPLAY_RELEASE_SETTING.id],
+              death: read.value[REPLAY_DEATH_SETTING.id],
             });
           }
         },
@@ -471,6 +496,54 @@ async function begin(mod: ModApi2): Promise<Running | null> {
       });
     },
   };
+  /* THE REPLAY RELEASE WATCH (#29), the same shape as the stage watch's:
+   * the predicate reads the turn the world already carries against the
+   * page's release setting, and the one-shot latch lives in the tick. The
+   * banner is pure text from the resolved settings (src/loop/replay.ts);
+   * `controller.release(reason)` shows it, which IS the banner. `onReleased`
+   * arms the demonstration log below. OFF unless the owner armed it: a
+   * release setting of 0 never answers true. */
+  let replayReleased = false;
+  const replayWatch: NonNullable<Parameters<typeof createTick>[1]>["replay"] = {
+    releaseAt: (world) => activeReplay.release > 0 && world.view.turn() >= activeReplay.release,
+    banner: () => replayBanner(activeReplay),
+    onReleased: (world) => {
+      replayReleased = true;
+      mod.meta.log(
+        `the Borg reached the death replay's release point (turn ${String(world.view.turn())}); ` +
+          "the keyboard is the owner's and every command from here is logged",
+      );
+    },
+  };
+  /* THE DEMONSTRATION LOG (#29, the minimal rail): the `player-command`
+   * event fires for every command the game takes, ours and the owner's
+   * alike (the web shell builds the payload at the loop, main.ts:8619), so
+   * one subscription covers the human half - from the release on, each
+   * command the OWNER issues is logged with the payload's own frozen
+   * facts. The Borg's own line needs no logging: the dossier IS its
+   * evidence. #27's phase 3 deepens this into paired state snapshots; the
+   * issue's `event:turn` does not exist in API 2 at this pin (the bus has
+   * no turn event), which src/loop/replay.ts documents. The subscription
+   * is retired in stop() and on a re-begin, like every handle. */
+  if (replayLogHandle !== null && replayLogOff !== null) {
+    const held = replayLogHandle;
+    replayLogHandle = null;
+    await replayLogOff(held).catch(() => undefined);
+  }
+  replayLogOff = mod.events.off;
+  const replayLog = await mod.events.on("player-command", (event) => {
+    if (!replayReleased) return;
+    const where = event.dir !== undefined ? ` dir ${String(event.dir)}` : "";
+    const args = event.args !== undefined && event.args.handle !== undefined ? ` handle ${String(event.args.handle)}` : "";
+    mod.meta.log(`[replay] command ${event.code}${where}${args}`);
+  });
+  if (replayLog.ok) {
+    replayLogHandle = replayLog.value;
+  } else {
+    mod.meta.log(
+      `the Borg cannot log the replayed commands (${replayLog.message}); the release still works, the demonstration log does not`,
+    );
+  }
   /* Module-level so stop() can retire them even before `running` settles,
    * and retired here the same way the bridge is, so a second start on the
    * same page (a start without a stop) never leaves two loops listening for
@@ -479,7 +552,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch }), restart, journal };
 }
 
 const definition: Api2ModDefinition = {
@@ -540,6 +613,14 @@ const definition: Api2ModDefinition = {
     const journal = journalHandle;
     journalHandle = undefined;
     void journal?.stop();
+    /* The replay demonstration log's subscription leaves with the rest
+     * (#29): a re-registration on the same page subscribes again, and a
+     * standing one would log every command twice. */
+    const replayLog = replayLogHandle;
+    const replayOff = replayLogOff;
+    replayLogHandle = null;
+    replayLogOff = null;
+    if (replayLog !== null && replayOff !== null) void replayOff(replayLog).catch(() => undefined);
     void held?.dispose();
   },
 

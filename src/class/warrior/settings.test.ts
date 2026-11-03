@@ -56,6 +56,7 @@ import {
 } from "./settings.js";
 import { LINEAGE_KEY, bumpLineage, lineageFrom, readLineage } from "./lineage.js";
 import { CLASS_SETTING } from "../registry.js";
+import { REPLAY_DEATH_SETTING, REPLAY_RELEASE_SETTING } from "../../loop/replay.js";
 import { STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING } from "../../loop/stage.js";
 
 const quiet = (): void => {};
@@ -382,9 +383,16 @@ describe("the manifest declarations", () => {
     /* manifest.json's `settings` key is what the host reads (its Mods screen
      * renders each row); this pins it exactly, so a row cannot drift from
      * the declaration its resolver clamps by. Since #25 the list also
-     * carries the two stage rows, pinned the same way in
-     * src/loop/stage.test.ts. */
-    expect(manifest.settings).toEqual([RACE_CHOICE_SETTING, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING]);
+     * carries the two stage rows (pinned the same way in
+     * src/loop/stage.test.ts) and since #29 the two death-replay rows
+     * (pinned in src/loop/replay.test.ts). */
+    expect(manifest.settings).toEqual([
+      RACE_CHOICE_SETTING,
+      STAGE_CLVL_SETTING,
+      STAGE_DEPTH_SETTING,
+      REPLAY_RELEASE_SETTING,
+      REPLAY_DEATH_SETTING,
+    ]);
     expect(CLASS_SETTING.id).toBe("borg.class");
     /* The declared range covers exactly the candidates: no index the menu can
      * pick that the list does not name, and no candidate the menu cannot

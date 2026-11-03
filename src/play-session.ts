@@ -169,8 +169,12 @@ interface LifeObservation {
  * of the record: the census counts what the controller issued, the trail
  * notes where the character stood and whether anything was visible, and
  * resting beside a monster is counted as it happens.
+ *
+ * Exported for the death-replay driver (#29): a replay IS a life driven by
+ * this same observation (the census it verifies against the record is this
+ * census), so the replay rides the one copy rather than growing a second.
  */
-function observingLife(
+export function observingLife(
   core: typeof Core,
   game: StartedGame,
   seed: number,
@@ -252,14 +256,25 @@ function observingLife(
   };
 }
 
-/** One driven life: the shared loop body, with the ONE counting rule (#36). */
-function driveLife(
+/**
+ * One driven life: the shared loop body, with the ONE counting rule (#36).
+ *
+ * `visit` (#29, observation-only, optional) is called at the TOP of each
+ * iteration - after the previous decision completed and its turns elapsed,
+ * before the next decision is armed. The death-replay driver passes one to
+ * freeze the post-mortem capture at each ladder rung's release boundary (the
+ * first boundary at or after T-N); both session drivers pass nothing, and a
+ * call that only READS cannot move play, so the driven lives are exactly
+ * what they were.
+ */
+export function driveLife(
   core: typeof Core,
   game: StartedGame,
   decisions: number,
   life: LifeObservation,
   seed: number,
   stage: StageDefinition | undefined = undefined,
+  visit: (() => void) | undefined = undefined,
 ): { dead: boolean; taken: number; attained: boolean } {
   const state: GameState = game.state;
   let dead = false;
@@ -273,6 +288,7 @@ function driveLife(
   const attainedNow = (): boolean =>
     stage !== undefined && stageAttained(stage, { clvl: state.actor.player.lev, maxDepth: state.actor.player.maxDepth });
   for (; taken < decisions; ) {
+    visit?.();
     if (attainedNow()) {
       attained = true;
       break;

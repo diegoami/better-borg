@@ -16665,6 +16665,7 @@ function createTick(bridge2, borg) {
   let lastScene = "";
   let lastCommand = "";
   let stalls = 0;
+  let released = false;
   return async (mod2, input) => {
     bridge2.setInput(input);
     if (input.prompt !== null) {
@@ -16674,6 +16675,14 @@ function createTick(bridge2, borg) {
     if (input.phase !== "play" && input.phase !== "store") return;
     const world = await bridge2.readWorld();
     if (world === null) return;
+    if (borg.replay !== void 0 && !released && borg.replay.releaseAt(world)) {
+      released = true;
+      const banner = borg.replay.banner(world);
+      await mod2.act.controller.release(banner);
+      borg.replay.onReleased?.(world);
+      return;
+    }
+    if (released) return;
     if (borg.stage !== void 0 && borg.stage.attained(world)) {
       borg.stage.onAttained(world);
       return;
@@ -17693,6 +17702,54 @@ function librarySlotName(stage, identity) {
   return identityOnly.length <= STAGE_NAME_LIMIT ? identityOnly : identityOnly.slice(0, STAGE_NAME_LIMIT);
 }
 
+// src/loop/replay.ts
+var REPLAY_RELEASE_SETTING = {
+  id: "borg.replayReleaseTurn",
+  title: "Death replay release turn",
+  description: "The death-replay trainer's release point (#29): when the game's turn counter reaches this value the Borg stops playing and hands the keyboard back with the death banner, so the owner can play the last turns of a dead run themselves. Take the number from the dossier ladder's release-boundary line (docs/runs/, the run's postmortem directory); 0 (the default) keeps the replay mode off. Birth the character on the recorded seed (?seed=<S>&new, the dossier names the race settings) - the Borg replays the run deterministically to this turn. Read once per page, so the release point is fixed for the whole life.",
+  min: 0,
+  max: 1e6,
+  step: 1,
+  default: 0
+};
+var REPLAY_DEATH_SETTING = {
+  id: "borg.replayDeathTurn",
+  title: "Death replay death turn",
+  description: "The recorded death turn the death-replay banner counts down from (#29): with borg.replayReleaseTurn armed, the banner names this turn and how many turns remain. Take it from the dossier's recorded-death line; 0 (the default) shows the banner without the countdown. Read once per page with borg.replayReleaseTurn.",
+  min: 0,
+  max: 1e6,
+  step: 1,
+  default: 0
+};
+function replayModeOf(stored) {
+  return {
+    release: replayValue(REPLAY_RELEASE_SETTING, stored.release),
+    death: replayValue(REPLAY_DEATH_SETTING, stored.death)
+  };
+}
+function replayValue(setting, stored) {
+  const raw = typeof stored === "number" && Number.isFinite(stored) ? stored : setting.default;
+  const clamped = Math.min(setting.max, Math.max(setting.min, raw));
+  let snapped = setting.min + Math.round((clamped - setting.min) / setting.step) * setting.step;
+  if (snapped > setting.max) snapped -= setting.step;
+  const places = Math.max(decimalsOf3(setting.min), decimalsOf3(setting.step));
+  return Number(snapped.toFixed(places));
+}
+function decimalsOf3(value) {
+  const text = String(value);
+  const point = text.indexOf(".");
+  return point === -1 ? 0 : text.length - point - 1;
+}
+function replayBanner(mode) {
+  if (mode.death > 0 && mode.death > mode.release) {
+    return `Death replay: the recorded character died at turn ${String(mode.death)} - the keyboard is yours for the last ${String(mode.death - mode.release)} turns.`;
+  }
+  if (mode.death > 0) {
+    return `Death replay: the release turn ${String(mode.release)} is reached (the recorded death turn ${String(mode.death)} is not after it - check borg.replayReleaseTurn) - the keyboard is yours.`;
+  }
+  return `Death replay: the release turn ${String(mode.release)} is reached - the keyboard is yours.`;
+}
+
 // plugin.ts
 function characterAlreadyAutoplayed(context) {
   const state = context.engine?.state;
@@ -17723,11 +17780,14 @@ function changedFrom(cfg) {
 }
 var activePack = PACKS[CLASS_SETTING.default];
 var activeStage = stageOf({});
+var activeReplay = replayModeOf({});
 var lineageAtPage = null;
 var bridge;
 var running;
 var restartHandle;
 var journalHandle;
+var replayLogHandle = null;
+var replayLogOff = null;
 var startEpoch = 0;
 async function begin(mod2) {
   const mine = startEpoch;
@@ -17749,6 +17809,10 @@ async function begin(mod2) {
             activeStage = stageOf({
               clvl: read.value[STAGE_CLVL_SETTING.id],
               depth: read.value[STAGE_DEPTH_SETTING.id]
+            });
+            activeReplay = replayModeOf({
+              release: read.value[REPLAY_RELEASE_SETTING.id],
+              death: read.value[REPLAY_DEATH_SETTING.id]
             });
           }
         },
@@ -17845,11 +17909,41 @@ async function begin(mod2) {
       });
     }
   };
+  let replayReleased = false;
+  const replayWatch = {
+    releaseAt: (world) => activeReplay.release > 0 && world.view.turn() >= activeReplay.release,
+    banner: () => replayBanner(activeReplay),
+    onReleased: (world) => {
+      replayReleased = true;
+      mod2.meta.log(
+        `the Borg reached the death replay's release point (turn ${String(world.view.turn())}); the keyboard is the owner's and every command from here is logged`
+      );
+    }
+  };
+  if (replayLogHandle !== null && replayLogOff !== null) {
+    const held = replayLogHandle;
+    replayLogHandle = null;
+    await replayLogOff(held).catch(() => void 0);
+  }
+  replayLogOff = mod2.events.off;
+  const replayLog = await mod2.events.on("player-command", (event) => {
+    if (!replayReleased) return;
+    const where = event.dir !== void 0 ? ` dir ${String(event.dir)}` : "";
+    const args = event.args !== void 0 && event.args.handle !== void 0 ? ` handle ${String(event.args.handle)}` : "";
+    mod2.meta.log(`[replay] command ${event.code}${where}${args}`);
+  });
+  if (replayLog.ok) {
+    replayLogHandle = replayLog.value;
+  } else {
+    mod2.meta.log(
+      `the Borg cannot log the replayed commands (${replayLog.message}); the release still works, the demonstration log does not`
+    );
+  }
   void restartHandle?.stop();
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch }), restart, journal };
 }
 var definition = {
   api: ">=2.0.0 <3.0.0",
@@ -17896,6 +17990,11 @@ var definition = {
     const journal = journalHandle;
     journalHandle = void 0;
     void journal?.stop();
+    const replayLog = replayLogHandle;
+    const replayOff = replayLogOff;
+    replayLogHandle = null;
+    replayLogOff = null;
+    if (replayLog !== null && replayOff !== null) void replayOff(replayLog).catch(() => void 0);
     void held?.dispose();
   },
   /* Offer to play only when this character was handed to an autoplayer before or was armed from the title row. Returning false is the normal case: the mod is installed and enabled, and this character has never been handed over, so the human keeps the keyboard. */

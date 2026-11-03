@@ -35,8 +35,30 @@ A watched desktop run (a human or a CDP driver watching the real window) adds
 seen, message by message, and the answers to the standing questions - did it
 flee, shop, rest, descend, die, and start again.
 
+### The post-mortem dossier ladder (#29)
+
+A record with dead runs grows a `postmortem/` subdirectory - NEW files
+only, never an edit to the session's own (append-only, rule 7): a `README.md`
+ladder table and one `seed-<n>/offset-<k>.md` dossier per dead run x rung
+of the replay ladder (5/10/15/20 turns before death by default), written by
+
+    node tools/replay.mjs --record docs/runs/<session>
+
+which replays each dead run from the record's own facts (same seed, same
+planned birth, the same deterministic Borg) and VERIFIES the replayed death
+line against the record - cause, turn, decisions, the whole census - with
+the verdict printed in every dossier (a diverged replay writes its
+dossiers but says DIVERGED at the top). A rung whose target turn falls
+inside a single decision has no live boundary and is listed as `none`. The
+dossier's format id is `mandos/postmortem@1`; its sections and the AI
+post-mortem routine that consumes them are docs/postmortem.md. A diagnosis
+artifact (`seed-<n>/diagnosis.md`) lands beside the dossiers it was written
+from - the baseline's seed-34 grey-mold diagnosis is the committed example.
+
 Bulky by-products (screenshots, video, long traces) live outside git in
-`artifacts/` and are linked by path, never committed (rule 7).
+`artifacts/` and are linked by path, never committed (rule 7). Dossiers are
+the deliberate exception by design: each is a few KB of text, committed,
+diffable - the whole point of the format.
 
 ### The runner's runs.json (schema `better-borg/runs@1`)
 

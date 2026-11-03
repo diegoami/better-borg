@@ -15,6 +15,7 @@ muscle.
 | [B03](B03.md) | The swap subsystem (rings + weapon/armour, one valuation seam) | Hard | #4 | B02 |
 | [B15](B15.md) | Unify repositories at M2 open: the warrior becomes strategy pack #1 | Medium | #15 | B14 (M1 close) |
 | [B25](B25.md) | Stage-grind: retire-on-attainment saves and reach-rate as the number | Medium | #25 | #19 (the Mandos rename) |
+| [B29](B29.md) | Death-replay trainer: dossier ladders, the AI post-mortem, and the human replay path | Medium | #29 | #25 (the stage rail it rides beside) |
 
 ## Later phases
 

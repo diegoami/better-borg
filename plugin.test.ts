@@ -166,15 +166,18 @@ describe("the built plugin.js", () => {
     const game = await begin();
     /* "dungeonlevel" is T06's journal joining the feed: the arrival event is
      * what records a depth milestone. "run-end" is T04's restart loop: the
-     * run report is the only thing that may trigger a create. */
-    expect([...game.listeners.keys()]).toEqual(["message", "dungeonlevel", "run-end"]);
+     * run report is the only thing that may trigger a create.
+     * "player-command" is #29's replay demonstration log: it hears every
+     * command the game takes and, once a death replay's release has handed
+     * the keyboard over, logs the owner's moves. */
+    expect([...game.listeners.keys()]).toEqual(["message", "dungeonlevel", "run-end", "player-command"]);
     await built.stop?.();
     /* The bridge retires synchronously; the loop's and the journal's
      * retirements wait a microtask each for their subscription handles to
      * settle, so both land after the message listener. Which of the two
      * lands first is not a property anything depends on, so the assertion is
-     * the set: all three gone, nothing else touched. */
-    expect([...game.unsubscribed].sort()).toEqual(["dungeonlevel", "message", "run-end"]);
+     * the set: all four gone, nothing else touched. */
+    expect([...game.unsubscribed].sort()).toEqual(["dungeonlevel", "message", "player-command", "run-end"]);
   });
 
   it("restarts its dead character through the roster seam, once, flagged first", async () => {

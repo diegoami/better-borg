@@ -35,6 +35,7 @@
       "event:message",
       "event:run-end",
       "event:dungeonlevel",
+      "event:player-command",
       "ui:title",
       "ui:birth.replace",
       "profiles:manage",
@@ -148,6 +149,24 @@
         "max": 100,
         "step": 1,
         "default": 1
+      },
+      {
+        "id": "borg.replayReleaseTurn",
+        "title": "Death replay release turn",
+        "description": "The death-replay trainer's release point (#29): when the game's turn counter reaches this value the Borg stops playing and hands the keyboard back with the death banner, so the owner can play the last turns of a dead run themselves. Take the number from the dossier ladder's release-boundary line (docs/runs/, the run's postmortem directory); 0 (the default) keeps the replay mode off. Birth the character on the recorded seed (?seed=<S>&new, the dossier names the race settings) - the Borg replays the run deterministically to this turn. Read once per page, so the release point is fixed for the whole life.",
+        "min": 0,
+        "max": 1000000,
+        "step": 1,
+        "default": 0
+      },
+      {
+        "id": "borg.replayDeathTurn",
+        "title": "Death replay death turn",
+        "description": "The recorded death turn the death-replay banner counts down from (#29): with borg.replayReleaseTurn armed, the banner names this turn and how many turns remain. Take it from the dossier's recorded-death line; 0 (the default) shows the banner without the countdown. Read once per page with borg.replayReleaseTurn.",
+        "min": 0,
+        "max": 1000000,
+        "step": 1,
+        "default": 0
       }
     ]
   }

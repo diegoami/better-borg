@@ -85,6 +85,23 @@ export interface Decider {
     attained(world: World): boolean;
     onAttained(world: World): void;
   };
+  /**
+   * THE REPLAY RELEASE (#29), asked after the world is read and BEFORE the
+   * stage watch and any decision: when `releaseAt` answers true for this
+   * wait's world, the tick releases the keyboard with `banner`'s text as
+   * the shown reason (the host displays it in place of the usual line -
+   * that shown reason IS the death banner) and submits nothing more, ever:
+   * the owner plays the last turns of the dead run. `onReleased` fires once
+   * at the release for the wiring that arms the demonstration log. The
+   * watcher answers from the turn the world already carries (the
+   * `borg.replayReleaseTurn` setting's value, fixed per page); the TICK
+   * owns the one-shot latch, exactly as it owns the stage watch's.
+   */
+  readonly replay?: {
+    releaseAt(world: World): boolean;
+    banner(world: World): string;
+    onReleased?(world: World): void;
+  };
 }
 
 /** What a command's aim is, for the commands that name a direction. */
@@ -108,6 +125,10 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
   let lastScene = "";
   let lastCommand = "";
   let stalls = 0;
+  /* The replay's one-shot (#29): once the release point is reached the tick
+   * releases and never submits again - the owner owns the keyboard, and a
+   * host that asks anyway gets nothing, not a decision after the hand-over. */
+  let released = false;
   return async (mod, input) => {
     bridge.setInput(input);
     if (input.prompt !== null) {
@@ -117,6 +138,18 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
     if (input.phase !== "play" && input.phase !== "store") return;
     const world = await bridge.readWorld();
     if (world === null) return;
+
+    /* The replay release BEFORE the stage watch and any decision (#29): a
+     * deliberately armed replay outranks everything the grind would do -
+     * the owner asked for these last turns, not for another retire. */
+    if (borg.replay !== undefined && !released && borg.replay.releaseAt(world)) {
+      released = true;
+      const banner = borg.replay.banner(world);
+      await mod.act.controller.release(banner);
+      borg.replay.onReleased?.(world);
+      return;
+    }
+    if (released) return;
 
     /* The stage watch before any decision (#25): an attained character
      * spends no further decision - the retire protocol owns the next move.

@@ -213,3 +213,89 @@ describe("one tick", () => {
     expect(game.submitted).toEqual([]);
   });
 });
+
+describe("the replay release (#29)", () => {
+  /** A world whose turn the fake watcher counts up from, as the wiring's
+   * does from the game's own counter. */
+  const worldAt = (turn: number): World =>
+    ({ view: { turn: () => turn, player: () => ({ grid: { x: 1, y: 1 } }), monsters: () => [] } as never, facts: { shopnum: null, kinds: new Map() } }) as World;
+
+  it("releases with the banner at the release point and submits nothing ever again", async () => {
+    /* The one-shot is the point: after the hand-over the owner owns the
+     * keyboard, and a host that asks the controller again gets NOTHING -
+     * not a decision after the release, not a second release. */
+    const game = fakeGame();
+    let turn = 5020;
+    let released = 0;
+    const tick = createTick(
+      bridge({ readWorld: () => Promise.resolve(worldAt(turn)) }),
+      {
+        controller: () => WALK,
+        rewind: () => undefined,
+        replay: {
+          releaseAt: (world) => world.view.turn() >= 5029,
+          banner: () => "Death replay: the recorded character died at turn 5049 - the keyboard is yours for the last 20 turns.",
+          onReleased: () => {
+            released += 1;
+          },
+        },
+      },
+    );
+    await tick(game.mod, game.input());
+    turn = 5029;
+    await tick(game.mod, game.input());
+    turn = 5030;
+    await tick(game.mod, game.input());
+    expect(game.submitted).toHaveLength(1); /* the pre-release decision only */
+    expect(game.released).toEqual([
+      "Death replay: the recorded character died at turn 5049 - the keyboard is yours for the last 20 turns.",
+    ]);
+    expect(released).toBe(1);
+  });
+
+  it("outranks the stage watch: an armed replay hands the keyboard over rather than retiring", async () => {
+    /* A deliberately armed replay wins over everything the grind would do -
+     * the owner asked for these last turns, not for another retire. */
+    const game = fakeGame();
+    let attained = 0;
+    const tick = createTick(
+      bridge({ readWorld: () => Promise.resolve(worldAt(5029)) }),
+      {
+        controller: () => WALK,
+        rewind: () => undefined,
+        stage: {
+          attained: () => true,
+          onAttained: () => {
+            attained += 1;
+          },
+        },
+        replay: {
+          releaseAt: () => true,
+          banner: () => "Death replay: the release turn 5029 is reached - the keyboard is yours.",
+        },
+      },
+    );
+    await tick(game.mod, game.input());
+    expect(attained).toBe(0);
+    expect(game.submitted).toEqual([]);
+    expect(game.released).toHaveLength(1);
+  });
+
+  it("plays the ordinary grind untouched while the release point is not reached", async () => {
+    const game = fakeGame();
+    const tick = createTick(
+      bridge({ readWorld: () => Promise.resolve(worldAt(10)) }),
+      {
+        controller: () => WALK,
+        rewind: () => undefined,
+        replay: {
+          releaseAt: (world) => world.view.turn() >= 5029,
+          banner: () => "never",
+        },
+      },
+    );
+    for (let n = 0; n < 3; n++) await tick(game.mod, game.input());
+    expect(game.submitted).toHaveLength(3);
+    expect(game.released).toEqual([]);
+  });
+});

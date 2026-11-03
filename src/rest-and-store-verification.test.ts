@@ -262,7 +262,11 @@ suite("the Borg's ladder reaches rest and the store", () => {
        * than a single-turn hold. Ten turns is one ordinary move. */
       expect(r.turnDelta, `seed ${String(r.seed)}`).toBeGreaterThan(100);
     }
-  }, 60_000);
+    /* 300s to match the store test below: this sweeps every seed with a
+     * driven life apiece, and on a slow filesystem/WSL machine the sweep
+     * alone costs more than the 60s this used to allow - the assertions
+     * are about the Borg, not the clock. */
+  }, 300_000);
 
   /**
    * Issue #4. Reachability - walking to a shop through town's own explore/

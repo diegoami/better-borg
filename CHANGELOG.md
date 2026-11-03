@@ -6,6 +6,31 @@ matching git tag that an install pins itself to.
 
 ## Unreleased
 
+- [Visible] **The death-replay trainer** (#29, the trainer loop's first
+  rail): every dead harness run now grows a post-mortem dossier ladder -
+  one deterministic text page per dead run x rung (5/10/15/20 turns before
+  death by default), written by `tools/replay.mjs`, which replays the
+  recorded seed with the same planned birth and VERIFIES the replayed
+  death line against the record (cause, turn, decisions, the whole
+  census). Each dossier carries the screen as text (the remembered map
+  with visible monsters), the message-log tail, the pack AND the home, the
+  recent decisions with the census, and provenance - all diffable,
+  committed under the record's own `postmortem/` directory (new files
+  only, rule 7). The AI post-mortem workflow (docs/postmortem.md) turns a
+  dossier into a diagnosis artifact; the baseline's seed-34 grey-mold
+  death is the committed example (the Borg oscillated between backing
+  away from a 1-hp mold and flowing back toward the up-stair beyond it -
+  the never-evaluated alternative was one dagger thrust). The optional
+  human path: two new settings — `borg.replayReleaseTurn` (default 0 =
+  off) and `borg.replayDeathTurn` (default 0) — arm a release gate that
+  replays the run deterministically to the rung and hands the keyboard
+  back with the death banner (`controller.release`'s shown reason; no new
+  engine seam), logging every command from there. New grant:
+  `event:player-command` (the demonstration log's one capability line —
+  the issue's `event:turn` does not exist in API 2 at this pin). The
+  master seed remains unreadable to mods — verified and asked upstream
+  (neo-angband#431); watched-lineage replay is the follow-on it unblocks.
+
 - [Visible] **The stage-grind: retire-on-attainment, and reach-rate as the
   number** (#25, the purpose redirect's first rail). Two new numeric
   settings — `borg.stageClvl` (default 2) and `borg.stageDepth` (default 1)

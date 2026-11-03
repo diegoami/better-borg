@@ -36,8 +36,9 @@ describe("the two version sites", () => {
     /* The restart loop's event:run-end, the journal's event:dungeonlevel and
      * the birth presenter's ui:birth.replace (the M2 unification, #15, ported
      * from the archived fork's T04/T06/T03), plus the retire path's
-     * session:control (#25), over upstream's 17. */
-    expect(normalized.capabilities).toHaveLength(21);
+     * session:control (#25) and the replay demonstration log's
+     * event:player-command (#29), over upstream's 17. */
+    expect(normalized.capabilities).toHaveLength(22);
     expect(normalized.rules).toEqual(document.data.rules);
     expect(normalized.rules!.length).toBeGreaterThan(0);
   });

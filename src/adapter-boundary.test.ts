@@ -15,8 +15,13 @@ const ALLOWED = new Set(["src/core-api.ts", "src/api2/host.ts", "src/test-bind-c
    * machinery too, never in the plugin graph: play-session.ts boots real
    * games, so it reads game.booted.registries exactly the way the suite it
    * was extracted from always did, and run-record.ts names the record's
-   * "engine" schema field. Nothing that reaches plugin.js may join them. */
-  "src/play-session.ts", "src/run-record.ts"]);
+   * "engine" schema field. Nothing that reaches plugin.js may join them.
+   * The post-mortem files (B29) are the same kind of machinery: replay.ts
+   * drives the replay through play-session's own exports (it binds the
+   * engine the same way the session drivers do), and dossier.ts freezes
+   * the live GameState a replay holds into plain data - a host-side
+   * capture, never shipped. */
+  "src/play-session.ts", "src/run-record.ts", "src/postmortem/replay.ts", "src/postmortem/dossier.ts"]);
 
 /** Fakes for tests, and the bridge that turns the known world into the view, are built from the host's own view and action types. */
 const MAY_NAME_HOST_TYPES = new Set(["src/harness.ts", "src/api2/act.ts", "src/api2/world.ts"]);

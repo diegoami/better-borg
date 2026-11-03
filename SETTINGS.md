@@ -68,3 +68,31 @@ characters: `M s20 c2d1` from the harness (the seed is the name's identity
 - the ladder maps its per-seed cohorts by it) or `M n17 c2d1` in the mod
 (the lineage counter - a mod cannot know the game seed). The date a slot
 was kept is the roster's own last-played column.
+
+## The death-replay trainer: playing a dead run's last turns
+
+Since #29 the record of every dead harness run carries a post-mortem
+dossier ladder (`docs/runs/<session>/postmortem/`, written by
+`tools/replay.mjs`; the workflow is docs/postmortem.md) - and the owner can
+play any rung's last turns themselves. Two settings arm it, both read once
+per page so the release point is fixed for the life (rule 5):
+
+1. `borg.replayReleaseTurn` = 0 (off): the turn the Borg stops and hands
+   the keyboard back with the death banner. Take it from the dossier's
+   rung line ("release boundary: turn N").
+2. `borg.replayDeathTurn` = 0 (unnamed): the recorded death turn the banner
+   counts down from ("recorded death: turn T").
+
+The launch recipe (the dossier's provenance block names the exact birth):
+open the lab build with `?seed=<S>&new`, pin the recorded character's race
+(`borg.raceRandom` off, `borg.raceChoice` to the dossier's race), birth
+from the title row, and the Borg replays the run deterministically to the
+release turn - then the keyboard is yours, every command you issue is
+logged (`[replay] ...`), and Ctrl-Z gives it back at any moment.
+
+One caveat, stated: the lab build runs the lab branch's engine (the
+noteSpot fix, upstream PR #429) while a harness record ran the published
+engine - until a release carries the fix, a lab replay of a HARNESS death
+can diverge from the record at the first door-close. The watched-lineage
+deaths the mod itself records replay exactly once the upstream seed seam
+lands (neo-angband#431): a mod cannot read the seed its game runs on.

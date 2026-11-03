@@ -49,13 +49,14 @@ describe("manifest capabilities", () => {
   });
 
   it("declares the two hidden reads the Borg makes, the turn it reads, and the events it reads", () => {
-    /* truth.monsters and truth.race are the allowlist in src/api2/truth.ts, and the game opens exactly those two with state:monsters-actual.read. The real map is never read, so state:map-actual.read stays out of the list. world().turn is filled only with state:turn.read. The run-end event is the restart loop's only trigger: a death report is the one thing that may start the next character. The dungeonlevel event is the journal's depth milestones: the arrival the game announces is the only honest moment a depth was reached. */
+    /* truth.monsters and truth.race are the allowlist in src/api2/truth.ts, and the game opens exactly those two with state:monsters-actual.read. The real map is never read, so state:map-actual.read stays out of the list. world().turn is filled only with state:turn.read. The run-end event is the restart loop's only trigger: a death report is the one thing that may start the next character. The dungeonlevel event is the journal's depth milestones: the arrival the game announces is the only honest moment a depth was reached. The player-command event is the replay demonstration log's rail (#29): the web shell emits it per command taken, and from the release on it is the human's move log. */
     expect(capabilities()).toContain("state:monsters-actual.read");
     expect(capabilities()).toContain("state:turn.read");
     expect(capabilities()).not.toContain("state:map-actual.read");
     expect(capabilities()).toContain("event:message");
     expect(capabilities()).toContain("event:run-end");
     expect(capabilities()).toContain("event:dungeonlevel");
+    expect(capabilities()).toContain("event:player-command");
   });
 
   it("declares session:control for the retire path, and nothing wider", () => {

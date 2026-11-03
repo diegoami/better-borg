@@ -33,7 +33,12 @@ Prior pass: 2026-11-02, same result.
   read-only, one field on the RunReport - the run-identity payload a journaling
   mod already receives at `onRunEnd`. Fail-before/pass-after proven; the PR
   offers to re-cut onto another surface if preferred. Unblocks watched-lineage
-  replay for #29.
+  replay for #29. (B29's filing sweep, for the record: no mod-facing surface
+  carried the seed at pin 1.23.0-beta.1 - state facades, input snapshot and
+  RunReport all verified seedless, the lab hook's `seed()` is the harness's
+  window, and the dupe-check covered open AND closed, #349/#356 being
+  harness-side; until a release carries the fix, the replay trainer works
+  against harness runs, whose seeds the runner knows.)
 - **neo-angband#414 → PR #432** (up 2026-11-03, mergeable): `disturb()` signals
   `input-flush` (player-util.c:1674), with the MOD_SEAMS doc paragraph. 33/33,
   fail-before proven.
