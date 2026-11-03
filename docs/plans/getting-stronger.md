@@ -9,13 +9,19 @@ ground (#26), and learns without a human in the loop: every death produces a
 post-mortem dossier ladder that a session with code access diagnoses (#29);
 the human may still demonstrate (#27) but is never the bottleneck.
 
-**Classes are covered iteratively** (owner, 2026-11-03): first the WARRIOR
-reaches the target level and depth reliably — that is the milestone in
-flight. Then that same milestone repeats for EVERY class, one class at a
-time, the easiest next class first (each class a strategy pack under
-`src/class/`, never a fork - process §2; its race shortlist decided per class
-the T07 way). Then the targets move up, and the rounds repeat — stage-major,
-one concentration at a time. Reaching deeper survives as the ladder's axis.
+**Classes: wide first, then iteratively deeper** (owner, amended 2026-11-03):
+BEFORE any warrior specialization, a GENERIC first pass — class-agnostic
+improvements (#29's post-mortem diagnoses, Phase 1's ceiling fixes) that lift
+every class. Then START WIDE: fixed-class pinning at birth and race sets
+stay, but the warrior bias leaves the default (the generic pack births any
+class; a neutral default — a per-birth class draw mirroring `raceRandom` is
+the candidate shape, design in #17). The WIDE BASELINE: every class measured
+at the stage-1 milestone (a class × seed reach-rate grid) — the floor every
+class must reach. THEN each class's strategy improves IN ORDER (a strategy
+pack per class under `src/class/`, never a fork - process §2; race shortlists
+per class the T07 way; the order chosen by the baseline data), and the
+rounds repeat as the targets move up — stage-major, one concentration at a
+time. Reaching deeper survives as the ladder's axis.
 
 Three phases in dependency order, and one standing constraint that shapes
 all of them.
