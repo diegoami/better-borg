@@ -130,4 +130,41 @@ upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
    fixes - the noteSpot line dies the day a release carries #428, and the
    branch is deleted once empty.
 
+## 8. Watched runs (lab builds)
+
+A lab build plays the mod UNATTENDED from the owner's own screen: birth via
+the title row, rebirth on every death, the graveyard accumulating in the data
+base. Two shapes, both **owner-verified 2026-11-03**. The engine they bundle
+is the lab branch's (noteSpot-fixed); the mod folder's NAME must equal the
+manifest id (`mandos`) - clone into a folder called exactly that.
+
+**Desktop (WSL, WSLg provides the display):**
+
+    mkdir -p <data>/mods
+    git clone -b main https://github.com/diegoami/mandos.git <data>/mods/mandos
+    cd /path/to/neo-angband        # the neowarrior-lab checkout
+    NEO_ANGBAND_LAB_BUILD=1 pnpm --filter @rpgm-tools/neo-angband-web bundle
+    (cd packages/desktop && NEO_ANGBAND_LAB_BUILD=1 pnpm build)
+    cd packages/desktop && NEO_ANGBAND_DATA=<data> pnpm exec electron . --lab-trust=mandos
+
+`NEO_ANGBAND_DATA` names the data base (the dev shape of data-dir.ts's four:
+keeps saves/mods out of `node_modules` and out of the user profile - make it
+a stable folder you own; ours is `~/projects/angband/mandos-lab-data`). Mods
+come from `<data>/mods/`, no folder picker. In-app ONCE: mods menu → enable
+Mandos → title row "New Mandos warrior character" → answer the game's confirm.
+Everything (saves, graveyard, settings) then lives under `<data>` - portable;
+delete it to reset. The lab branch's first-party entry + the switch carry the
+trust.
+
+**Web:**
+
+    git clone -b main https://github.com/diegoami/mandos.git mandos
+    cd /path/to/neo-angband/packages/web && NEO_ANGBAND_LAB_BUILD=1 pnpm dev
+
+Open the served URL with `?labtrust=mandos` appended, then the same in-app
+once-through (allow third-party, pick the `mandos` folder, enable).
+
+Without a lab build the first death ends the run by design (fail-closed);
+headless play is unaffected (#18: diegoami/mandos issue 18).
+
 
