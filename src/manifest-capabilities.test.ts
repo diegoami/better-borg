@@ -21,6 +21,20 @@ function capabilities(): readonly string[] {
 }
 
 describe("manifest capabilities", () => {
+  it("carries the mod's identity consistently (the #19 rename, pinned)", () => {
+    /* The id is load-bearing everywhere: the install folder's name must equal
+       it (disk-packs rule), the lab-trust id must equal it, and install
+       storage is keyed by it. A silent edit to any of these three surfaces -
+       id, name, repository - strands a player's install, so the trio is
+       pinned here. The run-record schema id is NOT part of this: it is a
+       format identifier committed into existing records and deliberately
+       keeps the better-borg name (rule 7). */
+    const data = JSON.parse(readFileSync(join(repoRoot, "manifest.json"), "utf8")) as { data: { id: string; name: string; repository: string } };
+    expect(data.data.id).toBe("mandos");
+    expect(data.data.name).toBe("Mandos");
+    expect(data.data.repository).toBe("https://github.com/diegoami/mandos");
+  });
+
   it("asks for no wildcard read", () => {
     /* `state:*.read` would cover every domain in one line and would grant a
        domain the mod does not read today and any domain a newer engine adds.

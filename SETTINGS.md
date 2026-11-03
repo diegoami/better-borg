@@ -1,6 +1,6 @@
 # Settings reference
 
-The Borg reads the toggles below when its controller is created; changing any
+Mandos (formerly better-borg). The Borg reads the toggles below when its controller is created; changing any
 of them requires a reload before the controller uses the new value. The birth
 settings are different: `borg.class` and `borg.raceRandom` are read once per
 page (every armed birth follows the reload its writer issues, so each birth

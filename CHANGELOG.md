@@ -4,6 +4,19 @@ All notable changes to this mod are recorded here. Versions follow the mod's own
 `manifest.json`, which is what the game reads, and each released version has a
 matching git tag that an install pins itself to.
 
+## Unreleased
+
+- [Visible] **The mod is now Mandos** (formerly better-borg). New mod id
+  (`mandos`), name, repository and description — the purpose line now names
+  the grind: play unattended, reach a chosen stage reliably, retire each
+  success into a kept, loadable save. The title row reads "New Mandos warrior
+  character". Folder name = manifest id: install from a folder called
+  `mandos`. The run-record schema id stays `better-borg/runs@1` — a format
+  identifier committed into existing records, not branding (rule 7).
+  INSTALL-STORAGE COST (accepted, #19): a mod's storage is keyed by its id,
+  so the browser lineage's graveyard and lineage counter start fresh under
+  `mandos`.
+
 ## 0.1.0 - 2026-11-02
 
 The fork's first version: upstream `1fa2f8d` (v1.4.0-beta.2) rebranded as

@@ -50,7 +50,7 @@ describe("the class registry", () => {
     expect(warriorPack.className).toBe("Warrior");
     /* The presentation bits the pack owns move with it: the title row's
      * label is the warrior's, carried from the archived fork unchanged. */
-    expect(warriorPack.titleRowLabel).toBe("New Warrior Borg character");
+    expect(warriorPack.titleRowLabel).toBe("New Mandos warrior character");
   });
 
   it("selects the pack a stored value names, clamping and defaulting by the declaration", () => {

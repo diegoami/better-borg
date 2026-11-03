@@ -1,6 +1,8 @@
-# better-borg
+# Mandos
 
-**A class-agnostic fork of [Borg](https://github.com/neostryder/neo-angband-mod-borg)
+**Formerly better-borg** (and, before the unification, the archived
+[neowarrior-borg](https://github.com/diegoami/neowarrior-borg) fork) —
+**a class-agnostic fork of [Borg](https://github.com/neostryder/neo-angband-mod-borg)
 — defect fixes and strength improvements for every borg, staged for upstream,
 with per-class strategy packs.**
 

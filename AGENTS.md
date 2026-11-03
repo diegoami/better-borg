@@ -3,7 +3,8 @@
 For any agent or tool working in this repository (OpenCode, Codex, Claude
 Code, others):
 
-- **What this is**: the class-agnostic Borg fork - defect fixes and strength
+- **What this is**: Mandos (formerly better-borg) — the class-agnostic Borg
+  fork: defect fixes and strength
   improvements for every borg, staged for upstream, with per-class STRATEGY
   PACKS under `src/class/` selected by the `borg.class` setting (pack #1 is
   the warrior; a new class starts as a pack plus a setting, never a fork -

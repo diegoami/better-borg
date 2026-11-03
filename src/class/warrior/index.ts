@@ -171,7 +171,7 @@ export function warriorBirth(mod: ModApi2, core: typeof Core): Api2BirthPresente
 export const warriorPack: StrategyPack = {
   id: "warrior",
   className: WARRIOR_CLASS_NAME,
-  titleRowLabel: "New Warrior Borg character",
+  titleRowLabel: "New Mandos warrior character",
   defaultRaceName: WARRIOR_RACE_CANDIDATES[0],
   raceCandidates: WARRIOR_RACE_CANDIDATES,
   planFor: planWarriorFor,

@@ -19,7 +19,7 @@ three-repository era on 2026-11-03):
 | Repo | Takes |
 | --- | --- |
 | `neostryder/neo-angband-mod-borg` (upstream) | defect fixes, offered as PRs from here |
-| `diegoami/better-borg` (this repo) | everything: the class-agnostic core AND the per-class strategy packs under `src/class/` |
+| `diegoami/mandos` (this repo; renamed from `better-borg` 2026-11-03, #19) | everything: the class-agnostic core AND the per-class strategy packs under `src/class/` |
 
 **History**: `diegoami/neowarrior-borg` was the single class fork, wound
 down at M2 open exactly as the owner decided (2026-11-02): its
@@ -50,8 +50,11 @@ title-row label), an entry in the registry's ordered `PACKS` array (which
 widens the `borg.class` range and lands its manifest row in the same
 change), and its own tests. Per-class lineages are isolated by install
 slots; per-class valuation weights, when they exist, are pack data. After
-the unification (B15) the unified mod RENAMES to **Mandos** - the keeper
-of the dead who sends them back (#19) - before the next tag.
+the unification (B15) the unified mod RENAMED to **Mandos** - the keeper
+of the dead who sends them back (#19, landed 2026-11-03: id `mandos`,
+folder `mandos`, repo `diegoami/mandos`; the run-record schema id
+`better-borg/runs@1` deliberately keeps its old name - a format identifier
+committed into existing records, rule 7).
 
 ## 3. Task files and the loop
 

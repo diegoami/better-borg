@@ -25,6 +25,9 @@ import type { RunReport } from "./play-session.js";
 
 /** Identifies the runs.json shape; bump when the schema gains a field. */
 export const RUNS_SCHEMA_ID = "better-borg/runs@1";
+/* ^ Deliberately NOT renamed with the mod (#19): this is a FORMAT identifier
+ * committed byte-identically into existing records (rule 7), not branding.
+ * New records keep carrying it; a future format change bumps the @n. */
 
 /** Which tool drove the cohort, at what shape. */
 export interface SessionRunner {

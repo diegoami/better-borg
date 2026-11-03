@@ -2,8 +2,8 @@
   "format": "neo-angband/mod/manifest",
   "schemaVersion": 2,
   "data": {
-    "id": "betterborg",
-    "name": "Better Borg",
+    "id": "mandos",
+    "name": "Mandos",
     "version": "0.1.0",
     "api": ">=2.0.0 <3.0.0",
     "runtime": "in-process",
@@ -40,10 +40,10 @@
       "profiles:manage",
       "saves:manage"
     ],
-    "description": "A class-agnostic Borg: a hard fork of Angband's automatic player (the borg in Angband 4.2.6, as ported to Neo Angband by neostryder) carrying defect fixes and strength improvements for every class. The class it plays is a strategy pack - the default is the warrior, the archived neowarrior-borg fork's lineage, selected by the borg.class setting. It births its own planned character, records its runs, and starts the next character when one dies - unattended, for as deep as it can get. Port defects are staged here as upstream pull requests; improvements upstream declines still live here. Deterministic, plays by the same rules as the stock Borg.\n\nInstalling and enabling it does not give it your character. Start it from the title screen's New Warrior Borg character row, or press Ctrl-Z in play to hand over the keyboard, as with the stock Borg.",
+    "description": "Mandos, formerly better-borg: a class-agnostic Borg - a hard fork of Angband's automatic player (the borg in Angband 4.2.6, as ported to Neo Angband by neostryder) carrying defect fixes and strength improvements for every class. The class it plays is a strategy pack - the default is the warrior, the archived neowarrior-borg fork's lineage, selected by the borg.class setting. It grinds for you: it plays unattended, concentrates on reaching a chosen stage reliably, retires each successful run into a kept, loadable save, and starts the next character when one dies. Deterministic, plays by the same rules as the stock Borg. Port defects are staged here as upstream pull requests; improvements upstream declines still live here.\n\nInstalling and enabling it does not give it your character. Start it from the title screen's New Mandos warrior character row, or press Ctrl-Z in play to hand over the keyboard, as with the stock Borg.",
     "author": "diegoami",
     "license": "GPL-2.0-only",
-    "repository": "https://github.com/diegoami/better-borg",
+    "repository": "https://github.com/diegoami/mandos",
     "shape": "plugin",
     "facets": [
       "plugin"
