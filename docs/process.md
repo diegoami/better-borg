@@ -283,6 +283,16 @@ which `tools/upstream-watch.mjs` follows like the others. Our fix is then a
 CHOICE that departs from 4.2.6 (rule 3), FORK-marked, unless angband/angband
 fixes it, in which case it is a defect fix toward the C's newer code.
 
+**C report gate** (owner, 2026-11-04): label these Mandos investigations
+`upstream-c`. Before proposing an external report, build and test the C
+game with the C Borg, record the exact source/configuration and observed
+reproduction, and search both open and closed C issues and PRs for a
+duplicate. An extracted-function fixture alone is not validation in the
+running C game. Post the evidence internally on the Mandos issue first;
+post to `angband/angband` only after the owner's explicit OK on that report.
+Keep instrumentation and limitations visible; do not imply an observed
+live death when the evidence is an instrumented scenario.
+
 **Before posting**, run `node tools/upstream-sync.mjs` (exit 0): an issue
 cites the pristine checkout at upstream's head, and a PR branch is cut from
 it in an isolated worktree. Keep the pristine checkout itself at the
