@@ -274,8 +274,9 @@ gaps go to the engine tracker the same way (#428). The mod-borg stance is
 survey-only: a PR there needs an acknowledged defect and zero debate.
 
 **A bug in the C borg itself** (owner, 2026-11-04): when the 4.2.6 C borg is
-wrong too, so a port that follows it faithfully is equally wrong, it is
-posted to the C's own repository, **angband/angband**, as well. Check its
+wrong too, so a port that follows it faithfully is equally wrong, its
+approved report belongs in the C's own repository, **angband/angband**.
+The C report gate below applies before any post. Check its
 current master first, because our C reference (`../neo-angband/reference/src/borg/`)
 is the 4.2.6 snapshot and the bug may already be fixed there. Track it like
 any thread: an `angband/angband#n` on the tracking issue's **Threads** line,
@@ -284,7 +285,13 @@ CHOICE that departs from 4.2.6 (rule 3), FORK-marked, unless angband/angband
 fixes it, in which case it is a defect fix toward the C's newer code.
 
 **C report gate** (owner, 2026-11-04): label these Mandos investigations
-`upstream-c`. Before proposing an external report, build and test the C
+`upstream-c`. A code discrepancy or bookkeeping error alone is not enough
+for upstream submission. Demonstrate a meaningful gameplay consequence
+that the owner can explain in plain language, with reproduction and
+controls. Do not claim a bad decision, death, lost progress or strength
+improvement that has not been observed. If impact remains unproven, keep
+the candidate internal; a technically valid patch is not posting approval.
+Before proposing an external report, build and test the C
 game with the C Borg, record the exact source/configuration and observed
 reproduction, and search both open and closed C issues and PRs for a
 duplicate. An extracted-function fixture alone is not validation in the
