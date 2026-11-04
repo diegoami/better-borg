@@ -12,8 +12,8 @@
  * - Panel-relative scans (w_x/w_y + SCREEN_*) become full-map scans, since the
  *   port has no panel concept; the borg's own remembered map is the same data.
  * - borg_flow_spastic's borg_detect_door sector suppression is dropped (treated
- *   as "not detected", i.e. searchable), and borg_primarily_caster is
- *   approximated by "has spell points".
+ *   as "not detected", i.e. searchable). borg_primarily_caster is the store's
+ *   faithful borgPrimarilyCaster since #57 (it was "has spell points").
  */
 
 import type { AgentCommand } from "@rpgm-tools/neo-angband-core";
@@ -55,6 +55,7 @@ import {
 import { borgFlowCostStair, syncStairsFromMap } from "./flow-stairs.js";
 import { getFearCaches } from "../danger/state.js";
 import { playerHas } from "../trait/player-flags.js";
+import { borgPrimarilyCaster } from "../store/store.js";
 
 /** borg_get_leash (borg-flow-misc.c): how far to roam from the stairs. */
 export function borgGetLeash(ctx: BorgContext, flow: FlowState, pickUp: boolean): number {
@@ -324,6 +325,28 @@ export function borgCheckRest(ctx: BorgContext, flow: FlowState, y: number, x: n
 }
 
 /**
+ * borg_flow_recover's "do I need to recover some?" (borg-flow-misc.c:242-256):
+ * a primary caster recovers for SP as well as HP; every other class only for
+ * HP, cuts, stuns and fear. FORK (Mandos #57), a DEFECT fix toward the C: the
+ * branch is borg_primarily_caster() (borg-magic.c:264, num_books > 3 - mage,
+ * druid, priest, necromancer), not "has spell points", which also made
+ * paladins, rogues, rangers and blackguards recover for SP (inherited).
+ */
+export function borgNeedsRecover(ctx: BorgContext): boolean {
+  const w = ctx.world;
+  const unhurt =
+    trait(w, BI.CURHP) > Math.trunc(trait(w, BI.MAXHP) / 3) &&
+    !trait(w, BI.ISCUT) &&
+    !trait(w, BI.ISSTUN) &&
+    !trait(w, BI.ISHEAVYSTUN) &&
+    !trait(w, BI.ISAFRAID);
+  if (borgPrimarilyCaster(ctx)) {
+    return !(unhurt && (trait(w, BI.CURSP) > Math.trunc(trait(w, BI.MAXSP) / 4) || trait(w, BI.MAXSP) === 0));
+  }
+  return !unhurt;
+}
+
+/**
  * borg_flow_recover (borg-flow-misc.c): flow to a safe "happy" grid to heal.
  */
 export function borgFlowRecover(ctx: BorgContext, flow: FlowState, dist: number): AgentCommand | null {
@@ -332,28 +355,7 @@ export function borgFlowRecover(ctx: BorgContext, flow: FlowState, dist: number)
   if (w.self.timeThisPanel > 500) return null;
   if (trait(w, BI.CLEVEL) <= 5) return null;
 
-  /* Do I need to recover some? (caster ~ has SP) */
-  const caster = trait(w, BI.MAXSP) > 0;
-  if (caster) {
-    if (
-      trait(w, BI.CURHP) > Math.trunc(trait(w, BI.MAXHP) / 3) &&
-      (trait(w, BI.CURSP) > Math.trunc(trait(w, BI.MAXSP) / 4) || trait(w, BI.MAXSP) === 0) &&
-      !trait(w, BI.ISCUT) &&
-      !trait(w, BI.ISSTUN) &&
-      !trait(w, BI.ISHEAVYSTUN) &&
-      !trait(w, BI.ISAFRAID)
-    )
-      return null;
-  } else {
-    if (
-      trait(w, BI.CURHP) > Math.trunc(trait(w, BI.MAXHP) / 3) &&
-      !trait(w, BI.ISCUT) &&
-      !trait(w, BI.ISSTUN) &&
-      !trait(w, BI.ISHEAVYSTUN) &&
-      !trait(w, BI.ISAFRAID)
-    )
-      return null;
-  }
+  if (!borgNeedsRecover(ctx)) return null;
 
   if (w.self.goal.fleeing) return null;
   if (w.self.lunalMode || w.self.munchkinMode) return null;
