@@ -108,7 +108,15 @@ function check() {
   for (const a of archived) console.log(`archived   ${a}`);
   console.log(`stalls     ${stalls.length}${stalls.length ? ": " + stalls.join("; ") : ""}`);
   const problems = [];
-  if (noTruth.length > 0) problems.push(`no truth domain on ${noTruth.length} start(s): grant the real-monsters permission (Mods -> Mandos -> Change permissions), #53`);
+  /* Judge the LATEST start: an earlier start in the same log may predate a
+   * grant the player has since made. */
+  const starts = said(/the Borg has the keyboard/u);
+  const latest = starts[starts.length - 1] ?? "";
+  if (/no truth domain/u.test(latest)) {
+    problems.push(`the latest start has no truth domain: Mods -> Mandos -> Change permissions (or "Choose one by one"), switch on "See exact numbers for the creatures your character perceives...", #53`);
+  } else if (noTruth.length > 0) {
+    console.log(`note       ${noTruth.length} earlier start(s) without truth; the latest has it`);
+  }
   for (const c of consents) problems.push(`the player has not granted "${c}" (Mods -> Mandos -> Change permissions)`);
   for (const p of problems) console.log(`PROBLEM    ${p}`);
   if (problems.length > 0) process.exit(1);
