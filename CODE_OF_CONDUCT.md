@@ -1,10 +1,15 @@
-# Code of Conduct for Neo Angband Projects
+# Mandos code of conduct
 
-Effective date: 2026-08-23.
+Original Neo Angband statement: 2026-08-23. Mandos scope and reporting
+identity clarified: 2026-11-04.
 
 ## Scope
 
-This Code is intended for adoption in the `neo-angband` repository and the seven `neo-angband-mod-*` repositories. It applies to issues, pull requests, discussions, review comments, documentation contributions, and other project interactions. It also applies to Neo Angband discussions in the RPGM Tools Discord.
+These inherited Neo Angband conduct expectations apply to interactions in
+the Mandos repository: issues, pull requests, discussions, reviews and
+documentation contributions. Mandos does not administer upstream
+repositories or the RPGM Tools Discord; those spaces have their own
+maintainers and policies.
 
 GitHub and Discord maintain their own platform rules. This Code supplements, and does not replace, those rules.
 
@@ -27,10 +32,17 @@ Disagreement about game design, mod behavior, licensing, documentation, or imple
 
 ## Reporting
 
-Conduct concerns can be reported through the project's published private contact route: `strider-angband (at) rpgm.tools`. A report should include relevant links, dates, and a concise description when available. Public disclosure of a security vulnerability should follow `SECURITY.md` instead.
+For a concern about Mandos, contact its known maintainer,
+[diegoami](https://github.com/diegoami), to arrange an appropriate reporting
+route. Do not include personal or confidential details before a private
+route is agreed. The upstream maintainer's email address is not a Mandos
+reporting channel. GitHub's own reporting controls remain available for
+platform abuse. Security vulnerabilities follow [SECURITY.md](SECURITY.md).
 
 ## Response and enforcement
 
 A maintainer can review reported conduct and take proportionate action based on the available context. Possible responses include clarification, a request to stop, a warning, removal or editing of content where the platform permits it, closing an issue or pull request, restricting participation, referral to GitHub or Discord moderation, or removal from a project-controlled community space.
 
-A participant may request reconsideration through the same private contact route. A reconsideration request should identify the action and relevant context. No outcome is promised.
+A participant may ask the Mandos maintainer to reconsider an action,
+identifying the action and relevant context. No particular channel or
+outcome is promised.

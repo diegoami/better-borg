@@ -15,6 +15,9 @@ the issues' labels: `status:ready` and `priority:*`.
   no-N-forks doctrine, docs/process.md section 2). Which class and race each
   birth plays is the player's: one toggle per class and per race (#16).
 - **Rules**: [`CLAUDE.md`](CLAUDE.md), numbered and cited as "rule n".
+- **Current scope**: rule 15 authorizes bug hunting and fixing only. The
+  roadmap's strategies, learning, snapshots and new unattended stage-resume
+  functionality remain parked until the owner changes scope.
 - **Process**: [`docs/process.md`](docs/process.md): the loop, records,
   milestones, and the pack doctrine. Before upstream work: run
   `node tools/upstream-watch.mjs` - movement on our threads means engage;

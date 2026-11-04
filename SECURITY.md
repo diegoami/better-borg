@@ -1,17 +1,26 @@
-# Security Policy
+# Mandos security policy
 
 ## Scope
 
-This repository owns the Borg plugin, its capability declarations, its use of the agent view and bound registries, its decision logic, and the commands it emits.
+This repository maintains the Mandos fork: its plugin, declared capabilities,
+decision logic and emitted commands. A vulnerability introduced by that work
+belongs to `diegoami/mandos`. A shared defect may also require a coordinated
+upstream report; the upstream author is not the maintainer of this fork.
 
-A vulnerability in those components belongs to `neo-angband-mod-borg`.
-
-The core `neo-angband` repository owns mod loading, capability enforcement, controller isolation, the shared agent API, archive handling, and the general mod trust model. A vulnerability in those components belongs to core. See the [core security policy](https://github.com/neostryder/neo-angband/blob/master/SECURITY.md).
+The Neo Angband engine owns mod loading, capability enforcement, controller
+isolation, the shared API, archive handling and the host trust model. For
+those components, follow the [upstream engine security policy](https://github.com/neostryder/neo-angband/blob/master/SECURITY.md).
 
 ## Reporting a vulnerability
 
-Do not open a public issue for an undisclosed vulnerability.
+Do not publish an undisclosed vulnerability in an issue or pull request.
+Contact the known Mandos maintainer, [diegoami](https://github.com/diegoami),
+to arrange a private reporting route before sending confidential details.
+This policy does not promise a particular private channel or publish a
+Mandos security email address. The `strider-angband` address in upstream's
+policy belongs to that project, not this fork.
 
-Send a private report to **strider-angband (at) rpgm.tools**. Identify `neo-angband-mod-borg`, the affected tag or commit, the relevant capability or agent operation, reproduction steps, and the expected impact.
-
-Reports about ordinary gameplay behavior that has no security impact belong in the public issue tracker.
+Once a private route is agreed, identify Mandos, the affected tag or commit,
+relevant capability or operation, reproduction steps and expected impact.
+Ordinary gameplay defects without security impact belong in the
+[Mandos issue tracker](https://github.com/diegoami/mandos/issues).

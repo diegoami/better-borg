@@ -1,5 +1,12 @@
 # The declared-gaps inventory (#34, step 2)
 
+This is the dated declared-marker inventory from the #34 / #58 pass, not a
+live implementation-status list. Source lines below identify the sites as
+reviewed then. Later restorations are documented by their task records;
+the [C-function classification](c-classification.md) adds the separate #61
+analysis. A missing legacy view field alone does not establish that the
+engine lacks the data: #81 tracks those producer/metadata questions.
+
 Every place the port itself says it is not faithful to the 4.2.6 C borg: a
 "not ported", "left out", "unported", "not yet ported", "TODO" or
 "approximat…" marker in `src/` (tests excluded). There were 38 such lines on
@@ -40,7 +47,7 @@ Re-run the inventory with:
 
 All corrected in #58.
 
-## C. Legitimate (stays)
+## C. Historical legitimate classifications
 
 | Site | Divergence | Why it stays |
 | --- | --- | --- |
@@ -62,6 +69,16 @@ All corrected in #58.
 - **The C's own approximations, ported verbatim**: `src/perceive.ts:193` (the light distance), `src/danger/geometry.ts:41` (the game's grid distance), `src/fight/attack.ts:1057` (atan2).
 - **Our code**: `src/loop/stall.ts`, `src/trait/player-flags.ts`, `src/class/warrior/plan.ts`, `src/api2/world.ts`, `src/core-api.ts`.
 
-## Next
+## Follow-up references
 
-Done since: #59 (the play-step branches, PR #62) and #50's borg_play_magic (PR #63, upstream neo-angband#441). Next: #50's remaining rungs, in the order a measured run says they bite. Then step 3 (#31, the class × seed grid) and step 4 (#34's subsystem audit).
+The play-step restoration is tracked by [#59](https://github.com/diegoami/mandos/issues/59)
+and [PR #62](https://github.com/diegoami/mandos/pull/62); spell study/testing
+landed in PR #63. The remaining
+inventory/recharge rungs are described in [B50](../tasks/B50.md), with the
+API 2 continuation correction in [B76](../tasks/B76.md). Ring swaps remain
+under #4. These references identify delivered work without treating this
+older inventory as the live queue.
+
+Use the [reviewed classifications](c-classification.md) and the task issues
+for subsequent defects and limitations. The active order remains on the
+[checkpoint issue](https://github.com/diegoami/mandos/issues/36).

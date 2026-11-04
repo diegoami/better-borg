@@ -1,7 +1,12 @@
 # Process
 
-`CLAUDE.md` holds the rules; this file says how work runs. Same system as
+[CLAUDE.md](../CLAUDE.md) holds the rules; this file says how work runs. Same system as
 neowarrior-borg (which is malpaco's, which is Geoclick2027's).
+
+Rule 15 limits current work to bug hunting and fixing. Restoring omitted C
+behavior is defect work; new strategies, learning, snapshots and new
+unattended stage-resume functionality remain parked. The procedures below
+do not authorize those features, even when an engine seam already exists.
 
 ## 1. Setup
 
@@ -83,11 +88,12 @@ Working notes (each one cost a session time):
   --stage 2,1 [--out artifacts]`. Probes go to `--out artifacts` (ignored),
   never `docs/runs/`. Send the output to a log file, not a short `tail` - the
   error line gets cut. A 60000-cap no-stage life is ~7 minutes per seed.
-- Seed 23 without a stage falls into the door-close loop (upstream #428) -
-  known, not a new finding.
+- Older unpatched seed-23 runs exposed the door-close defect (#428). The
+  harness now carries its fix (#429); a current failure must be reproduced
+  and investigated, not waived as that historical result.
 - A scratch git worktree needs `node_modules`: symlink it (the content pack
-  comes with it); removing the worktree then needs `--force` (the symlink is
-  untracked).
+  comes with it). Remove the owned symlink before removing a completed
+  worktree; inspect any other untracked or unique files first.
 - Checkouts: `../neo-angband` is the engine on OUR lab branch (its remotes:
   `origin` neostryder, `fork` ours, `upstream` angband/angband, the C game).
   The PRISTINE ones, never worked in, are `../neo-angband-upstream` (a
@@ -107,6 +113,10 @@ Working notes (each one cost a session time):
   carried patches, `tools/engine-pin.mjs`) does. Since #54 the harness
   runs the published 1.23.0-beta.2 plus the patch, and the lab runs our
   fork's 1.23.0-beta.2-mandos.N.
+  That fingerprint covers one patched file, not the whole engine or birth
+  path. Record the actual engine/content pins and carried patches. A common
+  release base or master-seed value does not prove desktop/harness replay
+  equivalence; #54 requires the recorded death facts to match.
 
 ## 2. The pack doctrine (was: the two-fork routing)
 
@@ -147,8 +157,9 @@ the birth pools (`src/birth/pools.ts`, #16). A DEDICATED pack, once a
 measured plan exists, is a module under `src/class/<name>/` implementing the
 StrategyPack interface (`src/class/pack.ts`) plus an entry in the
 registry's `PACKS` array, which then births that class instead of the
-generic pack, and its own tests. Per-class lineages are isolated by install
-slots; per-class valuation weights, when they exist, are pack data. After
+generic pack, and its own tests. The current birth draw uses a shared
+persisted install counter across class/race pairs. Any future class-specific
+weights belong in pack data and remain subject to rule 15. After
 the unification (B15) the unified mod RENAMED to **Mandos** - the keeper
 of the dead who sends them back (#19, landed 2026-11-03: id `mandos`,
 folder `mandos`, repo `diegoami/mandos`; the run-record schema id
@@ -243,10 +254,12 @@ that. Instead:
 1. Forks exist for exactly this: `diegoami/neo-angband-mod-borg` and
    `diegoami/neo-angband` (plain forks of upstream, no working tree of their
    own).
-2. Cut the PR branch from UPSTREAM's master
-   (`git fetch upstream && git checkout -b upstream-pr/<slug> upstream/master`),
-   cherry-pick ONLY the fix commits from this repo's history, push to the
-   fork, open the PR from `diegoami:<branch>`.
+2. After `tools/upstream-sync.mjs` refreshes the pristine checkouts, cut an
+   isolated PR worktree from the relevant `origin/master` (neostryder),
+   cherry-pick ONLY the fix commits, rebuild its plugin where needed, push
+   to our fork and open the PR from `diegoami:<branch>`. In the engine
+   checkout, the remote named `upstream` is **angband/angband**, not
+   neostryder; do not assume a remote name identifies the PR base.
 3. One PR per defect; the PR body is the issue body plus the diff. Suggest
    labels in the issue body (we cannot label on their tracker) and cross-link
    both ways.
@@ -272,8 +285,9 @@ fixes it, in which case it is a defect fix toward the C's newer code.
 
 **Before posting**, run `node tools/upstream-sync.mjs` (exit 0): an issue
 cites the pristine checkout at upstream's head, and a PR branch is cut from
-it (`git -C ../neo-angband-mod-borg switch -c pr/<slug>`, then back to
-`master` after the push).
+it in an isolated worktree. Keep the pristine checkout itself at the
+refreshed master; retain the fix and verification evidence before removing
+the disposable PR worktree.
 
 **Posting** (rule 12): draft, show the owner, post on approval. Shape it like
 the posts already up - engine issue #428 and its PR #429 are the reference,
@@ -286,8 +300,10 @@ either, read the code region and verify against the pristine trees - two
 assumptions bit us on 2026-11-03, one corrected publicly on the issue.
 
 **After posting: track it, carry it, keep working** (owner, 2026-11-03).
-We do not stop and wait for upstream, and we do not wait to learn whether
-they accept.
+We do not stop authorized defect work while waiting for upstream. The
+carry policy below does not expand rule 15's scope: a previously proposed
+seam is not permission to implement its parked feature. Record the actual
+harness and lab consumers separately in the tracking issue.
 
 1. **Track.** Every upstream post gets a tracking issue here the same day,
    labelled `upstream`, in the shape `docs/UPSTREAM.md` describes
@@ -308,7 +324,8 @@ they accept.
    then works only on our fork, within reason, and the tracking issue
    records that. The mod still ships no engine code (rule 5). Where cheap,
    it feature-detects a seam, so it degrades rather than breaks on a stock
-   engine.
+   engine. The current manifest can still refuse a stock engine outright;
+   feature detection does not override its declared engine range.
 3. **Monitor and decide case by case.** The upstream watch shows movement.
    When they review, address the feedback in the same pass; if they prefer
    a different fix, adopt theirs and drop ours. When a release carries it,
@@ -348,10 +365,11 @@ upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
    carry in the fork per the doctrine. Run it before any upstream work, not
    just at sync passes; `--reset` re-baselines.
 
-1. `git fetch upstream` in each pristine checkout; compare our pins (the mod
-   import boundary, and the engine floor in `package.json`) against
-   `upstream/master`. Zero ahead = nothing to adopt (2026-11-02: both
-   upstreams zero ahead of our pins).
+1. Run `tools/upstream-sync.mjs`, then compare our pins (the mod import
+   boundary and engine floor in `package.json`) with neostryder's refreshed
+   `origin/master`. The engine's `upstream` remote names the C repository.
+   Record the comparison at the named revisions rather than carrying an
+   earlier "zero ahead" result forward as current state.
 2. Triage what's new against the watchlist (`docs/UPSTREAM.md`): movement on
    issues we queued (#14), seams we depend on (#418/#385/#414), anything
    touching our filed reports (#428). Read the CHANGELOG diff, not just the
@@ -362,7 +380,8 @@ upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
    must say what they ran on.
 4. The GitHub forks (`diegoami/neo-angband`, `diegoami/neo-angband-mod-borg`)
    are PR vehicles only: `gh repo sync` them on demand when cutting a §6 PR.
-   No working trees; never ahead of upstream except a PR branch.
+   No permanent product working trees; the isolated PR worktrees from §6
+   are disposable. Fork branches are ahead only for their offered change.
 5. The local game checkout: `master` follows upstream, ff-only. The
    `neowarrior-lab` branch (pushed to `fork`) rebases onto it and shrinks as
    upstream ships our fixes - the noteSpot line dies the day a release
@@ -373,9 +392,11 @@ upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
 
 A lab build plays the mod UNATTENDED from the owner's own screen: birth via
 the title row, rebirth on every death, the graveyard accumulating in the data
-base. Two shapes, both **owner-verified 2026-11-03**. The engine they bundle
-is the lab branch's (noteSpot-fixed); the mod folder's NAME must equal the
-manifest id (`mandos`) - clone into a folder called exactly that.
+base. The desktop/web launch shapes below were used in the 2026-11-03
+checks. That historical check is not proof of current grants, retirement
+or replay parity; validate each watched build as described below. The
+engine is the lab branch's, and the mod folder name must equal the manifest
+id (`mandos`).
 
 **Start it with `node tools/lab.mjs start`** (`status` to look first). The lab's
 two halves drift on their own: no merge updates the mod clone in
@@ -411,7 +432,7 @@ come from `<data>/mods/`, no folder picker. **Updating the mod** is a plain
 `git pull` inside `<data>/mods/mandos` (the committed plugin.js is current on
 every merge - `pnpm check`, part of `pnpm verify`, keeps it so), then
 restart the app; install storage (graveyard, lineage counter) survives the
-update. In-app ONCE: mods menu → enable Mandos → title row "New Mandos warrior character" → answer the game's confirm.
+update. In-app ONCE: mods menu → enable Mandos → title row "New Mandos character" → answer the game's confirm.
 Everything (saves, graveyard, settings) then lives under `<data>` - portable;
 delete it to reset. The lab branch's first-party entry + the switch carry the
 trust.
@@ -424,7 +445,11 @@ trust.
 Open the served URL with `?labtrust=mandos` appended, then the same in-app
 once-through (allow third-party, pick the `mandos` folder, enable).
 
-Without a lab build the first death ends the run by design (fail-closed);
-headless play is unaffected (#18: diegoami/mandos issue 18).
+Use the supported lab build and its grants for this desktop workflow. The
+current manifest rejects stock engines outside its fork range. #18 records
+the earlier fail-closed restart behavior; it is not a stock-engine setup
+recipe. The headless harness has its own pinned engine and session driver.
+A successful consent/play check does not establish desktop-to-harness
+replay parity; that requires separate verification under #54.
 
 

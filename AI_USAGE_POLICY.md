@@ -1,8 +1,10 @@
 # AI Use, Disclosure, and Accountability
 
-This mod is part of the Neo Angband family, and like the main engine repository it is developed with substantial help from generative AI.
-
-The main tool has been Claude (Anthropic), mostly through Claude Code. It has helped write and revise TypeScript, draft tests, trace code paths against this mod's own manifest and design docs, and draft documentation.
+Mandos derives from the Neo Angband Borg port and retains its AI-assisted
+development history. Work on this fork also uses generative AI, including
+Claude Code (Anthropic) and Codex (OpenAI), for implementation drafts, tests,
+source tracing and documentation. The Mandos maintainer owns the changes
+accepted here; upstream maintainers are not responsible for this fork.
 
 This document was also prepared with AI assistance.
 
@@ -54,7 +56,12 @@ AI assistance is not a substitute for being able to explain what a change does, 
 
 Design decisions, compatibility decisions, gameplay decisions, balance decisions, release decisions, and exceptions to this mod's own established rules remain human responsibilities.
 
-Neo Angband's core stays a faithful reproduction of Angband 4.2.6, and this mod is an optional layer on top of it. Everything in the mod is off by default, and the core itself stays unedited.
+Mandos is an optional mod and does not take a character's keyboard merely
+because it is installed or enabled. Its settings have their own defaults:
+for example, the class/race birth pools are enabled. The manifest is the
+authority for those defaults. The mod ships no engine code; the development
+lab and harness carry identified engine fixes separately, and run records
+name the actual engine pin and carried patches.
 
 ## Licensing and Provenance
 
@@ -82,9 +89,15 @@ AI-assisted contributions are welcome, and they are judged on the quality and ve
 
 Contributors are responsible for the code or documentation they submit. They should understand the change, be able to explain it during review, and provide the same tests, provenance, licensing care, and other evidence expected from a fully hand-written contribution.
 
-If generative AI materially drafted or rewrote a contribution, beyond ordinary editor completion or autocomplete, say so in the pull request description. Naming the tool is enough; prompt transcripts are not required.
+Project-level AI use is disclosed in this document. Keep this policy
+accurate when the project's use changes. Under [CLAUDE.md](CLAUDE.md), rule
+14, commit messages and pull-request bodies carry no AI-attribution
+trailers. Contribution descriptions should state the problem, change,
+provenance and verification; repeated tool-credit boilerplate is not the
+project's disclosure mechanism.
 
-Disclosure is informational and does not count against the contribution. It lets reviewers apply appropriate scrutiny, and maintainers and other contributors do not have to guess.
+Disclosure does not substitute for inspectable evidence or shift
+responsibility away from the contributor and maintainer.
 
 A contribution may be rejected or returned for more work if its author cannot establish where the behavior came from, explain the implementation, resolve a provenance question, or provide adequate verification. Contributions written without AI are held to the same standard.
 

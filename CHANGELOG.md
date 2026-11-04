@@ -74,6 +74,20 @@ stock engine refuses the mod.
   entry; the original port's planning record is preserved separately in
   docs/history/upstream-playability.md.
 
+
+- [Visible] [DEFECT] **Preserve the recharge continuation during API 2 retries**
+  (#76, PR #77). Speculative loadout passes restore the pending wear/rest
+  continuation before retrying, so an unsubmitted wear is not replaced by
+  its queued rest. The regression covers both pending states; the
+  [Warrior control](docs/runs/2026-11-04-b76-warrior-c2d1/README.md) is
+  unchanged. Heavy play tests use 300-second budgets and CI a 15-minute
+  ceiling, without changing decision caps or gameplay assertions.
+- [Internal] **Classify the original C-function candidates** (#61, PR #82).
+  The [reviewed audit](docs/audit/c-classification.md) accounts for all 145
+  entries: 69 plumbing, 41 merged, 16 limits and 19 gaps. Its completeness
+  guard checks that every current unnamed candidate is covered; this is
+  source classification, not a whole-port fidelity or strength claim.
+
 ## 0.1.0 - 2026-11-04
 
 **Works on**: our engine fork only. That is `neowarrior-lab` of
