@@ -407,29 +407,20 @@ suite("the pack restart chain, headless", () => {
     expect(plan.baseStats).toEqual([18, 10, 10, 10, 17]);
     expect(plan.pointsLeft).toBe(0);
 
-    /* THE SESSION, through the same driver (src/play-session.ts) whose
-     * output gets committed to docs/runs/ by tools/runs.mjs. REBASED AT B32:
-     * this test once pinned four consecutive deaths (every standard-grid
-     * warrior died on depth 1 inside 369 decisions) - the caution/attack fix
-     * removed three of those four deaths (seed 34's grey-mold death became a
-     * stage retirement; 23 and 49 survive their slices grinding at clvl 2 -
-     * docs/runs/2026-11-03-b32-stage-c2d1/). The chain RULE did not change:
-     * a death boots the successor, a survivor ends the session without
-     * booting one. REBASED AGAIN AT B40 (#40): carrying our engine fixes
-     * saved seed 20 (#429 noteSpot), so the chain now opens on seed 14,
-     * which still dies inside 600 decisions (grey mold, depth 1, 348
-     * decisions); its death boots seed 23, and seed 23's survival stops the
-     * loop before seed 34 - the same rule the strict gate test below proves
-     * at the unit level. */
+    /* The shared session driver must boot after a death and stop after a
+     * survivor. B69's working attack scan saves the former death seed 14.
+     * tools/runs.mjs at cap 600 found seed 73 dies to grey mold at decision
+     * 420, while seed 1 survives: docs/runs/2026-11-04-b69-chain-cap600/.
+     * The unused successors prove that survival stops the chain. */
     const session = await playPackSession(Core, pack!, warriorPack, {
-      seeds: [14, 23, 34, 49],
+      seeds: [73, 1, 34, 49],
       capFor: () => 600,
     });
     expect(session.lives).toHaveLength(2);
-    expect(session.lives[0]!.seed).toBe(14);
-    expect(session.lives[0]!.dead, "seed 14's death is what booted seed 23").toBe(true);
-    expect(session.lives[1]!.seed).toBe(23);
-    expect(session.lives[1]!.dead, "seed 23 survived its slice, so no third boot").toBe(false);
+    expect(session.lives[0]!.seed).toBe(73);
+    expect(session.lives[0]!.dead, "seed 73's death is what booted seed 1").toBe(true);
+    expect(session.lives[1]!.seed).toBe(1);
+    expect(session.lives[1]!.dead, "seed 1 survived its slice, so no third boot").toBe(false);
     /* The census the harness counted balances the decisions on every life,
      * ended or not (#36's rule). */
     for (const life of session.lives) {
@@ -443,11 +434,11 @@ suite("the pack restart chain, headless", () => {
      * middle life capped to a single decision survives, the chain's death
      * gate must refuse to boot its successor, and the session must fail
      * rather than count the other lives' deaths into a chain that was
-     * broken. Seed 14 (seed 20 before B40) still plays its full short life
-     * so the survivor really is interior. */
+     * broken. Seed 73 plays its full short life before seed 1
+     * survives, so the survivor really is interior (B69 cap-600 record). */
     const plan = warriorBuildPlan();
-    expect(() => chainPlannedWarriors(plan, [14, 23, 34], (seed) => (seed === 23 ? 1 : 600))).toThrow(
-      /seed 23 was still alive after its session slice/u,
+    expect(() => chainPlannedWarriors(plan, [73, 1, 34], (seed) => (seed === 1 ? 1 : 600))).toThrow(
+      /seed 1 was still alive after its session slice/u,
     );
   }, 300_000);
 
@@ -473,17 +464,14 @@ suite("the pack restart chain, headless", () => {
      * `dungeonlevel` arrivals, its graveyard entry awaited before the next
      * character boots - the loop's journal-before-create ordering - and the
      * ONE record writer turning the lives into the runs.json schema
-     * (better-borg/runs@1). Seeds [20, 23, 34] (REBASED AT B32: since the
-     * caution/attack fix only seed 20 dies on this grid - at 250 decisions -
-     * so the session is a death, a rebirth, and a survivor's slice that
-     * ends it; every assertion below is shape-agnostic about which lives
-     * ended). REBASED AT B40: seed 20 survives on the engine with our
-     * carried patches; seed 14 is the opening death now. */
-    const seeds = [14, 23, 34];
+     * (better-borg/runs@1). B69 saves the former opening death seed 14.
+     * The cap-600 record pins seed 73's death and seed 1's surviving slice,
+     * so this session exercises both an archive and a rebirth. */
+    const seeds = [73, 1, 34];
     const session = await playPackSession(Core, pack!, warriorPack, { seeds, capFor: () => 600 });
 
     /* AT LEAST ONE DEATH AND ONE REBIRTH, which is this test's requirement
-     * (the chain test above pins the strict all-four-die chain on these
+     * (the chain test above pins death followed by survival on these
      * seeds): the first character died, and its death is what booted the
      * second one - the driver boots only behind a death, so a second life
      * IS the rebirth. A character that survives its slice ends the session,

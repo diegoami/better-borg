@@ -1,0 +1,122 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T17:02:07.739Z",
+  "label": "b69-chain-cap600",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 600,
+    "seeds": [
+      73,
+      1,
+      34,
+      49
+    ],
+    "lives": 2,
+    "stage": null
+  },
+  "build": {
+    "commit": "task/B69-borg-okay@670c1983",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "warrior pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 73,
+      "life": 1,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 420,
+      "turns": 4525,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 174,
+      "kills": 3,
+      "places": 234,
+      "dead": true,
+      "causeOfDeath": "grey mold",
+      "commands": {
+        "descend": 21,
+        "walk": 366,
+        "pickup": 6,
+        "ascend": 20,
+        "open": 2,
+        "throw": 1,
+        "tunnel": 3,
+        "quaff": 1
+      },
+      "jitter": 33,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 5144
+      }
+    },
+    {
+      "seed": 1,
+      "life": 2,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 600,
+      "turns": 7055,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 3,
+      "gold": 195,
+      "kills": 33,
+      "places": 377,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 13,
+        "walk": 523,
+        "open": 7,
+        "quaff": 1,
+        "ascend": 13,
+        "hold": 2,
+        "rest": 12,
+        "tunnel": 5,
+        "pickup": 4,
+        "drop": 19,
+        "read": 1
+      },
+      "jitter": 43,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 7872
+      }
+    }
+  ]
+}
