@@ -32,6 +32,7 @@
  */
 
 import { describe, expect, it } from "vitest";
+import { Rng } from "@rpgm-tools/neo-angband-core";
 import type { Api2Events, Api2LevelEvent, Api2Slot, JsonValue, RunOutcome, RunReport } from "@rpgm-tools/neo-angband-mod-sdk";
 import {
   archiveFinishedRun,
@@ -353,6 +354,17 @@ describe("the install graveyard archive", () => {
     expect(graveyardArchiveOf((install.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs).toEqual([
       { run: null, ...entry },
     ]);
+  });
+
+  it("keeps accepted-birth inputs through report, storage and archive reload (#54)", async () => {
+    const birthRngState = new Rng(4242).getState();
+    const birthOptions = { birth_force_descend: true, birth_no_selling: false };
+    const ended = { ...report("death"), seed: 4242, birthRngState, birthOptions };
+    expect(graveyardEntryOf(ended)).toMatchObject({ birthRngState, birthOptions });
+    const install = slot();
+    expect(await archiveFinishedRun({ archive: install, log: () => undefined }, ended)).toBe(true);
+    const [saved] = graveyardArchiveOf((install.held() as Record<string, JsonValue>)[GRAVEYARD_KEY]!).runs;
+    expect(saved).toMatchObject({ seed: 4242, birthRngState, birthOptions });
   });
 
   it("records the master seed when the engine reports one, and only then (#54)", async () => {

@@ -149,6 +149,8 @@ for (const run of deadRuns) {
       life: run.life,
       race: run.race,
       baseStats: run.baseStats,
+      ...(run.birthRngState === undefined ? {} : { birthRngState: run.birthRngState }),
+      ...(run.birthOptions === undefined ? {} : { birthOptions: run.birthOptions }),
       deathTurn: run.turns,
       cause: run.causeOfDeath ?? (run.stall !== undefined ? `stalled (${run.stall.kind} ${String(run.stall.command)})` : "(unnamed)"),
       decisions: run.decisions,

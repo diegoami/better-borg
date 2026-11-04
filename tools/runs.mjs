@@ -190,6 +190,8 @@ const record = {
     race: life.race,
     class: life.className,
     baseStats: [...life.baseStats],
+    ...(life.birthRngState === undefined ? {} : { birthRngState: life.birthRngState }),
+    ...(life.birthOptions === undefined ? {} : { birthOptions: life.birthOptions }),
     decisions: life.decisions,
     turns: life.turns,
     depths: [...life.depthsVisited],

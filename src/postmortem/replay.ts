@@ -45,13 +45,14 @@ import { bindCore, coreIsBound } from "../core-api.js";
 import { driveLife, observingLife, type LifeStall } from "../play-session.js";
 import type { StrategyPack } from "../class/pack.js";
 import type { StageDefinition } from "../loop/stage.js";
+import { birthReplayDataOf, type BirthReplayData } from "../records/birth-replay.js";
 import { capturePostmortem, renderDossier, type DossierHeader, type PostmortemCapture } from "./dossier.js";
 
 /** The ladder's default rungs: 5/10/15/20 turns before death (owner, 2026-11-03). */
 export const DEFAULT_OFFSETS: readonly number[] = [5, 10, 15, 20];
 
 /** The recorded facts a replay needs, read out of a runs.json entry + header. */
-export interface DeadRunFacts {
+export interface DeadRunFacts extends BirthReplayData {
   /** The seed the run played under (the harness's own key). */
   readonly seed: number;
   /** The life number within its record (1-based). */
@@ -158,6 +159,14 @@ export async function replayDeadRun(
   if (!coreIsBound()) bindCore(core);
   const say = options.log ?? ((): void => undefined);
   const ladder = normalizeOffsets(options.offsets ?? DEFAULT_OFFSETS);
+  const birth = birthReplayDataOf(dead);
+  if ((dead.birthRngState !== undefined && birth.birthRngState === undefined)
+    || (dead.birthOptions !== undefined && birth.birthOptions === undefined)) {
+    throw new Error(`seed ${String(dead.seed)}: invalid accepted-birth replay input`);
+  }
+  if (birth.birthRngState?.quick || birth.birthRngState?.fixed) {
+    throw new Error(`seed ${String(dead.seed)}: a debug RNG birth cannot be replayed as normal play`);
+  }
 
   const plan = strategy.planFor(core, pack, dead.race);
   if (plan.baseStats.length !== dead.baseStats.length || plan.baseStats.some((v, i) => v !== dead.baseStats[i])) {
@@ -174,6 +183,8 @@ export async function replayDeadRun(
     className: strategy.className,
     roller: "point",
     birthStats: [...plan.baseStats],
+    ...(birth.birthRngState === undefined ? {} : { rngState: birth.birthRngState }),
+    ...(birth.birthOptions === undefined ? {} : { optionOverrides: birth.birthOptions }),
   });
   const state: GameState = game.state;
 

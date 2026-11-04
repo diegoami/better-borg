@@ -49,8 +49,8 @@
  * issued) - that record stays as committed (append-only), and every record
  * from here on counts the killing decision.
  *
- * Determinism (rule 5): the seed fixes the game, the seed fixes the Borg's
- * private stream, and this module adds no randomness of its own. Wall-clock
+ * Determinism (rule 5): the birth input fixes the game, and the Borg starts
+ * its private stream exactly as the shipped plugin does (#54). Wall-clock
  * durations are recorded as metadata and never influence a result.
  */
 
@@ -58,6 +58,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { birthReplayDataOf, type BirthReplayData } from "./records/birth-replay.js";
 import { dirname, join, sep } from "node:path";
 import type * as Core from "@rpgm-tools/neo-angband-core";
 import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
@@ -473,7 +474,7 @@ function jitterOf(life: LifeObservation): number {
 }
 
 /** What a run did, in the terms a stall shows up in. */
-export interface RunReport {
+export interface RunReport extends BirthReplayData {
   /** The game seed this character was born under. */
   seed: number;
   /** 1-based life number within the seed's session (one character per life). */
@@ -625,6 +626,8 @@ export function playSession(
     const depthsSorted = [...observed.depths].sort((a, b) => a - b);
     runs.push({
       seed: opts.seed,
+      ...birthReplayDataOf(state),
+      ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
       life,
       race: player.race.name,
       class: player.cls.name,
@@ -780,6 +783,8 @@ function runReportOf(core: typeof Core, state: GameState, outcome: SdkRunReport[
     /* FORK: Mandos #54 (DEFECT). Forward the engine's retained original
      * seed, as the web host does; legacy states may have no provenance. */
     ...(state.masterSeed === undefined ? {} : { seed: state.masterSeed }),
+    ...birthReplayDataOf(state),
+    ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
     score: core.totalPoints(player),
     scored: false,
     endedAt: 0,
@@ -799,7 +804,7 @@ function killsOf(state: GameState): number {
 }
 
 /** One pack character's life, with its records read back from the journal's slots. */
-export interface SessionLife {
+export interface SessionLife extends BirthReplayData {
   readonly seed: number;
   /** 1-based life number within the session (one character per life). */
   readonly life: number;
@@ -1096,6 +1101,8 @@ export async function playPackSession(
 
     lives.push({
       seed,
+      ...birthReplayDataOf(state),
+      ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
       life: lives.length + 1,
       dead,
       decisions: taken,

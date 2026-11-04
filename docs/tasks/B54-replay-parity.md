@@ -32,7 +32,21 @@ now survives cap 600 rather than providing the former chain-test death.
 
 ## Remaining work
 
-Retain/reconstruct the exact accepted birth input, verify an actual
+The accepted birth input is now retained by engine commit `cc838821a`:
+the actual pre-generation RNG position survives save/load and reaches the
+end report beside immutable birth options. The save/report regressions
+fail before and pass after; build/lint and 98 focused tests pass. The full
+engine suite passes 14,159 tests (12 skipped), 717 files (three skipped),
+in 404.39 seconds. The correction is published append-only on PR #433;
+lab carry `85bea0999` builds successfully.
+
+Mandos's journal, archive, run-record writer and replay pass these optional
+inputs through without changing old records. The archive regression
+fails before; removing the writer handoff makes its new test fail. The
+related 39-test set and typecheck pass. A real one-decision harness smoke
+record contains the 32-word birth input and immutable birth options.
+
+Verify an actual
 matching-code lab death against the headless path, then run the replay
 suite alone and the watched full gate. Do not claim that the private RNG
 correction alone finishes #54, or that lost historical seeds can be
