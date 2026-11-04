@@ -42,11 +42,9 @@
 
 import { describe, expect, it } from "vitest";
 import * as Core from "@rpgm-tools/neo-angband-core";
-import { ContentIdResolver, LOOP_STATUS, installController, runGameLoop, startGame } from "@rpgm-tools/neo-angband-core";
+import { startGame } from "@rpgm-tools/neo-angband-core";
 import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
-import { createBorg } from "./controller.js";
-import { makeCoreResolvers } from "./resolvers.js";
-import { loadPack, packRoot, playRun, playPackSession } from "./play-session.js";
+import { loadPack, packRoot, playRun, playPackSession, observingLife, driveLife } from "./play-session.js";
 import { RUNS_SCHEMA_ID, buildRunsJson, type SessionRecord } from "./run-record.js";
 import { WARRIOR_CLASS_NAME, type WarriorBuildPlan } from "./class/warrior/plan.js";
 import { planWarriorFor, warriorPack } from "./class/warrior/index.js";
@@ -313,54 +311,11 @@ suite("the pack restart chain, headless", () => {
   function playWarriorLife(seed: number, plan: WarriorBuildPlan, decisions: number): PackLife {
     const game = bootPlannedWarrior(seed, plan);
     const state: GameState = game.state;
-    const resolver = new ContentIdResolver({
-      objects: game.booted.registries.objects,
-      playerRaces: game.players.races,
-      playerClasses: game.players.classes,
-    });
-    const borg = createBorg({
-      /* #54: match the shipped plugin and the shared play driver. */
-      resolvers: makeCoreResolvers({
-        races: game.booted.registries.monsters.races,
-        objects: game.booted.registries.objects,
-        state: state as never,
-        blowMethods: game.booted.registries.monsters.blowMethods.values(),
-      }),
-    });
-
-    /* The latch, as in playRun: runGameLoop asks nextCommand for as long as
-     * the player has energy, so a controller that always answers never lets
-     * the loop return. */
-    let armed = false;
-    installController(
-      state,
-      (view, act) => {
-        if (!armed) return null;
-        armed = false;
-        return borg.controller(view, act);
-      },
-      { viewDeps: { resolver, reg: game.booted.registries.objects } },
-    );
-
-    let dead = false;
-    let taken = 0;
-    for (; taken < decisions; ) {
-      armed = true;
-      const status = runGameLoop(state, game.registry);
-      taken += 1;
-      if (status === LOOP_STATUS.DEAD) {
-        dead = true;
-        break;
-      }
-      if (status === LOOP_STATUS.DEATH_CONFIRM) {
-        state.pendingDeath?.resolve(true);
-        continue;
-      }
-      if (status === LOOP_STATUS.LEVEL_CHANGE) {
-        game.changeLevel(state.targetDepth ?? state.chunk.depth + 1);
-        state.generateLevel = false;
-      }
-    }
+    const observation = observingLife(Core, game);
+    let dead: boolean;
+    let taken: number;
+    try { ({ dead, taken } = driveLife(Core, game, decisions, observation, seed)); }
+    finally { observation.uninstall(); }
 
     return {
       seed,

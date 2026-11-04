@@ -78,6 +78,26 @@ function decider(controller: AgentController, rewinds: { count: number } = { cou
 const WALK: AgentCommand = { code: "walk", dir: 6 } as AgentCommand;
 
 describe("recharge continuation across API2 retries (#76)", () => {
+  it("does not consume private RNG draws for an abandoned loadout pass (#54)", async () => {
+    const selection = vi.spyOn(Think, "think").mockImplementation((ctx) =>
+      ctx.act.move([1, 2, 3, 4, 6, 7, 8, 9][ctx.rng.randint0(8)]!));
+    const run = async (retry: boolean) => {
+      const game = fakeGame();
+      const borg = createBorg({ rngSeed: 1 });
+      let pending = retry;
+      const tick = createTick(bridge({
+        readWorld: () => Promise.resolve({ view: game.view, facts: { shopnum: null, kinds: new Map() } } as World),
+        loadoutsPending: () => pending,
+        settleLoadouts: () => { pending = false; return Promise.resolve(1); },
+      }), borg);
+      await tick(game.mod, game.input());
+      await tick(game.mod, game.input());
+      return game.submitted.map((entry) => entry.intent);
+    };
+    try { expect(await run(true)).toEqual(await run(false)); }
+    finally { selection.mockRestore(); }
+  });
+
   it.each([false, true])("preserves wear/rest order when a loadout retry starts with pending rest=%s", async (pendingRest) => {
     const game = fakeGame();
     const amulet: ItemView = {

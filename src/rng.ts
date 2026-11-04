@@ -38,6 +38,11 @@ export class Rng {
     this.value = seed >>> 0;
   }
 
+  /** Preserve the private stream before an unsubmitted speculative decision. */
+  snapshot(): number {
+    return this.value;
+  }
+
   randint0(m: number): number {
     if (m > 0x10000000) throw new RangeError(`Rand_div: m must be <= 0x10000000, got ${m}`);
     if (m <= 1) return 0;

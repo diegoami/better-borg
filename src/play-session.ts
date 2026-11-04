@@ -59,6 +59,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { birthReplayDataOf, type BirthReplayData } from "./records/birth-replay.js";
+import { playView, playGradeFloors } from "./play-view.js";
 import { dirname, join, sep } from "node:path";
 import type * as Core from "@rpgm-tools/neo-angband-core";
 import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
@@ -139,16 +140,28 @@ export function loadPack(dir: string): GamePack {
   const json = <T,>(name: string): T =>
     JSON.parse(readFileSync(join(dir, `${name}.json`), "utf8")) as T;
   const records = <T,>(name: string): T[] => json<{ records: T[] }>(name).records;
+  const optionalRecords = <T,>(name: string): T[] => existsSync(join(dir, `${name}.json`)) ? records<T>(name) : [];
   return {
     constants: json("constants"),
     terrain: records("terrain"),
     roomTemplates: records("room_template"),
     vaults: records("vault"),
     dungeonProfiles: records("dungeon_profile"),
+    /* FORK: Mandos #54, DEFECT in our loader. Match the desktop's full
+     * GamePack: omitted shops changed initialization RNG and left the
+     * benchmark playing a different world despite an identical seed. */
+    chestTraps: records("chest_trap"),
+    world: records("world"),
     projection: records("projection"),
     trap: records("trap"),
+    messageTypes: optionalRecords("message_type"),
+    tvals: optionalRecords("tval"),
+    monsterSpells: records<{ type?: unknown }>("monster_spell").filter((record) => typeof record.type === "string"),
     names: records("names"),
+    store: records("store"),
     quest: records("quest"),
+    uiKnowledge: records("ui_knowledge"),
+    hints: records("hints"),
     obj: {
       objectBase: json("object_base"),
       object: json("object"),
@@ -171,7 +184,6 @@ export function loadPack(dir: string): GamePack {
       summons: records("summon"),
       pits: records("pit"),
     },
-    mon2: undefined,
     player: {
       races: records("p_race"),
       classes: records("class"),
@@ -249,6 +261,8 @@ export function observingLife(
   game: StartedGame,
 ): LifeObservation {
   const state: GameState = game.state;
+  // The real host marks a character when its autoplayer takes control.
+  state.actor.player.noscore |= core.NOSCORE.BORG;
   const resolver = new core.ContentIdResolver({
     objects: game.booted.registries.objects,
     playerRaces: game.players.races,
@@ -269,6 +283,8 @@ export function observingLife(
       blowMethods: game.booted.registries.monsters.blowMethods.values(),
     }),
   });
+  const viewDeps = { resolver, reg: game.booted.registries.objects };
+  const floors = playGradeFloors(game);
 
   /* The latch the host installs for the same reason (main.ts): runGameLoop
    * asks nextCommand for as long as the player has energy, so a controller
@@ -292,9 +308,14 @@ export function observingLife(
   let decision = 0;
   const session = core.installController(
     state,
-    (view, act) => {
+    (legacyView, legacyAct) => {
       if (!armed) return null;
       armed = false;
+      const view = playView(core, game, legacyView, viewDeps, floors);
+      const act = { ...legacyAct, setTargetMonster: (id: number) => {
+        const actual = core.knownMonsterMidx(state, id);
+        return actual === null ? false : legacyAct.setTargetMonster(actual);
+      } };
       const cmd = borg.controller(view, act);
       if (cmd) commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
       decision += 1;
@@ -333,7 +354,7 @@ export function observingLife(
       });
       return cmd;
     },
-    { viewDeps: { resolver, reg: game.booted.registries.objects } },
+    { viewDeps },
   );
 
   return {
@@ -912,6 +933,8 @@ export interface LibrarySlot {
 
 /** How a pack session is asked for. */
 export interface PackSessionOptions {
+  /** #54: one recorded character's accepted birth input, for a verified replay/control. */
+  birthInput?: BirthReplayData;
   /** The seeds to play, in order; each character boots only behind its predecessor's death or retirement. */
   readonly seeds: readonly number[];
   /** The decision cap for each life. */
@@ -945,6 +968,14 @@ export async function playPackSession(
   strategy: StrategyPack,
   options: PackSessionOptions,
 ): Promise<SessionOutcome> {
+  const birth = birthReplayDataOf(options.birthInput);
+  if (options.birthInput !== undefined && options.seeds.length !== 1) {
+    throw new Error("A recorded birth input belongs to exactly one seed");
+  }
+  if ((options.birthInput?.birthRngState !== undefined && birth.birthRngState === undefined)
+    || (options.birthInput?.birthOptions !== undefined && birth.birthOptions === undefined)) {
+    throw new Error("Invalid accepted-birth input");
+  }
   /* The port's engine constants (FEAT, TV, ...) are live bindings that the
    * host fills from the engine it hands the mod; the vitest setup file
    * stands in for that in tests, and here the session binds the one engine
@@ -988,6 +1019,8 @@ export async function playPackSession(
       className: strategy.className,
       roller: "point",
       birthStats: [...plan.baseStats],
+      ...(birth.birthRngState === undefined ? {} : { rngState: birth.birthRngState }),
+      ...(birth.birthOptions === undefined ? {} : { optionOverrides: birth.birthOptions }),
     });
     const state: GameState = game.state;
     /* The host's event bus, attached before anything can arrive on a level:

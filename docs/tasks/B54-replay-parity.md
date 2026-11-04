@@ -46,8 +46,31 @@ fails before; removing the writer handoff makes its new test fail. The
 related 39-test set and typecheck pass. A real one-decision harness smoke
 record contains the 32-word birth input and immutable birth options.
 
-Verify an actual
-matching-code lab death against the headless path, then run the replay
+Further first-divergence work found that our content loader omitted town
+stores, chest traps, the world graph and hints. In particular, missing store
+initialization changed the game RNG; the old benchmark was not the desktop
+world. A store/world regression fails before and passes after loading the
+complete pack. The legacy API1 view also exposed unseen LOS-only grids and
+unquantized values which the shipped API2 adapter does not expose. The
+harness now uses the same public known-world builder and API2 converters;
+its unseen-grid regression fails before and passes after projection.
+
+An independent API2 retry regression shows abandoned passes consuming the
+private stream. Snapshot/restore on rewind fixes it without resetting the
+stream between submitted decisions. Do not attribute the observed death
+to that separate defect: the verified case's command trace is unchanged by
+the rewind correction.
+
+An isolated actual desktop Human Mage, original seed 99110530, dies at turn
+2450 to a giant yellow centipede. The uninstrumented and observed desktop
+reports agree (apart from save-slot identity); a fresh rebuilt-mod run also
+agrees. Headless play with the captured birth input now matches all 113
+command arguments and every pre-command turn, position, HP, SP and depth,
+as well as the complete census, death cause, level and gold. Bulky traces
+are retained under `artifacts/b54-desktop-*` pending the compact committed
+record and replay fixture.
+
+Commit that matching-code lab death as the current replay fixture, then run the replay
 suite alone and the watched full gate. Do not claim that the private RNG
 correction alone finishes #54, or that lost historical seeds can be
 recovered. No fatal-state snapshot or new strategy is involved.

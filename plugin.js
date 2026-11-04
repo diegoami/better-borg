@@ -652,6 +652,10 @@ var Rng = class {
   reseed(seed) {
     this.value = seed >>> 0;
   }
+  /** Preserve the private stream before an unsubmitted speculative decision. */
+  snapshot() {
+    return this.value;
+  }
   randint0(m) {
     if (m > 268435456) throw new RangeError(`Rand_div: m must be <= 0x10000000, got ${m}`);
     if (m <= 1) return 0;
@@ -16595,10 +16599,10 @@ function createBorg(opts = {}) {
   const spells = buildSpellTable(session.resolvers.spellMessages ?? []);
   const tables = { hitBy: blows.hitBy, spell: spells.spell, spellInvisible: spells.spellInvisible };
   let lastDepth = -1;
-  let before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false };
+  let before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false, rng: rng.snapshot() };
   const controller = hostController((view, act) => {
     const ctx = { world, view, act, rng };
-    before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false };
+    before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false, rng: rng.snapshot() };
     world.clock += 1;
     world.self.timeThisPanel += 1;
     const depth = view.player().depth;
@@ -16662,6 +16666,7 @@ function createBorg(opts = {}) {
     session.lastGrid = before.lastGrid;
     session.arrivalPickup = before.arrival;
     session.rechargeRest = before.rechargeRest;
+    rng.reseed(before.rng);
   };
   return { world, rng, controller, rewind };
 }
