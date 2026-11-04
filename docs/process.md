@@ -258,21 +258,22 @@ they accept.
    labelled `upstream`, in the shape `docs/UPSTREAM.md` describes
    (Threads / What / Kind / Carried / On release). The upstream watch reads
    its thread list from these issues.
-2. **Carry.** For an obvious bug - a port defect in the borg or a gap in
-   the engine - we work on the assumption that our PR is accepted, and we
-   carry the fix ourselves meanwhile:
+2. **Carry.** Every PR we post is one we decided makes sense, so we work on
+   the assumption that EACH is accepted - bug fixes and seam requests alike
+   (owner, 2026-11-04: "We assume all our prs are accepted, we decide before
+   the post only the ones that make sense"). Meanwhile we carry it:
    - a borg port defect: in the core, faithful to the C (B32's
      `track_step` is the model);
-   - an engine gap: a patch of the published engine package that
-     `pnpm install` applies, so the headless harness, CI and every run
-     record play on it, plus the same commit on the local lab branch for
-     the desktop build (#40 sets this up; until then #429 lives on the lab
-     branch only). The mod itself never ships engine code (rule 5). A run
-     record names the engine as the published pin plus the carried patch
-     list.
-   A seam request (a new capability rather than a bug) is NOT assumed: the
-   feature waits, or takes a legitimate mod-side fallback, and the tracking
-   issue says which.
+   - an engine change (a gap or a seam): a hunk in the patch of the
+     published engine package that `pnpm install` applies, so the headless
+     harness, CI and every run record play on it, plus the same commit on
+     the lab branch for the desktop build. A run record names the engine as
+     the published pin plus the carried patch list.
+   The mod may depend on a carried seam. If upstream declines one, the mod
+   then works only on our fork, within reason, and the tracking issue
+   records that. The mod still ships no engine code (rule 5). Where cheap,
+   it feature-detects a seam, so it degrades rather than breaks on a stock
+   engine.
 3. **Monitor and decide case by case.** The upstream watch shows movement.
    When they review, address the feedback in the same pass; if they prefer
    a different fix, adopt theirs and drop ours. When a release carries it,
