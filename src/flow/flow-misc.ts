@@ -7,8 +7,8 @@
  * REDUCTIONS (documented; navigation preserved):
  * - borg_check_rest's per-monster race-flag tests (RF_NEVER_MOVE / RF_MULTIPLY /
  *   RF_PASS_WALL / RF_KILL_WALL) ARE modelled via FlowHooks.monsterHasFlag, and
- *   the borg_fear_* arrays are read too; see borgCheckRest for the one arm
- *   that is still missing and why.
+ *   the borg_fear_* arrays are read too. The PF_COMBAT_REGEN arm, once the one
+ *   left out, is ported (#55).
  * - Panel-relative scans (w_x/w_y + SCREEN_*) become full-map scans, since the
  *   port has no panel concept; the borg's own remembered map is the same data.
  * - borg_flow_spastic's borg_detect_door sector suppression is dropped (treated
