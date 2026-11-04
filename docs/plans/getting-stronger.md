@@ -21,8 +21,8 @@ BEFORE any warrior specialization, a GENERIC first pass — class-agnostic
 improvements (#29's post-mortem diagnoses, Phase 1's ceiling fixes) that lift
 every class. Then START WIDE: fixed-class pinning at birth and race sets
 stay, but the warrior bias leaves the default (the generic pack births any
-class; a neutral default — a per-birth class draw mirroring `raceRandom` is
-the candidate shape, design in #17). The WIDE BASELINE: every class measured
+class; the neutral default is a per-birth draw from class and race toggle
+pools, all on - landed by #16/#17, 2026-11-04). The WIDE BASELINE: every class measured
 at the stage-1 milestone (a class × seed reach-rate grid) — the floor every
 class must reach. THEN each class's strategy improves IN ORDER (a strategy
 pack per class under `src/class/`, never a fork - process §2; race shortlists
