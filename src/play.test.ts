@@ -319,10 +319,7 @@ suite("the pack restart chain, headless", () => {
       playerClasses: game.players.classes,
     });
     const borg = createBorg({
-      /* The Borg's private stream, varied with the game seed exactly as
-       * playRun varies it: the chain of warriors must not share one draw
-       * sequence either. */
-      rngSeed: (seed * 2654435761) >>> 0 || 1,
+      /* #54: match the shipped plugin and the shared play driver. */
       resolvers: makeCoreResolvers({
         races: game.booted.registries.monsters.races,
         objects: game.booted.registries.objects,

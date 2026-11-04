@@ -196,7 +196,7 @@ export async function replayDeadRun(
   state.events = bus;
   game.announceArrival();
 
-  const observed = observingLife(core, game, dead.seed);
+  const observed = observingLife(core, game);
 
   /* The rungs, easiest target first (largest offset = smallest T-N). The
    * visit hook freezes a capture at the first boundary at or after each

@@ -246,7 +246,6 @@ interface LifeObservation {
 export function observingLife(
   core: typeof Core,
   game: StartedGame,
-  seed: number,
 ): LifeObservation {
   const state: GameState = game.state;
   const resolver = new core.ContentIdResolver({
@@ -255,12 +254,10 @@ export function observingLife(
     playerClasses: game.players.classes,
   });
   const borg = createBorg({
-    /* Vary the Borg's private stream with the game seed. Every run used to
-     * share one starting seed, so all four "different" runs drove an identical
-     * draw sequence and the suite was structurally blind to anything that
-     * depends on the Borg's own rolls: tie-breaks, retry counters, the twitchy
-     * fallback. A regression there would have shown up on no seed at all. */
-    rngSeed: (seed * 2654435761) >>> 0 || 1,
+    /* FORK: Mandos #54, DEFECT in our measurement/replay driver. Use the
+     * shipped plugin's default private stream; hashing the world seed here
+     * made this a different Borg even with an identical game state. Tests
+     * can still exercise explicit private seeds through createBorg. */
     resolvers: makeCoreResolvers({
       races: game.booted.registries.monsters.races,
       objects: game.booted.registries.objects,
@@ -615,10 +612,10 @@ export function playSession(
 
   const runs: RunReport[] = [];
   for (let life = 1; life <= lives; life++) {
-    /* The Borg starts each life as it started the first: same private-stream
-     * derivation from the seed, fresh world model (the previous character's
+    /* The Borg starts each life as it started the first: the plugin's default
+     * private stream, fresh world model (the previous character's
      * map is not this character's knowledge), fresh resolvers. */
-    const observed = observingLife(core, game, opts.seed);
+    const observed = observingLife(core, game);
     const turnStart = state.turn;
     const startedAt = Date.now();
 
@@ -1021,7 +1018,7 @@ export async function playPackSession(
      * the listeners are attached and before the first changeLevel. */
     game.announceArrival();
 
-    const observed = observingLife(core, game, seed);
+    const observed = observingLife(core, game);
     const startedAt = Date.now();
     const { dead, taken, attained } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
 
