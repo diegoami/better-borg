@@ -355,8 +355,14 @@ branch's input-flush commit. The tool fast-forwards the clone to
 `origin/main` and rebuilds the engine when the lab branch head differs from
 the last build (`artifacts/lab-build.json`). It refuses a dirty or wrong-branch
 engine, launches, and prints the mod and engine commits it is running. A
-lab check for a release names those two commits. The manual shape below is
-what the tool runs.
+lab check for a release names those two commits, and it passes only when
+`node tools/lab.mjs check` exits 0 after the watched lives. That command
+reads the newest lab log: births, deaths, retirements kept, and every
+consent the mod ran without. Found 2026-11-04: the 0.1.0 lab check was
+accepted while the profile had never granted the truth domain or
+`session:control`, so no attained character was kept (#53). Grant them
+once per lab profile: Mods -> Mandos -> Change permissions. The manual
+shape below is what the tool runs.
 
 **Desktop (WSL, WSLg provides the display):**
 
