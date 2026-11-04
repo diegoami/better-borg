@@ -23,6 +23,24 @@ records) merged here at M2 open and whose run records moved with them
   never in the core and never in a fork of this repository; a new class
   starts as a pack plus a setting.
 
+## Which engine it runs on
+
+Mandos ships no engine code. It does depend on the engine fixes and seams
+we have offered upstream (process section 6), and on the lab build's
+trust entry, and it plays without them only badly or not at all. **Until
+upstream releases those, every Mandos version works on OUR engine fork
+only:** the `neowarrior-lab` branch of
+[diegoami/neo-angband](https://github.com/diegoami/neo-angband), started as
+process section 8 describes, not a stock Neo Angband install. On a stock
+engine the first death ends the unattended run (fail-closed, #18), the
+door-close loop (neo-angband#428) can stall a life, and the borg has no
+truth domain. Each release names its engines in the CHANGELOG's
+**Works on** line:
+
+| Mandos | Stock upstream engine | Our fork |
+| --- | --- | --- |
+| 0.1.0 | no | `neowarrior-lab` at `8b1169799`: 1.23.0-beta.2 plus PR #429 and PR #432 and the lab trust. That lab ran without the truth domain (#53). |
+
 What is being worked on, and why: the dated priority paragraph in
 [docs/plans/getting-stronger.md](docs/plans/getting-stronger.md), and the
 latest comment on the pinned

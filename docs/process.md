@@ -190,6 +190,11 @@ crash, 1x usage limit - and committed state saved the work every time):
 - Merge gates, main session only: fast loop, full verify, a hand-run
   mutation, `pnpm check`, the engine fingerprint -> squash-merge, close the
   issue with the verification record, delete the branch.
+- A release names its engines (owner, 2026-11-04). The CHANGELOG
+  section's **Works on** line and the README's table say which stock
+  upstream release and which commit of our fork it works on. The fork
+  commit is the one `tools/lab.mjs` printed at the release's lab check. A
+  release that needs an unreleased PR of ours says "our fork only".
 
 ## 4. Reviews
 
