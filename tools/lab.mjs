@@ -98,12 +98,15 @@ function check() {
   const unkept = said(/could not keep a save of the character that attained/u);
   const noTruth = said(/gave it no truth domain/u);
   const archived = said(/the Borg archived the ended run: /u).map((l) => l.replace(/^the Borg archived the ended run: /u, ""));
+  /* Stalls: the mod's own guard handing the keyboard back (#56). */
+  const stalls = said(/handed the keyboard back \(the mod released it: /u).map((l) => l.replace(/^.*the mod released it: /u, "").replace(/\)$/u, ""));
   const consents = [...new Set(lines.flatMap((l) => [...l.matchAll(/needs the "([^"]+)" permission, which the player has not granted/gu)].map((m) => m[1])))];
   console.log(`lab log    ${newest}`);
   console.log(`births     ${births.length}${births.length ? ": " + births.map((b) => b.replace(/^the Borg birthed its /u, "").replace(/ \(.*$/u, "")).join(", ") : ""}`);
   console.log(`deaths     ${deaths.length}${deaths.length ? ": " + deaths.map((d) => (/\(([^)]+)\)/u.exec(d)?.[1] ?? "?")).join(", ") : ""}`);
   console.log(`retired    ${kept.length} kept${unkept.length ? `, ${unkept.length} attained but NOT kept` : ""}`);
   for (const a of archived) console.log(`archived   ${a}`);
+  console.log(`stalls     ${stalls.length}${stalls.length ? ": " + stalls.join("; ") : ""}`);
   const problems = [];
   if (noTruth.length > 0) problems.push(`no truth domain on ${noTruth.length} start(s): grant the real-monsters permission (Mods -> Mandos -> Change permissions), #53`);
   for (const c of consents) problems.push(`the player has not granted "${c}" (Mods -> Mandos -> Change permissions)`);
