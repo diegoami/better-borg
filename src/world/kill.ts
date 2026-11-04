@@ -114,7 +114,8 @@ export class BorgKills {
   summoner = 0;
 
   /**
-   * The record at index i (i >= 1). DEFECT fix toward the C (#48): upstream's
+   * The record at index i (i >= 1). FORK (Mandos #48), a DEFECT fix toward
+   * the C, offered upstream as neostryder/neo-angband-mod-borg#24: upstream's
    * borg_kills is a FIXED array, so &borg_kills[i] is always a record and a
    * wiped or never-used slot reads r_idx == 0 (borg-flow.c:738-742 abandons
    * the step on exactly that). This list grows and wipe() truncates it, so a

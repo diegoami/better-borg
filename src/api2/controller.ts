@@ -73,7 +73,8 @@ export interface Decider {
   /** Drop what the Borg's own map believes about one grid, so the next decision treats it as unknown. */
   forget?(x: number, y: number): void;
   /**
-   * THE STAGE WATCH (#25), asked once per wait after the world is read and
+   * FORK (Mandos #25), a CHOICE with no C counterpart (4.2.6 has no stage
+   * to retire at). THE STAGE WATCH, asked once per wait after the world is read and
    * before any decision is made. `attained` sees the same world the
    * decision would; when it answers true the tick submits NOTHING for this
    * wait - the retire the caller starts owns what happens next - and hands
@@ -87,7 +88,8 @@ export interface Decider {
     onAttained(world: World): void;
   };
   /**
-   * THE REPLAY RELEASE (#29), asked after the world is read and BEFORE the
+   * FORK (Mandos #29), a CHOICE with no C counterpart. THE REPLAY RELEASE,
+   * asked after the world is read and BEFORE the
    * stage watch and any decision: when `releaseAt` answers true for this
    * wait's world, the tick releases the keyboard with `banner`'s text as
    * the shown reason (the host displays it in place of the usual line -
@@ -104,7 +106,8 @@ export interface Decider {
     onReleased?(world: World): void;
   };
   /**
-   * THE TRAINER RAIL (#27, PHASE 1 as scoped by the owner, 2026-11-03): the
+   * FORK (Mandos #27), a CHOICE with no C counterpart. THE TRAINER RAIL
+   * (PHASE 1 as scoped by the owner, 2026-11-03): the
    * uncertainty journal. `assess` answers whether the command this wait is
    * about to carry marks the decision unsure (the wiring closes over the
    * Borg's own world model; pure, observation-only); `note` journals the
@@ -140,7 +143,7 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
   let lastScene = "";
   let lastCommand = "";
   let stalls = 0;
-  /* The replay's one-shot (#29): once the release point is reached the tick
+  /* FORK (Mandos #29): the replay's one-shot. Once the release point is reached the tick
    * releases and never submits again - the owner owns the keyboard, and a
    * host that asks anyway gets nothing, not a decision after the hand-over. */
   let released = false;
@@ -154,7 +157,8 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
     const world = await bridge.readWorld();
     if (world === null) return;
 
-    /* The replay release BEFORE the stage watch and any decision (#29): a
+    /* FORK (Mandos #29): the replay release BEFORE the stage watch and any
+     * decision. A
      * deliberately armed replay outranks everything the grind would do -
      * the owner asked for these last turns, not for another retire. */
     if (borg.replay !== undefined && !released && borg.replay.releaseAt(world)) {
@@ -166,7 +170,7 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
     }
     if (released) return;
 
-    /* The stage watch before any decision (#25): an attained character
+    /* FORK (Mandos #25): the stage watch before any decision. An attained character
      * spends no further decision - the retire protocol owns the next move.
      * The watcher latches, so this asks at most once per page per life. */
     if (borg.stage !== undefined && borg.stage.attained(world)) {
@@ -194,7 +198,7 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
     }
     idle = 0;
 
-    /* The uncertainty journal (#27, phase 1), assessed after the decision is
+    /* FORK (Mandos #27): the uncertainty journal (phase 1), assessed after the decision is
      * final - the extra passes done - and before anything is submitted: the
      * point describes the command this wait is about to carry, and a decision
      * with no command is a yield, not a choice. Observation-only; the

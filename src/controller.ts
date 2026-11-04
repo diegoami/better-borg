@@ -185,7 +185,8 @@ export function createBorg(opts: BorgOptions = {}): Borg {
       junked: session.junked,
     });
 
-    /* 3a. Mark this grid as having been stepped on (borg-update.c:2466-2475,
+    /* FORK (Mandos #32), a DEFECT fix toward the C, inherited from the port.
+     * 3a. Mark this grid as having been stepped on (borg-update.c:2466-2475,
      * immediately after borg_update_map inside borg_update). track_step is
      * what the back-away bounce detection (caution.ts, caution.c:1725) and
      * borg_happy_grid's recently-stepped check read; it had never been

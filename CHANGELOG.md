@@ -13,7 +13,11 @@ rebranded `betterborg` (2026-11-02) and now Mandos. It is the stable baseline
 before the audit. Reach-rate at the default stage c2d1 is **4/4 (100%)** on
 the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
 
-- [Visible] **Our engine fixes, carried** (#40). The headless harness and the
+Each entry names its kind (rule 3). [DEFECT] restores what the 4.2.6 borg or
+the engine actually does, and is offered upstream. [CHOICE] is ours: it has
+no C counterpart or improves on it, and is `FORK`-marked at its source.
+
+- [Visible] [DEFECT] **Our engine fixes, carried** (#40). The headless harness and the
   lab build play the published engine plus the two fixes we offered upstream:
   neo-angband PR #429, `noteSpot` on the live `setFeat` path, which ends the
   door-close loop (#428); and PR #432, where `disturb()` signals
@@ -21,12 +25,12 @@ the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
   death beside a grey mushroom patch (#38) was the door gap. The mod itself
   ships no engine code (rule 5): an installed game gets these fixes when an
   engine release carries them.
-- [Visible] **Fixed: a crash after the monster list is wiped** (#48). It is
+- [Visible] [DEFECT] **Fixed: a crash after the monster list is wiped** (#48). It is
   an inherited port defect: `BorgKills.at()` read a wiped slot as `undefined`,
   so `borgPlayStep` threw where the C's fixed `borg_kills` array reads an
   empty record (borg-flow.c:738-742). Offered upstream as
   neostryder/neo-angband-mod-borg#24.
-- [Visible] **Caution vs attack: the one-hit blocker and the bounce
+- [Visible] [CHOICE + DEFECT] **Caution vs attack: the one-hit blocker and the bounce
   guard** (#32; both diagnosed halves verified FAITHFUL to 4.2.6 - C lines
   in docs/tasks/B32.md - so both changes are fork choices, marked at their
   source; the reach-rate at the default stage c2d1 moved **50% → 75%**).
@@ -43,8 +47,8 @@ the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
   (3) DEFECT toward the C: `track_step` was never written anywhere in the
   port, so the bounce guard (and the happy-grid recently-stepped check)
   read an empty track at any health; restored verbatim after every map
-  update (borg-update.c:2466-2475, compact-at-75). Also fixed: the
-  postmortem dossier's fixed 33x17 window crashed rendering a boundary
+  update (borg-update.c:2466-2475, compact-at-75). Also fixed, a DEFECT in
+  our own tooling: the postmortem dossier's fixed 33x17 window crashed rendering a boundary
   near the level edge (knownFeat indexes without a bounds check) - found
   by the seed-34 replay the moment the fixed borg stood where the recorded
   run never did; diverged replays write their dossiers again (B29's
@@ -54,7 +58,7 @@ the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
   (same family) became a later death at depth 2, seed 49 byte-identical;
   the replay-exactness test rides the new record.
 
-- [Visible] **The uncertainty journal: the Borg knows its own doubts** (#27,
+- [Visible] [CHOICE] **The uncertainty journal: the Borg knows its own doubts** (#27,
   phase 1 as scoped by the owner 2026-11-03; the question and demonstration
   phases are deferred). Two deterministic signals, always on, needing no
   setting and no new capability: the best-attack chooser records its top
@@ -75,7 +79,7 @@ the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
   engine's agent seam exposes none): the port's own best-attack chooser is
   the one per-decision numeric ranking of candidate actions.
 
-- [Visible] **The death-replay trainer** (#29, the trainer loop's first
+- [Visible] [CHOICE] **The death-replay trainer** (#29, the trainer loop's first
   rail): every dead harness run now grows a post-mortem dossier ladder -
   one deterministic text page per dead run x rung (5/10/15/20 turns before
   death by default), written by `tools/replay.mjs`, which replays the
@@ -100,7 +104,7 @@ the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
   master seed remains unreadable to mods — verified and asked upstream
   (neo-angband#431); watched-lineage replay is the follow-on it unblocks.
 
-- [Visible] **The stage-grind: retire-on-attainment, and reach-rate as the
+- [Visible] [CHOICE] **The stage-grind: retire-on-attainment, and reach-rate as the
   number** (#25, the purpose redirect's first rail). Two new numeric
   settings — `borg.stageClvl` (default 2) and `borg.stageDepth` (default 1)
   — define the stage a lineage grinds toward: character level at least the
@@ -119,7 +123,7 @@ the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
   being unattended by design). Run records gain per-run `stageAttained` /
   `retired` fields and a `runner.stage` block — additive, the schema id
   stays `better-borg/runs@1` (rule 8).
-- [Visible] **The mod is now Mandos** (formerly better-borg). New mod id
+- [Visible] [CHOICE] **The mod is now Mandos** (formerly better-borg). New mod id
   (`mandos`), name, repository and description — the purpose line now names
   the grind: play unattended, reach a chosen stage reliably, retire each
   success into a kept, loadable save. The title row reads "New Mandos warrior
@@ -129,7 +133,7 @@ the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
   INSTALL-STORAGE COST (accepted, #19): a mod's storage is keyed by its id,
   so the browser lineage's graveyard and lineage counter start fresh under
   `mandos`.
-- [Visible] **This was first the Better Borg** (2026-11-02, untagged): new
+- [Visible] [CHOICE] **This was first the Better Borg** (2026-11-02, untagged): new
   mod id (`betterborg`), name, repository and description; the Borg inside
   unchanged.
 

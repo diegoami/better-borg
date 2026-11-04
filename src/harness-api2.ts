@@ -40,6 +40,10 @@ export interface FakeGameOptions {
   readonly noscore?: number;
   readonly armed?: boolean;
   /**
+   * FORK (Mandos #25, #29): this fake host's options from here on are ours;
+   * they model the seams the stage retire and the replay release use. Test
+   * harness only, no C counterpart.
+   *
    * Whether this mod's controller holds the keyboard when asked
    * (act.controller.owns). Default true: the fake's driver is the mod.
    */

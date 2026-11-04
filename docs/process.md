@@ -285,14 +285,19 @@ they accept.
 single source is its PR branch in our engine fork (`diegoami/neo-angband`,
 `pr/<slug>`, cut from upstream master - the vehicle above). Two consumers
 are built from those branches, never edited by hand:
-- **this repository's `patches/`**: one patch per fix against the published
-  engine package, wired through `pnpm.patchedDependencies` so `pnpm install`
-  applies it everywhere - the headless harness, CI and every run record
-  (#40 sets this up; until it lands the harness runs WITHOUT them);
+- **this repository's `patches/`**: ONE patch file per patched package
+  (pnpm allows one per package version), holding one hunk group per fix.
+  Each hunk carries a `Mandos carries neostryder/neo-angband PR #n (fixes
+  #m ...)` comment, which `tools/engine-pin.mjs` reads to name the carried
+  list in every run record. It is wired through `patchedDependencies` in
+  `pnpm-workspace.yaml`, so `pnpm install` applies it everywhere: the
+  headless harness, CI and every run record (since #40). When a release
+  carries one fix, remove only that fix's hunks (then regenerate the patch
+  against the new version);
 - **the lab branch** `neowarrior-lab` in the engine checkout, pushed to the
   fork: the same commits, plus the lab-trust commits the desktop build
   needs (#418 is the upstream answer to those).
-Each tracking issue's **Carried** line names its patch file and lab commit.
+Each tracking issue's **Carried** line names the patch (and its PR's hunks) and the lab commit.
 
 ## 7. Keeping current with upstream
 

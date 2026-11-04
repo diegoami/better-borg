@@ -2361,9 +2361,11 @@ export function borgAttack(ctx: BorgContext, boostedBravery = false): AgentComma
   fs.simulate = true;
   let bG = -1;
   let bN = 0;
-  /* The runner-up, tracked in the same pass (#27): observation-only
-   * bookkeeping over scores the loop already computed - the committed method
-   * and every tie the chooser could not separate are unchanged. */
+  /* FORK (Mandos #27): the runner-up, tracked in the same pass. Upstream's
+   * chooser keeps only the winner (borg-fight-attack.c:5273); this is
+   * observation-only bookkeeping over scores the loop already computed - the
+   * committed method and every tie the chooser could not separate are
+   * unchanged. */
   let rG = -1;
   let rN = 0;
   for (let gI = 0; gI < maxAttacks; gI++) {
@@ -2390,7 +2392,8 @@ export function borgAttack(ctx: BorgContext, boostedBravery = false): AgentComma
   fs.pending = null;
   borgCalculateAttackEffectiveness(ctx, fs, bG as BF);
   g.attacking = false;
-  /* #27: the committed valuation, beside the command it chose - the
+  /* FORK (Mandos #27): no counterpart in the C chooser. The committed
+   * valuation, beside the command it chose - the
    * uncertainty signal's tie half. The command is the very object being
    * returned, so the assessor can tell THIS attack from any later decision.
    * The runner-up rides as a SCORE only (phase 2's ask-mode capture is
