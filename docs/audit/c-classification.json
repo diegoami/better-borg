@@ -1,0 +1,1827 @@
+{
+  "schema": "mandos/c-classification@1",
+  "baseline": {
+    "count": 145,
+    "total": 463,
+    "named": 318,
+    "source": "docs/audit/c-coverage.md at 3d4ba3d",
+    "namesSha256": "51dbe9e92b40db90aee476155ceb4f9a84a07861a5f644eac420ad383476f144"
+  },
+  "scope": "Classification of the original 145 unrecognized C function names; not a whole-port fidelity certificate. Unsupported optional C modes are explicitly distinguished from stock behavior.",
+  "rows": [
+    {
+      "name": "borg_forget_view",
+      "file": "borg-cave-view.c",
+      "line": 46,
+      "category": "plumbing",
+      "evidence": "C rebuilds its terminal-derived view bitmap. The host supplies per-cell inView and the port ingests/clears BORG_VIEW; a second C screen-view algorithm is unnecessary.",
+      "port": [
+        "src/perceive.ts",
+        "src/core-api.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_update_view_aux",
+      "file": "borg-cave-view.c",
+      "line": 89,
+      "category": "plumbing",
+      "evidence": "C rebuilds its terminal-derived view bitmap. The host supplies per-cell inView and the port ingests/clears BORG_VIEW; a second C screen-view algorithm is unnecessary.",
+      "port": [
+        "src/perceive.ts",
+        "src/core-api.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_update_view",
+      "file": "borg-cave-view.c",
+      "line": 179,
+      "category": "plumbing",
+      "evidence": "C rebuilds its terminal-derived view bitmap. The host supplies per-cell inView and the port ingests/clears BORG_VIEW; a second C screen-view algorithm is unnecessary.",
+      "port": [
+        "src/perceive.ts",
+        "src/core-api.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_cave",
+      "file": "borg-cave.c",
+      "line": 47,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_log_spellpath",
+      "file": "borg-fight-defend.c",
+      "line": 105,
+      "category": "plumbing",
+      "evidence": "Debug path logging and Term drawing only; it does not choose or execute the defensive maneuver.",
+      "port": [
+        "src/postmortem/dossier.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_defend_aux_resist_f",
+      "file": "borg-fight-defend.c",
+      "line": 543,
+      "category": "merged",
+      "evidence": "The four C element variants share auxResistElement; defendAux supplies each element, spell and activation. This names the implementation mapping, not a full guard-by-guard fidelity verdict.",
+      "port": [
+        "src/fight/defend.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_defend_aux_resist_c",
+      "file": "borg-fight-defend.c",
+      "line": 635,
+      "category": "merged",
+      "evidence": "The four C element variants share auxResistElement; defendAux supplies each element, spell and activation. This names the implementation mapping, not a full guard-by-guard fidelity verdict.",
+      "port": [
+        "src/fight/defend.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_defend_aux_resist_a",
+      "file": "borg-fight-defend.c",
+      "line": 726,
+      "category": "merged",
+      "evidence": "The four C element variants share auxResistElement; defendAux supplies each element, spell and activation. This names the implementation mapping, not a full guard-by-guard fidelity verdict.",
+      "port": [
+        "src/fight/defend.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_defend_aux_resist_e",
+      "file": "borg-fight-defend.c",
+      "line": 809,
+      "category": "merged",
+      "evidence": "The four C element variants share auxResistElement; defendAux supplies each element, spell and activation. This names the implementation mapping, not a full guard-by-guard fidelity verdict.",
+      "port": [
+        "src/fight/defend.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_defend_aux_mass_genocide",
+      "file": "borg-fight-defend.c",
+      "line": 1720,
+      "category": "gap",
+      "evidence": "The selector is a return-0 stub. Its C body does not read d_char; tracked positions, uniqueness, danger and HP already exist. The family glyph excuse cannot justify this omission.",
+      "port": [
+        "src/fight/defend.ts",
+        "src/item/magic.ts"
+      ],
+      "issues": [
+        75
+      ]
+    },
+    {
+      "name": "borg_defend_aux_genocide",
+      "file": "borg-fight-defend.c",
+      "line": 1851,
+      "category": "gap",
+      "evidence": "Return-0 stubs. Canonical glyphs can be joined from declared bound monster identities and composed monster/monster_base content; Api2TrueRace omitting the glyph is a missing lookup, not a fundamental data barrier. Symbol prompt/command selection still needs a faithful scenario.",
+      "port": [
+        "src/fight/defend.ts",
+        "src/api2/records.ts"
+      ],
+      "issues": [
+        75
+      ]
+    },
+    {
+      "name": "borg_defend_aux_genocide_nasties",
+      "file": "borg-fight-defend.c",
+      "line": 2157,
+      "category": "gap",
+      "evidence": "Return-0 stubs. Canonical glyphs can be joined from declared bound monster identities and composed monster/monster_base content; Api2TrueRace omitting the glyph is a missing lookup, not a fundamental data barrier. Symbol prompt/command selection still needs a faithful scenario.",
+      "port": [
+        "src/fight/defend.ts",
+        "src/api2/records.ts"
+      ],
+      "issues": [
+        75
+      ]
+    },
+    {
+      "name": "borg_defend_aux_teleportlevel",
+      "file": "borg-fight-defend.c",
+      "line": 2416,
+      "category": "merged",
+      "evidence": "Implemented under auxTeleportLevel, dispatched by BD.TPORTLEVEL.",
+      "port": [
+        "src/fight/defend.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_defend_aux_panel_shift",
+      "file": "borg-fight-defend.c",
+      "line": 2817,
+      "category": "legitimate",
+      "evidence": "C reads Term offsets and moves the viewport. This port has no Term/panel and reads the remembered map directly. This UI operation has no corresponding maneuver in this model.",
+      "port": [
+        "src/world/panel.ts",
+        "src/core-api.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_defend_aux_tele_away_morgoth",
+      "file": "borg-fight-defend.c",
+      "line": 3048,
+      "category": "gap",
+      "evidence": "Return-0 stubs. The active C routines do not require Term geometry; the banishment position guard is inside #if0. Existing Morgoth-on-level, positions, LOS and spell data permit these strategies.",
+      "port": [
+        "src/fight/defend.ts",
+        "src/perceive-facts.ts"
+      ],
+      "issues": [
+        80
+      ]
+    },
+    {
+      "name": "borg_defend_aux_banishment_morgoth",
+      "file": "borg-fight-defend.c",
+      "line": 3198,
+      "category": "gap",
+      "evidence": "Return-0 stubs. The active C routines do not require Term geometry; the banishment position guard is inside #if0. Existing Morgoth-on-level, positions, LOS and spell data permit these strategies.",
+      "port": [
+        "src/fight/defend.ts",
+        "src/perceive-facts.ts"
+      ],
+      "issues": [
+        80
+      ]
+    },
+    {
+      "name": "borg_defend_aux_light_morgoth",
+      "file": "borg-fight-defend.c",
+      "line": 3341,
+      "category": "gap",
+      "evidence": "Return-0 stub with a real missing prerequisite: the C position flag is required, while both port position flags have no true-producing writer. Track the producer and light maneuver together rather than call this an engine panel limitation.",
+      "port": [
+        "src/fight/defend.ts",
+        "src/danger/globals.ts",
+        "src/flow/flow.ts"
+      ],
+      "issues": [
+        80
+      ]
+    },
+    {
+      "name": "borg_calculate_defense_effectiveness",
+      "file": "borg-fight-defend.c",
+      "line": 3441,
+      "category": "merged",
+      "evidence": "defendAux dispatches the BD selector and borgDefend performs the simulated best-of scan and command pass.",
+      "port": [
+        "src/fight/defend.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_flow_glyph",
+      "file": "borg-flow-glyph.c",
+      "line": 331,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_flow_glyph",
+      "file": "borg-flow-glyph.c",
+      "line": 337,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_update_kill_old",
+      "file": "borg-flow-kill.c",
+      "line": 266,
+      "category": "merged",
+      "evidence": "ingestMonsters refreshes the tracked HP/injury and status/awake fields from structured MonsterView observations; follow/fear passes consume the refreshed records. C's duplicate status-scraping entry points are not needed by name.",
+      "port": [
+        "src/perceive.ts",
+        "src/perceive-facts.ts",
+        "src/flow/flow-kill.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_sleep_kill",
+      "file": "borg-flow-kill.c",
+      "line": 448,
+      "category": "merged",
+      "evidence": "ingestMonsters refreshes the tracked HP/injury and status/awake fields from structured MonsterView observations; follow/fear passes consume the refreshed records. C's duplicate status-scraping entry points are not needed by name.",
+      "port": [
+        "src/perceive.ts",
+        "src/perceive-facts.ts",
+        "src/flow/flow-kill.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_guess_race",
+      "file": "borg-flow-kill.c",
+      "line": 911,
+      "category": "merged",
+      "evidence": "C guess_race actually cheats the race at a grid; create_kill wraps record creation. Structured perceived monsters supply exact race identity and ingestMonsters allocates/updates records directly.",
+      "port": [
+        "src/perceive.ts",
+        "src/world/kill.ts",
+        "src/api2/world.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_count_death",
+      "file": "borg-flow-kill.c",
+      "line": 1650,
+      "category": "legitimate",
+      "evidence": "The local unique-on-level fact is rebuilt from surviving records. The C historical race-death ledger also initializes from global unique max_num and supplies SAURON_DEAD; current declared race/player views do not expose that history. trait.ts explicitly leaves SAURON_DEAD0. Observing one new kill would not restore the loaded-game history.",
+      "port": [
+        "src/perceive-facts.ts",
+        "src/perceive-messages.ts",
+        "src/trait/trait.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_create_kill",
+      "file": "borg-flow-kill.c",
+      "line": 3103,
+      "category": "merged",
+      "evidence": "C guess_race actually cheats the race at a grid; create_kill wraps record creation. Structured perceived monsters supply exact race identity and ingestMonsters allocates/updates records directly.",
+      "port": [
+        "src/perceive.ts",
+        "src/world/kill.ts",
+        "src/api2/world.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_monster_names",
+      "file": "borg-flow-kill.c",
+      "line": 3109,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_monster_names",
+      "file": "borg-flow-kill.c",
+      "line": 3214,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_flow_kill",
+      "file": "borg-flow-kill.c",
+      "line": 3240,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_flow_kill",
+      "file": "borg-flow-kill.c",
+      "line": 3279,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_flow_stairs",
+      "file": "borg-flow-stairs.c",
+      "line": 343,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_flow_stairs",
+      "file": "borg-flow-stairs.c",
+      "line": 352,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_get_top_object",
+      "file": "borg-flow-take.c",
+      "line": 50,
+      "category": "merged",
+      "evidence": "Known floor-item views supply object kind and pile order directly; ingestFloor handles the observed pile and junk-kind filter. C's cave-object lookup/glyph arguments are replaced by the structured observation.",
+      "port": [
+        "src/perceive.ts",
+        "src/core-api.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_guess_kind",
+      "file": "borg-flow-take.c",
+      "line": 72,
+      "category": "merged",
+      "evidence": "Known floor-item views supply object kind and pile order directly; ingestFloor handles the observed pile and junk-kind filter. C's cave-object lookup/glyph arguments are replaced by the structured observation.",
+      "port": [
+        "src/perceive.ts",
+        "src/core-api.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_follow_take_aux",
+      "file": "borg-flow-take.c",
+      "line": 124,
+      "category": "plumbing",
+      "evidence": "The C helper only tests BORG_OKAY. This port has no panel, as B69 establishes; map/view ingestion supplies the relevant observation boundary.",
+      "port": [
+        "src/world/panel.ts",
+        "src/perceive.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_follow_take",
+      "file": "borg-flow-take.c",
+      "line": 149,
+      "category": "merged",
+      "evidence": "ingestFloor and the level/under-player cleanup maintain takes from known item observations instead of retaining terminal-inferred phantom objects. The C panel-only helper is separately classified.",
+      "port": [
+        "src/perceive.ts",
+        "src/world/take.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_flow_take_lunal",
+      "file": "borg-flow-take.c",
+      "line": 695,
+      "category": "legitimate",
+      "evidence": "The full lunal/scum mode is unsupported and off in the stock controller; only the stock take path is implemented. This is a scope limitation for that optional mode, not a claim of parity when enabling it.",
+      "port": [
+        "src/flow/flow-take.ts",
+        "src/think-ladder.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_flow_take",
+      "file": "borg-flow-take.c",
+      "line": 887,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_flow_take",
+      "file": "borg-flow-take.c",
+      "line": 899,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_track",
+      "file": "borg-flow.c",
+      "line": 1214,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_track",
+      "file": "borg-flow.c",
+      "line": 1225,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_flow",
+      "file": "borg-flow.c",
+      "line": 1278,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_calculate_dynamic",
+      "file": "borg-formulas-calc.c",
+      "line": 676,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_array_add",
+      "file": "borg-formulas.c",
+      "line": 91,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_get_class",
+      "file": "borg-formulas.c",
+      "line": 110,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_formula_error",
+      "file": "borg-formulas.c",
+      "line": 123,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_power_dynamic",
+      "file": "borg-formulas.c",
+      "line": 806,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_prepared_dynamic",
+      "file": "borg-formulas.c",
+      "line": 1002,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_restock_dynamic",
+      "file": "borg-formulas.c",
+      "line": 1020,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_load_formulas",
+      "file": "borg-formulas.c",
+      "line": 1038,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_formulas",
+      "file": "borg-formulas.c",
+      "line": 1179,
+      "category": "legitimate",
+      "evidence": "Dynamic formula parsing/evaluation is not part of the supported stock policy; the static C-derived power/prepared/restock math is used. Formula evolution is a later roadmap phase. This explicitly does not claim dynamic-mode parity.",
+      "port": [
+        "src/trait/power.ts",
+        "src/trait/prepared.ts",
+        "docs/plans/getting-stronger.md"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_notice_home_clear",
+      "file": "borg-home-notice.c",
+      "line": 145,
+      "category": "merged",
+      "evidence": "zeroCounts and borgNoticeHome perform the clear-and-scan operation; noticeHomeFull/Empty/Single select the evaluated contents.",
+      "port": [
+        "src/store/home.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_notice_home_aux",
+      "file": "borg-home-notice.c",
+      "line": 342,
+      "category": "merged",
+      "evidence": "zeroCounts and borgNoticeHome perform the clear-and-scan operation; noticeHomeFull/Empty/Single select the evaluated contents.",
+      "port": [
+        "src/store/home.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_proc_setting",
+      "file": "borg-init.c",
+      "line": 100,
+      "category": "merged",
+      "evidence": "Typed manifest flags and settings initialize BorgCfg and controller options; the C borg.txt text parser and dynamic-formula loading route are replaced. Unsupported optional modes are not implied to be implemented.",
+      "port": [
+        "manifest.json",
+        "plugin.ts",
+        "src/trait/config.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_txt_file",
+      "file": "borg-init.c",
+      "line": 155,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_txt_file",
+      "file": "borg-init.c",
+      "line": 167,
+      "category": "merged",
+      "evidence": "Typed manifest flags and settings initialize BorgCfg and controller options; the C borg.txt text parser and dynamic-formula loading route are replaced. Unsupported optional modes are not implied to be implemented.",
+      "port": [
+        "manifest.json",
+        "plugin.ts",
+        "src/trait/config.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_reset_ignore",
+      "file": "borg-init.c",
+      "line": 339,
+      "category": "legitimate",
+      "evidence": "C saves/clears/restores global kind, ego and quality-ignore state. The declared mod surface does not provide those global ignore mutations; the port instead tracks its own discarded kinds. Default fresh profiles do not prove behavior under custom ignore preferences.",
+      "port": [
+        "src/think-session.ts",
+        "src/perceive.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_ignore",
+      "file": "borg-init.c",
+      "line": 369,
+      "category": "legitimate",
+      "evidence": "C saves/clears/restores global kind, ego and quality-ignore state. The declared mod surface does not provide those global ignore mutations; the port instead tracks its own discarded kinds. Default fresh profiles do not prove behavior under custom ignore preferences.",
+      "port": [
+        "src/think-session.ts",
+        "src/perceive.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_leave_game",
+      "file": "borg-init.c",
+      "line": 446,
+      "category": "plumbing",
+      "evidence": "C quits its process/UI. The host owns window/session lifetime; the mod returns/releases control rather than calling the terminal exit path.",
+      "port": [
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_prepare_race_class_info",
+      "file": "borg-init.c",
+      "line": 456,
+      "category": "merged",
+      "evidence": "The C wrapper only calls borg_prepare_book_info. Class ratings and SpellbookView/sidx mapping initialize/use that information through the magic module and host spell tables.",
+      "port": [
+        "src/item/magic.ts",
+        "src/api2/world.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free",
+      "file": "borg-init.c",
+      "line": 664,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_cheat_quiver",
+      "file": "borg-inventory.c",
+      "line": 132,
+      "category": "merged",
+      "evidence": "AgentView/KnownWorld inventory, equipment and quiver observations replace C scans of player gear. Inventory already contains quivered handles; the separate accessor supplies membership and must not be appended again.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/world.ts",
+        "src/trait/trait.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_cheat_equip",
+      "file": "borg-inventory.c",
+      "line": 172,
+      "category": "merged",
+      "evidence": "AgentView/KnownWorld inventory, equipment and quiver observations replace C scans of player gear. Inventory already contains quivered handles; the separate accessor supplies membership and must not be appended again.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/world.ts",
+        "src/trait/trait.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_cheat_inven",
+      "file": "borg-inventory.c",
+      "line": 214,
+      "category": "merged",
+      "evidence": "AgentView/KnownWorld inventory, equipment and quiver observations replace C scans of player gear. Inventory already contains quivered handles; the separate accessor supplies membership and must not be appended again.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/world.ts",
+        "src/trait/trait.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_what_text",
+      "file": "borg-io.c",
+      "line": 54,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_info",
+      "file": "borg-io.c",
+      "line": 138,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_note_internal",
+      "file": "borg-io.c",
+      "line": 144,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_warning",
+      "file": "borg-io.c",
+      "line": 271,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_note",
+      "file": "borg-io.c",
+      "line": 279,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_keypresses",
+      "file": "borg-io.c",
+      "line": 377,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_inkey",
+      "file": "borg-io.c",
+      "line": 392,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_flush",
+      "file": "borg-io.c",
+      "line": 421,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_queue_direction",
+      "file": "borg-io.c",
+      "line": 433,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_get_queued_direction",
+      "file": "borg-io.c",
+      "line": 439,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_massage_special_chars",
+      "file": "borg-io.c",
+      "line": 453,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_dump_recent_keys",
+      "file": "borg-io.c",
+      "line": 467,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_bell",
+      "file": "borg-io.c",
+      "line": 497,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_io",
+      "file": "borg-io.c",
+      "line": 508,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_io",
+      "file": "borg-io.c",
+      "line": 520,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_findact",
+      "file": "borg-item-activation.c",
+      "line": 190,
+      "category": "merged",
+      "evidence": "makeCoreResolvers activation hooks and the API2 ActivationBook resolve known item activation identity/charge through declared content reads.",
+      "port": [
+        "src/resolvers.ts",
+        "src/api2/caches.ts",
+        "src/item/deps.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_item_activation",
+      "file": "borg-item-activation.c",
+      "line": 206,
+      "category": "merged",
+      "evidence": "makeCoreResolvers activation hooks and the API2 ActivationBook resolve known item activation identity/charge through declared content reads.",
+      "port": [
+        "src/resolvers.ts",
+        "src/api2/caches.ts",
+        "src/item/deps.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_object_value_guess",
+      "file": "borg-item-analyze.c",
+      "line": 266,
+      "category": "gap",
+      "evidence": "The C item-analysis boundary is not replaced faithfully by forwarding the engine item view: unknownRunes is discarded, C negative flags imply Borg-cursed/value0, and C unit-style values differ from the engine's stack value. Restore the adapter/valuer explicitly; available known flags, knowledge and composed metadata suffice for these cases.",
+      "port": [
+        "src/api2/world.ts",
+        "src/item/deps.ts",
+        "src/store/store.ts"
+      ],
+      "issues": [
+        81
+      ]
+    },
+    {
+      "name": "borg_set_curses",
+      "file": "borg-item-analyze.c",
+      "line": 337,
+      "category": "legitimate",
+      "evidence": "Known curse names are applied by applyCurses, but C uncursable/per-instance severity uses numeric curse powers. KnownItem/Api2TrueItem supply names, not those powers; that part cannot be inferred from the declared item view.",
+      "port": [
+        "src/trait/trait.ts",
+        "src/api2/world.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_item_has_negative_flag",
+      "file": "borg-item-analyze.c",
+      "line": 413,
+      "category": "gap",
+      "evidence": "The C item-analysis boundary is not replaced faithfully by forwarding the engine item view: unknownRunes is discarded, C negative flags imply Borg-cursed/value0, and C unit-style values differ from the engine's stack value. Restore the adapter/valuer explicitly; available known flags, knowledge and composed metadata suffice for these cases.",
+      "port": [
+        "src/api2/world.ts",
+        "src/item/deps.ts",
+        "src/store/store.ts"
+      ],
+      "issues": [
+        81
+      ]
+    },
+    {
+      "name": "borg_item_analyze",
+      "file": "borg-item-analyze.c",
+      "line": 435,
+      "category": "gap",
+      "evidence": "The C item-analysis boundary is not replaced faithfully by forwarding the engine item view: unknownRunes is discarded, C negative flags imply Borg-cursed/value0, and C unit-style values differ from the engine's stack value. Restore the adapter/valuer explicitly; available known flags, knowledge and composed metadata suffice for these cases.",
+      "port": [
+        "src/api2/world.ts",
+        "src/item/deps.ts",
+        "src/store/store.ts"
+      ],
+      "issues": [
+        81
+      ]
+    },
+    {
+      "name": "borg_ego_has_random_power",
+      "file": "borg-item-analyze.c",
+      "line": 646,
+      "category": "gap",
+      "evidence": "The original unnamed function is now a name-coverage false positive through SpaceDeps.randomPower. A hook/conservative default is not its implementation. Known egoName and composed ego_item RAND_* metadata can supply the missing predicate.",
+      "port": [
+        "src/item/junk-space.ts",
+        "src/store/home.ts"
+      ],
+      "issues": [
+        81
+      ]
+    },
+    {
+      "name": "borg_decurse_weapon",
+      "file": "borg-item-decurse.c",
+      "line": 74,
+      "category": "gap",
+      "evidence": "This is the swap-weapon-specific decurse path, not borgDecurseAny. The port has only the general helper and no live weapon-swap model. Its omission belongs to the already tracked swap subsystem.",
+      "port": [
+        "src/item/item-decurse.ts"
+      ],
+      "issues": [
+        4
+      ]
+    },
+    {
+      "name": "borg_pick_armor",
+      "file": "borg-item-enchant.c",
+      "line": 38,
+      "category": "plumbing",
+      "evidence": "These C helpers press the inventory/equipment/quiver selection letters; they do not score enchant candidates. The port's candidate selection is elsewhere and uses handles. Full effect-target/prompt parity remains part of the subsystem audit, not proven by this name classification.",
+      "port": [
+        "src/item/item-enchant.ts",
+        "src/api2/act.ts"
+      ],
+      "issues": [
+        34
+      ]
+    },
+    {
+      "name": "borg_pick_weapon",
+      "file": "borg-item-enchant.c",
+      "line": 72,
+      "category": "plumbing",
+      "evidence": "These C helpers press the inventory/equipment/quiver selection letters; they do not score enchant candidates. The port's candidate selection is elsewhere and uses handles. Full effect-target/prompt parity remains part of the subsystem audit, not proven by this name classification.",
+      "port": [
+        "src/item/item-enchant.ts",
+        "src/api2/act.ts"
+      ],
+      "issues": [
+        34
+      ]
+    },
+    {
+      "name": "borg_lookup_sval_fail",
+      "file": "borg-item-val.c",
+      "line": 250,
+      "category": "plumbing",
+      "evidence": "C validates runtime lookup_sval failures by quitting. The port uses a pinned canonical SVAL table with identity tests rather than that runtime text lookup.",
+      "port": [
+        "src/item/svals.ts",
+        "src/item/item.test.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_backup_swap",
+      "file": "borg-item-wear.c",
+      "line": 534,
+      "category": "gap",
+      "evidence": "No backup-swap execution/valuation model is wired. This is an existing tracked weapon/armour swap gap, not a renamed greedy wear routine.",
+      "port": [
+        "src/item/item-wear.ts",
+        "src/think-session.ts"
+      ],
+      "issues": [
+        4
+      ]
+    },
+    {
+      "name": "borg_best_stuff_order",
+      "file": "borg-item-wear.c",
+      "line": 1042,
+      "category": "gap",
+      "evidence": "The home/store C call to borg_best_stuff is live even though the dungeon call is commented. Its combination search/order/continuation is absent; a greedy single-item wear or home-visit goal is not the optimizer.",
+      "port": [
+        "src/store/think-store.ts",
+        "src/item/item-wear.ts"
+      ],
+      "issues": [
+        79
+      ]
+    },
+    {
+      "name": "borg_one_step_wearing_best",
+      "file": "borg-item-wear.c",
+      "line": 1077,
+      "category": "gap",
+      "evidence": "The home/store C call to borg_best_stuff is live even though the dungeon call is commented. Its combination search/order/continuation is absent; a greedy single-item wear or home-visit goal is not the optimizer.",
+      "port": [
+        "src/store/think-store.ts",
+        "src/item/item-wear.ts"
+      ],
+      "issues": [
+        79
+      ]
+    },
+    {
+      "name": "borg_best_stuff_aux",
+      "file": "borg-item-wear.c",
+      "line": 1206,
+      "category": "gap",
+      "evidence": "The home/store C call to borg_best_stuff is live even though the dungeon call is commented. Its combination search/order/continuation is absent; a greedy single-item wear or home-visit goal is not the optimizer.",
+      "port": [
+        "src/store/think-store.ts",
+        "src/item/item-wear.ts"
+      ],
+      "issues": [
+        79
+      ]
+    },
+    {
+      "name": "borg_clear_best",
+      "file": "borg-item-wear.c",
+      "line": 1434,
+      "category": "gap",
+      "evidence": "The home/store C call to borg_best_stuff is live even though the dungeon call is commented. Its combination search/order/continuation is absent; a greedy single-item wear or home-visit goal is not the optimizer.",
+      "port": [
+        "src/store/think-store.ts",
+        "src/item/item-wear.ts"
+      ],
+      "issues": [
+        79
+      ]
+    },
+    {
+      "name": "borg_init_item_wear",
+      "file": "borg-item-wear.c",
+      "line": 1553,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_item_wear",
+      "file": "borg-item-wear.c",
+      "line": 1562,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_get_note",
+      "file": "borg-item.c",
+      "line": 44,
+      "category": "merged",
+      "evidence": "ItemView.inscription carries the note directly, with null as absence; there is no borg_item note-buffer accessor to recreate.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/world.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_deinscribe",
+      "file": "borg-item.c",
+      "line": 54,
+      "category": "plumbing",
+      "evidence": "C letter/prompt routing for removing its terminal inscriptions. The port addresses objects by stable handles and does not install that inscription scheme; its own discard memory is explicit. This is not justified by claiming the engine lacks an inscribe command.",
+      "port": [
+        "src/api2/act.ts",
+        "src/think-session.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_item_weight",
+      "file": "borg-item.c",
+      "line": 105,
+      "category": "merged",
+      "evidence": "The C helper is simply quantity*unit weight; that arithmetic is used directly at the item selection and trait call sites.",
+      "port": [
+        "src/item/junk-space.ts",
+        "src/trait/trait.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_item",
+      "file": "borg-item.c",
+      "line": 113,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_item",
+      "file": "borg-item.c",
+      "line": 127,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_consume",
+      "file": "borg-junk.c",
+      "line": 74,
+      "category": "merged",
+      "evidence": "Restored by B50 as borgConsume, preserving the C consumable whitelist and class/stat trade guards before dropping.",
+      "port": [
+        "src/item/junk-space.ts"
+      ],
+      "issues": [
+        50
+      ]
+    },
+    {
+      "name": "borg_log_death",
+      "file": "borg-log.c",
+      "line": 47,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_log_death_data",
+      "file": "borg-log.c",
+      "line": 93,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_index_to_label",
+      "file": "borg-log.c",
+      "line": 127,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_write_map",
+      "file": "borg-log.c",
+      "line": 144,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_prt_binary",
+      "file": "borg-log.c",
+      "line": 675,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_display_item",
+      "file": "borg-log.c",
+      "line": 698,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_status",
+      "file": "borg-log.c",
+      "line": 776,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_can_play_spell",
+      "file": "borg-magic-play.c",
+      "line": 44,
+      "category": "merged",
+      "evidence": "B63 restores borgCanPlaySpell. The effect exclusions use a frozen spell-name set validated against the composed class effect records; no live effect-pointer walk is needed for that consumer.",
+      "port": [
+        "src/item/magic-play.ts",
+        "src/item/magic-play.test.ts"
+      ],
+      "issues": [
+        64
+      ]
+    },
+    {
+      "name": "borg_spell_has_effect",
+      "file": "borg-magic.c",
+      "line": 403,
+      "category": "merged",
+      "evidence": "B63 restores borgCanPlaySpell. The effect exclusions use a frozen spell-name set validated against the composed class effect records; no live effect-pointer walk is needed for that consumer.",
+      "port": [
+        "src/item/magic-play.ts",
+        "src/item/magic-play.test.ts"
+      ],
+      "issues": [
+        64
+      ]
+    },
+    {
+      "name": "borg_cheat_spells",
+      "file": "borg-magic.c",
+      "line": 676,
+      "category": "merged",
+      "evidence": "SpellbookView supplies learned/worked/status and global sidx/book bidx. magic.ts maps C spell identities and the command layer uses the structured index; C player-spell-array and local-book offset lookup are replaced.",
+      "port": [
+        "src/item/magic.ts",
+        "src/api2/world.ts",
+        "src/api2/act.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_get_book_offset",
+      "file": "borg-magic.c",
+      "line": 723,
+      "category": "merged",
+      "evidence": "SpellbookView supplies learned/worked/status and global sidx/book bidx. magic.ts maps C spell identities and the command layer uses the structured index; C player-spell-array and local-book offset lookup are replaced.",
+      "port": [
+        "src/item/magic.ts",
+        "src/api2/world.ts",
+        "src/api2/act.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_react_prompted",
+      "file": "borg-messages-react.c",
+      "line": 95,
+      "category": "merged",
+      "evidence": "The host supplies typed pending prompts; createTick.promptAnswer handles them, while target/command intents replace C key queues. This is an architecture mapping; it does not certify every optional C picker/cheat prompt.",
+      "port": [
+        "src/api2/controller.ts",
+        "src/api2/act.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_clear_reactions",
+      "file": "borg-messages-react.c",
+      "line": 273,
+      "category": "merged",
+      "evidence": "The API2 MessageFeed drains each batch once and dispose removes its subscription; the C message buffer length/count reset is no longer a global operation.",
+      "port": [
+        "src/api2/feed.ts",
+        "src/api2/host.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_parse_aux",
+      "file": "borg-messages.c",
+      "line": 213,
+      "category": "merged",
+      "evidence": "Message reactions/string matching are split across borgReactMessages, attacker normalization and the event feed; structured player/monster observations replace many C message-inferred facts. This row records the replacement entry points, not complete message-by-message fidelity.",
+      "port": [
+        "src/perceive-messages.ts",
+        "src/perceive.ts",
+        "src/trait/buff-timers.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_read_message_equal",
+      "file": "borg-messages.c",
+      "line": 1258,
+      "category": "merged",
+      "evidence": "Message reactions/string matching are split across borgReactMessages, attacker normalization and the event feed; structured player/monster observations replace many C message-inferred facts. This row records the replacement entry points, not complete message-by-message fidelity.",
+      "port": [
+        "src/perceive-messages.ts",
+        "src/perceive.ts",
+        "src/trait/buff-timers.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_trim_lead_space",
+      "file": "borg-messages.c",
+      "line": 1344,
+      "category": "merged",
+      "evidence": "Message reactions/string matching are split across borgReactMessages, attacker normalization and the event feed; structured player/monster observations replace many C message-inferred facts. This row records the replacement entry points, not complete message-by-message fidelity.",
+      "port": [
+        "src/perceive-messages.ts",
+        "src/perceive.ts",
+        "src/trait/buff-timers.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_get_parsed_pain",
+      "file": "borg-messages.c",
+      "line": 1488,
+      "category": "plumbing",
+      "evidence": "C builds/sorts pain-message templates to infer monsters from terminal text. Structured perceived monster identities/HP remove that lookup-table requirement; attack spell/blow messages needed for fear are separately loaded.",
+      "port": [
+        "src/perceive.ts",
+        "src/perceive-messages.ts",
+        "src/api2/records.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_insert_pain",
+      "file": "borg-messages.c",
+      "line": 1525,
+      "category": "plumbing",
+      "evidence": "C builds/sorts pain-message templates to infer monsters from terminal text. Structured perceived monster identities/HP remove that lookup-table requirement; attack spell/blow messages needed for fear are separately loaded.",
+      "port": [
+        "src/perceive.ts",
+        "src/perceive-messages.ts",
+        "src/api2/records.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_pain_messages",
+      "file": "borg-messages.c",
+      "line": 1551,
+      "category": "plumbing",
+      "evidence": "C builds/sorts pain-message templates to infer monsters from terminal text. Structured perceived monster identities/HP remove that lookup-table requirement; attack spell/blow messages needed for fear are separately loaded.",
+      "port": [
+        "src/perceive.ts",
+        "src/perceive-messages.ts",
+        "src/api2/records.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_messages",
+      "file": "borg-messages.c",
+      "line": 1647,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_outfit_player",
+      "file": "borg-reincarnate.c",
+      "line": 278,
+      "category": "merged",
+      "evidence": "Birth belongs to the engine: startGame/presenter creation supplies the class start kit, initial knowledge, wielding and HP rolls. The mod requests a planned birth rather than duplicating the engine's object construction or HP RNG loop.",
+      "port": [
+        "src/class/birth.ts",
+        "src/class/warrior/presenter.ts",
+        "src/play-session.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_roll_hp",
+      "file": "borg-reincarnate.c",
+      "line": 372,
+      "category": "merged",
+      "evidence": "Birth belongs to the engine: startGame/presenter creation supplies the class start kit, initial knowledge, wielding and HP rolls. The mod requests a planned birth rather than duplicating the engine's object construction or HP RNG loop.",
+      "port": [
+        "src/class/birth.ts",
+        "src/class/warrior/presenter.ts",
+        "src/play-session.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_store_sell",
+      "file": "borg-store-sell.c",
+      "line": 1269,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_store_sell",
+      "file": "borg-store-sell.c",
+      "line": 1275,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_store",
+      "file": "borg-store.c",
+      "line": 212,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_store",
+      "file": "borg-store.c",
+      "line": 235,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_think_dungeon_munchkin",
+      "file": "borg-think-dungeon.c",
+      "line": 438,
+      "category": "legitimate",
+      "evidence": "The full C munchkin/scum controller is not wired and is off in the supported stock path. The exposed munchkinStart toggle changes early valuation; it does not promise this optional controller. Keep full-mode work distinct.",
+      "port": [
+        "src/think-ladder.ts",
+        "src/trait/config.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_oops",
+      "file": "borg-think.c",
+      "line": 66,
+      "category": "merged",
+      "evidence": "The C error/abort control path is represented by yielding/logging and the API2 controller release protocol rather than a global terminal key-source stop.",
+      "port": [
+        "src/think-ladder.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_save_game",
+      "file": "borg-think.c",
+      "line": 81,
+      "category": "merged",
+      "evidence": "The C function only queues Escape/Ctrl-S. Native autosaving and manage.session.save replace that key sequence; stage retirement explicitly awaits save before renaming/creating.",
+      "port": [
+        "src/loop/restart.ts",
+        "plugin.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_has_bad_curse",
+      "file": "borg-trait-swap.c",
+      "line": 138,
+      "category": "gap",
+      "evidence": "The swap item appraisal/curse state is not populated by the port. Existing zero/inert swap valuations are acknowledged and tracked; generic worn-item notice does not implement backup gear scoring.",
+      "port": [
+        "src/trait/power.ts",
+        "src/think-session.ts"
+      ],
+      "issues": [
+        4
+      ]
+    },
+    {
+      "name": "borg_notice_weapon_swap",
+      "file": "borg-trait-swap.c",
+      "line": 158,
+      "category": "gap",
+      "evidence": "The swap item appraisal/curse state is not populated by the port. Existing zero/inert swap valuations are acknowledged and tracked; generic worn-item notice does not implement backup gear scoring.",
+      "port": [
+        "src/trait/power.ts",
+        "src/think-session.ts"
+      ],
+      "issues": [
+        4
+      ]
+    },
+    {
+      "name": "borg_notice_armour_swap",
+      "file": "borg-trait-swap.c",
+      "line": 747,
+      "category": "gap",
+      "evidence": "The swap item appraisal/curse state is not populated by the port. Existing zero/inert swap valuations are acknowledged and tracked; generic worn-item notice does not implement backup gear scoring.",
+      "port": [
+        "src/trait/power.ts",
+        "src/think-session.ts"
+      ],
+      "issues": [
+        4
+      ]
+    },
+    {
+      "name": "borg_trait_init",
+      "file": "borg-trait.c",
+      "line": 3139,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_trait_free",
+      "file": "borg-trait.c",
+      "line": 3146,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_forget_map",
+      "file": "borg-update.c",
+      "line": 117,
+      "category": "merged",
+      "evidence": "BorgWorld.wipeLevel and controller level-change reset rebuild the per-level map/facts/tracks; stall recovery additionally forgets a targeted grid. No separate C global cave-array wipe is needed by name.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts",
+        "src/loop/stall.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_init_update",
+      "file": "borg-update.c",
+      "line": 3053,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_free_update",
+      "file": "borg-update.c",
+      "line": 3064,
+      "category": "plumbing",
+      "evidence": "C allocation/table setup or teardown. Per-controller/world/cache objects own this lifetime; JavaScript garbage collection replaces explicit frees. This does not certify the subsystem's decisions.",
+      "port": [
+        "src/world/model.ts",
+        "src/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_sort_aux",
+      "file": "borg-util.c",
+      "line": 35,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_sort",
+      "file": "borg-util.c",
+      "line": 86,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_sort_comp_hook",
+      "file": "borg-util.c",
+      "line": 98,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_sort_swap_hook",
+      "file": "borg-util.c",
+      "line": 126,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_trim",
+      "file": "borg-util.c",
+      "line": 149,
+      "category": "plumbing",
+      "evidence": "C terminal/key-buffer, diagnostic file/display, or screen-name sorting helper. Typed views, stable handles and host commands replace the terminal representation; this is not an omitted tactical choice.",
+      "port": [
+        "src/core-api.ts",
+        "src/api2/controller.ts"
+      ],
+      "issues": []
+    },
+    {
+      "name": "borg_inkey_hack",
+      "file": "borg.c",
+      "line": 189,
+      "category": "merged",
+      "evidence": "Host controller dispatch, the API2 tick/prompt protocol and the restart/birth lifecycle replace C's global terminal key interception.",
+      "port": [
+        "src/controller.ts",
+        "src/api2/controller.ts",
+        "src/loop/restart.ts",
+        "title.ts"
+      ],
+      "issues": []
+    }
+  ]
+}
