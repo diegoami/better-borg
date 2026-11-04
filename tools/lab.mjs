@@ -4,6 +4,8 @@
  *
  *   node tools/lab.mjs status    what the lab would run, and what is stale
  *   node tools/lab.mjs start     bring both halves current, then launch
+ *   node tools/lab.mjs check     read the newest lab log: births, deaths,
+ *                                retirements, and every missing consent
  *
  * The lab has two halves that drift on their own: the mod clone in
  * <data>/mods/mandos (a git clone of this repository), and the desktop
@@ -20,7 +22,7 @@
  */
 
 import { execFileSync, spawn } from "node:child_process";
-import { existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, openSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -76,9 +78,43 @@ function report(s) {
   console.log(`data        ${DATA}`);
 }
 
+/**
+ * The newest lab log, read for what a lab check must see (found 2026-11-04:
+ * the 0.1.0 lab check was accepted while the borg ran without the truth
+ * domain and without session:control, so no attained character was ever
+ * kept). Exit 1 when the mod ran without a consent it needs.
+ */
+function check() {
+  const dir = join(DATA, "logs");
+  if (!existsSync(dir)) fail(`no lab logs at ${dir}`);
+  const logs = readdirSync(dir).filter((f) => f.endsWith(".log")).map((f) => join(dir, f));
+  if (logs.length === 0) fail(`no lab logs at ${dir}`);
+  const newest = logs.sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs)[0];
+  const lines = readFileSync(newest, "utf8").split("\n").filter((l) => l.includes("[mod:mandos]"));
+  const said = (re) => lines.filter((l) => re.test(l)).map((l) => l.replace(/^.*\[mod:mandos\] /u, ""));
+  const births = said(/the Borg birthed its /u);
+  const deaths = said(/the Borg's character died /u);
+  const kept = said(/the Borg kept a save of the character that attained/u);
+  const unkept = said(/could not keep a save of the character that attained/u);
+  const noTruth = said(/gave it no truth domain/u);
+  const consents = [...new Set(lines.flatMap((l) => [...l.matchAll(/needs the "([^"]+)" permission, which the player has not granted/gu)].map((m) => m[1])))];
+  console.log(`lab log    ${newest}`);
+  console.log(`births     ${births.length}${births.length ? ": " + births.map((b) => b.replace(/^the Borg birthed its /u, "").replace(/ \(.*$/u, "")).join(", ") : ""}`);
+  console.log(`deaths     ${deaths.length}${deaths.length ? ": " + deaths.map((d) => (/\(([^)]+)\)/u.exec(d)?.[1] ?? "?")).join(", ") : ""}`);
+  console.log(`retired    ${kept.length} kept${unkept.length ? `, ${unkept.length} attained but NOT kept` : ""}`);
+  const problems = [];
+  if (noTruth.length > 0) problems.push(`no truth domain on ${noTruth.length} start(s): grant the real-monsters permission (Mods -> Mandos -> Change permissions), #53`);
+  for (const c of consents) problems.push(`the player has not granted "${c}" (Mods -> Mandos -> Change permissions)`);
+  for (const p of problems) console.log(`PROBLEM    ${p}`);
+  if (problems.length > 0) process.exit(1);
+  console.log("ok         every consent the mod needs was held");
+}
+
 const command = process.argv[2];
 
-if (command === "status") {
+if (command === "check") {
+  check();
+} else if (command === "status") {
   report(inspect());
 } else if (command === "start") {
   const s = inspect();
@@ -106,6 +142,6 @@ if (command === "status") {
   child.unref();
   console.log(`lab: launched (pid ${child.pid}) - mod ${mod}, engine ${s.engine} (${LAB_BRANCH}); log ${log}`);
 } else {
-  console.log("usage: node tools/lab.mjs status | start");
+  console.log("usage: node tools/lab.mjs status | start | check");
   process.exit(command === undefined ? 0 : 1);
 }
