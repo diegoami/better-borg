@@ -8,8 +8,8 @@
     "api": ">=2.0.0 <3.0.0",
     "runtime": "in-process",
     "engine": {
-      "range": ">=1.23.0-beta.1",
-      "because": "The first Neo Angband release with mod API 2, the truth domain the Borg reads perceived monsters through, and the loadout simulation."
+      "range": ">=1.23.0-beta.2-mandos.1 <1.23.0",
+      "because": "Needs our engine fork's build until a Neo Angband release carries our pull requests: neo-angband PR #429 (the door-close loop, #428), PR #432 (input-flush, #414) and PR #433 (the master seed, #431), on diegoami/neo-angband's neowarrior-lab branch, whose engine reports 1.23.0-beta.2-mandos.N. Also the first line with mod API 2, the truth domain and the loadout simulation."
     },
     "dependencies": {
       "required": {

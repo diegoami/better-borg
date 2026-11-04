@@ -355,6 +355,20 @@ describe("the install graveyard archive", () => {
     ]);
   });
 
+  it("records the master seed when the engine reports one, and only then (#54)", async () => {
+    /* FORK (Mandos #54): RunReport.seed comes from neo-angband PR #433,
+     * carried on our fork. Feature-detected: absent on a stock engine. */
+    const seeded = { outcome: "death", cause: "giant white mouse", seed: 1234567 } as unknown as RunReport;
+    expect(graveyardEntryOf(seeded).seed).toBe(1234567);
+    expect(graveyardEntryOf({ outcome: "death", cause: "x" } as unknown as RunReport)).not.toHaveProperty("seed");
+    expect(graveyardEntryOf({ outcome: "death", cause: "x", seed: "12" } as unknown as RunReport)).not.toHaveProperty("seed");
+
+    const install = slot();
+    expect(await archiveFinishedRun({ archive: install, log: () => undefined }, seeded)).toBe(true);
+    const [run] = graveyardArchiveOf((install.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs;
+    expect(run?.seed).toBe(1234567);
+  });
+
   it("resolves - and says so - when the install slot refuses or throws", async () => {
     const logs: string[] = [];
     await expect(archiveFinishedRun({ archive: refusingSlot(), log: (m) => logs.push(m) }, report("death"))).resolves.toBe(false);
@@ -364,6 +378,40 @@ describe("the install graveyard archive", () => {
 });
 
 describe("the installed journal", () => {
+  it("marks a life a human touched, keeps the mark across a reload, and archives it (#54)", async () => {
+    /* FORK (Mandos #54): player-command fires only for the human's commands,
+     * so one of them means the seed alone will not replay this life. */
+    const theSlot = slot();
+    const install = slot();
+    const bus = eventBus();
+    const first = installBorgJournal({ slot: theSlot, archive: install, log: () => undefined, events: bus.api, stamps: stamps(1, 7) });
+    await settle();
+    first.markTouched();
+    first.markTouched();
+    bus.arrive(arrival(1, "change"));
+    await settle();
+    expect(parseJournal(theSlot.held())).toMatchObject({ touched: true });
+    expect(parseJournal(theSlot.held())?.milestones.map((m) => m.depth)).toEqual([1]);
+    await first.stop();
+
+    /* The next page of the same character reads the mark back, and the
+     * death's graveyard entry carries it. */
+    const second = installBorgJournal({ slot: theSlot, archive: install, log: () => undefined, events: eventBus().api, stamps: stamps(1, 7) });
+    await settle();
+    await second.graveyard(report("death"));
+    const [run] = graveyardArchiveOf((install.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs;
+    expect(run?.touched).toBe(true);
+  });
+
+  it("archives an untouched life without the mark", async () => {
+    const install = slot();
+    const journal = installBorgJournal({ slot: slot(), archive: install, log: () => undefined, events: eventBus().api, stamps: stamps(1, 7) });
+    await settle();
+    await journal.graveyard(report("death"));
+    const [run] = graveyardArchiveOf((install.held() as Record<string, unknown>)[GRAVEYARD_KEY] as JsonValue).runs;
+    expect(run).not.toHaveProperty("touched");
+  });
+
   it("hears the arrivals, records them through the subscription, and stops listening on stop", async () => {
     const theSlot = slot();
     const install = slot();

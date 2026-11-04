@@ -541,11 +541,14 @@ async function begin(mod: ModApi2): Promise<Running | null> {
     },
   };
   /* THE DEMONSTRATION LOG (#29, the minimal rail): the `player-command`
-   * event fires for every command the game takes, ours and the owner's
-   * alike (the web shell builds the payload at the loop, main.ts:8619), so
-   * one subscription covers the human half - from the release on, each
+   * event fires only for the PLAYER's commands - an installed controller
+   * replaces the human's command provider, so the Borg's own never reach it
+   * (neo-angband main.ts emitPlayerCommand, the SDK's Api2CommandEvent) - so
+   * one subscription covers the human half: from the release on, each
    * command the OWNER issues is logged with the payload's own frozen
-   * facts. The Borg's own line needs no logging: the dossier IS its
+   * facts. FORK (Mandos #54): outside a replay release, any such command
+   * marks the life as touched (journal.markTouched), so its graveyard entry
+   * says the seed alone will not replay it. The Borg's own line needs no logging: the dossier IS its
    * evidence. #27's phase 3 (the paired demonstration deepening) is DEFERRED
    * by the owner (2026-11-03): this rail keeps its #29 shape. The issue's `event:turn` does not exist in API 2 at this pin (the bus has
    * no turn event), which src/loop/replay.ts documents. The subscription
@@ -557,7 +560,10 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   }
   replayLogOff = mod.events.off;
   const replayLog = await mod.events.on("player-command", (event) => {
-    if (!replayReleased) return;
+    if (!replayReleased) {
+      journal.markTouched();
+      return;
+    }
     const where = event.dir !== undefined ? ` dir ${String(event.dir)}` : "";
     const args = event.args !== undefined && event.args.handle !== undefined ? ` handle ${String(event.args.handle)}` : "";
     mod.meta.log(`[replay] command ${event.code}${where}${args}`);

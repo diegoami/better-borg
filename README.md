@@ -39,6 +39,7 @@ truth domain. Each release names its engines in the CHANGELOG's
 
 | Mandos | Stock upstream engine | Our fork |
 | --- | --- | --- |
+| Unreleased | no (the manifest refuses it) | `neowarrior-lab` at `7157fed1c` and later: the engine reports 1.23.0-beta.2-mandos.1 (1.23.0-beta.2 plus PR #429, #432, #433 and the lab trust). The manifest's range `>=1.23.0-beta.2-mandos.1 <1.23.0` accepts exactly our fork's builds. |
 | 0.1.0 | no | `neowarrior-lab` at `8b1169799`: 1.23.0-beta.2 plus PR #429 and PR #432 and the lab trust. Its lab check verified play and rebirth only: the profile had not granted the truth domain or `session:control`, so retirement into a kept save was not verified (#53). |
 
 What is being worked on, and why: the dated priority paragraph in

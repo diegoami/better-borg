@@ -8,6 +8,25 @@ both. While our engine PRs are unreleased upstream it is our fork only.
 
 ## Unreleased
 
+**Works on**: our engine fork only, and the game now enforces it. The
+manifest's engine range is `>=1.23.0-beta.2-mandos.1 <1.23.0`, which accepts
+the builds of diegoami/neo-angband's `neowarrior-lab` (1.23.0-beta.2 plus
+neo-angband PR #429, #432 and #433, reporting 1.23.0-beta.2-mandos.N), and a
+stock engine refuses the mod.
+
+- [Visible] [DEFECT] **The harness and the lab run one engine:
+  1.23.0-beta.2 plus our patches** (#54, owner). The harness moved from
+  the published 1.23.0-beta.1 to beta.2 (core, content and SDK). The c2d1
+  cohort plays identically. The lab branch carries the master-seed seam
+  (PR #433, now carried under the all-PRs-accepted policy) and reports
+  its own version, so the manifest can require it.
+- [Visible] [CHOICE] **A dead run can be replayed from the lab** (#54).
+  Each graveyard entry records the master seed the run ran on when the
+  engine reports it (feature-detected). A life in which the player gave a
+  command is marked "touched", because its seed alone does not replay it.
+  Each archived run is one log line, and `node tools/lab.mjs check` lists
+  them with births, deaths, retirements and any missing permission.
+
 ## 0.1.0 - 2026-11-04
 
 **Works on**: our engine fork only. That is `neowarrior-lab` of

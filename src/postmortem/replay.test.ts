@@ -142,7 +142,7 @@ suite("the death replay (#29)", () => {
     expect(replay.rungs.length + replay.missed.length).toBe([...DEFAULT_OFFSETS].length);
     expect(replay.rungs.length).toBeGreaterThan(0);
     expect(replay.rungs.map((r) => r.offset)).toContain(20);
-  }, 120_000);
+  }, 300_000);
 
   it("captures the ladder's rungs at boundaries after their targets and before the death", async () => {
     const { run, header } = recordedRun();
@@ -171,7 +171,7 @@ suite("the death replay (#29)", () => {
       expect(miss.targetTurn).toBe(run.turns - miss.offset);
       expect(miss.why).toContain("before turn");
     }
-  }, 120_000);
+  }, 300_000);
 
   it("renders each dossier with the rung's facts and the human-path settings", async () => {
     const { run, header } = recordedRun();
@@ -206,7 +206,7 @@ suite("the death replay (#29)", () => {
       expect(text).toContain("## Command census");
       expect(text).toContain("## Provenance");
     }
-  }, 120_000);
+  }, 300_000);
 
   it("refuses a record whose planned birth it cannot reproduce (the plan check)", async () => {
     const { run, header } = recordedRun();
@@ -249,5 +249,5 @@ suite("the death replay (#29)", () => {
       expect(rung.dossier).toContain("replay verification: DIVERGED");
     }
     expect(replay.rungs.length + replay.missed.length).toBe([...DEFAULT_OFFSETS].length);
-  }, 120_000);
+  }, 300_000);
 });

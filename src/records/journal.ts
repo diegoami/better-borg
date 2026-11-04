@@ -111,6 +111,14 @@ export interface GraveyardEntry {
   readonly turn: number | null;
   /** The final score, where the report carries one. */
   readonly score: number | null;
+  /**
+   * FORK (Mandos #54), additive: the master seed the run ran on, when the
+   * engine reports it (`RunReport.seed`, neo-angband PR #433, carried on our
+   * fork). With the class, race and mod version it replays the run
+   * headless. Absent on an engine without the field, and in entries written
+   * before #54.
+   */
+  readonly seed?: number;
 }
 
 /**
@@ -129,11 +137,15 @@ export interface ArchivedRun extends GraveyardEntry {
   readonly run: string | null;
   /** #27, additive: where the run was unsure (a bounded tail plus the raw total; absent when nobody journaled). */
   readonly unsure?: { readonly total: number; readonly points: readonly UnsurePoint[] };
+  /** FORK (Mandos #54), additive: a human gave the character a command, so its seed alone does not replay it. */
+  readonly touched?: true;
 }
 
 /** The trainer loop's journal extras for one ended run (#27): all optional, all additive. */
 export interface RunDossier {
   readonly unsure?: { readonly total: number; readonly points: readonly UnsurePoint[] };
+  /** #54: a human gave the character a command. */
+  readonly touched?: true;
 }
 
 /**
@@ -147,6 +159,13 @@ export const GRAVEYARD_KEY = "graveyard";
 export interface BorgJournalData {
   readonly journal: typeof JOURNAL_FORMAT;
   readonly milestones: readonly DepthMilestone[];
+  /**
+   * FORK (Mandos #54), additive: a human gave this character a command
+   * (the `player-command` event fires only for the player's commands, never
+   * a controller's - neo-angband packages/web/src/main.ts emitPlayerCommand).
+   * A touched life does not replay from its seed alone.
+   */
+  readonly touched?: true;
 }
 
 /** What one journal needs, each piece a slice of the mod's own context. */
@@ -194,6 +213,11 @@ export interface BorgJournal {
    * not arrive on it.
    */
   graveyard(report: RunReport, dossier?: RunDossier): Promise<void>;
+  /**
+   * FORK (Mandos #54): a human gave this character a command. Persisted in
+   * the character's journal once, and carried into its graveyard entry.
+   */
+  markTouched(): void;
   /** Stop listening. The character's stored journal stays as it is. */
   stop(): Promise<void>;
 }
@@ -253,6 +277,7 @@ function entryOf(value: JsonValue): GraveyardEntry | null {
     gold: numberOr(value["gold"], null),
     turn: numberOr(value["turn"], null),
     score: numberOr(value["score"], null),
+    ...(typeof value["seed"] === "number" && Number.isInteger(value["seed"]) ? { seed: value["seed"] } : {}),
   };
 }
 
@@ -267,7 +292,7 @@ export function parseJournal(value: JsonValue | null): BorgJournalData | null {
   const milestones = Array.isArray(value["milestones"])
     ? value["milestones"].map(milestoneOf).filter((entry): entry is DepthMilestone => entry !== null)
     : [];
-  return { journal: JOURNAL_FORMAT, milestones };
+  return { journal: JOURNAL_FORMAT, milestones, ...(value["touched"] === true ? { touched: true as const } : {}) };
 }
 
 /** The JSON this module stores for a journal. */
@@ -282,6 +307,7 @@ function storeJournal(data: BorgJournalData): JsonValue {
       level: milestone.level,
       turn: milestone.turn,
     })),
+    ...(data.touched === true ? { touched: true } : {}),
   };
 }
 
@@ -292,7 +318,12 @@ function archivedRunOf(value: JsonValue): ArchivedRun | null {
   if (entry === null) return null;
   const run = value["run"];
   const unsure = unsureOf(value["unsure"]);
-  return { ...entry, run: typeof run === "string" ? run : null, ...(unsure === null ? {} : { unsure }) };
+  return {
+    ...entry,
+    run: typeof run === "string" ? run : null,
+    ...(unsure === null ? {} : { unsure }),
+    ...(value["touched"] === true ? { touched: true as const } : {}),
+  };
 }
 
 /**
@@ -370,6 +401,7 @@ export function graveyardArchiveOf(value: JsonValue | null): { readonly journal:
 function storeArchiveRun(run: ArchivedRun): JsonValue {
   const stored: Record<string, JsonValue> = storeGraveyardEntry(run) as Record<string, JsonValue>;
   if (run.run !== null) stored["run"] = run.run;
+  if (run.touched === true) stored["touched"] = true;
   if (run.unsure !== undefined) {
     stored["unsure"] = {
       total: run.unsure.total,
@@ -473,7 +505,15 @@ export function graveyardEntryOf(report: RunReport): GraveyardEntry {
     gold: typeof report.gold === "number" ? report.gold : null,
     turn: typeof report.turn === "number" ? report.turn : null,
     score: typeof report.score === "number" ? report.score : null,
+    /* Feature-detected (#54): the published SDK's RunReport has no seed yet. */
+    ...seedOf(report),
   };
+}
+
+/** `RunReport.seed` when the engine carries it (neo-angband PR #433), else nothing. */
+function seedOf(report: RunReport): { readonly seed?: number } {
+  const seed = (report as { readonly seed?: unknown }).seed;
+  return typeof seed === "number" && Number.isInteger(seed) ? { seed } : {};
 }
 
 /** The JSON this module stores for one graveyard entry, nulls omitted. */
@@ -490,6 +530,7 @@ function storeGraveyardEntry(entry: GraveyardEntry): JsonValue {
     ...(entry.gold === null ? {} : { gold: entry.gold }),
     ...(entry.turn === null ? {} : { turn: entry.turn }),
     ...(entry.score === null ? {} : { score: entry.score }),
+    ...(entry.seed === undefined ? {} : { seed: entry.seed }),
   };
 }
 
@@ -534,6 +575,7 @@ export async function archiveFinishedRun(
     run: typeof report.key === "string" ? report.key : null,
     ...graveyardEntryOf(report),
     ...(dossier.unsure === undefined ? {} : { unsure: dossier.unsure }),
+    ...(dossier.touched === true ? { touched: true as const } : {}),
   };
   const runs = [...current.runs];
   const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);
@@ -549,6 +591,14 @@ export async function archiveFinishedRun(
     deps.log(`the Borg could not archive the run that just ended in its install storage (${error instanceof Error ? error.message : String(error)})`);
     return false;
   }
+  /* FORK (Mandos #54): one line per ended run, so a lab check
+   * (tools/lab.mjs check) can name what replays it without reading the
+   * browser profile's storage. */
+  deps.log(
+    `the Borg archived the ended run: ${entry.race ?? "?"} ${entry.class ?? "?"}, ` +
+      `${entry.seed === undefined ? "no seed (this engine does not report one)" : `seed ${String(entry.seed)}`}` +
+      `${entry.touched === true ? ", touched by the player (the seed alone does not replay it)" : ""}`,
+  );
   return true;
 }
 
@@ -585,6 +635,14 @@ export function installBorgJournal(deps: BorgJournalDeps): BorgJournal {
     deps.log(message);
   };
 
+  /* #54: whether a human has given this character a command - read once
+   * from the character's journal (an earlier page may have marked it), set
+   * by markTouched, and carried into the graveyard entry. */
+  let touched = false;
+  void enqueue(async () => {
+    if ((await readJournal(deps.slot))?.touched === true) touched = true;
+  });
+
   const subscribed: Promise<void> = deps.events
     .on("dungeonlevel", (event) => {
       /* Fire-and-forget by design: the host calls the listener synchronously
@@ -619,12 +677,27 @@ export function installBorgJournal(deps: BorgJournalDeps): BorgJournal {
     get listening(): boolean {
       return subscription !== null;
     },
+    markTouched() {
+      if (touched) return;
+      touched = true;
+      void enqueue(async () => {
+        const current = await readJournal(deps.slot);
+        if (current === null || current.touched === true) return;
+        try {
+          await deps.slot.set(storeJournal({ ...current, touched: true }));
+        } catch {
+          /* In memory it still counts for this page's graveyard entry. */
+        }
+      });
+    },
     graveyard(report, dossier) {
       /* The install archive (#34), not the character's bag: the host deletes
        * the character's save before the report publishes, so this slot is the
        * only one whose write can still be read on any later page. The
        * dossier's trainer-loop record lands in the SAME entry (#27). */
-      return enqueue(() => archiveFinishedRun({ archive: deps.archive, log: deps.log }, report, dossier).then(() => undefined));
+      return enqueue(() =>
+        archiveFinishedRun({ archive: deps.archive, log: deps.log }, report, { ...dossier, ...(touched ? { touched: true as const } : {}) }).then(() => undefined),
+      );
     },
     async stop() {
       await subscribed;

@@ -17471,13 +17471,14 @@ function entryOf(value) {
     level: numberOr(value["level"], null),
     gold: numberOr(value["gold"], null),
     turn: numberOr(value["turn"], null),
-    score: numberOr(value["score"], null)
+    score: numberOr(value["score"], null),
+    ...typeof value["seed"] === "number" && Number.isInteger(value["seed"]) ? { seed: value["seed"] } : {}
   };
 }
 function parseJournal(value) {
   if (value === null || !isObject(value) || value["journal"] !== JOURNAL_FORMAT) return null;
   const milestones = Array.isArray(value["milestones"]) ? value["milestones"].map(milestoneOf).filter((entry) => entry !== null) : [];
-  return { journal: JOURNAL_FORMAT, milestones };
+  return { journal: JOURNAL_FORMAT, milestones, ...value["touched"] === true ? { touched: true } : {} };
 }
 function storeJournal(data) {
   return {
@@ -17489,7 +17490,8 @@ function storeJournal(data) {
       arena: milestone.arena,
       level: milestone.level,
       turn: milestone.turn
-    }))
+    })),
+    ...data.touched === true ? { touched: true } : {}
   };
 }
 function archivedRunOf(value) {
@@ -17498,7 +17500,12 @@ function archivedRunOf(value) {
   if (entry === null) return null;
   const run = value["run"];
   const unsure = unsureOf(value["unsure"]);
-  return { ...entry, run: typeof run === "string" ? run : null, ...unsure === null ? {} : { unsure } };
+  return {
+    ...entry,
+    run: typeof run === "string" ? run : null,
+    ...unsure === null ? {} : { unsure },
+    ...value["touched"] === true ? { touched: true } : {}
+  };
 }
 function gridOf(value) {
   if (value === void 0) return void 0;
@@ -17549,6 +17556,7 @@ function graveyardArchiveOf(value) {
 function storeArchiveRun(run) {
   const stored = storeGraveyardEntry(run);
   if (run.run !== null) stored["run"] = run.run;
+  if (run.touched === true) stored["touched"] = true;
   if (run.unsure !== void 0) {
     stored["unsure"] = {
       total: run.unsure.total,
@@ -17623,8 +17631,14 @@ function graveyardEntryOf(report) {
     level: typeof report.level === "number" ? report.level : null,
     gold: typeof report.gold === "number" ? report.gold : null,
     turn: typeof report.turn === "number" ? report.turn : null,
-    score: typeof report.score === "number" ? report.score : null
+    score: typeof report.score === "number" ? report.score : null,
+    /* Feature-detected (#54): the published SDK's RunReport has no seed yet. */
+    ...seedOf(report)
   };
+}
+function seedOf(report) {
+  const seed = report.seed;
+  return typeof seed === "number" && Number.isInteger(seed) ? { seed } : {};
 }
 function storeGraveyardEntry(entry) {
   return {
@@ -17638,7 +17652,8 @@ function storeGraveyardEntry(entry) {
     ...entry.level === null ? {} : { level: entry.level },
     ...entry.gold === null ? {} : { gold: entry.gold },
     ...entry.turn === null ? {} : { turn: entry.turn },
-    ...entry.score === null ? {} : { score: entry.score }
+    ...entry.score === null ? {} : { score: entry.score },
+    ...entry.seed === void 0 ? {} : { seed: entry.seed }
   };
 }
 async function archiveFinishedRun(deps, report, dossier = {}) {
@@ -17658,7 +17673,8 @@ async function archiveFinishedRun(deps, report, dossier = {}) {
   const entry = {
     run: typeof report.key === "string" ? report.key : null,
     ...graveyardEntryOf(report),
-    ...dossier.unsure === void 0 ? {} : { unsure: dossier.unsure }
+    ...dossier.unsure === void 0 ? {} : { unsure: dossier.unsure },
+    ...dossier.touched === true ? { touched: true } : {}
   };
   const runs = [...current.runs];
   const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);
@@ -17674,6 +17690,9 @@ async function archiveFinishedRun(deps, report, dossier = {}) {
     deps.log(`the Borg could not archive the run that just ended in its install storage (${error instanceof Error ? error.message : String(error)})`);
     return false;
   }
+  deps.log(
+    `the Borg archived the ended run: ${entry.race ?? "?"} ${entry.class ?? "?"}, ${entry.seed === void 0 ? "no seed (this engine does not report one)" : `seed ${String(entry.seed)}`}${entry.touched === true ? ", touched by the player (the seed alone does not replay it)" : ""}`
+  );
   return true;
 }
 function installBorgJournal(deps) {
@@ -17690,6 +17709,10 @@ function installBorgJournal(deps) {
     warned = true;
     deps.log(message);
   };
+  let touched = false;
+  void enqueue(async () => {
+    if ((await readJournal(deps.slot))?.touched === true) touched = true;
+  });
   const subscribed = deps.events.on("dungeonlevel", (event) => {
     const stamps = deps.stamps().catch(() => ({ level: null, turn: null }));
     void enqueue(
@@ -17713,8 +17736,22 @@ function installBorgJournal(deps) {
     get listening() {
       return subscription !== null;
     },
+    markTouched() {
+      if (touched) return;
+      touched = true;
+      void enqueue(async () => {
+        const current = await readJournal(deps.slot);
+        if (current === null || current.touched === true) return;
+        try {
+          await deps.slot.set(storeJournal({ ...current, touched: true }));
+        } catch {
+        }
+      });
+    },
     graveyard(report, dossier) {
-      return enqueue(() => archiveFinishedRun({ archive: deps.archive, log: deps.log }, report, dossier).then(() => void 0));
+      return enqueue(
+        () => archiveFinishedRun({ archive: deps.archive, log: deps.log }, report, { ...dossier, ...touched ? { touched: true } : {} }).then(() => void 0)
+      );
     },
     async stop() {
       await subscribed;
@@ -18275,7 +18312,10 @@ async function begin(mod2) {
   }
   replayLogOff = mod2.events.off;
   const replayLog = await mod2.events.on("player-command", (event) => {
-    if (!replayReleased) return;
+    if (!replayReleased) {
+      journal.markTouched();
+      return;
+    }
     const where = event.dir !== void 0 ? ` dir ${String(event.dir)}` : "";
     const args = event.args !== void 0 && event.args.handle !== void 0 ? ` handle ${String(event.args.handle)}` : "";
     mod2.meta.log(`[replay] command ${event.code}${where}${args}`);
