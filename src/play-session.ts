@@ -780,6 +780,9 @@ function runReportOf(core: typeof Core, state: GameState, outcome: SdkRunReport[
     depth: state.chunk.depth,
     gold: player.au,
     turn: state.turn,
+    /* FORK: Mandos #54 (DEFECT). Forward the engine's retained original
+     * seed, as the web host does; legacy states may have no provenance. */
+    ...(state.masterSeed === undefined ? {} : { seed: state.masterSeed }),
     score: core.totalPoints(player),
     scored: false,
     endedAt: 0,
