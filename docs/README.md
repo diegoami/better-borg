@@ -1,89 +1,87 @@
-# Borg: quick reference
+# Mandos quick reference
 
-Angband's automatic player, ported from the borg in Angband 4.2.6. It plays the way you do, through the same commands, over mod API 2, with no privileged code inside the engine.
+Mandos is the class-agnostic Borg fork for measured stage grinding in Neo
+Angband. It restores defects in the original TypeScript port and adds
+class/race birth pools, kept stage saves, journals and replay analysis.
+Start with the [repository README](../README.md) for the purpose, evidence
+and desktop lab setup.
 
-This page is the short version: every setting, what the mod asks the game for,
-and where the longer material is. The account of why each of these exists is in
-[the repository README](../README.md).
+## Play and control
+
+| Action | Where |
+| --- | --- |
+| Start a new lineage | **New Mandos character** on the title screen. |
+| Hand over or take back an existing character | Ctrl-Z in play; the game asks for confirmation when handing over. |
+| Choose classes and races | Enable the desired `Class:` and `Race:` toggles in the Mods screen. One of each pins a combination; all off in a pool means all on. |
+| Choose the stage to keep saves at | `borg.stageClvl` and `borg.stageDepth`; both thresholds must be reached. |
+| Check a watched lab session | `node tools/lab.mjs check` reports births, deaths, kept saves and missing consent. |
+
+Enabling the mod alone does not give it your character. A character handed
+to an autoplayer gets the game's permanent `NOSCORE_BORG` mark.
 
 ## Settings
 
-Each one is a named toggle on the game's own Mods screen, which shows the full
-description. The identifier is the name a save and another mod see; where a
-switch has no flag of its own, the game knows it by its section id instead.
+The [settings reference](../SETTINGS.md) gives defaults, reload behavior and
+recipes. The Mods screen carries the full descriptions.
 
-| Setting | Identifier | Default | What it does |
-| --- | --- | --- | --- |
-| Play risky | `borg.playsRisky` | off | borg_plays_risky. Skip the early hit-point and character-level gates that hold the Borg above a depth, wait longer before drinking a cure, and back away later in a losing fight. |
-| Value melee and missile damage | `borg.worshipsDamage` | off | borg_worships_damage. Add weight to weapon and bow damage when the Borg scores a set of gear, so a trade that costs armour for damage looks better than it otherwise would. |
-| Value speed | `borg.worshipsSpeed` | off | borg_worships_speed. Add weight to a speed bonus when scoring gear. |
-| Value hit points | `borg.worshipsHp` | off | borg_worships_hp. Add weight to constitution and hit points when scoring gear. |
-| Value spell points | `borg.worshipsMana` | off | borg_worships_mana. Add weight to spell points when scoring gear. |
-| Value armour class | `borg.worshipsAc` | off | borg_worships_ac. Add weight to armour class when scoring gear. |
-| Value gold | `borg.worshipsGold` | off | borg_worships_gold. Sell harder, walk down rather than pay for a recall, and put off the first deep recall. |
-| Save up for something it wants | `borg.selfScum` | on | borg_self_scum. Let the Borg set itself a gold target and work in town until it can afford one item it has decided it needs. |
-| Skimp on stockpiles for an early munchkin run | `borg.munchkinStart` | off | borg_munchkin_start. Below character level borg_munchkin_level (12), stop valuing potions of resist poison and speed, phase door, word of recall and the deeper cure stockpiles as highly as it normally would, on the assumption that a young character is cashing out rather than settling in. |
-| Class: Warrior | `borg.classWarrior` | on | The Borg may birth a Warrior. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Class: Mage | `borg.classMage` | on | The Borg may birth a Mage. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Class: Druid | `borg.classDruid` | on | The Borg may birth a Druid. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Class: Priest | `borg.classPriest` | on | The Borg may birth a Priest. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Class: Necromancer | `borg.classNecromancer` | on | The Borg may birth a Necromancer. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Class: Paladin | `borg.classPaladin` | on | The Borg may birth a Paladin. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Class: Rogue | `borg.classRogue` | on | The Borg may birth a Rogue. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Class: Ranger | `borg.classRanger` | on | The Borg may birth a Ranger. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Class: Blackguard | `borg.classBlackguard` | on | The Borg may birth a Blackguard. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Human | `borg.raceHuman` | on | The Borg may birth a Human. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Half-Elf | `borg.raceHalfElf` | on | The Borg may birth a Half-Elf. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Elf | `borg.raceElf` | on | The Borg may birth a Elf. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Hobbit | `borg.raceHobbit` | on | The Borg may birth a Hobbit. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Gnome | `borg.raceGnome` | on | The Borg may birth a Gnome. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Dwarf | `borg.raceDwarf` | on | The Borg may birth a Dwarf. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Half-Orc | `borg.raceHalfOrc` | on | The Borg may birth a Half-Orc. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Half-Troll | `borg.raceHalfTroll` | on | The Borg may birth a Half-Troll. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Dunadan | `borg.raceDunadan` | on | The Borg may birth a Dunadan. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: High-Elf | `borg.raceHighElf` | on | The Borg may birth a High-Elf. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
-| Race: Kobold | `borg.raceKobold` | on | The Borg may birth a Kobold. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on. |
+| Group | Identifiers | Defaults |
+| --- | --- | --- |
+| Class pool | `borg.classWarrior` through `borg.classBlackguard` | All nine classes on. |
+| Race pool | `borg.raceHuman` through `borg.raceKobold` | All eleven races on. |
+| Target stage | `borg.stageClvl`, `borg.stageDepth` | 2 and 1 (c2d1). |
+| Risk | `borg.playsRisky` | Off. |
+| Gear valuation | `borg.worshipsDamage`, `borg.worshipsSpeed`, `borg.worshipsHp`, `borg.worshipsMana`, `borg.worshipsAc`, `borg.worshipsGold` | All off. |
+| Town saving and early stockpiles | `borg.selfScum`, `borg.munchkinStart` | Self-scum on, munchkin start off. |
+| Replay handoff | `borg.replayReleaseTurn`, `borg.replayDeathTurn` | 0 (release mode off, death turn unnamed). |
 
-The `Class:` and `Race:` toggles are the birth pools (#16): each character
-the Borg births draws its class from the classes switched on and its race
-from the races switched on, deterministically from a persisted birth counter.
-Switch on just one to always play it; all off counts as all on. A Warrior is
-born through the warrior pack's measured plan, any other class on the game's
-own suggested stats. See [SETTINGS.md](../SETTINGS.md) for recipes.
+Birth pools and stage settings are fixed for a life and apply on the next
+birth. Behavior-toggle changes need a reload. A Warrior uses its measured
+point-buy plan; other classes use the game's suggested stats. Casters can
+study and test spells, and eligible attack spells enter the combat chooser.
 
-The Mods screen also carries the mod's numeric settings, each one number a
-player can move. The Borg reads them when they matter, not at load time.
+## Engine and permissions
 
-| Setting | Identifier | Default | Range | What it does |
-| --- | --- | --- | --- | --- |
-| Stage character level | `borg.stageClvl` | 2 | 0-50 | The character level a run must reach for the Borg to count it as having attained its target stage, together with `borg.stageDepth`. A run that attains is saved under a library name and the next character starts. The default is the stage baseline's calibration (2026-11-03); raise it as the Borg grows stronger. Read once per page, so a change applies to the next birth. |
-| Stage depth | `borg.stageDepth` | 1 | 0-100 | The dungeon depth a run must have arrived on (0 is the town) for the Borg to count it as having attained its target stage, together with `borg.stageClvl`. The owner's destination is a moderate depth at character level around 20, which the settings reach as the Borg grows stronger. Read once per page, so a change applies to the next birth. |
-| Death replay release turn | `borg.replayReleaseTurn` | 0 | 0-1000000 | The death-replay trainer's release point: when the game's turn counter reaches this value the Borg stops playing and hands the keyboard back with the death banner, so the owner can play the last turns of a dead run themselves. Take the number from the dossier ladder's release-boundary line (docs/runs/, the run's postmortem directory); 0 keeps the replay mode off. Read once per page, so the release point is fixed for the whole life. |
-| Death replay death turn | `borg.replayDeathTurn` | 0 | 0-1000000 | The recorded death turn the death-replay banner counts down from: with `borg.replayReleaseTurn` armed, the banner names this turn and how many turns remain. Take it from the dossier's recorded-death line; 0 shows the banner without the countdown. Read once per page with `borg.replayReleaseTurn`. |
+The current manifest requires **our engine fork**, with range
+`>=1.23.0-beta.2-mandos.1 <1.23.0`, and mod API `>=2.0.0 <3.0.0`.
+Use the `neowarrior-lab` branch of
+[diegoami/neo-angband](https://github.com/diegoami/neo-angband) and follow the
+[lab runbook](process.md#8-watched-runs-lab-builds). The mod folder must be
+named `mandos`, matching its manifest id.
 
-## What it needs
+The [manifest](../manifest.json) is the authority for the requested grants.
+Use **Choose one by one** in the consent screen: the powerful
+`state:monsters-actual.read` grant is off unless explicitly enabled. It
+provides exact data about perceived monsters and their races; Mandos does
+not ask for the real map. `session:control` is needed to keep successful
+stage saves. The remaining grants cover known state, commands and prompts,
+journal events, title/birth UI, profiles and saves.
 
-- **Engine:** `>=1.23.0-beta.1`
-- **Mod API:** `>=2.0.0 <3.0.0`
-- **Shape:** `plugin`
-- **Facets:** `plugin`
-- **Capabilities:** `command:add`, `state:player.read`, `state:monsters.read`, `state:map.read`, `state:inventory.read`, `state:floor.read`, `state:stores.read`, `state:spells.read`, `state:turn.read`, `state:monsters-actual.read`, `state:interaction.read`, `input:intent`, `input:prompt.reply`, `event:message`, `event:run-end`, `event:dungeonlevel`, `event:player-command`, `ui:title`, `ui:birth.replace`, `profiles:manage`, `saves:manage`, `session:control`
+`node tools/lab.mjs start` updates the lab's mod clone and rebuilds a changed
+engine. A merge alone does not update the running desktop. Verify the
+permissions and actual commits with the lab tools before comparing a watched
+session with a harness record.
 
-Only `state:monsters-actual.read` lets the Borg see past what the character has found. It uses that for two things: the exact hit points of monsters the character can perceive, and those monsters' race records. The game leaves it off unless you switch it on, and without it the Borg plays from what the character knows. See [How the Borg runs on mod API 2](API2-MIGRATION.md).
+## Records and limits
 
-What a capability string permits, and what a mod that asks for one cannot do
-without it, is in [the mod lifecycle
-document](https://github.com/neostryder/neo-angband/blob/master/docs/modding/MOD_LIFECYCLE.md).
+The metric is reach-rate at a named stage over fixed seeds. c2d1 is an early
+calibration milestone, not a late-game benchmark. Committed records retain
+older builds and results so improvements can be checked.
 
-## Elsewhere
+Harness replays verify the recorded death line and label divergences.
+Desktop-to-harness exact replay remains under investigation in
+[#54](https://github.com/diegoami/mandos/issues/54). The graveyard stores run
+facts and journal data; it does not preserve a full fatal-state save.
 
-- [README](../README.md), the full account
-- [Changelog](../CHANGELOG.md), what changed in each version
-- [Planned](../PLANNED.md), what is not built yet
-- [How the Borg runs on mod API 2](API2-MIGRATION.md), what it reads and submits
-- [How the Borg reaches the
-  game](https://github.com/neostryder/neo-angband/blob/master/docs/modding/BORG.md),
-  in the game's own repository
-- [Installing a
-  mod](https://github.com/neostryder/neo-angband/blob/master/docs/MODS.md), the
-  route every mod installs by
+## Documentation map
+
+| Read | For |
+| --- | --- |
+| [README](../README.md) | What Mandos adds, measured examples and getting started. |
+| [Settings](../SETTINGS.md) | Birth-pool, stage and replay recipes. |
+| [Plans](../PLANNED.md) and [roadmap](plans/getting-stronger.md) | Mandos's direction and design. |
+| [Run records](runs/README.md) | Reproducible measurements and their format. |
+| [Post-mortem workflow](postmortem.md) | Generate dossiers, verify replays and diagnose failures. |
+| [API 2 bridge](API2-MIGRATION.md) | Reads, intents, caches and controller lifecycle. |
+| [Process](process.md) and [upstream watch](UPSTREAM.md) | Development, lab validation and carrying fixes. |
+| [Upstream history](history/README.md) | The original port's playability investigation. |
+| [Changelog](../CHANGELOG.md) | Versioned changes and engine compatibility. |

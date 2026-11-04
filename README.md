@@ -1,76 +1,139 @@
 # Mandos
 
-**Formerly better-borg** (and, before the unification, the archived
-[neowarrior-borg](https://github.com/diegoami/neowarrior-borg) fork) —
-**a class-agnostic fork of [Borg](https://github.com/neostryder/neo-angband-mod-borg)
-— defect fixes and strength improvements for every borg, staged for upstream,
-with per-class strategy packs.**
+Mandos is a Borg that helps with the grind in
+[Neo Angband](https://github.com/neostryder/neo-angband): choose which
+classes and races it may play, set a target stage, and let it produce
+characters that reach that stage. A successful run is kept as a loadable
+save; after a death or a successful retirement, it starts another character.
 
-One repository, one core, packs instead of forks (the no-N-forks doctrine,
-docs/process.md section 2): the class a Borg plays is a STRATEGY PACK under
-`src/class/`, and the player picks which classes and races it may draw at
-each birth (one toggle each, #16) - **pack #1 is the warrior**, the lineage of the archived
-[neowarrior-borg](https://github.com/diegoami/neowarrior-borg) fork, whose
-class-agnostic instruments (restart loop, journal/graveyard, session driver,
-records) merged here at M2 open and whose run records moved with them
-(docs/runs/). The rule this repo runs by:
+It builds on Angband 4.2.6's C Borg and
+[neostryder's TypeScript port](https://github.com/neostryder/neo-angband-mod-borg).
+Mandos restores missing or mistranslated behavior, measures the result, and
+offers port-defect fixes upstream. It also adds its own stage-grinding,
+class/race selection, journals and analysis tools. The previous name was
+**better-borg**; the former single-class **neowarrior-borg** fork is archived.
 
-- **Port defects** (behaviour that diverges from the Angband 4.2.6 borg the
-  port claims to be) are fixed here **and offered upstream** as pull requests.
-- **Improvements upstream declines** - or that are choices rather than
-  defects - live here.
-- **Class- or build-specific behaviour lives in a pack** under `src/class/`,
-  never in the core and never in a fork of this repository; a new class
-  starts as a pack plus a setting.
+## What you can do
 
-## Which engine it runs on
+- Play any of the game's **nine classes and eleven races**. Each birth draws
+  from the `Class:` and `Race:` toggles you enable; enable one of each to pin
+  a combination. All are enabled by default.
+- Keep characters at a chosen stage, defined by both character level and
+  dungeon depth. The default **c2d1** means character level 2 and arrival at
+  dungeon depth 1. This is an early calibration milestone; higher stages
+  need their own measurements.
+- Inspect a journal of finished runs and generate post-mortem dossiers from
+  reproducible harness runs. The dossiers show the map, messages, equipment
+  and recent decisions before the recorded death.
+- Hand an existing character to Mandos with Ctrl-Z, and take the keyboard
+  back when you want to play.
+  Handing a character to an autoplayer marks it `NOSCORE_BORG`, keeping it
+  off the high-score table.
 
-Mandos ships no engine code. It does depend on the engine fixes and seams
-we have offered upstream (process section 6), and on the lab build's
-trust entry, and it plays without them only badly or not at all. **Until
-upstream releases those, every Mandos version works on OUR engine fork
-only:** the `neowarrior-lab` branch of
-[diegoami/neo-angband](https://github.com/diegoami/neo-angband), started as
-process section 8 describes, not a stock Neo Angband install. On a stock
-engine the first death ends the unattended run (fail-closed, #18), the
-door-close loop (neo-angband#428) can stall a life, and the borg has no
-truth domain. Each release names its engines in the CHANGELOG's
-**Works on** line:
+There is one shared core for every class. The Warrior has a dedicated,
+measured point-buy plan; the other classes use the game's suggested birth
+stats through the generic pack. Class-specific strategies belong in packs
+inside this repository, rather than in separate class forks.
 
-| Mandos | Stock upstream engine | Our fork |
+## Where the improvements come from
+
+A green unit suite did not establish that the inherited port followed the C
+Borg in play. The audit compares the two, reproduces defects and measures
+restorations on fixed seeds. Examples:
+
+| Restoration | Practical effect | Recorded result |
 | --- | --- | --- |
-| Unreleased | no (the manifest refuses it) | `neowarrior-lab` at `7157fed1c` and later: the engine reports 1.23.0-beta.2-mandos.1 (1.23.0-beta.2 plus PR #429, #432, #433 and the lab trust). The manifest's range `>=1.23.0-beta.2-mandos.1 <1.23.0` accepts exactly our fork's builds. |
-| 0.1.0 | no | `neowarrior-lab` at `8b1169799`: 1.23.0-beta.2 plus PR #429 and PR #432 and the lab trust. Its lab check verified play and rebirth only: the profile had not granted the truth domain or `session:control`, so retirement into a kept save was not verified (#53). |
+| Attack target scan (#69) | The main combat chooser can find monsters: the port required a panel flag it never sets. | The class grid reached c2d1 in [57/72 lives, up from 37/71](docs/runs/2026-11-04-b69-class-grid-c2d1/README.md). |
+| Necromancer light and spell failure (#68) | Dark vision is no longer mistaken for carrying a lamp, so dark corridors do not add an incorrect 25-point spell penalty. | The [Necromancer cohort](docs/runs/2026-11-04-b68-necromancer-c2d1/README.md) improved from 4/8 to 6/8. |
+| Inventory and recharge rungs (#50) | Restore pack-space, weight shedding, whole-stack bad-ammo drops and worn-item recharging from the C Borg. | The [Ranger cohort](docs/runs/2026-11-04-b50-ranger-c2d1/README.md) improved from 6/8 to 7/8; the Warrior control stayed 4/4. |
 
-What is being worked on, and why: the dated priority paragraph in
-[docs/plans/getting-stronger.md](docs/plans/getting-stronger.md), and the
-latest comment on the pinned
-[checkpoint issue](https://github.com/diegoami/mandos/issues?q=is%3Aissue+is%3Aopen+label%3Acheckpoint).
+These measurements describe their named builds, races, seeds and stage.
+They are evidence of early-game improvement, not a late-game success rate.
+[Run records](docs/runs/README.md) retain the raw facts and older baselines.
 
-## Layout
+Changes are named by provenance: a **DEFECT** restores the C Borg or fixes an
+engine/port error and is offered upstream; a **CHOICE** deliberately changes
+policy and remains a marked Mandos decision. Learning and parameter searches
+happen offline; a live character follows a fixed deterministic policy.
 
-Same as the stock mod plus the pack layer: `plugin.ts`/`title.ts` are the
-mod's own code, `src/api2/` bridges the mod API, `src/` is the port,
-`src/loop/` + `src/records/` + `src/play-session.ts` are the class-agnostic
-instrument (the unattended line and its measurement), and `src/class/` holds
-the strategy packs. Every change from upstream is marked in the source
-beside the C it came from and named in its commit; the import commit
-`70145c5` is the boundary.
+## Run Mandos in the desktop lab
 
-## Building and testing
+The current checkout requires **our engine fork**,
+[diegoami/neo-angband](https://github.com/diegoami/neo-angband), on its
+`neowarrior-lab` branch. The manifest accepts
+`>=1.23.0-beta.2-mandos.1 <1.23.0`; stock Neo Angband is outside that range.
+The lab carries engine fixes and seams offered upstream. Mandos itself
+ships no engine code.
 
-    pnpm install --frozen-lockfile
-    pnpm verify     # typecheck, test, and prove plugin.js is a current build
+1. Follow the [checkout and lab setup](docs/process.md#1-setup), including
+   the engine branch and a mod clone named `mandos` in the lab data folder.
+2. From this repository, run:
 
-The play harness needs the game's content pack: a sibling checkout of
-`neo-angband` at `../neo-angband`, or `NEO_ANGBAND_REPO`. Run records live
-under [docs/runs/](docs/runs/README.md) - a change without a record is an
-unmeasured change.
+   ```sh
+   pnpm install --frozen-lockfile
+   node tools/lab.mjs status
+   node tools/lab.mjs start
+   ```
+
+   `start` updates the lab's mod clone, rebuilds a changed engine and prints
+   the actual mod and engine commits. A repository merge alone does not
+   update a running desktop session.
+3. Enable Mandos in the Mods screen. Use **Choose one by one** to grant the
+   requested permissions, including `state:monsters-actual.read` (the truth
+   domain) and `session:control` (keeping successful saves).
+4. Choose your class/race pools and stage in Settings, then select **New
+   Mandos character** on the title screen. Ctrl-Z hands an existing
+   character over or takes the keyboard back.
+5. After watching births, deaths and kept retirements, run
+   `node tools/lab.mjs check`. It reports missing permissions and the
+   outcomes in the newest lab log.
+
+See [Settings](SETTINGS.md) for recipes and the
+[lab runbook](docs/process.md#8-watched-runs-lab-builds) for the full setup.
+Each release's [changelog](CHANGELOG.md) names its compatible engine build.
+Version 0.1.0 was checked on our fork at `8b1169799`; that desktop check
+covered play and rebirth, while its retirement evidence came from the
+headless harness because the lab profile lacked the required consents.
+
+## Analysis limits
+
+Harness death replay checks the cause, turn, decision count and command
+census against the record. It needs the matching Borg code, engine, content
+and birth plan. Desktop lab deaths are **not yet proven to replay exactly**
+in the harness; [#54](https://github.com/diegoami/mandos/issues/54) tracks the
+mismatch even when a seed is recorded.
+
+The graveyard is a journal, not a full save of the fatal game state. Death
+snapshots with negative HP are a proposed diagnostic extension. The engine's
+ordinary dead-save path does not retain the dungeon entities for that use.
+
+## Develop and measure
+
+Use Node 22+ and the pnpm version in `package.json`:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm verify
+node tools/runs.mjs --label my-control --seeds 20,23,34,49 --cap 10000 --stage 2,1 --out artifacts
+```
+
+`pnpm verify` runs typecheck, tests and the committed plugin currency check.
+The harness finds content through `NEO_ANGBAND_REPO`, then the published
+content devDependency, then a sibling `../neo-angband` checkout. The default
+engine under test is the pinned published package plus the carried patches.
+Probe output goes to ignored `artifacts/`; committed measurements use
+[the run-record format](docs/runs/README.md).
+
+- [Documentation index and quick reference](docs/README.md)
+- [Mandos plans](PLANNED.md) and the [strength roadmap](docs/plans/getting-stronger.md)
+- [Work process](docs/process.md), [upstream tracking](docs/UPSTREAM.md) and
+  the latest [checkpoint](https://github.com/diegoami/mandos/issues/36)
 
 ## Licence and credits
 
-The borg is Ben Harrison's, extensively developed by Dr Andrew White and
-maintained by the Angband contributors; the Neo Angband port is by
-neostryder / RPGM Tools. This fork carries their work and marks every one of
-its own changes. Dual licence GPL v2 / Angband licence - see
-[LICENSE.md](LICENSE.md).
+The Borg is Ben Harrison's, extensively developed by Dr Andrew White and
+maintained by the Angband contributors. The Neo Angband port is by
+neostryder / RPGM Tools. Mandos carries their work and marks its own changes.
+Dual licence GPL v2 / Angband licence; see [LICENSE.md](LICENSE.md).
+The [original port's planning history](docs/history/README.md) is preserved
+separately from Mandos's roadmap.
