@@ -292,6 +292,13 @@ running C game. Post the evidence internally on the Mandos issue first;
 post to `angband/angband` only after the owner's explicit OK on that report.
 Keep instrumentation and limitations visible; do not imply an observed
 live death when the evidence is an instrumented scenario.
+Keep the tested C correction in `patches/upstream-c/`, separate from
+observation hooks and the TypeScript package patch. An approved C PR must
+use a clean branch cut directly from official `angband/angband` C master,
+containing only the C fix. The existing `diegoami/neo-angband` fork belongs
+to the official Angband fork network despite its immediate parent being
+`neostryder/neo-angband`; that does not make the TypeScript or lab branch
+an acceptable base for a C PR.
 
 **Before posting**, run `node tools/upstream-sync.mjs` (exit 0): an issue
 cites the pristine checkout at upstream's head, and a PR branch is cut from

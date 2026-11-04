@@ -1,0 +1,1 @@
+PASS: patches/upstream-c/B87-west-light.patch applies cleanly to official C master e473720ed88a0f0c7ca66815cef3000eb4a38bc3 and yields byte-identical corrected C source to the tested after build once the separate observation hook is removed.

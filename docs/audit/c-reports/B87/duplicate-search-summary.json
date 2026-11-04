@@ -1,0 +1,274 @@
+[
+  {
+    "query": "repo:angband/angband is:issue borg light state:open",
+    "total_count": 1,
+    "incomplete_results": false,
+    "items": [
+      {
+        "number": 6683,
+        "type": "issue",
+        "state": "open",
+        "title": "borg: array access problem with big tiles?",
+        "url": "https://github.com/angband/angband/issues/6683"
+      }
+    ]
+  },
+  {
+    "query": "repo:angband/angband is:issue borg light state:closed",
+    "total_count": 7,
+    "incomplete_results": false,
+    "items": [
+      {
+        "number": 6013,
+        "type": "issue",
+        "state": "closed",
+        "title": "Inconsistent behavior trying to cast Lightning Strike",
+        "url": "https://github.com/angband/angband/issues/6013"
+      },
+      {
+        "number": 6316,
+        "type": "issue",
+        "state": "closed",
+        "title": "Borg Stuck in Weird Shopping Loop",
+        "url": "https://github.com/angband/angband/issues/6316"
+      },
+      {
+        "number": 6113,
+        "type": "issue",
+        "state": "closed",
+        "title": "Borg Unable to Curse",
+        "url": "https://github.com/angband/angband/issues/6113"
+      },
+      {
+        "number": 5723,
+        "type": "issue",
+        "state": "closed",
+        "title": "Downstream use after free from destruction",
+        "url": "https://github.com/angband/angband/issues/5723"
+      },
+      {
+        "number": 3757,
+        "type": "issue",
+        "state": "closed",
+        "title": "Playable (full) troll race",
+        "url": "https://github.com/angband/angband/issues/3757"
+      },
+      {
+        "number": 3777,
+        "type": "issue",
+        "state": "closed",
+        "title": "Borg tends to use a spell to light up fully lit rooms",
+        "url": "https://github.com/angband/angband/issues/3777"
+      },
+      {
+        "number": 2823,
+        "type": "issue",
+        "state": "closed",
+        "title": "A uniform way to access player knowledge of player state",
+        "url": "https://github.com/angband/angband/issues/2823"
+      }
+    ]
+  },
+  {
+    "query": "repo:angband/angband is:pr borg light state:open",
+    "total_count": 0,
+    "incomplete_results": false,
+    "items": []
+  },
+  {
+    "query": "repo:angband/angband is:pr borg light state:closed",
+    "total_count": 8,
+    "incomplete_results": false,
+    "items": [
+      {
+        "number": 6760,
+        "type": "pr",
+        "state": "closed",
+        "title": "borg: change light beam to be used to light corridors",
+        "url": "https://github.com/angband/angband/pull/6760"
+      },
+      {
+        "number": 6680,
+        "type": "pr",
+        "state": "closed",
+        "title": "borg: get rid of the option to disallow graphics",
+        "url": "https://github.com/angband/angband/pull/6680"
+      },
+      {
+        "number": 6311,
+        "type": "pr",
+        "state": "closed",
+        "title": "borg: light handling",
+        "url": "https://github.com/angband/angband/pull/6311"
+      },
+      {
+        "number": 6136,
+        "type": "pr",
+        "state": "closed",
+        "title": "borg: necromancers like the dark",
+        "url": "https://github.com/angband/angband/pull/6136"
+      },
+      {
+        "number": 6114,
+        "type": "pr",
+        "state": "closed",
+        "title": "borg: a crash and a necromancer fix... but we need more",
+        "url": "https://github.com/angband/angband/pull/6114"
+      },
+      {
+        "number": 5974,
+        "type": "pr",
+        "state": "closed",
+        "title": "borg: light beam seems wrong and selling unID'd items if they stack",
+        "url": "https://github.com/angband/angband/pull/5974"
+      },
+      {
+        "number": 5795,
+        "type": "pr",
+        "state": "closed",
+        "title": "Borg reorg",
+        "url": "https://github.com/angband/angband/pull/5795"
+      },
+      {
+        "number": 5676,
+        "type": "pr",
+        "state": "closed",
+        "title": "Borg 4x",
+        "url": "https://github.com/angband/angband/pull/5676"
+      }
+    ]
+  },
+  {
+    "query": "repo:angband/angband borg west",
+    "total_count": 0,
+    "incomplete_results": false,
+    "items": []
+  },
+  {
+    "query": "repo:angband/angband \"borg-cave-light\"",
+    "total_count": 0,
+    "incomplete_results": false,
+    "items": []
+  },
+  {
+    "query": "repo:angband/angband \"BORG_LIGHT\"",
+    "total_count": 0,
+    "incomplete_results": false,
+    "items": []
+  },
+  {
+    "query": "repo:angband/angband borg lantern",
+    "total_count": 3,
+    "incomplete_results": false,
+    "items": [
+      {
+        "number": 6589,
+        "type": "pr",
+        "state": "closed",
+        "title": "Borg refuel lantern out of bounds",
+        "url": "https://github.com/angband/angband/pull/6589"
+      },
+      {
+        "number": 6316,
+        "type": "issue",
+        "state": "closed",
+        "title": "Borg Stuck in Weird Shopping Loop",
+        "url": "https://github.com/angband/angband/issues/6316"
+      },
+      {
+        "number": 6309,
+        "type": "issue",
+        "state": "closed",
+        "title": "Borg Not Dealing With Darkness",
+        "url": "https://github.com/angband/angband/issues/6309"
+      }
+    ]
+  },
+  {
+    "query": "repo:angband/angband borg torch",
+    "total_count": 5,
+    "incomplete_results": false,
+    "items": [
+      {
+        "number": 6668,
+        "type": "issue",
+        "state": "open",
+        "title": "Borg Should Use Oil",
+        "url": "https://github.com/angband/angband/issues/6668"
+      },
+      {
+        "number": 6316,
+        "type": "issue",
+        "state": "closed",
+        "title": "Borg Stuck in Weird Shopping Loop",
+        "url": "https://github.com/angband/angband/issues/6316"
+      },
+      {
+        "number": 5795,
+        "type": "pr",
+        "state": "closed",
+        "title": "Borg reorg",
+        "url": "https://github.com/angband/angband/pull/5795"
+      },
+      {
+        "number": 3714,
+        "type": "issue",
+        "state": "closed",
+        "title": "Borg can't handle no-selling",
+        "url": "https://github.com/angband/angband/issues/3714"
+      },
+      {
+        "number": 208,
+        "type": "pr",
+        "state": "closed",
+        "title": "Add a load more borg fixes and tweaks",
+        "url": "https://github.com/angband/angband/pull/208"
+      }
+    ]
+  },
+  {
+    "query": "repo:angband/angband borg radius",
+    "total_count": 2,
+    "incomplete_results": false,
+    "items": [
+      {
+        "number": 6013,
+        "type": "issue",
+        "state": "closed",
+        "title": "Inconsistent behavior trying to cast Lightning Strike",
+        "url": "https://github.com/angband/angband/issues/6013"
+      },
+      {
+        "number": 6202,
+        "type": "issue",
+        "state": "closed",
+        "title": "FIRE_BOLT72 activation has a misleading name",
+        "url": "https://github.com/angband/angband/issues/6202"
+      }
+    ]
+  },
+  {
+    "query": "repo:angband/angband \"borg_update_light\"",
+    "total_count": 0,
+    "incomplete_results": false,
+    "items": []
+  },
+  {
+    "query": "repo:angband/angband light west",
+    "total_count": 0,
+    "incomplete_results": false,
+    "items": []
+  },
+  {
+    "query": "repo:angband/angband lighting asymmetric",
+    "total_count": 0,
+    "incomplete_results": false,
+    "items": []
+  },
+  {
+    "query": "repo:angband/angband borg shoulder",
+    "total_count": 0,
+    "incomplete_results": false,
+    "items": []
+  }
+]
