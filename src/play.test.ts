@@ -513,6 +513,7 @@ suite("the pack restart chain, headless", () => {
         expect(life.graveyard).toHaveLength(1);
         expect(life.graveyard[0]).toMatchObject({
           outcome: "death",
+          seed: life.seed,
           cause: life.causeOfDeath,
           name: expect.any(String),
           race: life.race,

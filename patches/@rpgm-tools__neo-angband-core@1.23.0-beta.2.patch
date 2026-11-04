@@ -1,3 +1,16 @@
+diff --git a/dist/game/context.d.ts b/dist/game/context.d.ts
+index 979d1e883b5ef04247cb9783e13e8024b7ecfaa8..ef512ba3c83081cef4f907b4b33734d4438422d2 100644
+--- a/dist/game/context.d.ts
++++ b/dist/game/context.d.ts
+@@ -173,6 +173,8 @@ export interface StoredLevel {
+  */
+ export interface GameState {
+     rng: Rng;
++    /** Original master seed, when known; distinct from the current RNG position. */
++    masterSeed?: number;
+     chunk: Chunk;
+     actor: PlayerActor;
+     /**
 diff --git a/dist/game/player-path.js b/dist/game/player-path.js
 index 025c970ac255c2f5c2203a2f0e8c491ceb68352f..7d5280e28f0a866e79496544d534bf88a1c44a62 100644
 --- a/dist/game/player-path.js
@@ -44,3 +57,78 @@ index a5779bf154427c9a7e321ed288a91e1ab182dd55..7c7f5ec6612d8683b75f6b87a9f1364e
      };
  }
  /** square_trap_specific: a trap of the exact kind index here? */
+diff --git a/dist/mod/host-abi.d.ts b/dist/mod/host-abi.d.ts
+index 9a1b87145b6738d2d83ac82114938932789ed63d..59a83ad4ff86d8f38b690412d2db1fb7c2cf1566 100644
+--- a/dist/mod/host-abi.d.ts
++++ b/dist/mod/host-abi.d.ts
+@@ -2568,6 +2568,10 @@ export interface RunReport {
+     readonly gold: number;
+     /** The game turn the run ended on. */
+     readonly turn: number;
++    /** Original master seed when retained. Omitted for legacy saves or unknown
++     * continuations; a page's fresh random draw is not the restored game's seed.
++     * Replay also requires the same birth path, code and controller policy. */
++    readonly seed?: number;
+     /** total_points: maximum experience plus 100 per level of maximum depth. */
+     readonly score: number;
+     /** Whether the score table accepted the entry. */
+diff --git a/dist/session/game.js b/dist/session/game.js
+index 3cf4bde9e416f417bb4b2d45d64a13dc7df5310a..5022b585888e42cfacd584bfcfdad26c406a1bce 100644
+--- a/dist/session/game.js
++++ b/dist/session/game.js
+@@ -2814,6 +2814,12 @@ export function startGame(pack, opts = {}) {
+     const mainRng = opts.rng ?? new Rng(opts.seed ?? 1);
+     if (!opts.rng && opts.rngState)
+         mainRng.setState(opts.rngState);
++    // A supplied continuation need not reveal its original seed. Never label it
++    // with the default used only to construct the temporary RNG instance.
++    /* Mandos carries neostryder/neo-angband PR #433 (fixes #431; original seed provenance; tracked in #42/#54). */
++    const masterSeed = opts.seed !== undefined
++        ? opts.seed >>> 0
++        : opts.rng || opts.rngState ? undefined : 1;
+     const race = (opts.raceName ? players.raceByName(opts.raceName) : null) ??
+         players.raceByName("Human") ??
+         players.races[0];
+@@ -2961,6 +2967,7 @@ export function startGame(pack, opts = {}) {
+     };
+     const state = {
+         rng: booted.rng,
++        ...(masterSeed === undefined ? {} : { masterSeed }),
+         chunk: booted.chunk,
+         levelTopology: reg.topology,
+         chestTraps: reg.chestTraps,
+@@ -3621,6 +3628,9 @@ export function loadGame(pack, saveDocument, present = new Set(["core"]), opts =
+         : new Map();
+     const state = {
+         rng,
++        ...(typeof save.masterSeed === "number" && Number.isInteger(save.masterSeed)
++            && save.masterSeed >= 0 && save.masterSeed <= 0xffffffff
++            ? { masterSeed: save.masterSeed } : {}),
+         chunk,
+         levelTopology: reg.topology,
+         chestTraps: reg.chestTraps,
+diff --git a/dist/session/save.d.ts b/dist/session/save.d.ts
+index 4a064a92da584d9dd884ce8ac827d510ac2bfa88..ae9ed6e9e9e5534c480aeef4df0f0580dc13910a 100644
+--- a/dist/session/save.d.ts
++++ b/dist/session/save.d.ts
+@@ -764,6 +764,8 @@ export interface SavedGame {
+     /** The dungeon header retained by C even when the player is dead. */
+     dungeonDepth?: number;
+     rng: RngState;
++    /** Optional provenance; legacy saves retain their RNG state without an original seed. */
++    masterSeed?: number;
+     turn: number;
+     playing: boolean;
+     isDead: boolean;
+diff --git a/dist/session/save.js b/dist/session/save.js
+index 851a0f6bc64d6be240d3c4dd3c4f0043c04bff03..509a71d5835abb615a00146d880de1073de7f9bc 100644
+--- a/dist/session/save.js
++++ b/dist/session/save.js
+@@ -1474,6 +1474,7 @@ export function serializeGame(state, flavor, seedFlavor, ids, randartSeed = 0, e
+                 traps,
+             }),
+         rng: state.rng.getState(),
++        ...(state.masterSeed === undefined ? {} : { masterSeed: state.masterSeed }),
+         turn: state.turn,
+         playing: state.playing,
+         isDead: state.isDead,

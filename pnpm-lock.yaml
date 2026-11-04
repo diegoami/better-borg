@@ -163,7 +163,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@rpgm-tools/neo-angband-core@1.23.0-beta.2': c001fda49cbf555f0e9fab647ed26bfc62c8a993203a9fe2e739bee6d359de23
+  '@rpgm-tools/neo-angband-core@1.23.0-beta.2': ff8f2fed7cd332de2e1308b006764e33a2108e4fcae0cc3e0c653fd32834a1dd
 
 importers:
 
@@ -174,7 +174,7 @@ importers:
         version: 1.23.0-beta.2
       '@rpgm-tools/neo-angband-core':
         specifier: 1.23.0-beta.2
-        version: 1.23.0-beta.2(patch_hash=c001fda49cbf555f0e9fab647ed26bfc62c8a993203a9fe2e739bee6d359de23)
+        version: 1.23.0-beta.2(patch_hash=ff8f2fed7cd332de2e1308b006764e33a2108e4fcae0cc3e0c653fd32834a1dd)
       '@rpgm-tools/neo-angband-mod-sdk':
         specifier: 1.23.0-beta.2
         version: 1.23.0-beta.2
@@ -923,7 +923,7 @@ snapshots:
 
   '@rpgm-tools/neo-angband-content@1.23.0-beta.2': {}
 
-  '@rpgm-tools/neo-angband-core@1.23.0-beta.2(patch_hash=c001fda49cbf555f0e9fab647ed26bfc62c8a993203a9fe2e739bee6d359de23)':
+  '@rpgm-tools/neo-angband-core@1.23.0-beta.2(patch_hash=ff8f2fed7cd332de2e1308b006764e33a2108e4fcae0cc3e0c653fd32834a1dd)':
     dependencies:
       '@rpgm-tools/neo-angband-mod-sdk': 1.23.0-beta.2
 
