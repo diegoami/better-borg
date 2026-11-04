@@ -6,6 +6,12 @@ change: borg_attack's target scan no longer requires BORG_OKAY, a flag the
 port never sets, so the borg's main fight decision has targets for the first
 time. (The warrior's false stall on seed 7 was fixed by #65 in between.)
 
+**Build note.** The runs record `task/B69-borg-okay@9318d02a (dirty)`: the
+grid was started on the uncommitted fix. Its play code is the code committed
+as `57b7855` on that branch. That commit added only tests and the rebuilt
+plugin.js on top of what ran here; `git diff 9318d02 57b7855 -- src` outside
+`*.test.ts` is exactly the five BORG_OKAY removals.
+
 | Class | Before (class-grid-c2d1) | After (this record) |
 | --- | --- | --- |
 | Warrior | 6/7 (1 stall) | **8/8** |
