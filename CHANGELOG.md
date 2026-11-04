@@ -15,6 +15,10 @@ diegoami/neo-angband at `8b1169799` (1.23.0-beta.2 plus neo-angband PR
 #429 and PR #432 plus the lab trust). The headless harness and the records
 ran the published 1.23.0-beta.1 plus the same two fixes. It is not
 supported on a stock upstream engine (README, "Which engine it runs on").
+Its lab check verified play and rebirth only. The lab profile had not
+granted the truth domain or `session:control`, so the lab borg played on
+health bands and retirement into a kept save was not verified there (#53).
+The headless records verify retirement.
 
 The fork's first tagged version: upstream `1fa2f8d` (v1.4.0-beta.2), first
 rebranded `betterborg` (2026-11-02) and now Mandos. It is the stable baseline
