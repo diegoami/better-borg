@@ -27,7 +27,11 @@
  * to that record's seed 20). B40 did it again: carrying our engine fixes
  * (#429 noteSpot) saved seed 20, and the c2d1 cohort has no death left, so
  * the rider moved to 2026-11-03-b40-long-seed34 (seed 34, no stage, the
- * life #35 could not record, dying to a crow).
+ * life #35 could not record, dying to a crow). B69 restores the attack
+ * scan and moves the rider to the class-grid Mage seed-3 death; the
+ * previous 60000-cap replay no longer completes promptly (120s deadline).
+ * Seed 73, used by the chain tests, dies across all default rung targets
+ * in one decision, so it cannot prove that live dossier boundaries exist.
  *
  * Skips out loud without the game's checkout (the content pack is the
  * game's), exactly as the play suite does. Each driving test carries the
@@ -41,17 +45,17 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import * as Core from "@rpgm-tools/neo-angband-core";
 import { loadPack, packRoot } from "../play-session.js";
-import { warriorPack } from "../class/warrior/index.js";
+import { packForClass } from "../class/registry.js";
 import { DEFAULT_OFFSETS, replayDeadRun, type DeadRunFacts } from "./replay.js";
 import type { DossierHeader } from "./dossier.js";
 
 const PACK_DIR = packRoot();
 const suite = PACK_DIR ? describe : describe.skip;
 
-/** The committed record this test replays from (B40's: the first engine
- * with our carried patches; its dead run is seed 34, killed by a crow). */
-const RECORD_DIR = "docs/runs/2026-11-03-b40-long-seed34";
-const SEED = 34;
+/** B69's current death fixture; older records remain byte-immutable. */
+const RECORD_DIR = "docs/runs/2026-11-04-b69-class-grid-c2d1/mage";
+const SEED = 3;
+const REPLAY_PACK = packForClass("Mage");
 
 interface RecordedRun {
   readonly seed: number;
@@ -110,12 +114,12 @@ function factsOf(run: RecordedRun, cap: number, stage: { clvl: number; depth: nu
 suite("the death replay (#29)", () => {
   const pack = PACK_DIR ? loadPack(PACK_DIR) : null;
 
-  it(`reproduces the baseline's recorded death line exactly (seed ${String(SEED)}, the crow)`, async () => {
+  it(`reproduces the baseline's recorded death line exactly (seed ${String(SEED)}, the grey mushroom patch)`, async () => {
     const { run, header } = recordedRun();
     const replay = await replayDeadRun(
       Core,
       pack!,
-      warriorPack,
+      REPLAY_PACK,
       factsOf(run, header.cap, header.stage),
       { label: header.label, directory: RECORD_DIR, recorded: header.recorded },
       header.build,
@@ -149,7 +153,7 @@ suite("the death replay (#29)", () => {
     const replay = await replayDeadRun(
       Core,
       pack!,
-      warriorPack,
+      REPLAY_PACK,
       factsOf(run, header.cap, header.stage),
       { label: header.label, directory: RECORD_DIR, recorded: header.recorded },
       header.build,
@@ -178,7 +182,7 @@ suite("the death replay (#29)", () => {
     const replay = await replayDeadRun(
       Core,
       pack!,
-      warriorPack,
+      REPLAY_PACK,
       factsOf(run, header.cap, header.stage),
       { label: header.label, directory: RECORD_DIR, recorded: header.recorded },
       header.build,
@@ -215,7 +219,7 @@ suite("the death replay (#29)", () => {
       replayDeadRun(
         Core,
         pack!,
-        warriorPack,
+        REPLAY_PACK,
         wrong,
         { label: header.label, directory: RECORD_DIR, recorded: header.recorded },
         header.build,
@@ -234,7 +238,7 @@ suite("the death replay (#29)", () => {
     const replay = await replayDeadRun(
       Core,
       pack!,
-      warriorPack,
+      REPLAY_PACK,
       wrongTurn,
       { label: header.label, directory: RECORD_DIR, recorded: header.recorded },
       header.build,

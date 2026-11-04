@@ -1,0 +1,410 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T15:54:55.626Z",
+  "label": "g69-paladin",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B69-borg-okay@57b7855c",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "generic-paladin pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Paladin",
+      "baseStats": [
+        17,
+        10,
+        15,
+        12,
+        15
+      ],
+      "decisions": 165,
+      "turns": 2551,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 304,
+      "kills": 4,
+      "places": 51,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 2,
+        "rest": 57,
+        "walk": 96,
+        "descend": 4,
+        "ascend": 3,
+        "open": 1,
+        "pickup": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 2183
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Paladin",
+      "baseStats": [
+        17,
+        10,
+        15,
+        12,
+        15
+      ],
+      "decisions": 136,
+      "turns": 3077,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 318,
+      "kills": 6,
+      "places": 60,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 4,
+        "ascend": 3,
+        "study": 1,
+        "cast": 3,
+        "rest": 22,
+        "walk": 100,
+        "throw": 1,
+        "pickup": 2
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 1845
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Paladin",
+      "baseStats": [
+        17,
+        10,
+        15,
+        12,
+        15
+      ],
+      "decisions": 451,
+      "turns": 8466,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 326,
+      "kills": 3,
+      "places": 245,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 4,
+        "descend": 13,
+        "walk": 405,
+        "open": 7,
+        "rest": 5,
+        "ascend": 12,
+        "pickup": 3,
+        "quaff": 1
+      },
+      "jitter": 40,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 6410
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Paladin",
+      "baseStats": [
+        17,
+        10,
+        15,
+        12,
+        15
+      ],
+      "decisions": 53,
+      "turns": 2490,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 292,
+      "kills": 6,
+      "places": 22,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 3,
+        "rest": 4,
+        "descend": 2,
+        "walk": 42,
+        "ascend": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 769
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Paladin",
+      "baseStats": [
+        17,
+        10,
+        15,
+        12,
+        15
+      ],
+      "decisions": 361,
+      "turns": 5767,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 341,
+      "kills": 6,
+      "places": 167,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 3,
+        "descend": 18,
+        "walk": 276,
+        "throw": 1,
+        "open": 11,
+        "pickup": 1,
+        "ascend": 17,
+        "drop": 27,
+        "rest": 6
+      },
+      "jitter": 20,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4837
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Paladin",
+      "baseStats": [
+        17,
+        10,
+        15,
+        12,
+        15
+      ],
+      "decisions": 356,
+      "turns": 6023,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 323,
+      "kills": 3,
+      "places": 201,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 18,
+        "ascend": 16,
+        "study": 1,
+        "cast": 4,
+        "walk": 307,
+        "open": 5,
+        "read": 1,
+        "rest": 4
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4610
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Paladin",
+      "baseStats": [
+        17,
+        10,
+        15,
+        12,
+        15
+      ],
+      "decisions": 253,
+      "turns": 3467,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 3,
+      "gold": 301,
+      "kills": 1,
+      "places": 133,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 8,
+        "walk": 231,
+        "rest": 2,
+        "ascend": 7,
+        "pickup": 1,
+        "throw": 1,
+        "open": 1
+      },
+      "jitter": 36,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3644
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Paladin",
+      "baseStats": [
+        17,
+        10,
+        15,
+        12,
+        15
+      ],
+      "decisions": 64,
+      "turns": 1399,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 315,
+      "kills": 6,
+      "places": 34,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 2,
+        "descend": 2,
+        "walk": 55,
+        "ascend": 1,
+        "pickup": 1,
+        "rest": 1,
+        "open": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 728
+      }
+    }
+  ]
+}

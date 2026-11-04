@@ -1,0 +1,424 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T15:52:42.949Z",
+  "label": "g69-druid",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B69-borg-okay@57b7855c",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "generic-druid pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Druid",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 35,
+      "turns": 400,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 388,
+      "kills": 0,
+      "places": 22,
+      "dead": true,
+      "causeOfDeath": "grey mushroom patch",
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 3,
+        "walk": 26,
+        "open": 1,
+        "ascend": 2,
+        "throw": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 855
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Druid",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 907,
+      "turns": 10652,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 404,
+      "kills": 3,
+      "places": 487,
+      "dead": true,
+      "causeOfDeath": "wild dog",
+      "commands": {
+        "descend": 27,
+        "ascend": 26,
+        "study": 1,
+        "cast": 1,
+        "walk": 793,
+        "pickup": 7,
+        "wield": 2,
+        "open": 19,
+        "tunnel": 3,
+        "drop": 19,
+        "rest": 7,
+        "throw": 1,
+        "read": 1
+      },
+      "jitter": 33,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 18422
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Druid",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 1007,
+      "turns": 12659,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 399,
+      "kills": 6,
+      "places": 519,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 35,
+        "ascend": 34,
+        "walk": 903,
+        "throw": 1,
+        "open": 9,
+        "pickup": 6,
+        "rest": 16,
+        "close": 1
+      },
+      "jitter": 35,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 19205
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Druid",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 476,
+      "turns": 6308,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 2,
+      "gold": 385,
+      "kills": 4,
+      "places": 330,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 2,
+        "descend": 7,
+        "ascend": 6,
+        "rest": 31,
+        "walk": 408,
+        "throw": 1,
+        "pickup": 8,
+        "wield": 2,
+        "open": 8,
+        "quaff": 2
+      },
+      "jitter": 51,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 9651
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Druid",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 1151,
+      "turns": 13909,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 379,
+      "kills": 7,
+      "places": 575,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 43,
+        "walk": 984,
+        "ascend": 42,
+        "pickup": 7,
+        "tunnel": 1,
+        "rest": 62,
+        "open": 8,
+        "throw": 1,
+        "wield": 1
+      },
+      "jitter": 40,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 19674
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Druid",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 319,
+      "turns": 3241,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 416,
+      "kills": 2,
+      "places": 179,
+      "dead": true,
+      "causeOfDeath": "white harpy",
+      "commands": {
+        "descend": 18,
+        "ascend": 17,
+        "study": 1,
+        "cast": 1,
+        "walk": 279,
+        "open": 1,
+        "pickup": 1,
+        "throw": 1
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4847
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Druid",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 1034,
+      "turns": 15382,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 472,
+      "kills": 6,
+      "places": 564,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 24,
+        "ascend": 23,
+        "walk": 940,
+        "pickup": 10,
+        "throw": 1,
+        "wield": 1,
+        "rest": 12,
+        "quaff": 1,
+        "open": 16,
+        "hold": 2,
+        "tunnel": 2
+      },
+      "jitter": 38,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 23075
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Druid",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 76,
+      "turns": 761,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 404,
+      "kills": 0,
+      "places": 45,
+      "dead": true,
+      "causeOfDeath": "cave spider",
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 3,
+        "ascend": 2,
+        "walk": 68,
+        "throw": 1
+      },
+      "jitter": 38,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 1215
+      }
+    }
+  ]
+}
