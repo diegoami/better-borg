@@ -1,6 +1,7 @@
 # Mandos settings
 
-The `borg.*` identifiers are retained from the Borg and the mod's save format.
+The `borg.*` identifiers are stable saved setting names, including Mandos's
+own birth-pool, stage and replay settings.
 Mandos reads the behavior toggles when its controller is created; changing
 them requires a reload before the controller uses the new value. The birth
 pools are different: the `Class:` and `Race:` toggles are read once per page

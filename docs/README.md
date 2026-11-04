@@ -34,6 +34,43 @@ recipes. The Mods screen carries the full descriptions.
 | Town saving and early stockpiles | `borg.selfScum`, `borg.munchkinStart` | Self-scum on, munchkin start off. |
 | Replay handoff | `borg.replayReleaseTurn`, `borg.replayDeathTurn` | 0 (release mode off, death turn unnamed). |
 
+### Toggle reference
+
+The names and defaults below match the Mods screen. The overview above
+explains the pools; each switch remains individually listed here.
+
+| Setting | Identifier | Default | What it does |
+| --- | --- | --- | --- |
+| Play risky | `borg.playsRisky` | off | Skip the early hit-point and character-level gates that hold Mandos above a depth, wait longer before drinking a cure, and back away later in a losing fight. |
+| Value melee and missile damage | `borg.worshipsDamage` | off | Add weight to weapon and bow damage when Mandos scores a set of gear, so a trade that costs armour for damage looks better than it otherwise would. |
+| Value speed | `borg.worshipsSpeed` | off | Add weight to a speed bonus when scoring gear. |
+| Value hit points | `borg.worshipsHp` | off | Add weight to constitution and hit points when scoring gear. |
+| Value spell points | `borg.worshipsMana` | off | Add weight to spell points when scoring gear. |
+| Value armour class | `borg.worshipsAc` | off | Add weight to armour class when scoring gear. |
+| Value gold | `borg.worshipsGold` | off | Sell harder, walk down rather than pay for a recall, and put off the first deep recall. |
+| Save up for something it wants | `borg.selfScum` | on | Let Mandos set itself a gold target and work in town until it can afford one item it has decided it needs. |
+| Skimp on stockpiles for an early munchkin run | `borg.munchkinStart` | off | Below character level borg_munchkin_level (12), value stockpiles of resist poison and speed potions, phase door, word of recall and the deeper cures less than it normally would, on the assumption that a young character is cashing out early. |
+| Class: Warrior | `borg.classWarrior` | on | Allow this class in the next-birth draw pool. |
+| Class: Mage | `borg.classMage` | on | Allow this class in the next-birth draw pool. |
+| Class: Druid | `borg.classDruid` | on | Allow this class in the next-birth draw pool. |
+| Class: Priest | `borg.classPriest` | on | Allow this class in the next-birth draw pool. |
+| Class: Necromancer | `borg.classNecromancer` | on | Allow this class in the next-birth draw pool. |
+| Class: Paladin | `borg.classPaladin` | on | Allow this class in the next-birth draw pool. |
+| Class: Rogue | `borg.classRogue` | on | Allow this class in the next-birth draw pool. |
+| Class: Ranger | `borg.classRanger` | on | Allow this class in the next-birth draw pool. |
+| Class: Blackguard | `borg.classBlackguard` | on | Allow this class in the next-birth draw pool. |
+| Race: Human | `borg.raceHuman` | on | Allow this race in the next-birth draw pool. |
+| Race: Half-Elf | `borg.raceHalfElf` | on | Allow this race in the next-birth draw pool. |
+| Race: Elf | `borg.raceElf` | on | Allow this race in the next-birth draw pool. |
+| Race: Hobbit | `borg.raceHobbit` | on | Allow this race in the next-birth draw pool. |
+| Race: Gnome | `borg.raceGnome` | on | Allow this race in the next-birth draw pool. |
+| Race: Dwarf | `borg.raceDwarf` | on | Allow this race in the next-birth draw pool. |
+| Race: Half-Orc | `borg.raceHalfOrc` | on | Allow this race in the next-birth draw pool. |
+| Race: Half-Troll | `borg.raceHalfTroll` | on | Allow this race in the next-birth draw pool. |
+| Race: Dunadan | `borg.raceDunadan` | on | Allow this race in the next-birth draw pool. |
+| Race: High-Elf | `borg.raceHighElf` | on | Allow this race in the next-birth draw pool. |
+| Race: Kobold | `borg.raceKobold` | on | Allow this race in the next-birth draw pool. |
+
 Birth pools and stage settings are fixed for a life and apply on the next
 birth. Behavior-toggle changes need a reload. A Warrior uses its measured
 point-buy plan; other classes use the game's suggested stats. Casters can
