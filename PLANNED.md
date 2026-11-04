@@ -10,6 +10,16 @@ holds the detailed design; [GitHub issues](https://github.com/diegoami/mandos/is
 and the latest [checkpoint](https://github.com/diegoami/mandos/issues/36)
 hold the active queue and handover. Issue labels own task status.
 
+## Current authorized scope
+
+The owner's direction is **bug hunting and fixing only** until the owner
+changes scope ([CLAUDE.md](CLAUDE.md), rule 15). Hunt, reproduce, attribute
+and fix defects; restoring omitted C Borg behavior is DEFECT work. New
+strategies, parameter learning, fatal-state snapshots and new unattended
+stage-resume functionality remain parked. The later roadmap sections
+describe future direction, not authorization to start features when the
+audit ends.
+
 ## Restore and audit the inherited Borg
 
 Compare the TypeScript port with the Angband 4.2.6 C Borg across classes,
