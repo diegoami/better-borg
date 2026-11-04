@@ -1,6 +1,12 @@
-# How the Borg runs on mod API 2
+# How Mandos runs on mod API 2
 
-The Borg is a mod API 2 mod. Its manifest declares schema version 2, the API range `>=2.0.0 <3.0.0`, and Neo Angband `>=1.23.0-beta.1`, and `plugin.ts` exports an API 2 definition with `start`, `stop`, `armed`, and `controller`. There are no hooks, because the Borg changes no rule and adds no record.
+Mandos is a mod API 2 plugin. Its manifest declares schema version 2,
+API range `>=2.0.0 <3.0.0`, and engine range
+`>=1.23.0-beta.2-mandos.1 <1.23.0`. That range selects our engine fork's
+lab builds. `plugin.ts` exports `start`, `stop`, `armed` and `controller`.
+It drives the game through commands rather than installing engine rule
+hooks or adding game content. The bridge began in neostryder's Borg port;
+Mandos adds the stage, journal and restart lifecycle around it.
 
 Upstream's borg, and the port of it under `src/`, decides synchronously: it asks for the player, a grid, or the pack partway through a decision and uses the answer at once. API 2 answers every call with a promise. The code in `src/api2/` sits between the two. It reads the game before each decision, hands the decision code a synchronous view of that reading, and turns the chosen command into intents.
 
@@ -12,7 +18,7 @@ A game that grants no engine domain gets a log line saying the Borg could not st
 
 ## Who gets the keyboard
 
-`armed` answers true only for a character the player handed over: one whose save Ctrl-Z marked with `NOSCORE_BORG`, or one created from the title screen's **New Borg character** row, which starts character creation with the controller armed. Installing or enabling the mod does neither. For any other character the game never calls the controller. The Ctrl-Z mark comes from the engine domain's state, because the known world does not include it.
+`armed` answers true only for a character the player handed over: one whose save Ctrl-Z marked with `NOSCORE_BORG`, or one created from the title screen's **New Mandos character** row, which starts character creation with the controller armed. Installing or enabling the mod does neither. For any other character the game never calls the controller. The Ctrl-Z mark comes from the engine domain's state, because the known world does not include it.
 
 ## One tick
 
@@ -20,11 +26,11 @@ The game calls `controller` at each input wait, and `src/api2/controller.ts` han
 
 The command builders the decision code calls, such as `walk`, `quaff`, and `shop-buy`, are built locally in `src/api2/act.ts` with the same codes and arguments the game's API 1 builders produced, so the ported decisions run as written.
 
-The keyboard goes back to the player after 25 refused commands in a row, after 25 decisions in a row with no command, or after the same command is accepted 40 times in a row against an unchanged scene. The scene is the character's position, depth, hit points, spell points, experience, and gold, plus the monsters in view and their hit points. That last rule covers a command the game accepts that does nothing, such as opening a door the Borg's map still shows as closed after it was opened out of sight. No game turn passes, so the refusal and idle counts never move. At the sixth repeat, and every sixth one after it, the Borg also clears its own map's record of the grid the command aimed at, and the next decision treats that grid as unknown.
+The keyboard goes back to the player after 25 refused commands in a row, after 25 decisions in a row with no command, or after the same command is accepted 40 times in a row against an unchanged scene. The scene is the character's position, depth, hit points, spell points, experience, gold and timed afflictions (blindness, confusion, fear, poison, cuts, stun and paralysis), plus the monsters in view and their hit points. Counting down an affliction is progress, so waiting it out is not classified as an unchanged-scene stall. That last rule covers a command the game accepts that does nothing, such as opening a door the Borg's map still shows as closed after it was opened out of sight. No game turn passes, so the refusal and idle counts never move. At the sixth repeat, and every sixth one after it, the Borg also clears its own map's record of the grid the command aimed at, and the next decision treats that grid as unknown.
 
 ## The view the decision code reads
 
-`src/api2/world.ts` reads `view.world()` once per decision and builds the view the port was written against. The known world carries less than the API 1 view did, and the gaps are filled with what the player can know. The map is the remembered map: a grid never seen is impassable, with no feature or trap, and a secret door shows as the granite the player sees. A grid glows only if the known level says so. A timed effect reads as the shortest duration in the grade the status line names, and food is the status line's percentage times 100. The game turn is part of the world only when the mod holds `state:turn.read`, so the manifest lists it. An item's timeout is its count of charging items, and a light's fuel comes from the known item.
+`src/api2/world.ts` reads `view.world()` once per decision and builds the view the port was written against. The known world carries less than the API 1 view did, and the gaps are filled with what the player can know. The map is the remembered map: a grid never seen is impassable, with no feature or trap, and a secret door shows as the granite the player sees. A grid glows only if the known level says so. The inventory master list already contains quivered handles; the separate quiver accessor identifies their membership and order, so its items must not be appended to inventory again. A timed effect reads as the shortest duration in the grade the status line names, and food is the status line's percentage times 100. The game turn is part of the world only when the mod holds `state:turn.read`, so the manifest lists it. An item's timeout is its count of charging items, and a light's fuel comes from the known item.
 
 Some questions come up partway through a decision, so `src/api2/caches.ts` keeps three caches to answer them. Race records are read once per race index and kept for the session. The activation of each worn item is read once per artifact name, ego name, or kind. Loadout simulations answer what the character would be with an item worn, removed, or bought.
 
@@ -46,7 +52,34 @@ Messages come in through the `message` event. The bridge holds them between deci
 
 Each manifest toggle reaches the decision code as the setting it names, unchanged, and a toggle the game did not resolve stays at upstream's default. The buff-timer safety net reads `bugfix.borgFixes` from the mod's flags and stays on when that flag is missing.
 
-The manifest lists 17 capabilities and no wildcard: `command:add`, `state:player.read`, `state:monsters.read`, `state:map.read`, `state:inventory.read`, `state:floor.read`, `state:stores.read`, `state:spells.read`, `state:turn.read`, `state:monsters-actual.read`, `state:interaction.read`, `input:intent`, `input:prompt.reply`, `event:message`, `ui:title`, `profiles:manage`, and `saves:manage`. Without `state:interaction.read` the game never calls the controller, and without the two input grants every intent and prompt answer is refused.
+The [manifest](../manifest.json) lists 22 capabilities and no wildcard:
+`command:add`, `state:player.read`, `state:monsters.read`, `state:map.read`, `state:inventory.read`, `state:floor.read`, `state:stores.read`, `state:spells.read`, `state:turn.read`, `state:monsters-actual.read`, `state:interaction.read`, `input:intent`, `input:prompt.reply`, `event:message`, `event:run-end`, `event:dungeonlevel`, `event:player-command`, `ui:title`, `ui:birth.replace`, `profiles:manage`, `saves:manage`, `session:control`.
+Without `state:interaction.read` the game never calls the controller;
+without the input grants, intents and prompt answers are refused. The
+journal needs its run-end, dungeon-level and player-command events;
+keeping a stage save needs `session:control`.
+
+## Mandos's run lifecycle
+
+The stage watch runs before another decision. Once both thresholds are
+attained, the retirement protocol saves the character and renames the
+kept slot into the library before creating the next character. A refused
+save or rename logs the reason and leaves the character playing.
+
+The engine's run-end event drives death recording and restart. The normal
+dead character's save bytes are already removed when the report arrives,
+so Mandos writes its graveyard into install storage, not that deleted
+character's save bag. The restart loop awaits the journal write before
+requesting the next birth. Recorded fields include the seed when the
+engine supplies it and whether the human issued commands.
+
+A replay handoff, when explicitly armed, precedes the stage watch. It can
+release the keyboard at a dossier boundary, but a seed alone has not yet
+proved desktop and harness runs identical. See
+[#54](https://github.com/diegoami/mandos/issues/54) and the
+[settings reference](../SETTINGS.md#the-death-replay-trainer-playing-a-dead-runs-last-turns).
+The graveyard contains selected facts and journal data, not a full save
+of the fatal game state.
 
 ## Tests
 

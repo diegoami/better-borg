@@ -14,18 +14,20 @@ the builds of diegoami/neo-angband's `neowarrior-lab` (1.23.0-beta.2 plus
 neo-angband PR #429, #432 and #433, reporting 1.23.0-beta.2-mandos.N), and a
 stock engine refuses the mod.
 
-- [Visible] [DEFECT] **The harness and the lab run one engine:
-  1.23.0-beta.2 plus our patches** (#54, owner). The harness moved from
+- [Visible] [DEFECT] **Align the harness and lab on the
+  1.23.0-beta.2 engine base with carried fixes** (#54, owner). The harness moved from
   the published 1.23.0-beta.1 to beta.2 (core, content and SDK). The c2d1
   cohort plays identically. The lab branch carries the master-seed seam
   (PR #433, now carried under the all-PRs-accepted policy) and reports
   its own version, so the manifest can require it.
-- [Visible] [CHOICE] **A dead run can be replayed from the lab** (#54).
+- [Visible] [CHOICE] **Record the lab seed and human-intervention mark** (#54).
   Each graveyard entry records the master seed the run ran on when the
   engine reports it (feature-detected). A life in which the player gave a
   command is marked "touched", because its seed alone does not replay it.
   Each archived run is one log line, and `node tools/lab.mjs check` lists
-  them with births, deaths, retirements and any missing permission.
+  them with births, deaths, retirements and any missing permission. Exact
+  desktop-to-harness replay is still under investigation in #54; the seed
+  field alone does not establish it.
 - [Visible] [CHOICE] **Choose the classes and races the Borg plays** (#16,
   #17; ours, never requested upstream). Twenty toggles on the Mods screen,
   `Class: Warrior` ... `Class: Blackguard` and `Race: Human` ...
@@ -36,9 +38,41 @@ stock engine refuses the mod.
   up. A Warrior is still born through the warrior pack's measured plan;
   every other class is born on the game's own suggested stats for its race
   and class (the birth screen's starting spread, the C's `generate_stats`).
-  Caster classes play without learning spells for now (#50). Replaces
+  Spell study and testing were restored by PR #63 (#50); the generic birth
+  plan does not prevent casters from learning. Replaces
   `borg.raceRandom` and `borg.raceChoice`: a stored choice in either is no
   longer read. The title row is now "New Mandos character".
+
+- [Visible] [DEFECT] **The main attack chooser finds its targets** (#69,
+  PR #70). The port required BORG_OKAY, a panel flag it never sets. Treating
+  it as set, as the other panel-free paths do, restores attack/defense
+  scans while retaining the view gate. The class grid at c2d1 improves
+  from 37/71 to 57/72; the [record](docs/runs/2026-11-04-b69-class-grid-c2d1/README.md)
+  names the builds and cohorts. Offered upstream as mod-borg PR #38.
+- [Visible] [DEFECT] **Torchless Necromancers stay dark** (#68, PR #71).
+  UNLIGHT supplies vision without a lamp; it no longer marks the grid as
+  torch-lit and incorrectly adds 25 to spell failure. The C's exact light
+  predicate and declared ZERO_FAIL check are restored too. The
+  [Necromancer cohort](docs/runs/2026-11-04-b68-necromancer-c2d1/README.md)
+  improves from 4/8 to 6/8 at c2d1; Warrior, Druid and Priest controls are
+  unchanged. Offered upstream as mod-borg PR #39.
+- [Visible] [DEFECT] **The remaining inventory/recharge rungs are restored**
+  (#50, PR #73): make a full-pack hole, shed one item when slow, dump a
+  whole bad quiver stack, and wear then rest to recharge equipment.
+  Consumption, safety gates and power/value comparisons follow the C.
+  The [Ranger cohort](docs/runs/2026-11-04-b50-ranger-c2d1/README.md) improves
+  from 6/8 to 7/8; the Warrior control remains 4/4 with identical facts.
+- [Visible] [DEFECT] **Restore other omitted port decisions**: Blackguards
+  use their COMBAT_REGEN recovery rules (#55); recovery distinguishes
+  primary casters from hybrids (#57); the play-step trap/door magic
+  branches are restored (#59); casters study and test spells (#50 / PR #63).
+  The stall watch also recognizes afflictions counting down as progress
+  instead of releasing a character waiting out confusion (#65).
+- [Internal] [DEFECT] **Mandos documentation describes this fork** (#74).
+  The README, quick reference, settings and API guide explain Mandos's
+  behavior and verified limits. Root PLANNED.md is the Mandos roadmap
+  entry; the original port's planning record is preserved separately in
+  docs/history/upstream-playability.md.
 
 ## 0.1.0 - 2026-11-04
 

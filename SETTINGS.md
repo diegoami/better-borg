@@ -1,7 +1,9 @@
-# Settings reference
+# Mandos settings
 
-Mandos (formerly better-borg). The Borg reads the toggles below when its controller is created; changing any
-of them requires a reload before the controller uses the new value. The birth
+The `borg.*` identifiers are stable saved setting names, including Mandos's
+own birth-pool, stage and replay settings.
+Mandos reads the behavior toggles when its controller is created; changing
+them requires a reload before the controller uses the new value. The birth
 pools are different: the `Class:` and `Race:` toggles are read once per page
 (every armed birth follows the reload its writer issues, so each birth sees
 the then-current toggles), so a change applies to the next rebirth without
@@ -30,9 +32,8 @@ Each character the Borg births draws ONE class from the `Class:` toggles
 switched on and ONE race from the `Race:` toggles switched on (#16; a fork
 choice, upstream's Borg reincarnates at random). The draw is deterministic:
 it is seeded by a persisted birth counter, and each birth bumps the counter,
-so an unattended line varies its pair, the same counter always gives the
-same pair, and there is no clock, no random number and no use of the Borg's
-decision RNG. The counter is not a record of what was played; the
+so an unattended line varies its pair and the same counter gives the same
+pair. The draw uses neither a wall clock nor the controller's decision RNG. The counter is not a record of what was played; the
 per-character journal is. All toggles start on.
 
 - **Pin a lineage**, e.g. "always a High-Elf Warrior": switch on only
@@ -44,9 +45,10 @@ per-character journal is. All toggles start on.
 A Warrior is born through the warrior pack's measured point-buy plan. Every
 other class is born on the game's own suggested stats for that race and
 class (the birth screen's starting spread, the C's `generate_stats`), until
-a dedicated pack for it is measured. Caster classes play without learning
-spells for now: the borg's spell-learning step is one of the C steps the
-port never ported (#50).
+a dedicated pack for it is measured. Spell study and testing are restored
+from the C Borg (#50 / PR #63); eligible spells also participate in the
+combat chooser (#69). A generic birth plan does not prevent a caster from
+learning or fighting with its spells.
 
 ## The stage: what the grind keeps a save at
 
@@ -59,30 +61,38 @@ the stage, both read once per page so a change applies to the NEXT birth:
 1. `borg.stageClvl` = 2 (the character level a run must reach),
 2. `borg.stageDepth` = 1 (the depth a run must have arrived on; 0 is town).
 
-The defaults are CALIBRATED, not guessed: the stage baseline
-(`docs/runs/2026-11-03-stage-baseline/`) measured today's Borg on the
-standard seed grid and found the frontier at character level 2, depth 1 -
-attained by half the grid, one rung deeper by none. That is the strongest
-rung today's strength can grind at, and it ships as the default so the
-number has somewhere to climb from. The owner's destination - roughly
-character level 20 at moderate depth, reachable in a watched evening - is
-where the strength work (the swap subsystem, the upstream door-close PR)
-is headed; move the two settings as it lands. The ladder (#26) climbs the
-same settings: stage N+1's lineage resumes from stage N's kept saves.
+The default was selected using the [c2d1 calibration baseline](docs/runs/2026-11-03-stage-baseline-c2d1/README.md).
+It is an early measurement target, not a claim about the strongest stage
+Mandos can reach. Later fixes change the reach-rate; the
+[run records](docs/runs/README.md) name the build, cohort and result.
+The longer-term goal is reliable progress toward a character around level
+20 at moderate depth. Raise the settings as stronger stages are measured.
+
+A successful save and rename keep a library entry before the next birth.
+If either is refused, Mandos logs the reason and keeps playing; it does
+not abandon a living character without keeping the save. The
+[stage-ladder work](https://github.com/diegoami/mandos/issues/26) covers
+using those kept characters as the inputs to later stages.
 
 A retired save's name is short because the host caps save names at 15
 characters: `M s20 c2d1` from the harness (the seed is the name's identity
 - the ladder maps its per-seed cohorts by it) or `M n17 c2d1` in the mod
-(the lineage counter - a mod cannot know the game seed). The date a slot
-was kept is the roster's own last-played column.
+(the lineage counter used by the mod's naming scheme). The lab's carried
+master-seed seam can also record the game seed in the graveyard; the name
+format remains based on the lineage counter. The date a slot was kept is
+the roster's own last-played column.
 
 ## The death-replay trainer: playing a dead run's last turns
 
-Since #29 the record of every dead harness run carries a post-mortem
-dossier ladder (`docs/runs/<session>/postmortem/`, written by
-`tools/replay.mjs`; the workflow is docs/postmortem.md) - and the owner can
-play any rung's last turns themselves. Two settings arm it, both read once
-per page so the release point is fixed for the life (rule 5):
+The [post-mortem workflow](docs/postmortem.md) can generate a dossier ladder
+for a dead harness run with `tools/replay.mjs`. It needs the record's Borg
+code, engine/content pin and planned birth. The replay verifies cause,
+turn, decision count and command census; a mismatch is reported as
+DIVERGED. A rung crossed entirely by the killing decision has no live
+release boundary.
+
+Two settings arm the optional human handoff, both read once per page so
+the release point is fixed for the life:
 
 1. `borg.replayReleaseTurn` = 0 (off): the turn the Borg stops and hands
    the keyboard back with the death banner. Take it from the dossier's
@@ -90,16 +100,17 @@ per page so the release point is fixed for the life (rule 5):
 2. `borg.replayDeathTurn` = 0 (unnamed): the recorded death turn the banner
    counts down from ("recorded death: turn T").
 
-The launch recipe (the dossier's provenance block names the exact birth):
-open the lab build with `?seed=<S>&new`, pin the recorded character's class and
-race (only its `Class:` and `Race:` toggles on), birth
-from the title row, and the Borg replays the run deterministically to the
-release turn - then the keyboard is yours, every command you issue is
-logged (`[replay] ...`), and Ctrl-Z gives it back at any moment.
+For a matching replay, the dossier's provenance block names the birth and
+its release boundary. The lab launch route is `?seed=<S>&new`, with only
+the recorded class and race enabled, followed by **New Mandos character**.
+At the release turn, Mandos hands back the keyboard and shows the death
+banner; subsequent human commands are logged, and Ctrl-Z can hand control
+back.
 
-One caveat, stated: the lab build runs the lab branch's engine (the
-noteSpot fix, upstream PR #429) while a harness record ran the published
-engine - until a release carries the fix, a lab replay of a HARNESS death
-can diverge from the record at the first door-close. The watched-lineage
-deaths the mod itself records replay exactly once the upstream seed seam
-lands (neo-angband#431): a mod cannot read the seed its game runs on.
+**A seed is not yet sufficient proof of a matching lab replay.** The lab
+records seeds and human-intervention marks, but a desktop death has still
+diverged from the harness ([#54](https://github.com/diegoami/mandos/issues/54)).
+The harness and lab use the beta.2 engine base with carried fixes; their
+birth and seed paths must also agree. Verify the replay before treating a
+dossier boundary as the same game state. The graveyard retains selected
+run facts and journal data, not a full save of the fatal dungeon.

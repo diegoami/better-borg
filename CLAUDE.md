@@ -57,3 +57,10 @@
     forks, or upstream. AI use is disclosed in one place,
     `AI_USAGE_POLICY.md`. The `commit-msg` hook (`.githooks/`, process
     section 1) refuses such a message.
+15. **Current scope: bug hunting and fixing only** (owner, 2026-11-04;
+    until the owner changes scope). Hunt, reproduce, attribute and fix
+    defects. Restoring omitted C Borg behavior is DEFECT work. New
+    strategies, parameter learning, fatal-state snapshots and new
+    unattended stage-resume functionality remain parked. Finishing an
+    audit does not automatically authorize roadmap features; expanding
+    beyond defect work requires the owner's explicit scope change.
