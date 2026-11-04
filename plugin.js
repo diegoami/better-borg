@@ -118,7 +118,7 @@ function registerBorgTitle(ctx, memory) {
     const cleared = await clearBirthFlag(slot);
     if (cleared) return;
     ctx.log?.(
-      "the Borg could not durably clear its birth flag after a refused start, so the flag may still be set: the next character created after any later reload would be born as the Borg's planned warrior. The presenter still consumes-or-declines it on that page, but a human's birth could be taken once - clear the mod's install storage before letting anyone create a character here"
+      "the Borg could not durably clear its birth flag after a refused start, so the flag may still be set: the next character created after any later reload would be born as the Borg's planned character. The presenter still consumes-or-declines it on that page, but a human's birth could be taken once - clear the mod's install storage before letting anyone create a character here"
     );
   }
   async function here() {
@@ -17022,6 +17022,118 @@ function createTick(bridge2, borg) {
   };
 }
 
+// src/birth/pools.ts
+var CLASS_ROSTER = [
+  "Warrior",
+  "Mage",
+  "Druid",
+  "Priest",
+  "Necromancer",
+  "Paladin",
+  "Rogue",
+  "Ranger",
+  "Blackguard"
+];
+var RACE_ROSTER = [
+  "Human",
+  "Half-Elf",
+  "Elf",
+  "Hobbit",
+  "Gnome",
+  "Dwarf",
+  "Half-Orc",
+  "Half-Troll",
+  "Dunadan",
+  "High-Elf",
+  "Kobold"
+];
+function flagSuffix(name) {
+  return name.replace(/[^A-Za-z0-9]/gu, "");
+}
+function classFlag(name) {
+  return `borg.class${flagSuffix(name)}`;
+}
+function raceFlag(name) {
+  return `borg.race${flagSuffix(name)}`;
+}
+var CLASS_RULES = CLASS_ROSTER.map((name) => ({
+  flag: classFlag(name),
+  title: `Class: ${name}`,
+  description: `The Borg may birth a ${name}. Each birth draws its class from the classes switched on; switch on just one to always play it. All off counts as all on.`,
+  default: true,
+  requiresReload: true
+}));
+var RACE_RULES = RACE_ROSTER.map((name) => ({
+  flag: raceFlag(name),
+  title: `Race: ${name}`,
+  description: `The Borg may birth a ${name}. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on.`,
+  default: true,
+  requiresReload: true
+}));
+function drawIndex(seed, size) {
+  let h = seed >>> 0;
+  h ^= h >>> 16;
+  h = Math.imul(h, 2246822507);
+  h ^= h >>> 13;
+  h = Math.imul(h, 3266489909);
+  h ^= h >>> 16;
+  return Math.floor((h >>> 0) / 4294967296 * size);
+}
+function plural(kind) {
+  return kind.endsWith("s") ? `${kind}es` : `${kind}s`;
+}
+function pool(kind, roster, flagOf, input, game, log) {
+  const known = game !== null && game.length > 0 ? roster.filter((name) => game.includes(name)) : [...roster];
+  const unknown = roster.filter((name) => !known.includes(name));
+  if (unknown.length > 0) {
+    log(`the game does not define the ${unknown.length > 1 ? plural(kind) : kind} ${unknown.join(", ")}, so the Borg leaves ${unknown.length > 1 ? "them" : "it"} out of its draw`);
+  }
+  const on2 = known.filter((name) => input.flags[flagOf(name)] ?? true);
+  if (on2.length > 0) return on2;
+  log(`every ${kind} toggle is off, so the Borg draws from every ${kind} instead`);
+  return known.length > 0 ? known : [...roster];
+}
+function resolveBirthPair(input, log) {
+  const classPool = pool("class", CLASS_ROSTER, classFlag, input, input.gameClasses, log);
+  const racePool = pool("race", RACE_ROSTER, raceFlag, input, input.gameRaces, log);
+  const seed = (input.lineage >>> 0) * 2;
+  const className = classPool[drawIndex(seed, classPool.length)];
+  const raceName2 = racePool[drawIndex(seed + 1, racePool.length)];
+  const which = (chosen, kind) => chosen.length === 1 ? `the only ${kind} switched on` : `drawn from ${String(chosen.length)} ${plural(kind)}`;
+  log(
+    `the Borg's next character will be a ${raceName2} ${className} (class ${which(classPool, "class")}, race ${which(racePool, "race")}, lineage ${String(input.lineage)})`
+  );
+  return { className, raceName: raceName2, classPool, racePool };
+}
+
+// src/class/warrior/lineage.ts
+var LINEAGE_KEY = "lineage";
+function lineageFrom(value) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return 0;
+  const stored = value[LINEAGE_KEY];
+  return typeof stored === "number" && Number.isInteger(stored) && stored >= 0 ? stored : 0;
+}
+async function readLineage(slot) {
+  try {
+    const read = await slot.get();
+    if (!read.ok) return 0;
+    return lineageFrom(read.value);
+  } catch {
+    return 0;
+  }
+}
+async function bumpLineage(slot) {
+  try {
+    const read = await slot.get();
+    if (!read.ok) return false;
+    const base = read.value !== null && typeof read.value === "object" && !Array.isArray(read.value) ? read.value : {};
+    const written = await slot.set({ ...base, [LINEAGE_KEY]: lineageFrom(read.value) + 1 });
+    return written.ok;
+  } catch {
+    return false;
+  }
+}
+
 // src/class/warrior/plan.ts
 var WARRIOR_CLASS_NAME = "Warrior";
 var STAT_ORDER = ["STR", "INT", "WIS", "DEX", "CON"];
@@ -17130,91 +17242,6 @@ function planWarriorBirth(input) {
   };
 }
 
-// src/class/warrior/settings.ts
-var WARRIOR_RACE_CANDIDATES = ["Half-Troll", "Dunadan", "High-Elf", "Dwarf"];
-var RACE_CHOICE_SETTING = {
-  id: "borg.raceChoice",
-  title: "Warrior race",
-  description: "The race the Borg's planned warrior is born as when borg.raceRandom is off: 0 Half-Troll, 1 Dunadan, 2 High-Elf, 3 Dwarf - the bake-off shortlist, in this order everywhere. The default (2, High-Elf) is the bake-off's recommendation. Read at each birth, so a change applies to the next warrior.",
-  min: 0,
-  max: WARRIOR_RACE_CANDIDATES.length - 1,
-  step: 1,
-  default: 2
-};
-var RACE_RANDOM_RULE = {
-  flag: "borg.raceRandom",
-  title: "Random suited race",
-  description: "The fork's own toggle (no upstream borg_ setting): every warrior the Borg births draws its race from the bake-off shortlist - Half-Troll, Dunadan, High-Elf, Dwarf - seeded by a persisted birth counter, so an unattended line varies its race deterministically, with no clock and no random number draw. Off: borg.raceChoice pins the race.",
-  default: true,
-  requiresReload: true
-};
-function drawWarriorRaceIndex(lineage) {
-  let h = lineage >>> 0;
-  h ^= h >>> 16;
-  h = Math.imul(h, 2246822507);
-  h ^= h >>> 13;
-  h = Math.imul(h, 3266489909);
-  h ^= h >>> 16;
-  const spread = h >>> 0;
-  return Math.floor(spread / 4294967296 * WARRIOR_RACE_CANDIDATES.length);
-}
-function declaredValue(setting, stored) {
-  const raw = typeof stored === "number" && Number.isFinite(stored) ? stored : setting.default;
-  const clamped = Math.min(setting.max, Math.max(setting.min, raw));
-  let snapped = setting.min + Math.round((clamped - setting.min) / setting.step) * setting.step;
-  if (snapped > setting.max) snapped -= setting.step;
-  const places = Math.max(decimalsOf(setting.min), decimalsOf(setting.step));
-  return Number(snapped.toFixed(places));
-}
-function decimalsOf(value) {
-  const text = String(value);
-  const point = text.indexOf(".");
-  return point === -1 ? 0 : text.length - point - 1;
-}
-function resolveWarriorRace(input, log) {
-  const index = input.random ? drawWarriorRaceIndex(input.lineage) : declaredValue(RACE_CHOICE_SETTING, input.choice);
-  const named = WARRIOR_RACE_CANDIDATES[index] ?? WARRIOR_RACE_CANDIDATES[0];
-  const known = input.packRaces !== null && input.packRaces.length > 0 ? input.packRaces.includes(named) : true;
-  const fallback = WARRIOR_RACE_CANDIDATES[0];
-  const why = input.random ? `borg.raceRandom on: lineage draw ${String(input.lineage)} of the ${String(WARRIOR_RACE_CANDIDATES.length)}-race shortlist picked candidate ${String(index)}` : `borg.raceRandom off; borg.raceChoice ${String(index)} of ${String(RACE_CHOICE_SETTING.min)}-${String(RACE_CHOICE_SETTING.max)}`;
-  if (known) {
-    log(`the Borg's next warrior will be born a ${named} (${why})`);
-    return { raceName: named, index, fellBack: false, drawn: input.random };
-  }
-  log(
-    `the Borg's next warrior will be born a ${fallback} (${why} asked for ${named}, which this pack does not define, so candidate 0 is born instead)`
-  );
-  return { raceName: fallback, index, fellBack: true, drawn: input.random };
-}
-
-// src/class/warrior/lineage.ts
-var LINEAGE_KEY = "lineage";
-function lineageFrom(value) {
-  if (value === null || typeof value !== "object" || Array.isArray(value)) return 0;
-  const stored = value[LINEAGE_KEY];
-  return typeof stored === "number" && Number.isInteger(stored) && stored >= 0 ? stored : 0;
-}
-async function readLineage(slot) {
-  try {
-    const read = await slot.get();
-    if (!read.ok) return 0;
-    return lineageFrom(read.value);
-  } catch {
-    return 0;
-  }
-}
-async function bumpLineage(slot) {
-  try {
-    const read = await slot.get();
-    if (!read.ok) return false;
-    const base = read.value !== null && typeof read.value === "object" && !Array.isArray(read.value) ? read.value : {};
-    const written = await slot.set({ ...base, [LINEAGE_KEY]: lineageFrom(read.value) + 1 });
-    return written.ok;
-  } catch {
-    return false;
-  }
-}
-
 // src/class/warrior/presenter.ts
 function flagIsSet2(value) {
   if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
@@ -17275,6 +17302,25 @@ function createWarriorBirthPresenter(deps) {
     deps.log(`the Borg's warrior birth was refused at ${what}: ${result.reason}`);
     return false;
   };
+  const suggested = (session, raceName2, className) => {
+    if (!attempt(`chooseRace(${raceName2})`, session.chooseRace(raceName2))) return void 0;
+    if (!attempt(`chooseClass(${className})`, session.chooseClass(className))) return void 0;
+    const draft = session.draft();
+    if (draft.race !== raceName2 || draft.cls !== className) {
+      deps.log(
+        `the Borg declines to accept a character it did not choose: the session's draft is ${draft.race ?? "?"} ${draft.cls ?? "?"}, not ${raceName2} ${className}`
+      );
+      return void 0;
+    }
+    if (draft.name.trim() === "") {
+      if (!attempt("randomName", session.randomName())) return void 0;
+    }
+    if (!attempt("accept", session.accept())) return void 0;
+    deps.log(
+      `the Borg birthed its ${raceName2} ${className} (the game's suggested stats ${draft.stats.map((value) => String(value)).join("/")})`
+    );
+    return true;
+  };
   return {
     show(session) {
       if (prepared.state === "pending") {
@@ -17293,11 +17339,13 @@ function createWarriorBirthPresenter(deps) {
       }
       if (prepared.state === "not-ours" || spent) return void 0;
       spent = true;
+      const pair = deps.choose?.() ?? { raceName: deps.raceName ?? "", className: WARRIOR_CLASS_NAME };
+      if (pair.className !== WARRIOR_CLASS_NAME) return suggested(session, pair.raceName, pair.className);
       let plan;
       try {
         plan = planWarriorBirth({
           catalogue: session.catalogue(),
-          raceName: deps.raceName,
+          raceName: pair.raceName,
           costs: ladderFromCostTable(deps.costTable, deps.statBase)
         });
       } catch (error) {
@@ -17331,102 +17379,58 @@ function createWarriorBirthPresenter(deps) {
   };
 }
 
-// src/class/warrior/index.ts
-function planWarriorFor(core, pack, raceName2 = WARRIOR_RACE_CANDIDATES[0]) {
-  const players = core.bindPlayer(pack.player);
-  return planWarriorBirth({
-    catalogue: {
-      races: players.races.map((race) => ({ name: race.name, statAdj: race.statAdj })),
-      classes: players.classes.map((cls) => ({ name: cls.name, statAdj: cls.statAdj })),
-      stats: ["STR", "INT", "WIS", "DEX", "CON"],
-      pointBudget: core.MAX_BIRTH_POINTS
-    },
-    raceName: raceName2,
-    costs: ladderFromCostTable(core.BIRTH_STAT_COSTS, core.BIRTH_STAT_BASE)
-  });
+// src/class/birth.ts
+var TITLE_ROW_LABEL = "New Mandos character";
+async function recordNames(mod2, table) {
+  if (typeof mod2.content?.records !== "function") return null;
+  const read = await mod2.content.records(table);
+  if (!read.ok) return null;
+  const names = read.value.map((record) => record.name).filter((name) => typeof name === "string");
+  return names.length > 0 ? names : null;
 }
-function warriorBirth(mod2, core) {
+function plannedBirth(mod2, core) {
   if (core === void 0) {
     mod2.meta.log("the Borg has no engine here, so the game shows its own character creation");
     return void 0;
   }
-  let raceChoice = RACE_CHOICE_SETTING.default;
-  let packRaces = null;
-  const raceRandom = mod2.meta.flags[RACE_RANDOM_RULE.flag] ?? RACE_RANDOM_RULE.default;
   let lineage = 0;
+  let gameClasses = null;
+  let gameRaces = null;
   void readLineage(mod2.store.install).then((read) => {
     lineage = read;
   });
-  try {
-    if (typeof mod2.meta.settings === "function") {
-      void mod2.meta.settings().then(
-        (read) => {
-          if (read.ok) raceChoice = read.value[RACE_CHOICE_SETTING.id] ?? RACE_CHOICE_SETTING.default;
-        },
-        () => {
-        }
-      );
+  void recordNames(mod2, "class").then(
+    (names) => {
+      gameClasses = names;
+    },
+    () => {
     }
-    if (typeof mod2.content?.records === "function") {
-      void mod2.content.records("p_race").then(
-        (read) => {
-          if (!read.ok) return;
-          const names = read.value.map((record) => record.name).filter((name) => typeof name === "string");
-          packRaces = names.length > 0 ? names : null;
-        },
-        () => {
-        }
-      );
+  );
+  void recordNames(mod2, "p_race").then(
+    (names) => {
+      gameRaces = names;
+    },
+    () => {
     }
-  } catch {
-  }
+  );
   return createWarriorBirthPresenter({
     slot: mod2.store.install,
     log: (message) => mod2.meta.log(message),
-    get raceName() {
-      const resolved = resolveWarriorRace(
-        { random: raceRandom, choice: raceChoice, lineage, packRaces },
+    choose: () => {
+      const pair = resolveBirthPair(
+        { flags: mod2.meta.flags, lineage, gameClasses, gameRaces },
         (message) => mod2.meta.log(message)
       );
-      if (resolved.drawn) {
-        void bumpLineage(mod2.store.install).then((landed) => {
-          if (!landed) {
-            mod2.meta.log("the Borg could not persist its birth counter, so the next warrior may draw this one's race again");
-          }
-        });
-      }
-      return resolved.raceName;
+      void bumpLineage(mod2.store.install).then((landed) => {
+        if (!landed) {
+          mod2.meta.log("the Borg could not persist its birth counter, so the next character may repeat this one's class and race");
+        }
+      });
+      return pair;
     },
     costTable: core.BIRTH_STAT_COSTS,
     statBase: core.BIRTH_STAT_BASE
   });
-}
-var warriorPack = {
-  id: "warrior",
-  className: WARRIOR_CLASS_NAME,
-  titleRowLabel: "New Mandos warrior character",
-  defaultRaceName: WARRIOR_RACE_CANDIDATES[0],
-  raceCandidates: WARRIOR_RACE_CANDIDATES,
-  planFor: planWarriorFor,
-  createPresenter: warriorBirth
-};
-
-// src/class/registry.ts
-var PACKS = [warriorPack];
-var CLASS_SETTING = {
-  id: "borg.class",
-  title: "Borg class",
-  description: "Which class pack the Borg plays when it births its own character: 0 Warrior - the default, and the only pack so far; the archived neowarrior-borg fork's lineage, continued here. Read at each page, so a change applies to the next birth.",
-  min: 0,
-  max: Math.max(PACKS.length - 1, 1),
-  step: 1,
-  default: 0
-};
-function packForClassValue(stored) {
-  const raw = typeof stored === "number" && Number.isFinite(stored) ? stored : CLASS_SETTING.default;
-  const clamped = Math.min(CLASS_SETTING.max, Math.max(CLASS_SETTING.min, raw));
-  const snapped = CLASS_SETTING.min + Math.round((clamped - CLASS_SETTING.min) / CLASS_SETTING.step) * CLASS_SETTING.step;
-  return PACKS[snapped] ?? PACKS[CLASS_SETTING.default];
 }
 
 // src/records/journal.ts
@@ -18046,10 +18050,10 @@ function stageValue(setting, stored) {
   const clamped = Math.min(setting.max, Math.max(setting.min, raw));
   let snapped = setting.min + Math.round((clamped - setting.min) / setting.step) * setting.step;
   if (snapped > setting.max) snapped -= setting.step;
-  const places = Math.max(decimalsOf2(setting.min), decimalsOf2(setting.step));
+  const places = Math.max(decimalsOf(setting.min), decimalsOf(setting.step));
   return Number(snapped.toFixed(places));
 }
-function decimalsOf2(value) {
+function decimalsOf(value) {
   const text = String(value);
   const point = text.indexOf(".");
   return point === -1 ? 0 : text.length - point - 1;
@@ -18100,10 +18104,10 @@ function replayValue(setting, stored) {
   const clamped = Math.min(setting.max, Math.max(setting.min, raw));
   let snapped = setting.min + Math.round((clamped - setting.min) / setting.step) * setting.step;
   if (snapped > setting.max) snapped -= setting.step;
-  const places = Math.max(decimalsOf3(setting.min), decimalsOf3(setting.step));
+  const places = Math.max(decimalsOf2(setting.min), decimalsOf2(setting.step));
   return Number(snapped.toFixed(places));
 }
-function decimalsOf3(value) {
+function decimalsOf2(value) {
   const text = String(value);
   const point = text.indexOf(".");
   return point === -1 ? 0 : text.length - point - 1;
@@ -18146,7 +18150,6 @@ function changedFrom(cfg) {
   const stock = defaultCfg();
   return Object.entries(cfg).filter(([key, value]) => stock[key] !== value).map(([key, value]) => `${key}=${String(value)}`).sort();
 }
-var activePack = PACKS[CLASS_SETTING.default];
 var activeStage = stageOf({});
 var activeReplay = replayModeOf({});
 var lineageAtPage = null;
@@ -18173,7 +18176,6 @@ async function begin(mod2) {
       void mod2.meta.settings().then(
         (read) => {
           if (read.ok) {
-            activePack = packForClassValue(read.value[CLASS_SETTING.id]);
             activeStage = stageOf({
               clvl: read.value[STAGE_CLVL_SETTING.id],
               depth: read.value[STAGE_DEPTH_SETTING.id]
@@ -18207,7 +18209,7 @@ async function begin(mod2) {
       ...mod2.presentation?.title ? { title: mod2.presentation.title } : {},
       ...mod2.manage ? { profiles: mod2.manage.profiles } : {},
       slot: mod2.store.install,
-      label: activePack.titleRowLabel
+      label: TITLE_ROW_LABEL
     },
     installMemory(mod2.store.install)
   );
@@ -18335,8 +18337,9 @@ async function begin(mod2) {
 }
 var definition = {
   api: ">=2.0.0 <3.0.0",
-  /* The mod's own character creation, under ui:birth.replace: the ACTIVE
-   * PACK's presenter (src/class/ - the warrior by default). Flag-gated:
+  /* The mod's own character creation, under ui:birth.replace: the planned
+   * birth (src/class/birth.ts), its class and race drawn from the birth
+   * pools at each birth (#16). Flag-gated:
    * without the flag the presenter declines and the game's own birth screens
    * run as before. The engine arrives as a parameter the way ctx.core
    * arrives everywhere else; the pack's own index documents the wiring. */
@@ -18346,7 +18349,7 @@ var definition = {
       mod2.meta.log("the Borg has no engine here, so the game shows its own character creation");
       return void 0;
     }
-    return activePack.createPresenter(mod2, core);
+    return plannedBirth(mod2, core);
   },
   /* The controller installs with onDeath: "end", not upstream's default
    * "reincarnate". Upstream's reincarnation starts the next character in

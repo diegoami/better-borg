@@ -26,6 +26,19 @@ stock engine refuses the mod.
   command is marked "touched", because its seed alone does not replay it.
   Each archived run is one log line, and `node tools/lab.mjs check` lists
   them with births, deaths, retirements and any missing permission.
+- [Visible] [CHOICE] **Choose the classes and races the Borg plays** (#16,
+  #17; ours, never requested upstream). Twenty toggles on the Mods screen,
+  `Class: Warrior` ... `Class: Blackguard` and `Race: Human` ...
+  `Race: Kobold`, all on by default. Each character the Borg births draws
+  its class and its race from the ones switched on, deterministically from
+  the persisted birth counter. Switch on just one to always play it; all off
+  counts as all on. The warrior bias is gone: by default any class can come
+  up. A Warrior is still born through the warrior pack's measured plan;
+  every other class is born on the game's own suggested stats for its race
+  and class (the birth screen's starting spread, the C's `generate_stats`).
+  Caster classes play without learning spells for now (#50). Replaces
+  `borg.raceRandom` and `borg.raceChoice`: a stored choice in either is no
+  longer read. The title row is now "New Mandos character".
 
 ## 0.1.0 - 2026-11-04
 

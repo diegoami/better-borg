@@ -10,9 +10,10 @@ the issues' labels: `status:ready` and `priority:*`.
 - **What this is**: Mandos (formerly better-borg) — the class-agnostic Borg
   fork: defect fixes and strength
   improvements for every borg, staged for upstream, with per-class STRATEGY
-  PACKS under `src/class/` selected by the `borg.class` setting (pack #1 is
-  the warrior; a new class starts as a pack plus a setting, never a fork -
-  the no-N-forks doctrine, docs/process.md section 2).
+  PACKS under `src/class/` (pack #1 is the warrior; every other class plays
+  through the generic pack; a new class starts as a pack, never a fork - the
+  no-N-forks doctrine, docs/process.md section 2). Which class and race each
+  birth plays is the player's: one toggle per class and per race (#16).
 - **Rules**: [`CLAUDE.md`](CLAUDE.md), numbered and cited as "rule n".
 - **Process**: [`docs/process.md`](docs/process.md): the loop, records,
   milestones, and the pack doctrine. Before upstream work: run

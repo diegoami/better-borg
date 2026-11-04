@@ -53,10 +53,9 @@ export interface ProfileMemory {
 }
 
 /**
- * The row's default label. The ACTIVE PACK's label wins when the wiring
- * passes one (the warrior pack's "New Warrior Borg character", carried from
- * the archived fork): the title row is a presentation bit the pack owns, and
- * a mage pack's row would say mage.
+ * The row's default label. The wiring passes its own ("New Mandos
+ * character", src/class/birth.ts), which names no class: since #16 the class
+ * is drawn at the birth, after the row is chosen.
  */
 export const TITLE_LABEL = "New Borg character";
 /** Core keeps P, N, O, R, M, I, U and Q for its own rows, and Squire uses S. */
@@ -200,7 +199,7 @@ export function registerBorgTitle(ctx: TitleCtx, memory: ProfileMemory): boolean
     if (cleared) return;
     ctx.log?.(
       "the Borg could not durably clear its birth flag after a refused start, so the flag may still be set: " +
-        "the next character created after any later reload would be born as the Borg's planned warrior. " +
+        "the next character created after any later reload would be born as the Borg's planned character. " +
         "The presenter still consumes-or-declines it on that page, but a human's birth could be taken once - " +
         "clear the mod's install storage before letting anyone create a character here",
     );

@@ -25,7 +25,11 @@
  * Usage:
  *
  *   node tools/runs.mjs --label <name> [--seeds 20,23,34,49] [--cap 600]
- *       [--race Half-Troll] [--pack warrior] [--stage 2,1] [--out docs/runs]
+ *       [--race Half-Troll] [--pack warrior | --class Mage] [--stage 2,1] [--out docs/runs]
+ *
+ * --class names any class the game defines (#17): its dedicated pack if one
+ * exists, otherwise the generic pack (the game's suggested stats). --race
+ * then defaults to the pack's own (Human for the generic pack).
  *
  * The record lands in <out>/<date>-<label>/ (a fresh directory; records are
  * append-only). Prints the numbers the README's table wants; the table
@@ -84,6 +88,7 @@ let stage = null;
 }
 const raceName = arg("race", undefined);
 const packId = arg("pack", "warrior");
+const className = arg("class", undefined);
 const outRoot = resolve(arg("out", join(REPO_ROOT, "docs", "runs")));
 
 /* The bundle: one file in git-ignored artifacts/, engine and SDK external so
@@ -96,7 +101,7 @@ await build({
     contents:
       'export * from "./src/play-session.js";\n' +
       'export * from "./src/run-record.js";\n' +
-      'export { PACKS } from "./src/class/registry.js";\n',
+      'export { PACKS, packForClass } from "./src/class/registry.js";\n',
     resolveDir: REPO_ROOT,
     loader: "js",
   },
@@ -108,13 +113,13 @@ await build({
   logLevel: "silent",
 });
 
-const { loadPack, packRoot, packSource, playPackSession, writeSessionRecord, buildSummary, buildRunsJson, PACKS } = await import(
+const { loadPack, packRoot, packSource, playPackSession, writeSessionRecord, buildSummary, buildRunsJson, PACKS, packForClass } = await import(
   pathToFileURL(bundle).href
 );
 
-/* The pack: the registry selects it by id, the same way the borg.class
- * setting selects it in the mod. */
-const strategy = PACKS.find((p) => p.id === packId);
+/* The pack: --class through the registry (dedicated or generic, #17), or a
+ * dedicated pack by --pack id. */
+const strategy = className !== undefined ? packForClass(className) : PACKS.find((p) => p.id === packId);
 if (strategy === undefined) fail(`unknown pack "${packId}" (known: ${PACKS.map((p) => p.id).join(", ")})`);
 
 /* The pack: same resolution the play tests use (NEO_ANGBAND_REPO, the

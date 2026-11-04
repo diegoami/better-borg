@@ -54,19 +54,13 @@ export interface StrategyPack {
   readonly className: string;
   /** The title-screen row's label this pack owns (TITLE_LABEL's per-pack value). */
   readonly titleRowLabel: string;
-  /** The race a headless session boots when the caller names none (the shortlist's candidate 0). */
+  /** The race a headless session boots when the caller names none. */
   readonly defaultRaceName: string;
   /**
-   * THE UNIFORM RACE PAIR. Every pack exposes the SAME two player-facing
-   * race parameters - `borg.raceRandom` (the draw toggle) and
-   * `borg.raceChoice` (the pin) - with the warrior pack's exact semantics:
-   * the stored choice is an INDEX INTO THIS PACK'S candidate list, the draw
-   * is seeded by the install slot's lineage counter, and both are resolved
-   * once per birth, never cached. The ids are the mod's, not the pack's, so
-   * "always reborn as a warrior High-Elf" is simply the class pinned to
-   * warrior, the toggle off, the choice at 2 (see SETTINGS.md's
-   * pinned-lineage recipe) - and a future mage pack answers the same two
-   * rows with its own candidates instead of adding new settings.
+   * The races this pack was measured on (the warrior's T07 bake-off
+   * shortlist; empty for the generic pack). Measurement data only: since #16
+   * the player-facing race choice is the birth pools' toggles over the whole
+   * roster (src/birth/pools.ts), the same rows for every pack.
    */
   readonly raceCandidates: readonly string[];
   /**
