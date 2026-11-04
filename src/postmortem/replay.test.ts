@@ -48,16 +48,17 @@ import { loadPack, packRoot } from "../play-session.js";
 import { packForClass } from "../class/registry.js";
 import { DEFAULT_OFFSETS, replayDeadRun, type DeadRunFacts } from "./replay.js";
 import type { DossierHeader } from "./dossier.js";
+import type { BirthReplayData } from "../records/birth-replay.js";
 
 const PACK_DIR = packRoot();
 const suite = PACK_DIR ? describe : describe.skip;
 
-/** B69's current death fixture; older records remain byte-immutable. */
-const RECORD_DIR = "docs/runs/2026-11-04-b69-class-grid-c2d1/mage";
-const SEED = 3;
+/** B54's verified desktop death fixture; older records remain byte-immutable. */
+const RECORD_DIR = "docs/runs/2026-11-04-b54-desktop-death-replay";
+const SEED = 99110530;
 const REPLAY_PACK = packForClass("Mage");
 
-interface RecordedRun {
+interface RecordedRun extends BirthReplayData {
   readonly seed: number;
   readonly life: number;
   readonly race: string;
@@ -97,6 +98,8 @@ function recordedRun(): { run: RecordedRun; header: { label: string; recorded: s
 function factsOf(run: RecordedRun, cap: number, stage: { clvl: number; depth: number } | null): DeadRunFacts {
   return {
     seed: run.seed,
+    ...(run.birthRngState === undefined ? {} : { birthRngState: run.birthRngState }),
+    ...(run.birthOptions === undefined ? {} : { birthOptions: run.birthOptions }),
     life: run.life,
     race: run.race,
     baseStats: run.baseStats,
@@ -114,7 +117,7 @@ function factsOf(run: RecordedRun, cap: number, stage: { clvl: number; depth: nu
 suite("the death replay (#29)", () => {
   const pack = PACK_DIR ? loadPack(PACK_DIR) : null;
 
-  it(`reproduces the baseline's recorded death line exactly (seed ${String(SEED)}, the grey mushroom patch)`, async () => {
+  it(`reproduces the desktop's recorded death line exactly (seed ${String(SEED)}, the giant yellow centipede)`, async () => {
     const { run, header } = recordedRun();
     const replay = await replayDeadRun(
       Core,

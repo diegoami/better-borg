@@ -43,7 +43,7 @@
 import { describe, expect, it } from "vitest";
 import * as Core from "@rpgm-tools/neo-angband-core";
 import { startGame } from "@rpgm-tools/neo-angband-core";
-import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
+import type { GamePack, StartedGame } from "@rpgm-tools/neo-angband-core";
 import { loadPack, packRoot, playRun, playPackSession, observingLife, driveLife } from "./play-session.js";
 import { RUNS_SCHEMA_ID, buildRunsJson, type SessionRecord } from "./run-record.js";
 import { WARRIOR_CLASS_NAME, type WarriorBuildPlan } from "./class/warrior/plan.js";
@@ -254,6 +254,7 @@ suite("the pack restart chain, headless", () => {
    * draw.
    */
   const WARRIOR_RACE = WARRIOR_RACE_CANDIDATES[0];
+  const CHAIN_PACK = packForClass("Mage");
 
   /**
    * The plan the presenter replays, computed exactly as the pack wires it:
@@ -268,17 +269,7 @@ suite("the pack restart chain, headless", () => {
   }
 
   /** What one character's life shows, in the terms the loop cares about. */
-  interface PackLife {
-    readonly seed: number;
-    /** Whether the character died (the event that boots the next one). */
-    readonly dead: boolean;
-    readonly decisions: number;
-    readonly turns: number;
-    /** The deepest dungeon level the LIVE player says it reached. */
-    readonly deepest: number;
-    /** The cause of death, as the player's own died_from carries it. */
-    readonly cause: string | null;
-  }
+
 
   /**
    * Boot one planned warrior and assert its build FROM THE LIVE PLAYER, at
@@ -307,93 +298,37 @@ suite("the pack restart chain, headless", () => {
     return game;
   }
 
-  /** One warrior: boot (asserted), play to its death or the decision cap. */
-  function playWarriorLife(seed: number, plan: WarriorBuildPlan, decisions: number): PackLife {
-    const game = bootPlannedWarrior(seed, plan);
-    const state: GameState = game.state;
-    const observation = observingLife(Core, game);
-    let dead: boolean;
-    let taken: number;
-    try { ({ dead, taken } = driveLife(Core, game, decisions, observation, seed)); }
-    finally { observation.uninstall(); }
-
-    return {
-      seed,
-      dead,
-      decisions: taken,
-      turns: state.turn,
-      deepest: state.actor.player.maxDepth,
-      cause: dead ? state.actor.player.diedFrom : null,
-    };
-  }
-
-  /**
-   * Run the loop's chain over `seeds`, the way the loop itself sequences:
-   * the next character boots ONLY behind an explicit assertion that its
-   * predecessor DIED (the archived #31 - three deaths anywhere among four
-   * lives do not prove a chain; an interior survivor splits it into two
-   * shorter chains, and the real loop, which sequences on LOOP_STATUS.DEAD,
-   * would simply never have booted the next one). Every boot asserts the
-   * planned build from the live player inside bootPlannedWarrior.
-   */
-  function chainPlannedWarriors(plan: WarriorBuildPlan, seeds: readonly number[], capFor: (seed: number) => number): PackLife[] {
-    const lives: PackLife[] = [];
-    for (const seed of seeds) {
-      const previous = lives[lives.length - 1];
-      if (previous !== undefined) {
-        expect(
-          previous.dead,
-          `warrior on seed ${String(previous.seed)} was still alive after its session slice, ` +
-            `so the restart loop would never have booted seed ${String(seed)}`,
-        ).toBe(true);
-      }
-      lives.push(playWarriorLife(seed, plan, capFor(seed)));
-    }
-    return lives;
-  }
-
-  when("boots the next warrior behind a death and stops behind a survivor (the loop's chain rule)", async () => {
-    const plan = warriorBuildPlan();
-    /* The plan is what the pack's walk makes of the stock table: STR 18, CON
-     * 17, the rest at base, no points left - asserted here rather than
-     * assumed, because the session's meaning depends on it. */
-    expect(plan.raceName).toBe(WARRIOR_RACE);
-    expect(plan.baseStats).toEqual([18, 10, 10, 10, 17]);
-    expect(plan.pointsLeft).toBe(0);
-
-    /* The shared session driver must boot after a death and stop after a
-     * survivor. B69's working attack scan saves the former death seed 14.
-     * tools/runs.mjs at cap 600 found seed 73 dies to grey mold at decision
-     * 420, while seed 1 survives: docs/runs/2026-11-04-b69-chain-cap600/.
-     * The unused successors prove that survival stops the chain. */
-    const session = await playPackSession(Core, pack!, warriorPack, {
-      seeds: [73, 1, 34, 49],
-      capFor: () => 600,
+  when("boots the next planned character behind a death and stops behind a survivor (the loop's chain rule)", async () => {
+    // #54's complete content/API2 view saves the old warrior death fixtures.
+    // A measured Human Mage dies on seed 1 and survives seed 2 at cap 600.
+    const session = await playPackSession(Core, pack!, CHAIN_PACK, {
+      seeds: [1, 2, 34, 49], capFor: () => 600,
     });
     expect(session.lives).toHaveLength(2);
-    expect(session.lives[0]!.seed).toBe(73);
-    expect(session.lives[0]!.dead, "seed 73's death is what booted seed 1").toBe(true);
-    expect(session.lives[1]!.seed).toBe(1);
-    expect(session.lives[1]!.dead, "seed 1 survived its slice, so no third boot").toBe(false);
-    /* The census the harness counted balances the decisions on every life,
-     * ended or not (#36's rule). */
+    expect(session.lives[0]!.seed).toBe(1);
+    expect(session.lives[0]!.dead, "seed 1's death is what booted seed 2").toBe(true);
+    expect(session.lives[1]!.seed).toBe(2);
+    expect(session.lives[1]!.dead, "seed 2 survived its slice, so no third boot").toBe(false);
+    const plan = CHAIN_PACK.planFor(Core, pack!);
     for (const life of session.lives) {
+      expect(life.race).toBe(plan.raceName);
+      expect(life.className).toBe(CHAIN_PACK.className);
+      expect(life.baseStats).toEqual([...plan.baseStats]);
       const issued = Object.values(life.commands).reduce((a, b) => a + b, 0);
       expect(issued, `seed ${String(life.seed)}: census vs decisions`).toBe(life.decisions);
     }
   }, 300_000);
 
-  when("refuses to boot the next warrior behind one that survived its slice", () => {
-    /* The archived #31's guard, proven on the reviewer's probe shape: a
-     * middle life capped to a single decision survives, the chain's death
-     * gate must refuse to boot its successor, and the session must fail
-     * rather than count the other lives' deaths into a chain that was
-     * broken. Seed 73 plays its full short life before seed 1
-     * survives, so the survivor really is interior (B69 cap-600 record). */
-    const plan = warriorBuildPlan();
-    expect(() => chainPlannedWarriors(plan, [73, 1, 34], (seed) => (seed === 1 ? 1 : 600))).toThrow(
-      /seed 1 was still alive after its session slice/u,
-    );
+  when("refuses to boot the next character behind an interior survivor", async () => {
+    // Exercise the production gate, with a real first death followed by a
+    // single-decision living character. The third seed must never boot.
+    const session = await playPackSession(Core, pack!, CHAIN_PACK, {
+      seeds: [1, 2, 34], capFor: (seed) => seed === 2 ? 1 : 600,
+    });
+    expect(session.lives.map((life) => life.seed)).toEqual([1, 2]);
+    expect(session.lives[0]!.dead).toBe(true);
+    expect(session.lives[1]!.dead).toBe(false);
+    expect(session.lives[1]!.decisions).toBe(1);
   }, 300_000);
 
   when("births the planned warrior on every seed it is asked to", () => {
@@ -402,6 +337,9 @@ suite("the pack restart chain, headless", () => {
      * quietly broke the birth - a renamed race, a moved table - fails on
      * many seeds at once instead of on whichever four the session uses. */
     const plan = warriorBuildPlan();
+    expect(plan.raceName).toBe(WARRIOR_RACE);
+    expect(plan.baseStats).toEqual([18, 10, 10, 10, 17]);
+    expect(plan.pointsLeft).toBe(0);
     for (const seed of [1, 7, 13, 42, 77, 99]) {
       bootPlannedWarrior(seed, plan);
     }
@@ -419,10 +357,10 @@ suite("the pack restart chain, headless", () => {
      * character boots - the loop's journal-before-create ordering - and the
      * ONE record writer turning the lives into the runs.json schema
      * (better-borg/runs@1). B69 saves the former opening death seed 14.
-     * The cap-600 record pins seed 73's death and seed 1's surviving slice,
+     * The B54 cap-600 record pins Mage seed 1's death and seed 2's surviving slice,
      * so this session exercises both an archive and a rebirth. */
-    const seeds = [73, 1, 34];
-    const session = await playPackSession(Core, pack!, warriorPack, { seeds, capFor: () => 600 });
+    const seeds = [1, 2, 34];
+    const session = await playPackSession(Core, pack!, CHAIN_PACK, { seeds, capFor: () => 600 });
 
     /* AT LEAST ONE DEATH AND ONE REBIRTH, which is this test's requirement
      * (the chain test above pins death followed by survival on these
@@ -466,6 +404,8 @@ suite("the pack restart chain, headless", () => {
         expect(life.graveyard[0]).toMatchObject({
           outcome: "death",
           seed: life.seed,
+          birthRngState: life.birthRngState,
+          birthOptions: life.birthOptions,
           cause: life.causeOfDeath,
           name: expect.any(String),
           race: life.race,
@@ -511,9 +451,9 @@ suite("the pack restart chain, headless", () => {
       runner: { tool: "tools/runs.mjs", decisions: 600, seeds, lives: session.lives.length, stage: null },
       build: {
         commit: null,
-        engine: "@rpgm-tools/neo-angband-core 1.23.0-beta.1",
+        engine: "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches",
         content: PACK_DIR!,
-        borg: "warrior pack (stock parameters)",
+        borg: `${CHAIN_PACK.id} pack (stock parameters)`,
       },
       recorded: "2026-11-03T00:00:00.000Z",
       runs: session.lives.map((life) => ({
@@ -522,6 +462,8 @@ suite("the pack restart chain, headless", () => {
         race: life.race,
         class: life.className,
         baseStats: [...life.baseStats],
+        ...(life.birthRngState === undefined ? {} : { birthRngState: life.birthRngState }),
+        ...(life.birthOptions === undefined ? {} : { birthOptions: life.birthOptions }),
         decisions: life.decisions,
         turns: life.turns,
         depths: [...life.depthsVisited],
@@ -544,7 +486,7 @@ suite("the pack restart chain, headless", () => {
     const document = buildRunsJson(record);
     expect(document.schema).toBe(RUNS_SCHEMA_ID);
     expect(document.runner.seeds).toEqual(seeds);
-    expect(document.build.borg).toContain("warrior pack");
+    expect(document.build.borg).toContain(CHAIN_PACK.id);
     for (const [index, life] of session.lives.entries()) {
       const entry = document.runs[index]!;
       expect(entry, `runs.json entry for seed ${String(life.seed)}`).toMatchObject({
@@ -552,6 +494,8 @@ suite("the pack restart chain, headless", () => {
         race: life.race,
         class: life.className,
         baseStats: [...life.baseStats],
+        birthRngState: life.birthRngState,
+        birthOptions: life.birthOptions,
         decisions: life.decisions,
         turns: life.turns,
         maxDepth: life.maxDepth,

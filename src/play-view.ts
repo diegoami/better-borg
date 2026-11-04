@@ -26,6 +26,7 @@ export function playView(core: typeof Core, game: Core.StartedGame, raw: Core.Ag
   const cells = new Map(known.level.cells.map((cell) => [cell.y * width + cell.x, cell]));
   const names = new Map((known.monsters ?? []).map((monster) => [`${monster.grid.x},${monster.grid.y}`, monster]));
   const monsters = core.trueMonsterViews(game.state, deps).flatMap((monster) => {
+    if (!core.monsterIsObvious(game.state.monsters[monster.id]!)) return [];
     const named = names.get(`${monster.grid.x},${monster.grid.y}`);
     return named?.raceIndex === monster.raceIndex ? [{ ...monster, id: named.id }] : [];
   });
