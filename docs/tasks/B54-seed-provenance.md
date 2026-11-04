@@ -42,6 +42,11 @@ the existing journal already feature-detects that optional report field.
 - `pnpm typecheck`, `pnpm check`, and `git diff --check` pass.
 - Engine pin lists #432, #429 and #433; the trap fingerprint remains
   `34c27241f96aceff581bcb186a9d898f`.
+- Lab carry `a1e8a042f` builds successfully and is pushed append-only to
+  our `neowarrior-lab` branch. This is source/build validation, not a
+  claim that an already-running desktop process has reloaded it.
+- [Warrior control](../runs/2026-11-04-b54-provenance-warrior-c2d1/README.md):
+  4/4 attain c2d1; every per-life fact matches B76 except elapsed time.
 
 ## Remaining limit
 

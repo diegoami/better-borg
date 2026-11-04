@@ -1,0 +1,213 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T20:37:57.002Z",
+  "label": "b54-provenance-warrior-c2d1",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      20,
+      23,
+      34,
+      49
+    ],
+    "lives": 4,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B54-seed-provenance@d00951e1",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428), PR #433 (fixes #431)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "warrior pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 20,
+      "life": 1,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 204,
+      "turns": 2288,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 146,
+      "kills": 6,
+      "places": 129,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 6,
+        "walk": 185,
+        "ascend": 5,
+        "rest": 6,
+        "hold": 1,
+        "pickup": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3070
+      }
+    },
+    {
+      "seed": 23,
+      "life": 2,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 582,
+      "turns": 5956,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 169,
+      "kills": 9,
+      "places": 340,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 15,
+        "ascend": 14,
+        "walk": 531,
+        "open": 12,
+        "tunnel": 1,
+        "pickup": 3,
+        "throw": 1,
+        "rest": 3,
+        "hold": 1,
+        "quaff": 1
+      },
+      "jitter": 39,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 8261
+      }
+    },
+    {
+      "seed": 34,
+      "life": 3,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 153,
+      "turns": 1510,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 164,
+      "kills": 6,
+      "places": 103,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 4,
+        "walk": 143,
+        "quaff": 1,
+        "open": 1,
+        "hold": 1,
+        "ascend": 3
+      },
+      "jitter": 45,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 1885
+      }
+    },
+    {
+      "seed": 49,
+      "life": 4,
+      "race": "Half-Troll",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 343,
+      "turns": 3446,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 140,
+      "kills": 3,
+      "places": 212,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 12,
+        "walk": 312,
+        "ascend": 11,
+        "throw": 1,
+        "quaff": 1,
+        "pickup": 2,
+        "open": 4
+      },
+      "jitter": 38,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4744
+      }
+    }
+  ]
+}
