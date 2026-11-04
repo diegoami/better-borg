@@ -26,7 +26,9 @@ Compare the TypeScript port with the Angband 4.2.6 C Borg across classes,
 strategies and configuration options. Reproduce each finding and identify
 whether it is C design, an inherited port defect, a Mandos defect or an
 engine gap. Missing names in the [C coverage map](docs/audit/c-coverage.md)
-are candidates for investigation, not proof of missing behavior.
+are candidates for investigation, not proof of missing behavior. The
+[reviewed classifications](docs/audit/c-classification.md) explain the
+original candidates' concrete replacements, limits and tracked gaps.
 
 Port-defect restorations are offered upstream. Deliberate policy changes
 are named CHOICEs and remain marked in Mandos. Defects take priority over

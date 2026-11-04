@@ -2,8 +2,11 @@
 
 One file per task, `B<nn>.md`. The issue's `status:*` label is the status.
 The queue and where work stands: the open `checkpoint` issue (process.md section 3).
-A task file is written on its branch and lands with the merge, so the table
-lists finished tasks; queued work (the audit era, #34 onward) is on the issues.
+A task file is written on its branch and lands with the merge. Each file
+records its task as built, including the pins, assumptions and outcomes at
+that time; it is not a current setup recipe or live status page. The table
+below is a historical index, with an issue link when no task file exists.
+Queued work is on the issues.
 
 ## M1 - The ceiling rises
 
@@ -15,7 +18,7 @@ muscle.
 | --- | --- | --- | --- | --- |
 | [B01](B01.md) | The door-closing defect | Hard | #2 | — |
 | [B02](B02.md) | The bake-off runner (measurement instrument, then fitness evaluator) | Medium | #3 | B01 |
-| [B03](B03.md) | The swap subsystem (rings + weapon/armour, one valuation seam) | Hard | #4 | B02 |
+| [B03 / issue #4](https://github.com/diegoami/mandos/issues/4) | The swap subsystem (rings + weapon/armour, one valuation seam) | Hard | #4 | B02 |
 | [B15](B15.md) | Unify repositories at M2 open: the warrior becomes strategy pack #1 | Medium | #15 | B14 (M1 close) |
 | [B25](B25.md) | Stage-grind: retire-on-attainment saves and reach-rate as the number | Medium | #25 | #19 (the Mandos rename) |
 | [B29](B29.md) | Death-replay trainer: dossier ladders, the AI post-mortem, and the human replay path | Medium | #29 | #25 (the stage rail it rides beside) |
@@ -27,5 +30,6 @@ muscle.
 The owner's pivot (#34) puts the full-space audit first: every class,
 strategy and configuration option, each finding with its provenance. Its
 tasks land here as they merge. Phase 2 (formula engine, parameter
-evolution) and Phase 3 (knowledge) stay planned in the roadmap, behind the
-audit's findings.
+evolution) and Phase 3 (knowledge) remain future roadmap direction. Rule 15
+keeps new features parked until the owner changes scope; completing the
+audit does not authorize them automatically.

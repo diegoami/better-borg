@@ -1,38 +1,46 @@
 # The AI post-mortem
 
-How a session with code access turns a dead run's dossier into a diagnosis,
-and how diagnoses become work. This is the trainer loop's automated half
-(#29): the owner's conclusion, made architecture - dossiers are generated
-per death, a session writes the diagnosis, and **the feedback loop needs no
-human in its critical path**. The human replay path (the owner playing the
-last turns themselves) stays, and is optional; #28's human curation remains
-valuable when it happens, but nothing waits on it.
+This is the offline workflow for turning a recorded failure into a
+reproduced defect: invoke the replay tool, verify its result, inspect the
+dossier and write a diagnosis. The tools support that work; they do not
+automatically launch an analysis session for every death. Human play of the
+last turns is optional.
+
+The authorized scope is bug hunting and fixing ([rule 15](../CLAUDE.md)).
+A diagnosis can identify a policy idea, but new strategies, parameter
+learning and fatal-state snapshot features remain parked. The longer-term
+trainer design in the roadmap does not authorize those features.
 
 ## The loop
 
-1. **A run dies** in a harness session (`tools/runs.mjs`); the record lands
+1. **A run ends in death or a recorded stall** in a harness session
+   (`tools/runs.mjs`); the record lands
    under `docs/runs/<session>/` (append-only, rule 8).
-2. **The dossier ladder is generated** beside the record:
+2. **Invoke the dossier generator** beside the record, using the matching
+   Borg code, engine/content pin, birth plan and configuration:
 
        node tools/replay.mjs --record docs/runs/<session>
 
-   This replays every dead run in the record (same seed, same planned
-   birth, same deterministic Borg) and writes `<session>/postmortem/`:
+   The tool replays recorded deaths and stalls and writes
+   `<session>/postmortem/`:
    a `README.md` ladder table and one `seed-<n>/offset-<k>.md` dossier per
-   dead run x ladder rung (5/10/15/20 turns before death by default;
+   ended run x ladder rung (5/10/15/20 turns before the endpoint by default;
    `--offsets` widens the set). A rung whose target turn falls inside a
    single decision has NO live boundary and is listed as `none` - the
    killing decision of a fast death can spend more turns than the smallest
    rung. The replay's death line is verified against the record (cause,
    turn, decisions, the whole census) and the verdict is printed in every
    dossier; a DIVERGED replay says so at the top rather than dressing its
-   dossiers as the recorded run.
+   dossiers as the recorded run. A recorded stall uses the stopped life
+   as its endpoint. Existing dossier directories are not overwritten; use a
+   fresh record or a scratch copy for a new investigation, preserving the
+   committed evidence.
 3. **A session writes a diagnosis** (this document's routine, below) into
    `seed-<n>/diagnosis.md` beside the dossiers it read.
-4. **Diagnoses become work**: a named defect or a valuation adjustment
-   becomes a B-task or an issue, with the dossier as its reproduced
-   evidence. Nothing applies a diagnosis to live play (rule 5: learning is
-   offline; parameter changes land as measured, re-baselined changes).
+4. **Diagnoses become tracked findings**: file a reproduced defect with its
+   evidence and provenance. A suggested valuation or strategy change stays
+   a backlog idea while rule 15 limits work to defects. Nothing applies a
+   diagnosis to live play (rule 5).
 
 ## What a dossier is
 
@@ -61,9 +69,11 @@ One deterministic page of text per dead run x rung (format
 - **Provenance**: seed, life, the record, the engine and content pins, and
   the upstream seam note.
 
-Everything is a pure function of the replay: the same record, engine and
-content produce byte-identical dossiers (the exactness test pins this), so
-two dossiers diff cleanly across changes.
+For the same Borg code, initial state, configuration, engine and content,
+the replay observations are deterministic. The exactness test protects its
+named committed fixture; the per-run verification decides whether another
+replay reproduces its record. A deliberate code change can move an old
+death, so identical seed values alone do not establish equivalence.
 
 ## The routine (what a diagnosing session does)
 
@@ -83,7 +93,7 @@ Read the dossier, then walk the decision code beside it. In order:
 4. **Walk the code that made each recent decision.** The dossier's `cmd`
    column is what the controller ISSUED; for each distinct command in the
    tail, find the decision path in `src/` that chose it (start from
-   `src/think.ts`'s ladder) and ask: given THIS screen, THIS pack, THESE
+   `src/think-ladder.ts`) and ask: given THIS screen, THIS pack, THESE
    hit points, was that the code's intended behavior? Name the function
    and the line.
 5. **Write the diagnosis** (shape below) into `seed-<n>/diagnosis.md`.
@@ -91,11 +101,11 @@ Read the dossier, then walk the decision code beside it. In order:
    "should have differed" names WHICH code or weight would have to change.
    Speculation is allowed and LABELLED - a hypothesis to test, never a
    finding.
-6. **File what the diagnosis implies**: an issue (defect: restores what the
-   4.2.6 borg did; choice: improves on it - rule 3 decides the kind) or a
-   valuation-adjustment task, linking the dossier path as the reproduced
-   evidence. Do not change decision code from a diagnosis session without
-   its own measured task.
+6. **File what the diagnosis establishes**: classify its provenance under
+   rule 3 and link the dossier as evidence. Confirmed defects proceed
+   through their own reproduced, measured tasks. A preference for different
+   tactics is a CHOICE proposal, not authorization to implement a strategy
+   or parameter feature under the current scope.
 
 ### The diagnosis artifact's shape
 
@@ -111,31 +121,35 @@ Read the dossier, then walk the decision code beside it. In order:
 
 ## The human path (optional, beside this loop)
 
-The owner can play the last turns themselves: launch the lab build with the
-recorded seed (`?seed=<S>&new`), pin the dossier's named race settings,
-birth from the title row, and set `borg.replayReleaseTurn` /
-`borg.replayDeathTurn` from the dossier's rung lines. The Borg replays the
-run deterministically to the release boundary, then hands the keyboard back
-with the death banner (`src/loop/replay.ts`); from there every command the
-owner issues is logged (`[replay] ...`, the `event:player-command` rail
-that #27's phase 3 deepens into paired state snapshots). One caveat,
-stated: the lab build runs the lab branch's engine (the noteSpot fix, our
-PR #429), while the harness record ran the published engine - until a
-release carries the fix, a lab replay of a HARNESS death can diverge from
-the record at the first door-close. The automated path's evidence is the
-dossier either way.
+The existing handoff uses `borg.replayReleaseTurn` and
+`borg.replayDeathTurn` from the dossier. The lab launch route is
+`?seed=<S>&new`, with the recorded class and race pinned, followed by **New
+Mandos character**. At the configured boundary Mandos releases the keyboard
+and shows the death banner (`src/loop/replay.ts`); subsequent human commands
+are logged, and Ctrl-Z can hand control back.
+
+Treat that boundary as the recorded game state only after proving the case
+matches. The desktop and headless birth/replay paths have diverged despite
+a recorded seed ([#54](https://github.com/diegoami/mandos/issues/54)). Matching
+release labels or a seed field is not sufficient evidence. Verify an
+untouched replay against the recorded death line first; otherwise label
+what you observe as a different run. See the
+[settings reference](../SETTINGS.md#the-death-replay-trainer-playing-a-dead-runs-last-turns).
 
 ## Limits, named
 
-- **Harness runs only, V1.** A watched lineage's deaths replay only when
-  the seed seam lands upstream (neo-angband#431) - a mod cannot read the
-  seed its game runs on, so the mod's own graveyard cannot name one.
-- **The message tail is a bound sink, proven neutral.** The recorded
-  sessions booted message-less; the replay binds `state.msg` so the dossier
-  carries the tail. Every engine call site is an optional call
-  (`state.msg?.(...)` - verified at the pin), and the exactness test pins
-  the neutrality on the committed record: if binding the sink moved play,
-  the replay would diverge and the test would go red.
+- **Desktop parity is unresolved.** The lab's carried master-seed seam
+  can record a seed, and touched runs are marked, but exact reproduction in
+  the harness still needs proof in #54. The older statement that mods could
+  not read a seed described the engine before that seam was carried.
+- **The graveyard is not a full death save.** It preserves selected run
+  facts and journal data after the engine removes the character's normal
+  save. A diagnostic snapshot of the fatal dungeon state is a parked
+  feature, not part of this workflow.
+- **Message capture must be observational.** The replay binds a message
+  sink so the dossier can include the tail. The exactness test checks that
+  this does not move the named fixture's recorded death; another record's
+  own verification still decides whether it is exact.
 - **Rungs are turn-offsets; boundaries are decisions.** The autoplayer can
   only stop at decision boundaries, so a rung whose target falls inside a
   single decision has no release point (`none` in the ladder README), and

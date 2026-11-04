@@ -1,13 +1,19 @@
 # Getting stronger - the roadmap
 
-The goal, redirected by the owner on 2026-11-03: **a Borg that helps with the
-grind.** It reaches a chosen STAGE reliably — reach-rate over a fixed seed
-cohort is the number, replacing median deepest depth — retires each
-successful run into a kept, loadable save (#25), climbs a ladder of stages
-by resuming from the previous stage's saves instead of re-grinding proven
-ground (#26), and learns without a human in the loop: every death produces a
-post-mortem dossier ladder that a session with code access diagnoses (#29);
-the human may still demonstrate (#27) but is never the bottleneck.
+This is the long-term design direction, redirected by the owner on
+2026-11-03: **a Borg that helps with the grind**. The implemented foundation
+measures reach-rate at a chosen stage and keeps attained characters as
+loadable saves. The later stage ladder, offline learning and accumulated
+knowledge below describe intended extensions, not capabilities already
+established by those saves.
+
+**Current authorization is bug hunting and fixing only** ([CLAUDE.md](../../CLAUDE.md),
+rule 15), until the owner changes scope. Hunt, reproduce, attribute and fix
+defects, including omitted C behavior. New strategies, parameter learning,
+fatal-state snapshots and new unattended stage-resume functionality remain
+parked. Finishing the audit does not authorize the next roadmap phase.
+The active queue and decisions remain on the
+[checkpoint issue](https://github.com/diegoami/mandos/issues/36).
 
 **THE CURRENT PRIORITY (owner pivot, 2026-11-03, #34): audit the borg's
 full space** - all classes, strategies and configuration options - finding
@@ -22,50 +28,56 @@ improvements (#29's post-mortem diagnoses, Phase 1's ceiling fixes) that lift
 every class. Then START WIDE: fixed-class pinning at birth and race sets
 stay, but the warrior bias leaves the default (the generic pack births any
 class; the neutral default is a per-birth draw from class and race toggle
-pools, all on - landed by #16/#17, 2026-11-04). The WIDE BASELINE: every class measured
-at the stage-1 milestone (a class × seed reach-rate grid) — the floor every
-class must reach. THEN each class's strategy improves IN ORDER (a strategy
-pack per class under `src/class/`, never a fork - process §2; race shortlists
-per class the T07 way; the order chosen by the baseline data), and the
-rounds repeat as the targets move up — stage-major, one concentration at a
-time. Reaching deeper survives as the ladder's axis.
+pools, all on - landed by #16/#17, 2026-11-04). The wide baseline measures
+every class at the first milestone (a class × seed reach-rate grid),
+providing a common comparison point. With later owner authorization, each
+class's strategy would improve in order (a pack under `src/class/`, never a
+fork - process §2; measured race shortlists and an order chosen by the
+baseline data). Rounds would repeat as targets move up, one stage at a
+time. Dungeon depth remains the ladder's axis.
 
-Three phases in dependency order, and one standing constraint that shapes
-all of them.
+The following phases describe design dependencies. Only defect work within
+the current scope is authorized.
 
 ## The constraint: determinism (rule 5)
 
-The Borg draws only its own seeded RNG; games stay replayable. Therefore:
+The controller must draw only its own seeded RNG, with no wall clock or
+network in decisions. Exact replay additionally requires matching initial
+state, code and configuration; desktop-to-harness equivalence remains an
+explicit verification requirement in [#54](https://github.com/diegoami/mandos/issues/54).
+The design constraints are:
 
-- Parameters are chosen BETWEEN runs and frozen during a life; every run
-  record stores the parameters it played with.
+- Parameters are fixed between runs, not changed during a life. A record
+  identifies the build, cohort and configuration; a future parameter-search
+  record would also need the frozen candidate parameters.
 - No mid-life policy shifts, no wall clock, no "current best" changing under
   a live save.
-- Learning and evolution happen OFFLINE, in `tools/`, against the headless
-  harness; winners ship as frozen defaults or versioned read-only data.
+- Any future learning or evolution would run offline against the headless
+  harness. Its accepted outputs would ship as frozen defaults or versioned
+  read-only data, never as live policy mutation.
 
 In-game self-mutation each death was considered and rejected: one life is one
 extremely noisy fitness sample, and a GA over single-life outcomes breeds
 luck, not strength. Evolution wants a population measured in parallel - the
-harness, not the game window. "Children" are real as LINEAGE in the run
-records: parents, generation, fitness, a name.
+harness, not the game window. A future search would need lineage records
+with parents, generation, fitness and names; the current run-record format
+is not evidence that such an optimizer exists.
 
-## Phase 1 - Raise the ceiling (B01-B03)
+## Phase 1 - Correct the policy before tuning
 
-Tuning parameters against a broken policy spends compute measuring the bug.
+Tuning a broken policy spends compute measuring its defects. The original
+ceiling-fix work established the [door-close reproduction](../tasks/B01.md)
+and [measurement runner](../tasks/B02.md). Those files retain their original
+outcomes; they are not fresh work instructions.
 
-- **B01: the door-closing defect.** Seed 1: 771 of 1500 decisions are `close`
-  (cap 750) - half a session on doors is depth not gained. A port defect
-  (reproduced bit-for-bit on pristine upstream): fix it marked, offer it
-  upstream.
-- **B02: the bake-off runner.** The sweep harness (fixed seed cohort, N lives
-  per candidate, per-run records) - first as the measurement instrument, later
-  as the fitness evaluator. Held-out seeds the optimizer never sees.
-- **B03: the swap subsystem.** Ring swaps and weapon/armour swap buying - the
-  biggest unported muscle (upstream 4.2.6 has it; the port's seams are
-  deliberately unwired). Likely one shared valuation seam.
+Continue from reproduced defects and the
+[reviewed C-function classifications](../audit/c-classification.md), including
+the missing C swap behavior tracked in
+[#4](https://github.com/diegoami/mandos/issues/4). A name match is not a
+fidelity certificate, and an unfilled model field is not automatically an
+engine limitation. Measure each restoration on a named cohort.
 
-## Phase 2 - Parameter evolution (B04+)
+## Future phase 2 - Parameter evolution (parked)
 
 - Port upstream's formula engine (`borg_uses_dynamic_calcs`, borg-formulas.c):
   the natural genome - upstream's own knob-set for power/depth/restock math.
@@ -74,26 +86,27 @@ Tuning parameters against a broken policy spends compute measuring the bug.
   the target stage (#25, rule 1), N lives per candidate to beat the noise.
   (Written before #25 as median maxDepth with a town-death penalty; depth
   survives as the ladder's axis, not the fitness.)
-- Search: random search / CEM before a GA - with tens of dimensions CEM often
-  matches a GA at a fraction of the code. Add the GA (and lineage naming)
-  only if it pays.
+- Candidate search methods include random search, CEM and a GA. A later
+  authorized experiment would compare their measured cost and results;
+  listing them here does not authorize an optimizer implementation.
 - Winners land as frozen defaults + a run record; the training cohort is
   retired when the genome ships.
 
-## Phase 3 - Accumulated knowledge
+## Future phase 3 - Accumulated knowledge (parked)
 
 A versioned, read-only knowledge base built offline and shipped with the mod:
 per-monster observed threat (what actually killed borgs, at what depth),
 per-depth pacing priors, item value tables learned from shop outcomes. The
-Borg consults it at birth; within a life it is deterministic data, not a live
-learner. Every entry cites the runs that produced it.
+proposed Borg would consult it at birth; within a life it would be
+deterministic data, not a live learner. Every entry would cite its runs.
 Reference: the squire mod's journal taxonomy (lessons, grudges, lineage,
 calibration) at `../neo-angband-mod-squire` (read-only clone; ideas, not
 code - its runtime learning model cannot cross into a deterministic borg).
 
-**Engine changes are not fork policy**: engine needs are filed upstream
-(neo-angband); the local game checkout's lab branch may carry diagnostic
-patches, but the mod never ships one.
+**Engine changes remain separate from the mod**: engine defects are filed
+upstream and their accepted-for-carry fixes may be carried in the harness
+and lab branch under process section 6. Mandos ships no engine code. A
+possible engine seam does not authorize implementing a parked feature.
 
 ## Where work lives
 

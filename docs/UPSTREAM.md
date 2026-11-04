@@ -11,10 +11,13 @@ cherry-picked with the floor-bump rule (process §7, step 3); upstream issues we
 advance become B-tasks here, diagnosed and branched in OUR fork, then offered
 upstream (#428 is the pattern).
 
-Last checked: 2026-11-03, at the M1 close (sync pass: both upstreams —
+Historical sync note, 2026-11-03 at the M1 close: both upstreams —
 `neostryder/neo-angband` and `neostryder/neo-angband-mod-borg` — zero
-commits ahead of our pins; nothing to adopt. Rules: process.md §7).
-Prior pass: 2026-11-02, same result.
+commits ahead of the pins checked in that pass; nothing to adopt then.
+The prior 2026-11-02 pass recorded the same result. These are dated
+observations, not live status. Use `node tools/upstream-watch.mjs`,
+`node tools/upstream-sync.mjs` and the tracking issues for current state
+(process.md §7).
 
 ## Our threads: one tracking issue each
 
@@ -36,9 +39,10 @@ what we do while we wait.
 **Tracker convention (learned 2026-11-03)**: open != unfixed here - issues stay
 open until a stable release carries the fix (#371/#372/#415/#377). Check the
 maintainer's dedup/release comments before treating an open issue as work.
-**tsc note**: the packages/core build shows 53 missing-declaration errors in a
-FRESH worktree (build-order artifact: core references mod-sdk/dist) - build
-from the repo root (`tsc -b`) for the true count; master is genuinely clean.
+**Historical build note**: the earlier fresh core worktree produced 53
+missing-declaration errors because core referenced mod-sdk/dist before it
+was built. Build the project references from the engine repo root before
+attributing such failures; use the current build output for current claims.
 
 ## Touched by us, worth closing the loop
 
@@ -61,5 +65,6 @@ from the repo root (`tsc -b`) for the true count; master is genuinely clean.
 ## Ignored by policy
 
 The `repo:future-mod` family (endgame/dungeon/hall-of-legends phases) and
-`repo:mod-qol` items: content and QoL, not the borg's line. Revisit only if a
-milestone wants them.
+`repo:mod-qol` items: content and QoL, not the borg's line. Revisit only if
+the owner changes the authorized scope; a milestone alone does not
+authorize new feature work under rule 15.
