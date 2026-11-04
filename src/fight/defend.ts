@@ -365,7 +365,10 @@ function auxTeleAway(ctx: BorgContext, fs: FightState, p1: number): number {
     if (kill.when < ctx.world.clock - 2) continue;
     if (!ctx.world.map.inBounds(kill.pos.x, kill.pos.y)) continue;
     const ag = ctx.world.map.at(kill.pos.x, kill.pos.y);
-    if (!(ag.info & 0x08)) continue;
+    /* FORK (Mandos #69), a DEFECT fix toward the C (inherited): the C's
+     * BORG_OKAY test ("on the current panel") is treated as set, as
+     * flow-kill.ts does - the port has no panel and never sets the flag, so
+     * requiring it left this scan with no monster at all. */
     if (!(ag.info & 0x20)) continue;
     if (ag.feat >= FEAT.RUBBLE && ag.feat <= FEAT.PERM) continue;
     const d = Math.max(Math.abs(kill.pos.y - ctx.world.self.c.y), Math.abs(kill.pos.x - ctx.world.self.c.x));
@@ -460,7 +463,10 @@ function nearEvil(ctx: BorgContext): boolean {
     if (!kill.rIdx) continue;
     if (kill.when < ctx.world.clock - 2) continue;
     if (!ctx.world.map.inBounds(kill.pos.x, kill.pos.y)) continue;
-    if (!(ctx.world.map.at(kill.pos.x, kill.pos.y).info & 0x08)) continue;
+    /* FORK (Mandos #69), a DEFECT fix toward the C (inherited): the C's
+     * BORG_OKAY test ("on the current panel") is treated as set, as
+     * flow-kill.ts does - the port has no panel and never sets the flag, so
+     * requiring it left this scan with no monster at all. */
     if (Math.max(Math.abs(kill.pos.y - ctx.world.self.c.y), Math.abs(kill.pos.x - ctx.world.self.c.x)) > 3) continue;
     if (getDangerGlobals(ctx.world).resolveFacts(ctx, i).flags.has("EVIL")) return true;
   }
