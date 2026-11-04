@@ -6,6 +6,26 @@ matching git tag that an install pins itself to.
 
 ## Unreleased
 
+## 0.1.0 - 2026-11-04
+
+The fork's first tagged version: upstream `1fa2f8d` (v1.4.0-beta.2), first
+rebranded `betterborg` (2026-11-02) and now Mandos. It is the stable baseline
+before the audit. Reach-rate at the default stage c2d1 is **4/4 (100%)** on
+the fixed cohort (`docs/runs/2026-11-04-release-0-1-0-stage-c2d1/`).
+
+- [Visible] **Our engine fixes, carried** (#40). The headless harness and the
+  lab build play the published engine plus the two fixes we offered upstream:
+  neo-angband PR #429, `noteSpot` on the live `setFeat` path, which ends the
+  door-close loop (#428); and PR #432, where `disturb()` signals
+  `input-flush` (#414). Reach-rate at c2d1 moved **75% → 100%**. Seed 20's
+  death beside a grey mushroom patch (#38) was the door gap. The mod itself
+  ships no engine code (rule 5): an installed game gets these fixes when an
+  engine release carries them.
+- [Visible] **Fixed: a crash after the monster list is wiped** (#48). It is
+  an inherited port defect: `BorgKills.at()` read a wiped slot as `undefined`,
+  so `borgPlayStep` threw where the C's fixed `borg_kills` array reads an
+  empty record (borg-flow.c:738-742). Offered upstream as
+  neostryder/neo-angband-mod-borg#24.
 - [Visible] **Caution vs attack: the one-hit blocker and the bounce
   guard** (#32; both diagnosed halves verified FAITHFUL to 4.2.6 - C lines
   in docs/tasks/B32.md - so both changes are fork choices, marked at their
@@ -109,15 +129,9 @@ matching git tag that an install pins itself to.
   INSTALL-STORAGE COST (accepted, #19): a mod's storage is keyed by its id,
   so the browser lineage's graveyard and lineage counter start fresh under
   `mandos`.
-
-## 0.1.0 - 2026-11-02
-
-The fork's first version: upstream `1fa2f8d` (v1.4.0-beta.2) rebranded as
-`betterborg`, with no behaviour change yet. The first defect fix (the seed-1
-door-closing loop) comes after this entry, one marked change.
-
-- [Visible] **This is now the Better Borg.** New mod id (`betterborg`), name,
-  repository and description; the Borg inside is unchanged.
+- [Visible] **This was first the Better Borg** (2026-11-02, untagged): new
+  mod id (`betterborg`), name, repository and description; the Borg inside
+  unchanged.
 
 ## Upstream, until v1.4.0-beta.2
 
