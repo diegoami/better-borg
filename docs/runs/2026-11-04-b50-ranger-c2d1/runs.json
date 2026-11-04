@@ -1,0 +1,429 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T17:50:20.966Z",
+  "label": "b50-ranger-c2d1",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B50-remaining-rungs@3790c3a0 (dirty)",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "generic-ranger pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Ranger",
+      "baseStats": [
+        17,
+        10,
+        13,
+        16,
+        13
+      ],
+      "decisions": 287,
+      "turns": 3103,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 135,
+      "kills": 0,
+      "places": 168,
+      "dead": true,
+      "causeOfDeath": "Fang, Farmer Maggot's Dog",
+      "commands": {
+        "descend": 10,
+        "walk": 262,
+        "ascend": 9,
+        "rest": 1,
+        "pickup": 2,
+        "open": 2,
+        "read": 1
+      },
+      "jitter": 35,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3077
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Ranger",
+      "baseStats": [
+        17,
+        10,
+        13,
+        16,
+        13
+      ],
+      "decisions": 288,
+      "turns": 3513,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 125,
+      "kills": 6,
+      "places": 172,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 10,
+        "ascend": 9,
+        "walk": 257,
+        "rest": 4,
+        "pickup": 2,
+        "open": 4,
+        "drop": 1,
+        "fire": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3045
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Ranger",
+      "baseStats": [
+        17,
+        10,
+        13,
+        16,
+        13
+      ],
+      "decisions": 404,
+      "turns": 4017,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 172,
+      "kills": 7,
+      "places": 277,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 9,
+        "ascend": 8,
+        "walk": 383,
+        "throw": 1,
+        "open": 1,
+        "pickup": 2
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 1,
+        "points": [
+          {
+            "kind": "valuation-tie",
+            "turn": 1179,
+            "depth": 1,
+            "at": {
+              "x": 26,
+              "y": 20
+            },
+            "hp": 14,
+            "chosen": "throw",
+            "candidates": [
+              {
+                "method": "OBJECT",
+                "score": 4
+              },
+              {
+                "method": "LAUNCH",
+                "score": 4
+              }
+            ],
+            "aim": null
+          }
+        ]
+      },
+      "meta": {
+        "wallClockMs": 4208
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Ranger",
+      "baseStats": [
+        17,
+        10,
+        13,
+        16,
+        13
+      ],
+      "decisions": 272,
+      "turns": 2948,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 2,
+      "gold": 145,
+      "kills": 8,
+      "places": 189,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 8,
+        "walk": 245,
+        "ascend": 7,
+        "fire": 1,
+        "pickup": 5,
+        "rest": 2,
+        "wield": 1,
+        "open": 3
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 2683
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Ranger",
+      "baseStats": [
+        17,
+        10,
+        13,
+        16,
+        13
+      ],
+      "decisions": 543,
+      "turns": 5437,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 150,
+      "kills": 6,
+      "places": 383,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 9,
+        "ascend": 8,
+        "walk": 511,
+        "open": 8,
+        "pickup": 3,
+        "wield": 1,
+        "fire": 1,
+        "disarm": 2
+      },
+      "jitter": 38,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 5295
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Ranger",
+      "baseStats": [
+        17,
+        10,
+        13,
+        16,
+        13
+      ],
+      "decisions": 367,
+      "turns": 4032,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 115,
+      "kills": 5,
+      "places": 201,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 9,
+        "walk": 332,
+        "open": 10,
+        "ascend": 8,
+        "fire": 1,
+        "pickup": 3,
+        "rest": 4
+      },
+      "jitter": 35,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3745
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Ranger",
+      "baseStats": [
+        17,
+        10,
+        13,
+        16,
+        13
+      ],
+      "decisions": 504,
+      "turns": 5731,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 128,
+      "kills": 9,
+      "places": 293,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 19,
+        "ascend": 18,
+        "walk": 451,
+        "open": 7,
+        "tunnel": 1,
+        "pickup": 4,
+        "fire": 1,
+        "wield": 1,
+        "drop": 1,
+        "disarm": 1
+      },
+      "jitter": 36,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 6060
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Ranger",
+      "baseStats": [
+        17,
+        10,
+        13,
+        16,
+        13
+      ],
+      "decisions": 412,
+      "turns": 4174,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 130,
+      "kills": 6,
+      "places": 252,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 12,
+        "walk": 375,
+        "open": 10,
+        "ascend": 11,
+        "fire": 1,
+        "pickup": 2,
+        "wield": 1
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4874
+      }
+    }
+  ]
+}
