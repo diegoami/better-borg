@@ -85,7 +85,7 @@ await build({
       'export * from "./src/play-session.js";\n' +
       'export * from "./src/postmortem/replay.js";\n' +
       'export { POSTMORTEM_SCHEMA_ID } from "./src/postmortem/dossier.js";\n' +
-      'export { PACKS } from "./src/class/registry.js";\n',
+      'export { PACKS, packForClass } from "./src/class/registry.js";\n',
     resolveDir: REPO_ROOT,
     loader: "js",
   },
@@ -97,7 +97,7 @@ await build({
   logLevel: "silent",
 });
 
-const { loadPack, packRoot, packSource, replayDeadRun, DEFAULT_OFFSETS, PACKS } = await import(pathToFileURL(bundle).href);
+const { loadPack, packRoot, packSource, replayDeadRun, DEFAULT_OFFSETS, PACKS, packForClass } = await import(pathToFileURL(bundle).href);
 
 const strategy = PACKS.find((p) => p.id === packId);
 if (strategy === undefined) fail(`unknown pack "${packId}" (known: ${PACKS.map((p) => p.id).join(", ")})`);
@@ -107,8 +107,11 @@ if (packDir === null) {
 }
 
 const document = JSON.parse(readFileSync(runsPath, "utf8"));
-const deadRuns = document.runs.filter((run) => run.dead === true && (seedsFilter === null || seedsFilter.includes(run.seed)));
-if (deadRuns.length === 0) fail(`no dead runs to replay in ${runsPath}${seedsFilter === null ? "" : ` matching seeds ${seedsFilter.join(",")}`}`);
+/* Dead runs, and since #56 stalled ones: a stuck borg is studied like a dead one. */
+const deadRuns = document.runs.filter((run) => (run.dead === true || run.stall !== undefined) && (seedsFilter === null || seedsFilter.includes(run.seed)));
+if (deadRuns.length === 0) fail(`no dead or stalled runs to replay in ${runsPath}${seedsFilter === null ? "" : ` matching seeds ${seedsFilter.join(",")}`}`);
+/* A run is replayed through its own class's pack (#17): the record names the class. */
+const strategyFor = (run) => (typeof run.class === "string" && run.class !== strategy.className ? packForClass(run.class) : strategy);
 
 /* The dossier's provenance block cites the record's own build: the replay is
  * only exact against the engine/content the record names, so the dossier
@@ -140,20 +143,21 @@ for (const run of deadRuns) {
   const replay = await replayDeadRun(
     Core,
     loadPack(packDir),
-    strategy,
+    strategyFor(run),
     {
       seed: run.seed,
       life: run.life,
       race: run.race,
       baseStats: run.baseStats,
       deathTurn: run.turns,
-      cause: run.causeOfDeath ?? "(unnamed)",
+      cause: run.causeOfDeath ?? (run.stall !== undefined ? `stalled (${run.stall.kind} ${String(run.stall.command)})` : "(unnamed)"),
       decisions: run.decisions,
       commands: run.commands,
       clvl: run.clvl,
       maxDepth: run.maxDepth,
       stage: stage === null ? null : { clvl: stage.clvl, depth: stage.depth },
       cap: document.runner?.decisions ?? run.decisions,
+      ...(run.stall === undefined ? {} : { stall: run.stall }),
     },
     { label: recordLabel, directory: recordDirName, recorded: recordRecorded },
     buildBlock,
@@ -187,7 +191,7 @@ mkdirSync(outRoot, { recursive: true });
       })
       .join(", ");
     readme.push(
-      `| ${String(run.seed)} | ${run.causeOfDeath ?? "?"} | ${String(run.turns)} | ${rungs} | ${replay.verification.exact ? "exact" : `DIVERGED: ${replay.verification.differences.join("; ")}`} |`,
+      `| ${String(run.seed)} | ${run.causeOfDeath ?? (run.stall !== undefined ? `STALLED (${run.stall.kind} ${String(run.stall.command)} at decision ${String(run.stall.decision)})` : "?")} | ${String(run.turns)} | ${rungs} | ${replay.verification.exact ? "exact" : `DIVERGED: ${replay.verification.differences.join("; ")}`} |`,
     );
   }
   readme.push("");
@@ -209,7 +213,7 @@ for (const { run, replay } of outcomes) {
 for (const line of lines) console.error(line);
 for (const { run, replay } of outcomes) {
   console.log(
-    `seed ${String(run.seed)}: ${replay.verification.exact ? "reproduced the recorded death exactly" : `DIVERGED (${replay.verification.differences.join("; ")})`}`,
+    `seed ${String(run.seed)}: ${replay.verification.exact ? `reproduced the recorded ${run.stall !== undefined ? "stall" : "death"} exactly` : `DIVERGED (${replay.verification.differences.join("; ")})`}`,
   );
   for (const rung of replay.rungs) {
     console.log(`  offset ${String(rung.offset).padStart(2)}  release boundary turn ${String(rung.boundaryTurn)}  dossier ${join(recordDirName, "postmortem", `seed-${String(run.seed)}`, `offset-${String(rung.offset)}.md`)}`);

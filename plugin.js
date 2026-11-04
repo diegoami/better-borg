@@ -16906,14 +16906,60 @@ function intentOf(command) {
   };
 }
 
-// src/api2/controller.ts
-var REFUSALS_BEFORE_RELEASE = 25;
-var IDLE_BEFORE_RELEASE = 25;
-var MAX_EXTRA_PASSES = 6;
-var STALLS_BEFORE_FORGET = 6;
-var STALLS_BEFORE_RELEASE = 40;
+// src/loop/stall.ts
 var DIR_DX2 = [0, -1, 0, 1, -1, 0, 1, -1, 0, 1];
 var DIR_DY2 = [0, 1, 1, 1, 0, 0, 0, -1, -1, -1];
+function aimedGrid(command, from) {
+  const dir = command.dir;
+  if (dir === void 0 || dir < 1 || dir > 9 || dir === 5) return null;
+  return { x: from.x + DIR_DX2[dir], y: from.y + DIR_DY2[dir] };
+}
+function forgetGrid(world, x, y) {
+  if (!world.map.inBounds(x, y)) return;
+  const grid = world.map.at(x, y);
+  grid.feat = 0;
+  grid.info &= ~(BORG_MARK | BORG_VIEW);
+}
+var STALLS_BEFORE_FORGET = 6;
+var STALLS_BEFORE_RELEASE = 40;
+var IDLE_BEFORE_RELEASE = 25;
+function sceneKey(view) {
+  const player = view.player();
+  const monsters = view.monsters().map((monster) => [monster.grid.x, monster.grid.y, monster.hp]);
+  return JSON.stringify([player.grid.x, player.grid.y, player["depth"], player["hp"], player["sp"], player["exp"], player["gold"], monsters]);
+}
+function createStallWatch() {
+  let lastScene = "";
+  let lastCommand = "";
+  let repeats = 0;
+  let idle = 0;
+  return {
+    observe(scene, command) {
+      if (command === null) {
+        idle += 1;
+        if (idle >= IDLE_BEFORE_RELEASE) {
+          idle = 0;
+          return { repeats: 0, forget: false, stalled: { kind: "idle", command: null } };
+        }
+        return { repeats: 0, forget: false, stalled: null };
+      }
+      idle = 0;
+      const key = JSON.stringify(command);
+      repeats = scene === lastScene && key === lastCommand ? repeats + 1 : 0;
+      lastScene = scene;
+      lastCommand = key;
+      if (repeats >= STALLS_BEFORE_RELEASE) {
+        repeats = 0;
+        return { repeats: STALLS_BEFORE_RELEASE, forget: false, stalled: { kind: "repeat", command: command.code } };
+      }
+      return { repeats, forget: repeats >= STALLS_BEFORE_FORGET && repeats % STALLS_BEFORE_FORGET === 0, stalled: null };
+    }
+  };
+}
+
+// src/api2/controller.ts
+var REFUSALS_BEFORE_RELEASE = 25;
+var MAX_EXTRA_PASSES = 6;
 function promptAnswer(prompt) {
   switch (prompt.kind) {
     case "ack":
@@ -16928,23 +16974,10 @@ function promptAnswer(prompt) {
       return { action: "cancel" };
   }
 }
-function aimedGrid(command, from) {
-  const dir = command.dir;
-  if (dir === void 0 || dir < 1 || dir > 9 || dir === 5) return null;
-  return { x: from.x + DIR_DX2[dir], y: from.y + DIR_DY2[dir] };
-}
-function sceneOf(world) {
-  const player = world.view.player();
-  const monsters = world.view.monsters().map((monster) => [monster.grid.x, monster.grid.y, monster.hp]);
-  return JSON.stringify([player.grid.x, player.grid.y, player["depth"], player["hp"], player["sp"], player["exp"], player["gold"], monsters]);
-}
 function createTick(bridge2, borg) {
   let refusals = 0;
-  let idle = 0;
   let announced = false;
-  let lastScene = "";
-  let lastCommand = "";
-  let stalls = 0;
+  const watch = createStallWatch();
   let released = false;
   return async (mod2, input) => {
     bridge2.setInput(input);
@@ -16977,27 +17010,19 @@ function createTick(bridge2, borg) {
     }
     const targets = facade.take();
     if (command === null) {
-      idle += 1;
-      if (idle >= IDLE_BEFORE_RELEASE) {
-        idle = 0;
+      if (watch.observe("", null).stalled !== null) {
         await mod2.act.controller.release("The Borg had no command to give.");
       }
       return;
     }
-    idle = 0;
     const unsure = borg.trainer?.assess(world, command) ?? null;
     if (unsure !== null) borg.trainer?.note(unsure);
-    const scene = sceneOf(world);
-    const key = JSON.stringify(command);
-    stalls = scene === lastScene && key === lastCommand ? stalls + 1 : 0;
-    lastScene = scene;
-    lastCommand = key;
-    if (stalls >= STALLS_BEFORE_RELEASE) {
-      stalls = 0;
+    const step = watch.observe(sceneKey(world.view), command);
+    if (step.stalled !== null) {
       await mod2.act.controller.release(`The Borg's ${command.code} changed nothing ${String(STALLS_BEFORE_RELEASE)} times running.`);
       return;
     }
-    if (stalls >= STALLS_BEFORE_FORGET && stalls % STALLS_BEFORE_FORGET === 0) {
+    if (step.forget) {
       const aim = aimedGrid(command, world.view.player().grid);
       if (aim !== null && borg.forget !== void 0) {
         borg.forget(aim.x, aim.y);
@@ -18227,12 +18252,7 @@ async function begin(mod2) {
   );
   const changed = changedFrom(cfg);
   mod2.meta.log(changed.length === 0 ? "the Borg is on upstream's stock settings" : `the Borg's settings differ from stock: ${changed.join(", ")}`);
-  const forget = (x, y) => {
-    if (!borg.world.map.inBounds(x, y)) return;
-    const grid = borg.world.map.at(x, y);
-    grid.feat = 0;
-    grid.info &= ~(BORG_MARK | BORG_VIEW);
-  };
+  const forget = (x, y) => forgetGrid(borg.world, x, y);
   const journal = installBorgJournal({
     slot: mod2.store.character,
     archive: mod2.store.install,

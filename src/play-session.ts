@@ -69,6 +69,7 @@ import type {
   RunReport as SdkRunReport,
 } from "@rpgm-tools/neo-angband-mod-sdk";
 import { createBorg } from "./controller.js";
+import { aimedGrid, createStallWatch, forgetGrid, sceneKey } from "./loop/stall.js";
 import { bindCore, coreIsBound } from "./core-api.js";
 import { makeCoreResolvers } from "./resolvers.js";
 import { assessUncertainty, MAX_UNSURE_KEPT, type UnsurePoint } from "./uncertainty.js";
@@ -188,6 +189,18 @@ export function loadPack(dir: string): GamePack {
  * counting rule - everything both drivers do identically
  * ================================================================== */
 
+/**
+ * FORK (Mandos #56): a life that stalled - the same command against the same
+ * scene STALLS_BEFORE_RELEASE times, or no command IDLE_BEFORE_RELEASE times.
+ * `decision` is the 1-based decision that completed the stall.
+ */
+export interface LifeStall {
+  readonly kind: "repeat" | "idle";
+  readonly command: string | null;
+  readonly decision: number;
+  readonly turn: number;
+}
+
 /** What one life's controller observed, asked of the LIVE game. */
 interface LifeObservation {
   /** The command census: how many times each code was issued. */
@@ -210,6 +223,8 @@ interface LifeObservation {
     total: number;
     points: UnsurePoint[];
   };
+  /** FORK (Mandos #56): the stall that ended this life, or null (src/loop/stall.ts). */
+  readonly stall: LifeStall | null;
   /** Arm the Borg for the next decision (the host's latch, main.ts). */
   arm(): void;
   /** Remove the controller (the engine restores the previous provider). */
@@ -271,6 +286,12 @@ export function observingLife(
    * valuation the attack chooser already recorded and the world model the
    * decision already ran on - so the driven life is exactly what it was. */
   const unsure = { total: 0, points: [] as UnsurePoint[] };
+  /* FORK (Mandos #56): the mod's stall watch, the same copy the tick uses -
+   * the forget step at STALLS_BEFORE_FORGET repeats, and the stall itself,
+   * which ends the life here where the tick releases the keyboard. */
+  const watch = createStallWatch();
+  let stall: LifeStall | null = null;
+  let decision = 0;
   const session = core.installController(
     state,
     (view, act) => {
@@ -278,6 +299,15 @@ export function observingLife(
       armed = false;
       const cmd = borg.controller(view, act);
       if (cmd) commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
+      decision += 1;
+      const step = watch.observe(cmd === null ? "" : sceneKey(view), cmd);
+      if (step.forget && cmd !== null) {
+        const aim = aimedGrid(cmd, view.player().grid);
+        if (aim !== null) forgetGrid(borg.world, aim.x, aim.y);
+      }
+      if (step.stalled !== null && stall === null) {
+        stall = { kind: step.stalled.kind, command: step.stalled.command, decision, turn: state.turn };
+      }
       if (cmd !== null) {
         const point = assessUncertainty(borg.world, view, cmd);
         if (point !== null) {
@@ -316,6 +346,9 @@ export function observingLife(
     unsure,
     get restedBesideMonster(): number {
       return restedBesideMonster;
+    },
+    get stall(): LifeStall | null {
+      return stall;
     },
     arm: () => {
       armed = true;
@@ -378,6 +411,8 @@ export function driveLife(
       dead = true;
       break;
     }
+    /* #56: a stalled life ends after the decision that completed the stall. */
+    if (life.stall !== null) break;
     if (status === core.LOOP_STATUS.DEATH_CONFIRM) {
       state.pendingDeath?.resolve(true);
       continue;
@@ -484,6 +519,8 @@ export interface RunReport {
   jitter: number;
   /** Decisions on which the Borg chose to sit still with a monster adjacent. */
   restedBesideMonster: number;
+  /** #56, additive: present only when the life stalled. */
+  stall?: LifeStall;
   /**
    * The uncertainty journal (#27, additive in spirit - records before it
    * carry no `unsure` key): how many decisions marked themselves unsure, and
@@ -608,6 +645,7 @@ export function playSession(
       causeOfDeath: dead ? player.diedFrom : null,
       jitter: jitterOf(observed),
       restedBesideMonster: observed.restedBesideMonster,
+      ...(observed.stall === null ? {} : { stall: observed.stall }),
       unsure: { total: observed.unsure.total, points: [...observed.unsure.points] },
       stageAttained: attained,
       retired: false,
@@ -798,6 +836,8 @@ export interface SessionLife {
   readonly jitter: number;
   /** Decisions on which the Borg chose to sit still with a monster adjacent. */
   readonly restedBesideMonster: number;
+  /** #56, additive: present only when the life stalled. */
+  readonly stall?: LifeStall;
   /**
    * The uncertainty journal (#27), the stock RunReport's own field: the
    * total and the bounded tail, from the same observation both drivers share.
@@ -1074,6 +1114,7 @@ export async function playPackSession(
       places: observed.places.size,
       jitter: jitterOf(observed),
       restedBesideMonster: observed.restedBesideMonster,
+      ...(observed.stall === null ? {} : { stall: observed.stall }),
       unsure: { total: observed.unsure.total, points: [...observed.unsure.points] },
       wallClockMs: Date.now() - startedAt,
       arrivalStamps,

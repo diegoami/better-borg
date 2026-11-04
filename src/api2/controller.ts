@@ -24,27 +24,16 @@ import type { Bridge } from "./host.js";
 import type { World } from "./world.js";
 import { createActFacade, intentOf } from "./act.js";
 import type { UnsurePoint } from "../uncertainty.js";
+import { aimedGrid, createStallWatch, sceneKey, STALLS_BEFORE_RELEASE } from "../loop/stall.js";
 
 /** Consecutive refusals after which the keyboard goes back. */
 export const REFUSALS_BEFORE_RELEASE = 25;
-/** Consecutive decisions with no command after which the keyboard goes back. */
-export const IDLE_BEFORE_RELEASE = 25;
 /** Most extra passes one decision takes to read the loadout questions it asked. */
 export const MAX_EXTRA_PASSES = 6;
-/**
- * Accepted commands in a row, the same command against the same scene, after
- * which the Borg stops believing its map of the grid the command aimed at. A
- * door the game opened without the Borg's map hearing of it is the case this
- * exists for: the game takes "open" for a door that is no longer there and no
- * turn passes, so nothing the Borg's refusal and idle counts watch ever moves.
- */
-export const STALLS_BEFORE_FORGET = 6;
-/** The same, after which the keyboard goes back, whatever the command was. */
-export const STALLS_BEFORE_RELEASE = 40;
-
-/** Keypad direction to the grid offset it names (the game's own table). */
-const DIR_DX: readonly number[] = [0, -1, 0, 1, -1, 0, 1, -1, 0, 1];
-const DIR_DY: readonly number[] = [0, 1, 1, 1, 0, 0, 0, -1, -1, -1];
+/* The stall watch and its thresholds live in src/loop/stall.ts since #56,
+ * one copy for the tick and the headless harness; re-exported here for the
+ * tick's own callers and tests. */
+export { IDLE_BEFORE_RELEASE, STALLS_BEFORE_FORGET, STALLS_BEFORE_RELEASE } from "../loop/stall.js";
 
 export interface Tick {
   (mod: ModApi2, input: Api2InputState): Promise<void>;
@@ -123,26 +112,11 @@ export interface Decider {
 }
 
 /** What a command's aim is, for the commands that name a direction. */
-function aimedGrid(command: AgentCommand, from: { readonly x: number; readonly y: number }): { x: number; y: number } | null {
-  const dir = (command as { readonly dir?: number }).dir;
-  if (dir === undefined || dir < 1 || dir > 9 || dir === 5) return null;
-  return { x: from.x + DIR_DX[dir]!, y: from.y + DIR_DY[dir]! };
-}
-
-/** The scene a command was chosen against: where the character is, what it has, and what stands near. */
-function sceneOf(world: World): string {
-  const player = world.view.player() as unknown as Readonly<Record<string, unknown>> & { readonly grid: { readonly x: number; readonly y: number } };
-  const monsters = world.view.monsters().map((monster) => [monster.grid.x, monster.grid.y, monster.hp]);
-  return JSON.stringify([player.grid.x, player.grid.y, player["depth"], player["hp"], player["sp"], player["exp"], player["gold"], monsters]);
-}
 
 export function createTick(bridge: Bridge, borg: Decider): Tick {
   let refusals = 0;
-  let idle = 0;
   let announced = false;
-  let lastScene = "";
-  let lastCommand = "";
-  let stalls = 0;
+  const watch = createStallWatch();
   /* FORK (Mandos #29): the replay's one-shot. Once the release point is reached the tick
    * releases and never submits again - the owner owns the keyboard, and a
    * host that asks anyway gets nothing, not a decision after the hand-over. */
@@ -189,14 +163,11 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
     const targets = facade.take();
 
     if (command === null) {
-      idle += 1;
-      if (idle >= IDLE_BEFORE_RELEASE) {
-        idle = 0;
+      if (watch.observe("", null).stalled !== null) {
         await mod.act.controller.release("The Borg had no command to give.");
       }
       return;
     }
-    idle = 0;
 
     /* FORK (Mandos #27): the uncertainty journal (phase 1), assessed after the decision is
      * final - the extra passes done - and before anything is submitted: the
@@ -209,17 +180,12 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
 
     /* The same command against the same scene, again and again, is a command the
      * game takes and does nothing with. */
-    const scene = sceneOf(world);
-    const key = JSON.stringify(command);
-    stalls = scene === lastScene && key === lastCommand ? stalls + 1 : 0;
-    lastScene = scene;
-    lastCommand = key;
-    if (stalls >= STALLS_BEFORE_RELEASE) {
-      stalls = 0;
+    const step = watch.observe(sceneKey(world.view), command);
+    if (step.stalled !== null) {
       await mod.act.controller.release(`The Borg's ${command.code} changed nothing ${String(STALLS_BEFORE_RELEASE)} times running.`);
       return;
     }
-    if (stalls >= STALLS_BEFORE_FORGET && stalls % STALLS_BEFORE_FORGET === 0) {
+    if (step.forget) {
       const aim = aimedGrid(command, world.view.player().grid);
       if (aim !== null && borg.forget !== undefined) {
         borg.forget(aim.x, aim.y);

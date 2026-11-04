@@ -72,7 +72,7 @@ import { makeCoreResolvers } from "./src/resolvers.js";
 import { defaultCfg, setBuffTimerSafetyNet, type BorgCfg } from "./src/trait/config.js";
 import { createBridge, type Bridge } from "./src/api2/host.js";
 import { createTick, type Tick } from "./src/api2/controller.js";
-import { BORG_MARK, BORG_VIEW } from "./src/world/grid.js";
+import { forgetGrid } from "./src/loop/stall.js";
 import { plannedBirth, TITLE_ROW_LABEL } from "./src/class/birth.js";
 import { installBorgJournal, type BorgJournal } from "./src/records/journal.js";
 import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
@@ -373,12 +373,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   );
   const changed = changedFrom(cfg);
   mod.meta.log(changed.length === 0 ? "the Borg is on upstream's stock settings" : `the Borg's settings differ from stock: ${changed.join(", ")}`);
-  const forget = (x: number, y: number): void => {
-    if (!borg.world.map.inBounds(x, y)) return;
-    const grid = borg.world.map.at(x, y);
-    grid.feat = 0;
-    grid.info &= ~(BORG_MARK | BORG_VIEW);
-  };
+  const forget = (x: number, y: number): void => forgetGrid(borg.world, x, y);
   /* The journal, installed BEFORE the restart loop so the loop can be handed
    * the graveyard writer it awaits ahead of its flag/create sequence. Every
    * piece is a slice of this mod's own context: the character's slot in its

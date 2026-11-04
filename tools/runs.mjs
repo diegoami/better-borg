@@ -203,6 +203,7 @@ const record = {
     causeOfDeath: life.causeOfDeath,
     jitter: life.jitter,
     restedBesideMonster: life.restedBesideMonster,
+    ...(life.stall === undefined ? {} : { stall: life.stall }),
     stageAttained: life.stageAttained,
     retired: life.retired,
     unsure: { total: life.unsure.total, points: [...life.unsure.points] },
@@ -235,6 +236,6 @@ for (const life of session.lives) {
     `  seed ${String(life.seed).padStart(3)}  depth ${String(life.maxDepth).padStart(2)}  clvl ${String(life.clvl).padStart(2)}  ` +
       `decisions ${String(life.decisions).padStart(4)}  turns ${String(life.turns).padStart(6)}  kills ${String(life.kills).padStart(3)}  ` +
       `gold ${String(life.gold).padStart(5)}  ` +
-      `${life.retired ? "retired into the library" : life.stageAttained ? "attained (keep refused)" : life.dead ? `died to ${life.causeOfDeath ?? "?"}` : "survived its slice"}`,
+      `${life.retired ? "retired into the library" : life.stageAttained ? "attained (keep refused)" : life.dead ? `died to ${life.causeOfDeath ?? "?"}` : life.stall !== undefined ? `STALLED (${life.stall.kind}${life.stall.command ? ` ${life.stall.command}` : ""} at decision ${String(life.stall.decision)})` : "survived its slice"}`,
   );
 }

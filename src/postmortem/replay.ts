@@ -42,7 +42,7 @@
 import type * as Core from "@rpgm-tools/neo-angband-core";
 import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
 import { bindCore, coreIsBound } from "../core-api.js";
-import { driveLife, observingLife } from "../play-session.js";
+import { driveLife, observingLife, type LifeStall } from "../play-session.js";
 import type { StrategyPack } from "../class/pack.js";
 import type { StageDefinition } from "../loop/stage.js";
 import { capturePostmortem, renderDossier, type DossierHeader, type PostmortemCapture } from "./dossier.js";
@@ -76,6 +76,13 @@ export interface DeadRunFacts {
   readonly stage: StageDefinition | null;
   /** The decision cap the session ran (the record's `runner.decisions`). */
   readonly cap: number;
+  /**
+   * FORK (Mandos #56): the stall that ended the life, when it stalled rather
+   * than died (the record's `stall`). The replay must then stall the same
+   * way, at the same decision and turn; the rungs anchor at the life's end
+   * (`deathTurn`, the record's `turns`) exactly as for a death.
+   */
+  readonly stall?: LifeStall;
 }
 
 /** One rung's outcome: the frozen capture and the rendered dossier. */
@@ -237,9 +244,23 @@ export async function replayDeadRun(
 
   const replayedCommands: Record<string, number> = { ...observed.commands };
   const differences: string[] = [];
-  if (!died) differences.push(`the replay survived its cap of ${String(dead.cap)} decisions (the record died)`);
   const replayedCause = died ? state.actor.player.diedFrom : null;
-  if (died && replayedCause !== dead.cause) differences.push(`cause: replay "${String(replayedCause)}" vs record "${dead.cause}"`);
+  if (dead.stall === undefined) {
+    if (!died) differences.push(`the replay survived its cap of ${String(dead.cap)} decisions (the record died)`);
+    if (died && replayedCause !== dead.cause) differences.push(`cause: replay "${String(replayedCause)}" vs record "${dead.cause}"`);
+  } else {
+    /* #56: a stalled record replays to the same stall. */
+    const want = dead.stall;
+    const got = observed.stall;
+    if (died) differences.push(`the replay died of "${String(replayedCause)}" (the record stalled)`);
+    if (got === null) differences.push(`the replay did not stall (the record stalled: ${want.kind} ${String(want.command)} at decision ${String(want.decision)})`);
+    else if (got.kind !== want.kind || got.command !== want.command || got.decision !== want.decision || got.turn !== want.turn) {
+      differences.push(
+        `stall: replay ${got.kind} ${String(got.command)} at decision ${String(got.decision)} turn ${String(got.turn)} ` +
+          `vs record ${want.kind} ${String(want.command)} at decision ${String(want.decision)} turn ${String(want.turn)}`,
+      );
+    }
+  }
   if (state.turn !== dead.deathTurn) differences.push(`turn: replay ${String(state.turn)} vs record ${String(dead.deathTurn)}`);
   if (taken !== dead.decisions) differences.push(`decisions: replay ${String(taken)} vs record ${String(dead.decisions)}`);
   const census = censusDifference(replayedCommands, dead.commands);
@@ -262,7 +283,9 @@ export async function replayDeadRun(
     targetTurn: rung.targetTurn,
     why: died
       ? `the replay died at turn ${String(state.turn)} before turn ${String(rung.targetTurn)} had a decision boundary`
-      : `the replay survived its cap before turn ${String(rung.targetTurn)}`,
+      : observed.stall !== null
+        ? `the replay stalled at turn ${String(state.turn)} before turn ${String(rung.targetTurn)} had a decision boundary`
+        : `the replay survived its cap before turn ${String(rung.targetTurn)}`,
   }));
   for (const miss of missed) say(`seed ${String(dead.seed)} offset ${String(miss.offset)}: ${miss.why}`);
 

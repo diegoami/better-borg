@@ -97,6 +97,12 @@ interface RunEntry {
   commands: Record<string, number>;
   jitter: number;
   restedBesideMonster: number;
+  /**
+   * #56, additive: present only on a life that stalled (the same command
+   * against the same scene 40 times, or no command 25 times); records
+   * before B56, and lives that never stall, carry no `stall` key.
+   */
+  stall?: { kind: "repeat" | "idle"; command: string | null; decision: number; turn: number };
   /** #25, additive: whether this run attained the session's stage (the schema id stays `@1`; records before B25 carry no such key). */
   stageAttained: boolean;
   /** #25, additive: whether the retire flow kept a save of this run (the library). */
@@ -154,6 +160,9 @@ function runEntry(run: RunReport): RunEntry {
     commands: { ...run.commands },
     jitter: run.jitter,
     restedBesideMonster: run.restedBesideMonster,
+    ...(run.stall === undefined
+      ? {}
+      : { stall: { kind: run.stall.kind, command: run.stall.command, decision: run.stall.decision, turn: run.stall.turn } }),
     stageAttained: run.stageAttained,
     retired: run.retired,
     unsure: {
