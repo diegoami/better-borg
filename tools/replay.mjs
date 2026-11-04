@@ -34,11 +34,11 @@
  */
 
 import { build } from "esbuild";
-import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as Core from "@rpgm-tools/neo-angband-core";
+import { enginePin } from "./engine-pin.mjs";
 
 const HERE = fileURLToPath(new URL("./", import.meta.url));
 const REPO_ROOT = resolve(HERE, "..");
@@ -97,13 +97,13 @@ await build({
   logLevel: "silent",
 });
 
-const { loadPack, packRoot, replayDeadRun, DEFAULT_OFFSETS, PACKS } = await import(pathToFileURL(bundle).href);
+const { loadPack, packRoot, packSource, replayDeadRun, DEFAULT_OFFSETS, PACKS } = await import(pathToFileURL(bundle).href);
 
 const strategy = PACKS.find((p) => p.id === packId);
 if (strategy === undefined) fail(`unknown pack "${packId}" (known: ${PACKS.map((p) => p.id).join(", ")})`);
 const packDir = packRoot();
 if (packDir === null) {
-  fail("no content pack: set NEO_ANGBAND_REPO or check out neo-angband as a sibling (docs/process.md section 1)");
+  fail("no content pack: run pnpm install (@rpgm-tools/neo-angband-content), set NEO_ANGBAND_REPO, or check out neo-angband as a sibling (docs/process.md section 1)");
 }
 
 const document = JSON.parse(readFileSync(runsPath, "utf8"));
@@ -113,24 +113,7 @@ if (deadRuns.length === 0) fail(`no dead runs to replay in ${runsPath}${seedsFil
 /* The dossier's provenance block cites the record's own build: the replay is
  * only exact against the engine/content the record names, so the dossier
  * says what the record said, plus this checkout's engine pin. */
-function enginePin() {
-  try {
-    const pkg = JSON.parse(readFileSync(join(REPO_ROOT, "package.json"), "utf8"));
-    const pinned = pkg.devDependencies?.["@rpgm-tools/neo-angband-core"];
-    return typeof pinned === "string" ? `@rpgm-tools/neo-angband-core ${pinned}` : "@rpgm-tools/neo-angband-core (unpinned)";
-  } catch {
-    return "@rpgm-tools/neo-angband-core (unpinned)";
-  }
-}
 
-function contentId() {
-  try {
-    const short = execFileSync("git", ["rev-parse", "--short", "HEAD"], { cwd: resolve(packDir, "..", "..", ".."), encoding: "utf8" }).trim();
-    return `neo-angband@${short}`;
-  } catch {
-    return "neo-angband (not a git checkout)";
-  }
-}
 
 const outRoot = join(recordDir, "postmortem");
 if (existsSync(outRoot)) {
@@ -141,8 +124,8 @@ const recordLabel = typeof document.label === "string" ? document.label : basena
 const recordRecorded = typeof document.recorded === "string" ? document.recorded : "(unknown)";
 const recordDirName = relative(REPO_ROOT, recordDir).split("\\").join("/");
 const buildBlock = {
-  engine: `${enginePin()} (the record's engine: ${String(document.build?.engine ?? "?")})`,
-  content: document.build?.content ?? contentId(),
+  engine: `${enginePin(REPO_ROOT)} (the record's engine: ${String(document.build?.engine ?? "?")})`,
+  content: document.build?.content ?? packSource(packDir),
   borg: typeof document.build?.borg === "string" ? document.build.borg : `${strategy.id} pack`,
   cap: document.runner?.decisions ?? 0,
 };

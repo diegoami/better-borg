@@ -20,11 +20,11 @@
  *
  * Every one of those was false at some point on 2026-08-21.
  *
- * WHY THIS SKIPS WITHOUT THE GAME'S CHECKOUT. The content pack is the game's, not
- * this repository's, and there is no copy here to fall back on. `NEO_ANGBAND_REPO`
- * (or the sibling checkout the other tools already assume) is what makes this
- * runnable, exactly as it is for the plugin builder. A skip says so out loud
- * rather than passing on nothing.
+ * WHERE THE CONTENT PACK COMES FROM (#46). The pack is the game's, not this
+ * repository's: packRoot() takes `NEO_ANGBAND_REPO`, then the published
+ * @rpgm-tools/neo-angband-content devDependency, then a sibling checkout.
+ * Without any of them the suite skips and says so out loud locally; in CI the
+ * package is always installed, so there a missing pack fails instead.
  *
  * The session machinery (pack discovery, the boot, the drive loop, the run
  * report) is not test-bound anymore: it lives in ./play-session.ts, shared
@@ -85,6 +85,12 @@ function engineSeparatesDoorLocksFromTraps(pack: GamePack): boolean {
   return cell !== null && cell.trap === false;
 }
 
+/* #46: CI ran green for weeks with this whole suite skipped. The pack is a
+ * devDependency now, so in CI a missing one is a broken install - fail. */
+it.runIf(process.env["CI"])("finds the content pack in CI", () => {
+  expect(PACK_DIR).not.toBeNull();
+});
+
 const suite = PACK_DIR ? describe : describe.skip;
 
 suite("the Borg plays a real game", () => {
@@ -108,6 +114,8 @@ suite("the Borg plays a real game", () => {
       );
     }
     expect(typeof engineReady).toBe("boolean");
+    /* #46: in CI the pinned engine is the one we play; a skip there is a red. */
+    if (process.env["CI"]) expect(engineReady).toBe(true);
   });
 
   /* Four seeds rather than one: each of the three loops this test was written

@@ -29,8 +29,7 @@
  *   own, unscripted choice.
  */
 
-import { existsSync, readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -44,19 +43,7 @@ import {
 import type { GamePack, GameState } from "@rpgm-tools/neo-angband-core";
 import { createBorg } from "./controller.js";
 import { makeCoreResolvers } from "./resolvers.js";
-
-/** The game's checkout, holding the content pack a real boot needs. */
-function packRoot(): string | null {
-  const roots = [
-    process.env["NEO_ANGBAND_REPO"],
-    fileURLToPath(new URL("../../neo-angband/", import.meta.url)),
-  ].filter((r): r is string => typeof r === "string" && r.length > 0);
-  for (const root of roots) {
-    const dir = join(root, "packages", "content", "pack");
-    if (existsSync(join(dir, "constants.json"))) return dir;
-  }
-  return null;
-}
+import { packRoot } from "./play-session.js";
 
 const PACK_DIR = packRoot();
 

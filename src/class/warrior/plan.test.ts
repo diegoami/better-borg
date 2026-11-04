@@ -11,16 +11,15 @@
  * that asks pointBuyCost knows the plan is legal under the table a player
  * actually runs (rule 5: the mod plays by the game's rules, never its own).
  *
- * WHY THIS SKIPS WITHOUT THE GAME'S CHECKOUT, exactly as src/play.test.ts
- * does: the races and classes are the game's content, not this repository's,
- * and there is no copy here to fall back on. NEO_ANGBAND_REPO (or the sibling
- * checkout the other tools assume) supplies it. The skip says so out loud
- * rather than passing on nothing; the input-contract cases below it still run
- * anywhere, because they need no pack at all.
+ * WHY THIS CAN SKIP, exactly as src/play.test.ts does: the races and classes
+ * are the game's content, not this repository's. packRoot() finds it
+ * (NEO_ANGBAND_REPO, the published content package, or the sibling checkout,
+ * #46). The skip says so out loud rather than passing on nothing; the
+ * input-contract cases below it still run anywhere, because they need no
+ * pack at all.
  */
 
-import { existsSync, readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -37,28 +36,12 @@ import {
   ladderFromCostTable,
   planWarriorBirth,
 } from "./plan.js";
+import { packRoot } from "../../play-session.js";
 
 /** One p_race.json/class.json record, the only keys the catalogue needs. */
 interface PackRecord {
   name: string;
   stats: { str: number; int: number; wis: number; dex: number; con: number };
-}
-
-/** The game's checkout, holding the content records a real catalogue needs. */
-function packRoot(): string | null {
-  const roots = [
-    process.env["NEO_ANGBAND_REPO"],
-    /* Two levels deeper than src/play.test.ts's ../../neo-angband/ because
-     * this file lives in src/class/warrior/ (one deeper than the archived
-     * fork's src/birth/, where the original comment said "one"); the URL
-     * resolves against the file. */
-    fileURLToPath(new URL("../../../../neo-angband/", import.meta.url)),
-  ].filter((r): r is string => typeof r === "string" && r.length > 0);
-  for (const root of roots) {
-    const dir = join(root, "packages", "content", "pack");
-    if (existsSync(join(dir, "p_race.json"))) return dir;
-  }
-  return null;
 }
 
 const PACK_DIR = packRoot();
@@ -99,7 +82,7 @@ describe("the warrior build plan", () => {
     if (!PACK_DIR) {
       // eslint-disable-next-line no-console
       console.warn(
-        "[birth] no content pack found (NEO_ANGBAND_REPO or ../neo-angband), " +
+        "[birth] no content pack found (NEO_ANGBAND_REPO, @rpgm-tools/neo-angband-content or ../neo-angband), " +
           "so the pack-derived plan tests are skipped. They need the game's " +
           "p_race.json/class.json to assert the real races and the real costs.",
       );

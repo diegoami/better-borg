@@ -8,6 +8,10 @@
 # exports the pack - so the checkout, the NEO_ANGBAND_REPO variable and the
 # guard that the pack had actually landed are all gone. This workflow now
 # proves the mod against exactly what a third-party author would install.
+#
+# Mandos (#46): this repo had not taken that dependency, so CI skipped the
+# whole play harness. It is a devDependency now, and with CI set (GitHub sets
+# it) a missing pack or an unplayable engine FAILS the play suite.
 
 name: ci
 

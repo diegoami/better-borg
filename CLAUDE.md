@@ -27,9 +27,10 @@
    network in the controller. Determinism is a guarantee. Learning and
    optimization happen OFFLINE in tools/ and ship as frozen parameters or
    versioned read-only data (see the roadmap).
-6. **`pnpm verify` is the gate.** Play-harness runs need the sibling game
-   checkout (`../neo-angband` or `NEO_ANGBAND_REPO`) and skip out loud
-   without it.
+6. **`pnpm verify` is the gate.** Play-harness runs need the content pack
+   (`NEO_ANGBAND_REPO`, the `@rpgm-tools/neo-angband-content`
+   devDependency, or a sibling `../neo-angband` - #46). Without it they skip
+   out loud locally and fail in CI.
 7. **A play-harness failure that reproduces on pristine upstream at the same
    pin is a defect this fork exists to fix** - reproduce it, record it in
    `docs/runs/`, fix it marked (rule 3), and offer it upstream.

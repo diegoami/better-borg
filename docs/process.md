@@ -39,8 +39,8 @@ account (`rclone config`; name it in `backup.json`'s `rcloneAccount`), then
 `node tools/backup.mjs pull mandos-lab-data`.
 
 Check it worked: the engine fingerprint below; `pnpm verify` runs
-`src/play.test.ts` rather than skipping it (a skip means no content pack -
-#46); `node tools/upstream-watch.mjs` lists every thread; `node
+`src/play.test.ts` rather than skipping it (a skip means no content pack:
+`pnpm install` did not land `@rpgm-tools/neo-angband-content` - #46); `node tools/upstream-watch.mjs` lists every thread; `node
 tools/checkpoint.mjs` prints the snapshot. Then read the checkpoint issue.
 The desktop lab build is section 8.
 
@@ -61,8 +61,11 @@ The desktop lab build is section 8.
 
 ### Day to day
 
-Play harness: sibling checkout of `neo-angband` at `../neo-angband`, or
-`NEO_ANGBAND_REPO`. Required: `gh` with read access to `diegoami/mandos` -
+Play harness content pack (#46), first match wins: `NEO_ANGBAND_REPO`, the
+published `@rpgm-tools/neo-angband-content` devDependency (pinned to the
+engine's version - what CI plays), then a sibling `../neo-angband` checkout.
+Run records name the one used (`content`). In CI a missing pack fails the
+suite rather than skipping it. Required: `gh` with read access to `diegoami/mandos` -
 the queue and the checkpoint live on its issues, so without it there is no
 queue (the local folder is still named
 `better-borg`; the repo is `diegoami/mandos` - pass `--repo diegoami/mandos`).
@@ -79,9 +82,9 @@ Working notes (each one cost a session time):
   error line gets cut. A 60000-cap no-stage life is ~7 minutes per seed.
 - Seed 23 without a stage falls into the door-close loop (upstream #428) -
   known, not a new finding.
-- A scratch git worktree finds no content pack: set
-  `NEO_ANGBAND_REPO=<path to ../neo-angband>` and symlink `node_modules`;
-  removing it needs `--force` (the symlink is untracked).
+- A scratch git worktree needs `node_modules`: symlink it (the content pack
+  comes with it); removing the worktree then needs `--force` (the symlink is
+  untracked).
 - Read-only checkouts: `../neo-angband` (engine, on our local lab branch),
   `../neo-angband-mod-borg` (pristine `1fa2f8d`); the C reference is
   `../neo-angband/reference/src/borg/`.

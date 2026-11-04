@@ -108,7 +108,7 @@ await build({
   logLevel: "silent",
 });
 
-const { loadPack, packRoot, playPackSession, writeSessionRecord, buildSummary, buildRunsJson, PACKS } = await import(
+const { loadPack, packRoot, packSource, playPackSession, writeSessionRecord, buildSummary, buildRunsJson, PACKS } = await import(
   pathToFileURL(bundle).href
 );
 
@@ -117,11 +117,12 @@ const { loadPack, packRoot, playPackSession, writeSessionRecord, buildSummary, b
 const strategy = PACKS.find((p) => p.id === packId);
 if (strategy === undefined) fail(`unknown pack "${packId}" (known: ${PACKS.map((p) => p.id).join(", ")})`);
 
-/* The pack: same resolution the play tests use (NEO_ANGBAND_REPO, then the
- * sibling checkout); without it there is nothing to play. */
+/* The pack: same resolution the play tests use (NEO_ANGBAND_REPO, the
+ * published content package, then the sibling checkout - #46); without it
+ * there is nothing to play. */
 const packDir = packRoot();
 if (packDir === null) {
-  fail("no content pack: set NEO_ANGBAND_REPO or check out neo-angband as a sibling (docs/process.md section 1)");
+  fail("no content pack: run pnpm install (@rpgm-tools/neo-angband-content), set NEO_ANGBAND_REPO, or check out neo-angband as a sibling (docs/process.md section 1)");
 }
 
 /* --- provenance, the writer's build block -------------------------------- */
@@ -140,11 +141,6 @@ const dirty = git(["status", "--porcelain"]);
 const commit = head !== null ? `${branch ?? "?"}@${head.slice(0, 8)}${dirty ? " (dirty)" : ""}` : null;
 
 
-function contentId() {
-  /* packDir is <checkout>/packages/content/pack; the checkout root is three levels up. */
-  const short = git(["rev-parse", "--short", "HEAD"], resolve(packDir, "..", "..", ".."));
-  return short !== null ? `neo-angband@${short}` : "neo-angband (not a git checkout)";
-}
 
 /* --- the session, the record --------------------------------------------- */
 
@@ -179,7 +175,7 @@ const record = {
   build: {
     commit,
     engine: enginePin(REPO_ROOT),
-    content: contentId(),
+    content: packSource(packDir),
     borg: `${strategy.id} pack (stock parameters)`,
   },
   recorded: now.toISOString(),

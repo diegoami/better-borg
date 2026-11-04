@@ -54,9 +54,11 @@
  * durations are recorded as metadata and never influence a result.
  */
 
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { join } from "node:path";
+import { dirname, join, sep } from "node:path";
 import type * as Core from "@rpgm-tools/neo-angband-core";
 import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
 import type {
@@ -77,17 +79,58 @@ import type { StrategyPack } from "./class/pack.js";
 import { warriorPack } from "./class/warrior/index.js";
 import type { GameEvents, DungeonLevelEventData } from "@rpgm-tools/neo-angband-core";
 
-/** The game's checkout, holding the content pack a real boot needs. */
+/** This repository's root, from src/ and from a runner's bundle in artifacts/ alike. */
+const REPO_ROOT = fileURLToPath(new URL("../", import.meta.url));
+
+/** The published content package, pinned in package.json beside the engine. */
+const CONTENT_PKG = "@rpgm-tools/neo-angband-content";
+
+/**
+ * The content pack a real boot needs (#46), first match wins:
+ *   1. NEO_ANGBAND_REPO - an explicit checkout, the owner's override;
+ *   2. the published content package, version-pinned and lockfile-locked
+ *      like the engine it belongs to - what CI and a fresh clone play;
+ *   3. a sibling ../neo-angband checkout, for a tree without node_modules.
+ * The package comes before the sibling because the sibling is the lab
+ * branch, which moves; the published pack is the one the engine pin names.
+ */
 export function packRoot(): string | null {
-  const roots = [
-    process.env["NEO_ANGBAND_REPO"],
-    fileURLToPath(new URL("../../neo-angband/", import.meta.url)),
-  ].filter((r): r is string => typeof r === "string" && r.length > 0);
-  for (const root of roots) {
+  const checkout = (root: string | undefined): string | null => {
+    if (root === undefined || root.length === 0) return null;
     const dir = join(root, "packages", "content", "pack");
-    if (existsSync(join(dir, "constants.json"))) return dir;
+    return existsSync(join(dir, "constants.json")) ? dir : null;
+  };
+  const published = (): string | null => {
+    try {
+      const require = createRequire(join(REPO_ROOT, "package.json"));
+      return dirname(require.resolve(`${CONTENT_PKG}/pack/constants.json`));
+    } catch {
+      return null;
+    }
+  };
+  return checkout(process.env["NEO_ANGBAND_REPO"]) ?? published() ?? checkout(join(REPO_ROOT, "..", "neo-angband"));
+}
+
+/**
+ * Where a pack directory came from, as a run record names it: the package
+ * and its version, or the checkout's commit. Decided by node_modules, not by
+ * the package name - a checkout's packages/content carries the same name.
+ */
+export function packSource(dir: string): string {
+  if (dir.split(sep).includes("node_modules")) {
+    try {
+      const pkg = JSON.parse(readFileSync(join(dir, "..", "package.json"), "utf8")) as { version?: string };
+      return `${CONTENT_PKG} ${String(pkg.version)}`;
+    } catch {
+      return `${CONTENT_PKG} (version unknown)`;
+    }
   }
-  return null;
+  try {
+    const short = execFileSync("git", ["rev-parse", "--short", "HEAD"], { cwd: join(dir, "..", "..", ".."), encoding: "utf8" }).trim();
+    return `neo-angband@${short}`;
+  } catch {
+    return "neo-angband (not a git checkout)";
+  }
 }
 
 export function loadPack(dir: string): GamePack {

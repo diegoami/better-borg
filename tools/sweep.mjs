@@ -29,8 +29,9 @@
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { enginePin } from "./engine-pin.mjs";
 
@@ -139,32 +140,47 @@ const commit =
   head !== null ? `${branch ?? "?"}@${head.slice(0, 8)}${dirty ? " (dirty)" : ""}` : null;
 
 
-/* The content pack's directory: the sibling checkout or NEO_ANGBAND_REPO,
- * resolved HERE because the bundled entry's import.meta.url points at a
- * temporary file and cannot find a sibling on its own. This mirrors
- * packRoot() in src/play-session.ts. */
-function contentRoot() {
-  const roots = [process.env["NEO_ANGBAND_REPO"], join(REPO_ROOT, "..", "neo-angband")].filter(
-    (r) => typeof r === "string" && r.length > 0,
-  );
-  for (const root of roots) {
-    if (existsSync(join(root, "packages", "content", "pack", "constants.json"))) return root;
-  }
-  return null;
+/* The content pack's directory, resolved HERE because the bundled entry's
+ * import.meta.url points at a temporary file outside this repository. This
+ * mirrors packRoot()/packSource() in src/play-session.ts (#46):
+ * NEO_ANGBAND_REPO, then the published content package, then the sibling. */
+const CONTENT_PKG = "@rpgm-tools/neo-angband-content";
+
+function contentPackDir() {
+  const checkout = (root) => {
+    if (typeof root !== "string" || root.length === 0) return null;
+    const dir = join(root, "packages", "content", "pack");
+    return existsSync(join(dir, "constants.json")) ? dir : null;
+  };
+  const published = () => {
+    try {
+      return dirname(createRequire(join(REPO_ROOT, "package.json")).resolve(`${CONTENT_PKG}/pack/constants.json`));
+    } catch {
+      return null;
+    }
+  };
+  return checkout(process.env["NEO_ANGBAND_REPO"]) ?? published() ?? checkout(join(REPO_ROOT, "..", "neo-angband"));
 }
 
-const content = contentRoot();
-if (content === null) {
+const packDir = contentPackDir();
+if (packDir === null) {
   fail(
-    "no content pack found. The play harness needs the game's checkout: a " +
-      "sibling neo-angband directory or NEO_ANGBAND_REPO (see src/play.test.ts).",
+    "no content pack found: run pnpm install (@rpgm-tools/neo-angband-content), " +
+      "set NEO_ANGBAND_REPO, or check out neo-angband as a sibling (docs/process.md section 1).",
   );
 }
-const packDir = join(content, "packages", "content", "pack");
 
-/* The content pack's own checkout id, if it is a git work tree. */
+/* The pack's provenance: the package and its version, or the checkout's
+ * commit - decided by node_modules, since a checkout's package has the same name. */
 function contentId() {
-  const short = git(["rev-parse", "--short", "HEAD"], content);
+  if (packDir.split(sep).includes("node_modules")) {
+    try {
+      return `${CONTENT_PKG} ${String(JSON.parse(readFileSync(join(packDir, "..", "package.json"), "utf8")).version)}`;
+    } catch {
+      return `${CONTENT_PKG} (version unknown)`;
+    }
+  }
+  const short = git(["rev-parse", "--short", "HEAD"], join(packDir, "..", "..", ".."));
   return short !== null ? `neo-angband@${short}` : "neo-angband (not a git checkout)";
 }
 
