@@ -127,6 +127,11 @@ if (command === "check") {
   if (s.mod !== s.main) run(MOD, "git", ["merge", "--ff-only", "-q", "origin/main"]);
   if (s.built !== s.engine) {
     const env = { NEO_ANGBAND_LAB_BUILD: "1" };
+    /* The web bundle imports the engine packages from their built dist/,
+     * so they must be rebuilt first. Found 2026-11-04: core's dist was a
+     * day old, so the lab ran without the input-flush fix and reported the
+     * stock version. */
+    for (const pkg of ["core", "mod-sdk", "content"]) run(ENGINE, "pnpm", ["--filter", `@rpgm-tools/neo-angband-${pkg}`, "build"], env);
     run(ENGINE, "pnpm", ["--filter", "@rpgm-tools/neo-angband-web", "bundle"], env);
     run(join(ENGINE, "packages", "desktop"), "pnpm", ["build"], env);
     mkdirSync(join(ROOT, "artifacts"), { recursive: true });

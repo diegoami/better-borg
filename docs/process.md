@@ -374,6 +374,7 @@ shape below is what the tool runs.
     mkdir -p <data>/mods
     git clone -b main https://github.com/diegoami/mandos.git <data>/mods/mandos
     cd /path/to/neo-angband        # the neowarrior-lab checkout
+    for p in core mod-sdk content; do pnpm --filter @rpgm-tools/neo-angband-$p build; done
     NEO_ANGBAND_LAB_BUILD=1 pnpm --filter @rpgm-tools/neo-angband-web bundle
     (cd packages/desktop && NEO_ANGBAND_LAB_BUILD=1 pnpm build)
     cd packages/desktop && NEO_ANGBAND_DATA=<data> pnpm exec electron . --lab-trust=mandos
