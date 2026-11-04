@@ -109,7 +109,7 @@ three-repository era on 2026-11-03):
 down at M2 open exactly as the owner decided (2026-11-02): its
 class-agnostic instruments (restart loop, session driver, journal/graveyard,
 records) moved here, its warrior-specific code became strategy pack #1
-(`src/class/warrior/`, the `borg.class` default), and its committed run
+(`src/class/warrior/`), and its committed run
 records moved with it (docs/runs/ - see that README's Provenance). The
 repository is archived; its history is the immutable record and remains
 readable, but nothing writes there and no new class forks it.
@@ -127,12 +127,14 @@ same import boundary) is retired with the fork. **Fixed a port defect
 here?** Open the upstream PR from this repo's branch; if upstream changes
 the approach, adopt theirs here.
 
-**A new class starts as a pack plus a setting, never a fork**: a module
-under `src/class/<name>/` implementing the StrategyPack interface
-(`src/class/pack.ts` - the plan, the presenter, the uniform race pair, the
-title-row label), an entry in the registry's ordered `PACKS` array (which
-widens the `borg.class` range and lands its manifest row in the same
-change), and its own tests. Per-class lineages are isolated by install
+**A new class starts as a pack, never a fork**: every class the game
+defines is already playable through the generic pack (`src/class/generic.ts`,
+the game's suggested stats) and selectable through its `Class:` toggle in
+the birth pools (`src/birth/pools.ts`, #16). A DEDICATED pack, once a
+measured plan exists, is a module under `src/class/<name>/` implementing the
+StrategyPack interface (`src/class/pack.ts`) plus an entry in the
+registry's `PACKS` array, which then births that class instead of the
+generic pack, and its own tests. Per-class lineages are isolated by install
 slots; per-class valuation weights, when they exist, are pack data. After
 the unification (B15) the unified mod RENAMED to **Mandos** - the keeper
 of the dead who sends them back (#19, landed 2026-11-03: id `mandos`,

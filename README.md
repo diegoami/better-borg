@@ -8,8 +8,8 @@ with per-class strategy packs.**
 
 One repository, one core, packs instead of forks (the no-N-forks doctrine,
 docs/process.md section 2): the class a Borg plays is a STRATEGY PACK under
-`src/class/` selected by the `borg.class` setting - **pack #1 is the
-warrior**, the lineage of the archived
+`src/class/`, and the player picks which classes and races it may draw at
+each birth (one toggle each, #16) - **pack #1 is the warrior**, the lineage of the archived
 [neowarrior-borg](https://github.com/diegoami/neowarrior-borg) fork, whose
 class-agnostic instruments (restart loop, journal/graveyard, session driver,
 records) merged here at M2 open and whose run records moved with them

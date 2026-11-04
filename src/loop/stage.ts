@@ -9,8 +9,7 @@
  * seed cohort - not deepest depth - is the project's number (rule 1).
  *
  * A stage is TWO thresholds, each a persisted numeric setting in the
- * established shape (the `borg.raceChoice` convention over
- * `borg.stageClvl` x `borg.stageDepth`):
+ * established shape (`borg.stageClvl` x `borg.stageDepth`):
  *
  *   attained  <=>  character level >= borg.stageClvl
  *                  AND a first arrival at depth >= borg.stageDepth
@@ -25,7 +24,7 @@
  * exactly this: a depth the character ARRIVED on, recorded as a maximum.
  *
  * NEXT-BIRTH SEMANTICS (rule 5: no mid-life policy shifts): the settings are
- * read once per page, at the same moment `borg.class` is read, and the
+ * read once per page, at the same moment the birth pools are read, and the
  * resolved stage serves every decision of the character that page plays. A
  * stage change applies to the NEXT birth, never to a life in flight - a
  * mid-run retarget would be the mod moving its own goalposts.

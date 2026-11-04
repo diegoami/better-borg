@@ -2,10 +2,10 @@
 
 Mandos (formerly better-borg). The Borg reads the toggles below when its controller is created; changing any
 of them requires a reload before the controller uses the new value. The birth
-settings are different: `borg.class` and `borg.raceRandom` are read once per
-page (every armed birth follows the reload its writer issues, so each birth
-sees the then-current value) and `borg.raceChoice` at each birth, so all
-three apply to the next rebirth without waiting on anything else. The stage
+pools are different: the `Class:` and `Race:` toggles are read once per page
+(every armed birth follows the reload its writer issues, so each birth sees
+the then-current toggles), so a change applies to the next rebirth without
+waiting on anything else. The stage
 settings (`borg.stageClvl`, `borg.stageDepth`) keep the same next-birth
 lifetime: one stage per life, read once per page - a mid-run stage change
 would be a mid-life policy shift, which determinism forbids (rule 5).
@@ -21,25 +21,32 @@ would be a mid-life policy shift, which determinism forbids (rule 5).
 | `borg.worshipsGold` | off | Makes the Borg prioritize gold and delay some descents. | Yes, controller side. |
 | `borg.selfScum` | on | Lets the Borg work in town toward a chosen purchase. | Yes, controller side. |
 | `borg.munchkinStart` | off | Reduces early stockpile priorities for a faster cash focused start. | Yes, controller side. |
-| `borg.raceRandom` | on | Every warrior draws its race uniformly from the bake-off shortlist (Half-Troll, Dunadan, High-Elf, Dwarf), seeded by a persisted birth counter: the same counter always draws the same race, each birth bumps the counter, so an unattended line varies its race deterministically - no clock, no random numbers, the Borg's decision RNG untouched. The counter is not a record of what was played; the per-character journal is. | Yes, birth side: read once per page. |
-| `borg.raceChoice` | 2 | The race the Borg's planned warrior is born as when `borg.raceRandom` is off: 0 Half-Troll, 1 Dunadan, 2 High-Elf, 3 Dwarf - the bake-off shortlist, in this order everywhere; the default (2, High-Elf) is the bake-off's recommendation. Falls back to Half-Troll on a pack that lacks the named race. | No: read at each birth. |
-| `borg.class` | 0 | The class pack the Borg's planned character is born from: 0 Warrior - the default, and the only pack installed in this release; the archived neowarrior-borg fork's lineage, continued here. The value is a persisted parameter the mod reads at each page (a change applies to the next rebirth); the Mods-screen ROW for it appears together with the second pack, because the host's setting rows need a range wider than one value - until then a stored value is honored by the wiring, with out-of-range values resolving to the default. | Yes, birth side: read once per page. |
+| `borg.classWarrior` ... `borg.classBlackguard` | on | The class pool: one toggle per class the game defines (Warrior, Mage, Druid, Priest, Necromancer, Paladin, Rogue, Ranger, Blackguard). Each birth draws its class from the classes switched on. | Yes, birth side: read once per page. |
+| `borg.raceHuman` ... `borg.raceKobold` | on | The race pool: one toggle per race (Human, Half-Elf, Elf, Hobbit, Gnome, Dwarf, Half-Orc, Half-Troll, Dunadan, High-Elf, Kobold). Each birth draws its race from the races switched on. | Yes, birth side: read once per page. |
 
-## The pinned lineage
+## The birth pools: which classes and races the Borg plays
 
-"Always reborn as a warrior High-Elf" - one specific class and race, every
-rebirth, the whole unattended line - is three settings:
+Each character the Borg births draws ONE class from the `Class:` toggles
+switched on and ONE race from the `Race:` toggles switched on (#16; a fork
+choice, upstream's Borg reincarnates at random). The draw is deterministic:
+it is seeded by a persisted birth counter, and each birth bumps the counter,
+so an unattended line varies its pair, the same counter always gives the
+same pair, and there is no clock, no random number and no use of the Borg's
+decision RNG. The counter is not a record of what was played; the
+per-character journal is. All toggles start on.
 
-1. `borg.class` = 0 (Warrior, the only pack),
-2. `borg.raceRandom` = off (the draw off: the pin below decides),
-3. `borg.raceChoice` = 2 (High-Elf, the bake-off's recommendation).
+- **Pin a lineage**, e.g. "always a High-Elf Warrior": switch on only
+  `Class: Warrior` and only `Race: High-Elf`.
+- **A range**, e.g. "any fighter, any sturdy race": switch on Warrior,
+  Paladin and Blackguard, and Dwarf, Half-Troll and Dunadan.
+- **All off** in a pool counts as all on, and the log says so.
 
-Every pack exposes the same two race parameters with the warrior pack's
-semantics (`raceChoice` indexes the ACTIVE pack's candidate list;
-`raceRandom` toggles its draw), so the same recipe pins any future lineage:
-set the class, turn the draw off, set the race index. With the draw ON the
-line varies its race over the pack's shortlist deterministically instead -
-the owner's default for an unattended line.
+A Warrior is born through the warrior pack's measured point-buy plan. Every
+other class is born on the game's own suggested stats for that race and
+class (the birth screen's starting spread, the C's `generate_stats`), until
+a dedicated pack for it is measured. Caster classes play without learning
+spells for now: the borg's spell-learning step is one of the C steps the
+port never ported (#50).
 
 ## The stage: what the grind keeps a save at
 
@@ -84,8 +91,8 @@ per page so the release point is fixed for the life (rule 5):
    counts down from ("recorded death: turn T").
 
 The launch recipe (the dossier's provenance block names the exact birth):
-open the lab build with `?seed=<S>&new`, pin the recorded character's race
-(`borg.raceRandom` off, `borg.raceChoice` to the dossier's race), birth
+open the lab build with `?seed=<S>&new`, pin the recorded character's class and
+race (only its `Class:` and `Race:` toggles on), birth
 from the title row, and the Borg replays the run deterministically to the
 release turn - then the keyboard is yours, every command you issue is
 logged (`[replay] ...`), and Ctrl-Z gives it back at any moment.

@@ -769,3 +769,76 @@ describe("the warrior birth presenter", () => {
     expect(said).not.toMatch(/Maiar/u);
   });
 });
+
+/* ==================================================================
+ * FORK (Mandos #16, #17): the birth pools' pair, decided once per show
+ * ================================================================== */
+
+/** Build the presenter with the flag set and a `choose` that counts its calls. */
+async function armedWithChoice(pair: { raceName: string; className: string }, flagged = true) {
+  const held = slot({ profileIds: ["p1"] });
+  if (flagged) expect(await setBirthFlag(held)).toBe(true);
+  const logs: string[] = [];
+  let chooses = 0;
+  const presenter = createWarriorBirthPresenter({
+    slot: held,
+    log: (message) => logs.push(message),
+    choose: () => {
+      chooses += 1;
+      return pair;
+    },
+    costTable: BIRTH_STAT_COSTS,
+    statBase: BIRTH_STAT_BASE,
+  });
+  await settle();
+  return { presenter, fake: fakeSession(), logs, chooses: () => chooses };
+}
+
+describe("the planned birth's drawn pair (#16, #17)", () => {
+  it("births a class with no dedicated pack on the game's suggested spread, with no buys", async () => {
+    const { presenter, fake, logs, chooses } = await armedWithChoice({ raceName: "Dunadan", className: "Rogue" });
+    expect(presenter.show(fake)).toBe(true);
+    expect(chooses()).toBe(1);
+    const suggested = generateStats(
+      RACE_RECORDS[1] as unknown as PlayerRace,
+      CLASS_RECORDS[0] as unknown as PlayerClass,
+    );
+    expect(fake.accepts).toBe(1);
+    expect(fake.accepted?.race).toBe("Dunadan");
+    expect(fake.accepted?.cls).toBe("Rogue");
+    expect(fake.accepted?.stats).toEqual([...suggested.stats]);
+    expect(fake.buys).toHaveLength(0);
+    expect(fake.calls).not.toContain("reset");
+    expect(fake.calls).toEqual(["chooseRace Dunadan", "chooseClass Rogue", "draft", "randomName", "accept"]);
+    expect(logs.some((m) => m.startsWith("the Borg birthed its Dunadan Rogue (the game's suggested stats"))).toBe(true);
+  });
+
+  it("births a drawn Warrior through the warrior plan", async () => {
+    const { presenter, fake, chooses } = await armedWithChoice({ raceName: "Dunadan", className: "Warrior" });
+    expect(presenter.show(fake)).toBe(true);
+    expect(chooses()).toBe(1);
+    const plan = planWarriorBirth({
+      catalogue: planCatalogue(),
+      raceName: "Dunadan",
+      costs: ladderFromCostTable(BIRTH_STAT_COSTS, BIRTH_STAT_BASE),
+    });
+    expect(fake.accepted?.cls).toBe("Warrior");
+    expect(fake.accepted?.stats).toEqual([...plan.baseStats]);
+    expect(fake.calls.slice(0, 4)).toEqual(["catalogue", "chooseRace Dunadan", "chooseClass Warrior", "reset"]);
+  });
+
+  it("never decides a pair on the human path: no flag, no choose, no session call", async () => {
+    const { presenter, fake, chooses } = await armedWithChoice({ raceName: "Dunadan", className: "Rogue" }, false);
+    expect(presenter.show(fake)).toBeUndefined();
+    expect(chooses()).toBe(0);
+    expect(fake.calls).toEqual([]);
+  });
+
+  it("declines a class the session does not know, after deciding once", async () => {
+    const { presenter, fake, logs, chooses } = await armedWithChoice({ raceName: "Dunadan", className: "Mage" });
+    expect(presenter.show(fake)).toBeUndefined();
+    expect(chooses()).toBe(1);
+    expect(fake.accepts).toBe(0);
+    expect(logs.some((m) => m.includes("refused at chooseClass(Mage)"))).toBe(true);
+  });
+});

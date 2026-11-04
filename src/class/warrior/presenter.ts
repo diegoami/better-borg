@@ -109,13 +109,19 @@ export interface WarriorBirthDeps {
   /** The mod's log (mod.meta.log): declines and consumptions say why. */
   readonly log: (message: string) => void;
   /**
-   * The race to birth, by its catalogue name - the caller's setting, never a
-   * catalogue-order default (the T03 hazard). T05's raceChoice setting - and,
-   * since T09, the raceRandom draw it gates - resolves it once per birth at
-   * show (src/class/warrior/settings.ts); the wiring in plugin.ts supplies it, and
-   * this module never learns where a name came from.
+   * The race to birth as a Warrior, by its catalogue name, when no `choose`
+   * is given (tests, and any caller that pins a warrior) - never a
+   * catalogue-order default (the T03 hazard). The mod's wiring passes
+   * `choose` instead (src/class/birth.ts).
    */
-  readonly raceName: string;
+  readonly raceName?: string;
+  /**
+   * FORK (Mandos #16): the birth pools. When present, called ONCE per show
+   * to decide the class and race (src/birth/pools.ts, through the wiring);
+   * it outranks `raceName`. A Warrior is born through this pack's own plan;
+   * any other class through the game's suggested spread (see show()).
+   */
+  readonly choose?: () => { readonly raceName: string; readonly className: string };
   /**
    * The engine's BIRTH_STAT_COSTS, handed in because a bundled copy of the
    * engine is forbidden (src/core-api.ts): the presenter never imports the
@@ -203,6 +209,37 @@ export function createWarriorBirthPresenter(deps: WarriorBirthDeps): Api2BirthPr
     return false;
   };
 
+  /**
+   * FORK (Mandos #17): a class with no dedicated pack. chooseRace and
+   * chooseClass each end in the session's resetStatWork, which leaves the
+   * game's own SUGGESTED spread for that pair: the engine's generateStats,
+   * the C's generate_stats (player-birth.c:816-973), the per-class point-buy
+   * the game's birth screen starts from. The generic pack plays exactly that:
+   * no invented class knowledge, no buys. The draft must still name the pair
+   * before accept().
+   */
+  const suggested = (session: Api2BirthSession, raceName: string, className: string): boolean | undefined => {
+    if (!attempt(`chooseRace(${raceName})`, session.chooseRace(raceName))) return undefined;
+    if (!attempt(`chooseClass(${className})`, session.chooseClass(className))) return undefined;
+    const draft = session.draft();
+    if (draft.race !== raceName || draft.cls !== className) {
+      deps.log(
+        `the Borg declines to accept a character it did not choose: the session's draft is ` +
+          `${draft.race ?? "?"} ${draft.cls ?? "?"}, not ${raceName} ${className}`,
+      );
+      return undefined;
+    }
+    if (draft.name.trim() === "") {
+      if (!attempt("randomName", session.randomName())) return undefined;
+    }
+    if (!attempt("accept", session.accept())) return undefined;
+    deps.log(
+      `the Borg birthed its ${raceName} ${className} ` +
+        `(the game's suggested stats ${draft.stats.map((value) => String(value)).join("/")})`,
+    );
+    return true;
+  };
+
   return {
     show(session: Api2BirthSession): boolean | undefined {
       if (prepared.state === "pending") {
@@ -231,6 +268,9 @@ export function createWarriorBirthPresenter(deps: WarriorBirthDeps): Api2BirthPr
       if (prepared.state === "not-ours" || spent) return undefined;
       spent = true;
 
+      const pair = deps.choose?.() ?? { raceName: deps.raceName ?? "", className: WARRIOR_CLASS_NAME };
+      if (pair.className !== WARRIOR_CLASS_NAME) return suggested(session, pair.raceName, pair.className);
+
       /* The plan, under the handed-in table, from the session's own
        * catalogue. Any input-contract failure (a race the pack does not
        * define among them) declines here - the flag was already durably
@@ -239,7 +279,7 @@ export function createWarriorBirthPresenter(deps: WarriorBirthDeps): Api2BirthPr
       try {
         plan = planWarriorBirth({
           catalogue: session.catalogue(),
-          raceName: deps.raceName,
+          raceName: pair.raceName,
           costs: ladderFromCostTable(deps.costTable, deps.statBase),
         });
       } catch (error: unknown) {

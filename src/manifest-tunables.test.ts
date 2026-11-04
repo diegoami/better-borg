@@ -26,6 +26,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defaultCfg, type BorgCfg } from "./trait/config.js";
+import { CLASS_RULES, RACE_RULES } from "./birth/pools.js";
 
 const srcRoot = dirname(fileURLToPath(import.meta.url));
 const repoRoot = dirname(srcRoot);
@@ -72,11 +73,11 @@ function ruleCfg(): Map<string, string> {
  * `borg_cfg[]` counterpart because upstream's Borg has no counterpart to them
  * at all (its host reincarnates an autoplayer randomly, which is what the
  * planned-birth packs exist not to do). They are pinned against the manifest
- * - and against the wiring that resolves them - in the pack's own settings
- * test (src/class/warrior/settings.test.ts), the same way the numeric
- * settings are.
+ * - and against the wiring that resolves them - in the birth pools' own test
+ * (src/birth/pools.test.ts), the same way the numeric settings are. Since
+ * #16 they are the twenty class and race toggles.
  */
-const BIRTH_RULES = new Set(["borg.raceRandom"]);
+const BIRTH_RULES = new Set([...CLASS_RULES, ...RACE_RULES].map((rule) => rule.flag));
 
 /**
  * Upstream's `borg_settings[]` (borg-init.c:57-92), for the settings this mod

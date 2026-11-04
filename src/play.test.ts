@@ -51,6 +51,8 @@ import { RUNS_SCHEMA_ID, buildRunsJson, type SessionRecord } from "./run-record.
 import { WARRIOR_CLASS_NAME, type WarriorBuildPlan } from "./class/warrior/plan.js";
 import { planWarriorFor, warriorPack } from "./class/warrior/index.js";
 import { WARRIOR_RACE_CANDIDATES } from "./class/warrior/settings.js";
+import { packForClass } from "./class/registry.js";
+import { CLASS_ROSTER } from "./birth/pools.js";
 
 const PACK_DIR = packRoot();
 
@@ -723,5 +725,25 @@ suite("the pack restart chain, headless", () => {
     expect(run.decisions).toBeLessThan(1500);
     const issued = Object.values(run.commands).reduce((a, b) => a + b, 0);
     expect(issued).toBe(run.decisions);
+  }, 300_000);
+
+  /* FORK (Mandos #16, #17): every class the game defines can be born and
+   * played. The generic pack births a class with no dedicated pack on the
+   * game's suggested stats; the live player must be exactly that pair and
+   * that spread, and the census must hold for a short slice. */
+  when("births and plays every class the game defines", async () => {
+    for (const name of CLASS_ROSTER) {
+      const strategy = packForClass(name);
+      const raceName = name === "Warrior" ? WARRIOR_RACE_CANDIDATES[0] : "Dwarf";
+      const plan = strategy.planFor(Core, pack!, raceName);
+      const session = await playPackSession(Core, pack!, strategy, { seeds: [1], capFor: () => 120, raceName });
+      const life = session.lives[0]!;
+      expect(life.className, `${name}: the live player's class`).toBe(name);
+      expect(life.race, `${name}: the live player's race`).toBe(raceName);
+      expect(life.baseStats, `${name}: the planned base stats`).toEqual([...plan.baseStats]);
+      expect(life.decisions).toBeGreaterThan(0);
+      const issued = Object.values(life.commands).reduce((a, b) => a + b, 0);
+      expect(issued, `${name}: one command per decision`).toBe(life.decisions);
+    }
   }, 300_000);
 });

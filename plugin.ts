@@ -5,16 +5,17 @@
  * between the game's API and the port: everything else under src/ is the port,
  * carried over from the game's repository. This file's job is to satisfy the
  * mod API, read the game's content once, and take a decision at each input wait.
- * title.ts adds the title screen's "New Borg character" row - the label the
- * active class pack owns - which also arms the planned birth through the
- * pack's race settings.
+ * title.ts adds the title screen's "New Mandos character" row, which also
+ * arms the planned birth.
  *
- * THE M2 UNIFICATION (#15): since this release the mod is ONE class-agnostic
- * core with per-class STRATEGY PACKS (src/class/), selected by the
- * `borg.class` setting; the default is the warrior (pack 0), whose lineage
- * continues here from the archived neowarrior-borg fork. What that adds to
+ * THE M2 UNIFICATION (#15): the mod is ONE class-agnostic core with
+ * per-class STRATEGY PACKS (src/class/). Since #16 the class and race of
+ * each birth are drawn from the birth pools (src/birth/pools.ts: one toggle
+ * per class and per race); a Warrior is born through the warrior pack's plan,
+ * whose lineage continues here from the archived neowarrior-borg fork, and
+ * any other class through the game's suggested spread. What that adds to
  * this file, ported from the archived fork at v0.1.0 (e1ec1b7): the birth
- * presenter under `ui:birth.replace` (the pack's), the restart loop
+ * presenter under `ui:birth.replace` (src/class/birth.ts), the restart loop
  * (src/loop/restart.ts) with `onDeath: "end"`, and the journal and graveyard
  * (src/records/journal.ts) - the unattended line: birth, play, die, record,
  * restart.
@@ -72,8 +73,7 @@ import { defaultCfg, setBuffTimerSafetyNet, type BorgCfg } from "./src/trait/con
 import { createBridge, type Bridge } from "./src/api2/host.js";
 import { createTick, type Tick } from "./src/api2/controller.js";
 import { BORG_MARK, BORG_VIEW } from "./src/world/grid.js";
-import { CLASS_SETTING, PACKS, packForClassValue } from "./src/class/registry.js";
-import type { StrategyPack } from "./src/class/pack.js";
+import { plannedBirth, TITLE_ROW_LABEL } from "./src/class/birth.js";
 import { installBorgJournal, type BorgJournal } from "./src/records/journal.js";
 import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
 import { librarySlotName, stageAttained, stageOf, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING, type StageDefinition } from "./src/loop/stage.js";
@@ -231,23 +231,6 @@ interface Running {
 }
 
 /**
- * The active strategy pack. `borg.class` (the numeric pack selector, the
- * `borg.raceChoice` convention over PACKS) is read from the host's persisted
- * settings at each page and resolved through the declared range below - the
- * same per-page lifetime the pack's own race settings keep, so a change
- * applies to the NEXT rebirth. The manifest ROW arrives together with the
- * second pack, because the host's setting schema requires a numeric range
- * wider than one value (`min < max` strictly) and a warrior-only 0-0 row is
- * not a manifest the SDK validates - src/class/registry.ts holds the
- * declaration ready, its max computed from PACKS, and registry.test.ts pins
- * both halves. The wiring is live NOW: a stored `borg.class` is honored
- * (missing, non-numeric or out-of-range values resolve to the declared
- * default), so the parameter is persisted and read, never an internal
- * constant.
- */
-let activePack: StrategyPack = PACKS[CLASS_SETTING.default]!;
-
-/**
  * The stage THIS page's character grinds toward (#25): `borg.stageClvl` x
  * `borg.stageDepth`, read from the persisted settings at each page - the
  * same per-page lifetime `borg.class` keeps, so a change applies to the
@@ -324,19 +307,18 @@ async function begin(mod: ModApi2): Promise<Running | null> {
     void made.dispose();
     return null;
   }
-  /* The class pack this page plays: read from the persisted settings and
-   * resolved through the declared range - fire-and-forget here (the settings
-   * call is async), settled long before any birth is offered, exactly the
-   * way the pack's own race settings are read. A host with no settings seam,
-   * or a failed read, keeps the declared default: warrior. THE STAGE rides
-   * the same read (#25): both stage settings resolve through their declared
-   * ranges (stageOf), so a moved number applies to the next birth. */
+  /* THE STAGE (#25), read from the persisted settings - fire-and-forget
+   * here (the settings call is async), settled long before any birth is
+   * offered: both stage settings resolve through their declared ranges
+   * (stageOf), so a moved number applies to the next birth. A host with no
+   * settings seam, or a failed read, keeps the declared defaults. The class
+   * and race are not settings: they are the birth pools' toggles
+   * (src/birth/pools.ts), read by the birth wiring. */
   try {
     if (typeof mod.meta.settings === "function") {
       void mod.meta.settings().then(
         (read) => {
           if (read.ok) {
-            activePack = packForClassValue(read.value[CLASS_SETTING.id]);
             activeStage = stageOf({
               clvl: read.value[STAGE_CLVL_SETTING.id],
               depth: read.value[STAGE_DEPTH_SETTING.id],
@@ -348,12 +330,12 @@ async function begin(mod: ModApi2): Promise<Running | null> {
           }
         },
         () => {
-          /* Kept at the declared default pack and stage. */
+          /* Kept at the declared default stage. */
         },
       );
     }
   } catch {
-    /* Kept at the declared default pack and stage. */
+    /* Kept at the declared default stage. */
   }
   /* The lineage counter for this page's library names: same fire-and-forget
    * lifetime, same settled-long-before-it-matters property. */
@@ -372,7 +354,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   const borg = createBorg({ resolvers: makeCoreResolvers(made.resolverInput()), cfg });
   /* The title row needs ui:title, profiles:manage and the install slot (the
    * row sets the birth flag there); without all three there is no row. The
-   * LABEL is the active pack's - the one presentation bit a pack owns. */
+   * label names no class: the class is drawn at the birth (#16). */
   registerBorgTitle(
     {
       id: mod.meta.id,
@@ -380,7 +362,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
       ...(mod.presentation?.title ? { title: mod.presentation.title } : {}),
       ...(mod.manage ? { profiles: mod.manage.profiles } : {}),
       slot: mod.store.install,
-      label: activePack.titleRowLabel,
+      label: TITLE_ROW_LABEL,
     },
     installMemory(mod.store.install),
   );
@@ -583,8 +565,9 @@ async function begin(mod: ModApi2): Promise<Running | null> {
 const definition: Api2ModDefinition = {
   api: ">=2.0.0 <3.0.0",
 
-  /* The mod's own character creation, under ui:birth.replace: the ACTIVE
-   * PACK's presenter (src/class/ - the warrior by default). Flag-gated:
+  /* The mod's own character creation, under ui:birth.replace: the planned
+   * birth (src/class/birth.ts), its class and race drawn from the birth
+   * pools at each birth (#16). Flag-gated:
    * without the flag the presenter declines and the game's own birth screens
    * run as before. The engine arrives as a parameter the way ctx.core
    * arrives everywhere else; the pack's own index documents the wiring. */
@@ -594,7 +577,7 @@ const definition: Api2ModDefinition = {
       mod.meta.log("the Borg has no engine here, so the game shows its own character creation");
       return undefined;
     }
-    return activePack.createPresenter(mod, core);
+    return plannedBirth(mod, core);
   },
 
   /* The controller installs with onDeath: "end", not upstream's default
