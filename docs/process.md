@@ -21,10 +21,13 @@ with read access to `diegoami/mandos`, nvm. Toolchain: Node 22+ (CI uses
     git -C neo-angband remote add fork git@github.com:diegoami/neo-angband.git
     git -C neo-angband fetch fork
     git -C neo-angband checkout -b neowarrior-lab --track fork/neowarrior-lab
-    # upstream's borg mod, pristine at our import pin (read-only reference)
+    # the engine as upstream has it, a pristine worktree (never worked in)
+    git -C neo-angband worktree add --detach ../neo-angband-upstream origin/master
+    # upstream's borg mod, pristine on neostryder's master (never worked in)
     git clone git@github.com:neostryder/neo-angband-mod-borg.git neo-angband-mod-borg
     git -C neo-angband-mod-borg remote add fork git@github.com:diegoami/neo-angband-mod-borg.git
-    git -C neo-angband-mod-borg checkout 1fa2f8d
+    # bring both pristine checkouts to upstream's head
+    node better-borg/tools/upstream-sync.mjs
     # optional reference: upstream's squire mod (Phase 3 ideas)
     git clone https://github.com/neostryder/neo-angband-mod-squire.git neo-angband-mod-squire
 
@@ -85,8 +88,13 @@ Working notes (each one cost a session time):
 - A scratch git worktree needs `node_modules`: symlink it (the content pack
   comes with it); removing the worktree then needs `--force` (the symlink is
   untracked).
-- Read-only checkouts: `../neo-angband` (engine, on our local lab branch),
-  `../neo-angband-mod-borg` (pristine `1fa2f8d`); the C reference is
+- Checkouts: `../neo-angband` is the engine on OUR lab branch (its remotes:
+  `origin` neostryder, `fork` ours, `upstream` angband/angband, the C game).
+  The PRISTINE ones, never worked in, are `../neo-angband-upstream` (a
+  worktree of it, detached at neostryder's master) and
+  `../neo-angband-mod-borg` (neostryder's master). `node
+  tools/upstream-sync.mjs` brings both to upstream's head and says which `pr/*`
+  branch has a stale base. The C reference is
   `../neo-angband/reference/src/borg/`.
 - Engine fingerprint, at the start and end of every task: `md5sum
   node_modules/@rpgm-tools/neo-angband-core/dist/game/trap.js` =
@@ -251,6 +259,11 @@ kept here as a `FORK:`-marked choice (rule 3). Attribute against the C
 first; the attribution decides whether anything is posted at all. Engine
 gaps go to the engine tracker the same way (#428). The mod-borg stance is
 survey-only: a PR there needs an acknowledged defect and zero debate.
+
+**Before posting**, run `node tools/upstream-sync.mjs` (exit 0): an issue
+cites the pristine checkout at upstream's head, and a PR branch is cut from
+it (`git -C ../neo-angband-mod-borg switch -c pr/<slug>`, then back to
+`master` after the push).
 
 **Posting** (rule 12): draft, show the owner, post on approval. Shape it like
 the posts already up - engine issue #428 and its PR #429 are the reference,
