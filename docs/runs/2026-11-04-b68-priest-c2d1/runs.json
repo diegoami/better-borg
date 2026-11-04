@@ -1,0 +1,419 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T17:29:45.688Z",
+  "label": "b68-priest-c2d1",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B68-necromancer-light@7e1fa08b (dirty)",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "generic-priest pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Priest",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 435,
+      "turns": 15071,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 101,
+      "kills": 4,
+      "places": 224,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 25,
+        "descend": 14,
+        "rest": 34,
+        "walk": 345,
+        "ascend": 13,
+        "pickup": 1,
+        "open": 1,
+        "quaff": 1
+      },
+      "jitter": 30,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4659
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Priest",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 309,
+      "turns": 3900,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 117,
+      "kills": 2,
+      "places": 170,
+      "dead": true,
+      "causeOfDeath": "grey mushroom patch",
+      "commands": {
+        "descend": 9,
+        "ascend": 8,
+        "study": 1,
+        "cast": 1,
+        "rest": 18,
+        "walk": 267,
+        "open": 3,
+        "quaff": 2
+      },
+      "jitter": 32,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3370
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Priest",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 764,
+      "turns": 9028,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 121,
+      "kills": 5,
+      "places": 420,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 5,
+        "descend": 19,
+        "open": 17,
+        "walk": 696,
+        "ascend": 18,
+        "pickup": 6,
+        "rest": 2
+      },
+      "jitter": 33,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 9489
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Priest",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 430,
+      "turns": 6514,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 82,
+      "kills": 2,
+      "places": 252,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 2,
+        "rest": 4,
+        "descend": 13,
+        "ascend": 12,
+        "walk": 389,
+        "tunnel": 1,
+        "pickup": 4,
+        "wield": 1,
+        "open": 2,
+        "throw": 1
+      },
+      "jitter": 36,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4915
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Priest",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 454,
+      "turns": 16336,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 126,
+      "kills": 3,
+      "places": 285,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 27,
+        "descend": 23,
+        "walk": 353,
+        "rest": 15,
+        "open": 7,
+        "ascend": 22,
+        "pickup": 5,
+        "throw": 1
+      },
+      "jitter": 43,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 8453
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Priest",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 94,
+      "turns": 1480,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 97,
+      "kills": 6,
+      "places": 51,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 4,
+        "ascend": 3,
+        "study": 1,
+        "cast": 2,
+        "walk": 80,
+        "rest": 1,
+        "open": 3
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 865
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Priest",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 339,
+      "turns": 4801,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 106,
+      "kills": 2,
+      "places": 256,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 6,
+        "open": 10,
+        "walk": 310,
+        "rest": 3,
+        "throw": 1,
+        "ascend": 5,
+        "quaff": 1,
+        "pickup": 1
+      },
+      "jitter": 43,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3094
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Priest",
+      "baseStats": [
+        17,
+        10,
+        16,
+        10,
+        16
+      ],
+      "decisions": 444,
+      "turns": 5921,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 91,
+      "kills": 6,
+      "places": 248,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 2,
+        "rest": 10,
+        "walk": 385,
+        "descend": 18,
+        "quaff": 1,
+        "ascend": 17,
+        "throw": 1,
+        "open": 5,
+        "tunnel": 1,
+        "pickup": 1,
+        "wield": 1,
+        "hold": 1
+      },
+      "jitter": 35,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4520
+      }
+    }
+  ]
+}

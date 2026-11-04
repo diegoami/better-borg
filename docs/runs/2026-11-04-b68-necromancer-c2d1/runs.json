@@ -1,0 +1,508 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T17:22:52.857Z",
+  "label": "b68-necromancer-c2d1",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B68-necromancer-light@4b11bbac",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "generic-necromancer pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Necromancer",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 463,
+      "turns": 8236,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 459,
+      "kills": 5,
+      "places": 258,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 5,
+        "descend": 14,
+        "walk": 416,
+        "pickup": 4,
+        "wield": 1,
+        "rest": 7,
+        "takeoff": 1,
+        "ascend": 13,
+        "open": 1
+      },
+      "jitter": 39,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4942
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Necromancer",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 734,
+      "turns": 10306,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 4,
+      "gold": 306,
+      "kills": 4,
+      "places": 422,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 27,
+        "ascend": 25,
+        "study": 1,
+        "cast": 7,
+        "walk": 649,
+        "open": 12,
+        "rest": 7,
+        "pickup": 4,
+        "read": 1,
+        "quaff": 1
+      },
+      "jitter": 44,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 1,
+        "points": [
+          {
+            "kind": "valuation-tie",
+            "turn": 1208,
+            "depth": 1,
+            "at": {
+              "x": 162,
+              "y": 29
+            },
+            "hp": 8,
+            "chosen": "walk",
+            "candidates": [
+              {
+                "method": "THRUST",
+                "score": 19
+              },
+              {
+                "method": "SPELL_NETHER_BOLT",
+                "score": 19
+              }
+            ],
+            "aim": null
+          }
+        ]
+      },
+      "meta": {
+        "wallClockMs": 6715
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Necromancer",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 1072,
+      "turns": 12100,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 2,
+      "gold": 408,
+      "kills": 7,
+      "places": 661,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 6,
+        "descend": 35,
+        "walk": 974,
+        "ascend": 34,
+        "open": 15,
+        "tunnel": 1,
+        "pickup": 4,
+        "rest": 2
+      },
+      "jitter": 32,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 3,
+        "points": [
+          {
+            "kind": "valuation-tie",
+            "turn": 11082,
+            "depth": 1,
+            "at": {
+              "x": 141,
+              "y": 56
+            },
+            "hp": 9,
+            "chosen": "walk",
+            "candidates": [
+              {
+                "method": "THRUST",
+                "score": 19
+              },
+              {
+                "method": "SPELL_NETHER_BOLT",
+                "score": 19
+              }
+            ],
+            "aim": null
+          },
+          {
+            "kind": "valuation-tie",
+            "turn": 11092,
+            "depth": 1,
+            "at": {
+              "x": 141,
+              "y": 56
+            },
+            "hp": 7,
+            "chosen": "walk",
+            "candidates": [
+              {
+                "method": "THRUST",
+                "score": 19
+              },
+              {
+                "method": "SPELL_NETHER_BOLT",
+                "score": 19
+              }
+            ],
+            "aim": null
+          },
+          {
+            "kind": "valuation-tie",
+            "turn": 11101,
+            "depth": 1,
+            "at": {
+              "x": 141,
+              "y": 56
+            },
+            "hp": 7,
+            "chosen": "walk",
+            "candidates": [
+              {
+                "method": "THRUST",
+                "score": 19
+              },
+              {
+                "method": "SPELL_NETHER_BOLT",
+                "score": 19
+              }
+            ],
+            "aim": null
+          }
+        ]
+      },
+      "meta": {
+        "wallClockMs": 9578
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Necromancer",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 453,
+      "turns": 9428,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 360,
+      "kills": 3,
+      "places": 236,
+      "dead": true,
+      "causeOfDeath": "Fang, Farmer Maggot's Dog",
+      "commands": {
+        "study": 1,
+        "cast": 9,
+        "rest": 5,
+        "descend": 11,
+        "walk": 405,
+        "open": 10,
+        "ascend": 10,
+        "tunnel": 1,
+        "pickup": 1
+      },
+      "jitter": 31,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4196
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Necromancer",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 297,
+      "turns": 4052,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 363,
+      "kills": 5,
+      "places": 167,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 17,
+        "ascend": 16,
+        "study": 1,
+        "cast": 5,
+        "walk": 250,
+        "rest": 1,
+        "open": 3,
+        "pickup": 2,
+        "wield": 1,
+        "tunnel": 1
+      },
+      "jitter": 39,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 2780
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Necromancer",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 429,
+      "turns": 6331,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 374,
+      "kills": 4,
+      "places": 232,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 6,
+        "rest": 4,
+        "walk": 382,
+        "descend": 14,
+        "ascend": 13,
+        "pickup": 4,
+        "tunnel": 1,
+        "open": 4
+      },
+      "jitter": 32,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4142
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Necromancer",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 375,
+      "turns": 4457,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 363,
+      "kills": 6,
+      "places": 229,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 4,
+        "descend": 13,
+        "walk": 340,
+        "rest": 2,
+        "open": 3,
+        "ascend": 12
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3258
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Necromancer",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 100,
+      "turns": 990,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 363,
+      "kills": 0,
+      "places": 58,
+      "dead": true,
+      "causeOfDeath": "Grip, Farmer Maggot's Dog",
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 3,
+        "walk": 89,
+        "open": 1,
+        "pickup": 2,
+        "wield": 1,
+        "ascend": 2
+      },
+      "jitter": 36,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 906
+      }
+    }
+  ]
+}
