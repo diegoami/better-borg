@@ -17,3 +17,8 @@ All seeds 1–72 survived individual probes at the same cap (scratch logs in
 The run names `670c1983 (dirty)`: only test fixture edits were in flight;
 production play code is exactly `670c1983`. The older records stay unchanged.
 The B69 class-grid record remains the behavior measurement at c2d1.
+
+Build-note correction (2026-11-04): `runs.json` actually names clean
+`task/B69-borg-okay@670c1983`. Its provenance was captured before the test
+edits began; the dirty marker described above is absent. Production play
+code is still exactly that commit.
