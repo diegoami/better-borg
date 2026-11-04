@@ -63,15 +63,29 @@ export interface SceneView {
 }
 
 /**
+ * The timed afflictions that wear off with time. A command repeated while one
+ * of them counts down is waiting it out, not stalling (#65: a confused
+ * warrior with one food item - so, faithfully to the C, it may not rest -
+ * kept trying a locked door; each try took a turn and the confusion fell,
+ * but the scene looked unchanged, and the watch called it a stall where the
+ * C borg would have got through once the confusion ended). Food is left
+ * out on purpose: it falls every turn, so a rest that changes nothing else
+ * would never read as a stall.
+ */
+const AFFLICTIONS = ["blind", "confused", "afraid", "poisoned", "cut", "stun", "paralyzed"] as const;
+
+/**
  * What the scene is, for the purpose of "did that command change anything":
- * the player's grid, depth, hp, sp, exp and gold, and every perceived
- * monster's grid and hp. The game turn is deliberately left out: a rest
- * that passes turns and changes nothing else is exactly a stall.
+ * the player's grid, depth, hp, sp, exp and gold, its timed afflictions, and
+ * every perceived monster's grid and hp. The game turn is deliberately left
+ * out: a rest that passes turns and changes nothing else is exactly a stall.
  */
 export function sceneKey(view: SceneView): string {
   const player = view.player() as Readonly<Record<string, unknown>> & { readonly grid: { readonly x: number; readonly y: number } };
+  const status = (player["status"] ?? {}) as Readonly<Record<string, unknown>>;
+  const afflictions = AFFLICTIONS.map((name) => status[name] ?? 0);
   const monsters = view.monsters().map((monster) => [monster.grid.x, monster.grid.y, monster.hp]);
-  return JSON.stringify([player.grid.x, player.grid.y, player["depth"], player["hp"], player["sp"], player["exp"], player["gold"], monsters]);
+  return JSON.stringify([player.grid.x, player.grid.y, player["depth"], player["hp"], player["sp"], player["exp"], player["gold"], afflictions, monsters]);
 }
 
 /** What one observed decision calls for. */
