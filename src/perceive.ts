@@ -187,7 +187,8 @@ function ingestMap(world: BorgWorld, view: BorgView): void {
  * be checked for the monster still being on it, whether a room needs lighting,
  * and the necromancer's lit-square spell penalty.
  *
- * Verbatim port including the shapes: radius 1 is the eight neighbours, radius 2
+ * Ported shapes, with the west-arm correction marked below: radius 1 is the
+ * eight neighbours, radius 2
  * is four three-grid arms gated on the grid two away being floor, and radius 3+
  * is four diagonals plus a boxed scan of everything in view within the light's
  * own distance approximation.
@@ -259,8 +260,12 @@ function borgUpdateLight(world: BorgWorld, view: BorgView): void {
     }
     if (floorAt(cy, cx - 2)) {
       lightUp(cy, cx - 2);
-      lightUp(cy + 2, cx - 2);
-      lightUp(cy - 2, cx - 2);
+      /* FORK: Mandos #87, CHOICE correcting inherited C behavior in
+       * borg_update_light (borg-cave-light.c:137-141). Mirror the east arm:
+       * +/-2 repeated corners and missed both west shoulders. Found by
+       * diegoami/borg-rs, docs/c-bugs.md #4 at 613227bc53c4. */
+      lightUp(cy + 1, cx - 2);
+      lightUp(cy - 1, cx - 2);
     }
   }
 

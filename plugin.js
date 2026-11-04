@@ -16408,8 +16408,8 @@ function borgUpdateLight(world, view) {
     }
     if (floorAt(cy, cx - 2)) {
       lightUp(cy, cx - 2);
-      lightUp(cy + 2, cx - 2);
-      lightUp(cy - 2, cx - 2);
+      lightUp(cy + 1, cx - 2);
+      lightUp(cy - 1, cx - 2);
     }
   }
   if (radius >= 3 && cy + 3 < AUTO_MAX_Y && cy - 3 > 0 && cx + 3 < AUTO_MAX_X && cx - 3 > 0) {
