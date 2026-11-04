@@ -62,6 +62,15 @@ describe("the scene key", () => {
   it("changes with hit points", () => {
     expect(sceneKey(view(100, 10))).not.toBe(sceneKey(view(100, 9)));
   });
+
+  it("changes as an affliction wears off, but not with food (#65)", () => {
+    const withStatus = (status: Record<string, number>) => ({
+      player: () => ({ grid: { x: 3, y: 4 }, depth: 1, hp: 10, sp: 0, exp: 0, gold: 5, status }),
+      monsters: () => [],
+    });
+    expect(sceneKey(withStatus({ confused: 30, food: 5000 }))).not.toBe(sceneKey(withStatus({ confused: 29, food: 5000 })));
+    expect(sceneKey(withStatus({ confused: 0, food: 5000 }))).toBe(sceneKey(withStatus({ confused: 0, food: 4999 })));
+  });
 });
 
 describe("aim and forget", () => {

@@ -17051,10 +17051,13 @@ function forgetGrid(world, x, y) {
 var STALLS_BEFORE_FORGET = 6;
 var STALLS_BEFORE_RELEASE = 40;
 var IDLE_BEFORE_RELEASE = 25;
+var AFFLICTIONS = ["blind", "confused", "afraid", "poisoned", "cut", "stun", "paralyzed"];
 function sceneKey(view) {
   const player = view.player();
+  const status = player["status"] ?? {};
+  const afflictions = AFFLICTIONS.map((name) => status[name] ?? 0);
   const monsters = view.monsters().map((monster) => [monster.grid.x, monster.grid.y, monster.hp]);
-  return JSON.stringify([player.grid.x, player.grid.y, player["depth"], player["hp"], player["sp"], player["exp"], player["gold"], monsters]);
+  return JSON.stringify([player.grid.x, player.grid.y, player["depth"], player["hp"], player["sp"], player["exp"], player["gold"], afflictions, monsters]);
 }
 function createStallWatch() {
   let lastScene = "";
