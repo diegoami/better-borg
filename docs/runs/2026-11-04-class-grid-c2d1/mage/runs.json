@@ -1,0 +1,411 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T14:42:06.877Z",
+  "label": "grid-mage",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "main@0bd7626f",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "generic-mage pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 1450,
+      "turns": 16658,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 402,
+      "kills": 4,
+      "places": 803,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 44,
+        "walk": 1309,
+        "ascend": 43,
+        "rest": 28,
+        "pickup": 8,
+        "open": 14,
+        "wield": 1,
+        "quaff": 1
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 16534
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 539,
+      "turns": 6700,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 338,
+      "kills": 3,
+      "places": 316,
+      "dead": true,
+      "causeOfDeath": "rock lizard",
+      "commands": {
+        "descend": 15,
+        "ascend": 14,
+        "study": 1,
+        "cast": 1,
+        "walk": 482,
+        "rest": 13,
+        "pickup": 6,
+        "open": 3,
+        "quaff": 2,
+        "read": 2
+      },
+      "jitter": 39,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 6077
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 656,
+      "turns": 7395,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 354,
+      "kills": 0,
+      "places": 407,
+      "dead": true,
+      "causeOfDeath": "fruit bat",
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 17,
+        "walk": 600,
+        "ascend": 16,
+        "pickup": 5,
+        "drop": 9,
+        "open": 5,
+        "rest": 1,
+        "quaff": 1
+      },
+      "jitter": 34,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 6709
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 279,
+      "turns": 4204,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 322,
+      "kills": 1,
+      "places": 157,
+      "dead": true,
+      "causeOfDeath": "fruit bat",
+      "commands": {
+        "study": 1,
+        "cast": 2,
+        "rest": 4,
+        "descend": 12,
+        "walk": 245,
+        "ascend": 11,
+        "pickup": 2,
+        "quaff": 2
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3225
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 415,
+      "turns": 4250,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 365,
+      "kills": 2,
+      "places": 243,
+      "dead": true,
+      "causeOfDeath": "grey mushroom patch",
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 15,
+        "walk": 369,
+        "ascend": 14,
+        "open": 7,
+        "pickup": 6,
+        "wield": 1,
+        "quaff": 1
+      },
+      "jitter": 33,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4931
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 365,
+      "turns": 3970,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 349,
+      "kills": 2,
+      "places": 201,
+      "dead": true,
+      "causeOfDeath": "a fatal wound",
+      "commands": {
+        "descend": 20,
+        "ascend": 19,
+        "study": 1,
+        "cast": 1,
+        "walk": 316,
+        "open": 6,
+        "pickup": 1,
+        "quaff": 1
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3822
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 19,
+      "turns": 198,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 331,
+      "kills": 0,
+      "places": 8,
+      "dead": true,
+      "causeOfDeath": "grey mushroom patch",
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 2,
+        "open": 1,
+        "walk": 13,
+        "ascend": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 173
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "decisions": 22,
+      "turns": 230,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 357,
+      "kills": 1,
+      "places": 13,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "cast": 1,
+        "descend": 2,
+        "walk": 17,
+        "ascend": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 225
+      }
+    }
+  ]
+}

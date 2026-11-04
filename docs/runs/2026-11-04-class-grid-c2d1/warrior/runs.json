@@ -1,0 +1,463 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T14:41:24.704Z",
+  "label": "grid-warrior",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 7,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "main@0bd7626f",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "warrior pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 494,
+      "turns": 4989,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 173,
+      "kills": 8,
+      "places": 286,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 12,
+        "walk": 458,
+        "open": 8,
+        "quaff": 1,
+        "ascend": 11,
+        "rest": 1,
+        "pickup": 2,
+        "wield": 1
+      },
+      "jitter": 33,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4786
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 850,
+      "turns": 10040,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 199,
+      "kills": 9,
+      "places": 486,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 31,
+        "ascend": 30,
+        "walk": 758,
+        "tunnel": 2,
+        "pickup": 3,
+        "wield": 1,
+        "quaff": 1,
+        "open": 19,
+        "rest": 5
+      },
+      "jitter": 42,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 9428
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 383,
+      "turns": 3865,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 198,
+      "kills": 5,
+      "places": 247,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 6,
+        "walk": 365,
+        "ascend": 5,
+        "open": 5,
+        "pickup": 1,
+        "quaff": 1
+      },
+      "jitter": 48,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4200
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 671,
+      "turns": 9210,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 2,
+      "gold": 137,
+      "kills": 6,
+      "places": 373,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 28,
+        "walk": 591,
+        "rest": 10,
+        "ascend": 27,
+        "pickup": 3,
+        "open": 9,
+        "tunnel": 2,
+        "quaff": 1
+      },
+      "jitter": 38,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 6658
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 349,
+      "turns": 4671,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 140,
+      "kills": 8,
+      "places": 206,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 8,
+        "walk": 320,
+        "ascend": 7,
+        "tunnel": 1,
+        "quaff": 1,
+        "rest": 4,
+        "open": 8
+      },
+      "jitter": 45,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3655
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 1190,
+      "turns": 15018,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 2,
+      "gold": 203,
+      "kills": 5,
+      "places": 708,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 26,
+        "ascend": 25,
+        "walk": 1093,
+        "quaff": 1,
+        "pickup": 5,
+        "open": 32,
+        "rest": 6,
+        "tunnel": 2
+      },
+      "jitter": 27,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 11044
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 481,
+      "turns": 5053,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 1,
+      "gold": 167,
+      "kills": 2,
+      "places": 234,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 17,
+        "walk": 362,
+        "open": 55,
+        "ascend": 16,
+        "quaff": 1,
+        "pickup": 3,
+        "drop": 27
+      },
+      "jitter": 3,
+      "restedBesideMonster": 0,
+      "stall": {
+        "kind": "repeat",
+        "command": "open",
+        "decision": 481,
+        "turn": 5043
+      },
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 6,
+        "points": [
+          {
+            "kind": "known-world-gap",
+            "turn": 4543,
+            "depth": 1,
+            "at": {
+              "x": 120,
+              "y": 26
+            },
+            "hp": 20,
+            "chosen": "open",
+            "candidates": [],
+            "aim": {
+              "x": 121,
+              "y": 25
+            }
+          },
+          {
+            "kind": "known-world-gap",
+            "turn": 4643,
+            "depth": 1,
+            "at": {
+              "x": 120,
+              "y": 26
+            },
+            "hp": 20,
+            "chosen": "open",
+            "candidates": [],
+            "aim": {
+              "x": 121,
+              "y": 25
+            }
+          },
+          {
+            "kind": "known-world-gap",
+            "turn": 4713,
+            "depth": 1,
+            "at": {
+              "x": 120,
+              "y": 26
+            },
+            "hp": 20,
+            "chosen": "open",
+            "candidates": [],
+            "aim": {
+              "x": 121,
+              "y": 25
+            }
+          },
+          {
+            "kind": "known-world-gap",
+            "turn": 4773,
+            "depth": 1,
+            "at": {
+              "x": 120,
+              "y": 26
+            },
+            "hp": 20,
+            "chosen": "open",
+            "candidates": [],
+            "aim": {
+              "x": 121,
+              "y": 25
+            }
+          },
+          {
+            "kind": "known-world-gap",
+            "turn": 4873,
+            "depth": 1,
+            "at": {
+              "x": 120,
+              "y": 26
+            },
+            "hp": 20,
+            "chosen": "open",
+            "candidates": [],
+            "aim": {
+              "x": 121,
+              "y": 25
+            }
+          },
+          {
+            "kind": "known-world-gap",
+            "turn": 4993,
+            "depth": 1,
+            "at": {
+              "x": 120,
+              "y": 26
+            },
+            "hp": 20,
+            "chosen": "open",
+            "candidates": [],
+            "aim": {
+              "x": 121,
+              "y": 25
+            }
+          }
+        ]
+      },
+      "meta": {
+        "wallClockMs": 4598
+      }
+    }
+  ]
+}

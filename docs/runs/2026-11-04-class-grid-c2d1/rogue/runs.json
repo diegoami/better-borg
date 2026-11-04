@@ -1,0 +1,396 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T14:46:03.001Z",
+  "label": "grid-rogue",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "main@0bd7626f",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "generic-rogue pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Rogue",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 119,
+      "turns": 1317,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 238,
+      "kills": 2,
+      "places": 68,
+      "dead": true,
+      "causeOfDeath": "wild dog",
+      "commands": {
+        "descend": 6,
+        "walk": 100,
+        "open": 3,
+        "ascend": 5,
+        "rest": 1,
+        "pickup": 3,
+        "read": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": false,
+      "retired": false,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 1378
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Rogue",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 169,
+      "turns": 2261,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 195,
+      "kills": 2,
+      "places": 99,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 5,
+        "ascend": 4,
+        "walk": 142,
+        "tunnel": 1,
+        "open": 2,
+        "pickup": 1,
+        "rest": 13,
+        "quaff": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 1790
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Rogue",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 842,
+      "turns": 8439,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 254,
+      "kills": 8,
+      "places": 473,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 26,
+        "walk": 773,
+        "ascend": 25,
+        "open": 14,
+        "pickup": 3,
+        "wield": 1
+      },
+      "jitter": 33,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 8806
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Rogue",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 524,
+      "turns": 5791,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 192,
+      "kills": 3,
+      "places": 283,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 15,
+        "walk": 489,
+        "ascend": 14,
+        "open": 4,
+        "rest": 2
+      },
+      "jitter": 38,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 5366
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Rogue",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 1087,
+      "turns": 10814,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 250,
+      "kills": 8,
+      "places": 633,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 55,
+        "walk": 957,
+        "ascend": 54,
+        "open": 12,
+        "pickup": 8,
+        "wield": 1
+      },
+      "jitter": 35,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 12916
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Rogue",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 2054,
+      "turns": 22172,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 307,
+      "kills": 9,
+      "places": 1182,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 67,
+        "ascend": 65,
+        "walk": 1873,
+        "pickup": 15,
+        "open": 22,
+        "wield": 1,
+        "rest": 10,
+        "read": 1
+      },
+      "jitter": 33,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 32208
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Rogue",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 269,
+      "turns": 2692,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 201,
+      "kills": 4,
+      "places": 144,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 6,
+        "walk": 253,
+        "open": 4,
+        "ascend": 5,
+        "pickup": 1
+      },
+      "jitter": 36,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 5185
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Rogue",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 420,
+      "turns": 4155,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 2,
+      "gold": 214,
+      "kills": 6,
+      "places": 281,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 9,
+        "walk": 392,
+        "ascend": 8,
+        "pickup": 4,
+        "open": 6,
+        "quaff": 1
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 8954
+      }
+    }
+  ]
+}
