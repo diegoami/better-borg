@@ -1,0 +1,411 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T15:57:28.290Z",
+  "label": "g69-blackguard",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B69-borg-okay@57b7855c",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "generic-blackguard pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Blackguard",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 967,
+      "turns": 12486,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 2,
+      "gold": 183,
+      "kills": 8,
+      "places": 446,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "descend": 11,
+        "walk": 926,
+        "open": 6,
+        "rest": 6,
+        "tunnel": 2,
+        "pickup": 4,
+        "ascend": 10,
+        "throw": 1
+      },
+      "jitter": 39,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 10361
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Blackguard",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 449,
+      "turns": 4470,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 139,
+      "kills": 5,
+      "places": 382,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 4,
+        "ascend": 3,
+        "study": 1,
+        "walk": 431,
+        "throw": 1,
+        "pickup": 2,
+        "open": 7
+      },
+      "jitter": 54,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 7651
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Blackguard",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 275,
+      "turns": 2744,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 151,
+      "kills": 4,
+      "places": 158,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "descend": 8,
+        "walk": 248,
+        "ascend": 7,
+        "pickup": 6,
+        "open": 3,
+        "throw": 1,
+        "wield": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3946
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Blackguard",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 263,
+      "turns": 2688,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 148,
+      "kills": 4,
+      "places": 152,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "descend": 7,
+        "walk": 238,
+        "open": 4,
+        "ascend": 6,
+        "tunnel": 1,
+        "cast": 2,
+        "pickup": 3,
+        "throw": 1
+      },
+      "jitter": 30,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3083
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Blackguard",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 138,
+      "turns": 1366,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 4,
+      "gold": 139,
+      "kills": 5,
+      "places": 79,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "descend": 9,
+        "walk": 113,
+        "ascend": 8,
+        "open": 4,
+        "throw": 1,
+        "pickup": 1,
+        "read": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 2106
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Blackguard",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 471,
+      "turns": 5432,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 151,
+      "kills": 6,
+      "places": 257,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 24,
+        "ascend": 23,
+        "study": 1,
+        "walk": 418,
+        "open": 3,
+        "throw": 1,
+        "pickup": 1
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 6362
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Blackguard",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 225,
+      "turns": 2231,
+      "depths": [
+        0,
+        1,
+        2
+      ],
+      "maxDepth": 2,
+      "clvl": 2,
+      "gold": 164,
+      "kills": 4,
+      "places": 120,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "descend": 7,
+        "walk": 206,
+        "ascend": 6,
+        "cast": 1,
+        "open": 2,
+        "pickup": 1,
+        "throw": 1
+      },
+      "jitter": 34,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 2994
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Blackguard",
+      "baseStats": [
+        17,
+        12,
+        10,
+        17,
+        12
+      ],
+      "decisions": 677,
+      "turns": 7628,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 171,
+      "kills": 6,
+      "places": 462,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "study": 1,
+        "descend": 9,
+        "open": 20,
+        "walk": 632,
+        "ascend": 8,
+        "pickup": 2,
+        "throw": 1,
+        "read": 3,
+        "rest": 1
+      },
+      "jitter": 41,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 9008
+      }
+    }
+  ]
+}

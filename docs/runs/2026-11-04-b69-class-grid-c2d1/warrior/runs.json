@@ -1,0 +1,405 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-04T15:50:20.868Z",
+  "label": "g69-warrior",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 10000,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lives": 8,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B69-borg-okay@9318d02a (dirty)",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "warrior pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "life": 1,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 119,
+      "turns": 1154,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 4,
+      "gold": 173,
+      "kills": 8,
+      "places": 55,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 5,
+        "walk": 104,
+        "open": 4,
+        "quaff": 1,
+        "ascend": 4,
+        "pickup": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 2247
+      }
+    },
+    {
+      "seed": 2,
+      "life": 2,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 71,
+      "turns": 701,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 140,
+      "kills": 3,
+      "places": 39,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 5,
+        "ascend": 4,
+        "walk": 56,
+        "tunnel": 1,
+        "pickup": 1,
+        "wield": 1,
+        "throw": 1,
+        "quaff": 1,
+        "open": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 1273
+      }
+    },
+    {
+      "seed": 3,
+      "life": 3,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 204,
+      "turns": 2010,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 3,
+      "gold": 172,
+      "kills": 7,
+      "places": 114,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 6,
+        "walk": 189,
+        "ascend": 5,
+        "quaff": 1,
+        "open": 3
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 3126
+      }
+    },
+    {
+      "seed": 4,
+      "life": 4,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 706,
+      "turns": 7956,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 168,
+      "kills": 6,
+      "places": 408,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 20,
+        "walk": 652,
+        "rest": 2,
+        "ascend": 18,
+        "open": 7,
+        "throw": 1,
+        "quaff": 1,
+        "pickup": 4,
+        "read": 1
+      },
+      "jitter": 32,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 12339
+      }
+    },
+    {
+      "seed": 5,
+      "life": 5,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 158,
+      "turns": 1712,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 140,
+      "kills": 5,
+      "places": 94,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 11,
+        "walk": 130,
+        "ascend": 10,
+        "tunnel": 1,
+        "quaff": 1,
+        "pickup": 2,
+        "wield": 1,
+        "open": 1,
+        "throw": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 2490
+      }
+    },
+    {
+      "seed": 6,
+      "life": 6,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 604,
+      "turns": 6303,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 183,
+      "kills": 6,
+      "places": 336,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 19,
+        "ascend": 18,
+        "walk": 549,
+        "quaff": 1,
+        "open": 9,
+        "tunnel": 1,
+        "pickup": 3,
+        "wield": 1,
+        "rest": 3
+      },
+      "jitter": 37,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 8952
+      }
+    },
+    {
+      "seed": 7,
+      "life": 7,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 633,
+      "turns": 6376,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 225,
+      "kills": 4,
+      "places": 376,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 19,
+        "walk": 586,
+        "open": 6,
+        "ascend": 18,
+        "throw": 1,
+        "pickup": 3
+      },
+      "jitter": 34,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 10130
+      }
+    },
+    {
+      "seed": 8,
+      "life": 8,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 293,
+      "turns": 2898,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 154,
+      "kills": 4,
+      "places": 167,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 14,
+        "walk": 258,
+        "ascend": 13,
+        "pickup": 4,
+        "open": 1,
+        "throw": 1,
+        "wield": 1,
+        "quaff": 1
+      },
+      "jitter": 33,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 4966
+      }
+    }
+  ]
+}
