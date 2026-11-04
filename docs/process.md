@@ -260,6 +260,16 @@ first; the attribution decides whether anything is posted at all. Engine
 gaps go to the engine tracker the same way (#428). The mod-borg stance is
 survey-only: a PR there needs an acknowledged defect and zero debate.
 
+**A bug in the C borg itself** (owner, 2026-11-04): when the 4.2.6 C borg is
+wrong too, so a port that follows it faithfully is equally wrong, it is
+posted to the C's own repository, **angband/angband**, as well. Check its
+current master first, because our C reference (`../neo-angband/reference/src/borg/`)
+is the 4.2.6 snapshot and the bug may already be fixed there. Track it like
+any thread: an `angband/angband#n` on the tracking issue's **Threads** line,
+which `tools/upstream-watch.mjs` follows like the others. Our fix is then a
+CHOICE that departs from 4.2.6 (rule 3), FORK-marked, unless angband/angband
+fixes it, in which case it is a defect fix toward the C's newer code.
+
 **Before posting**, run `node tools/upstream-sync.mjs` (exit 0): an issue
 cites the pristine checkout at upstream's head, and a PR branch is cut from
 it (`git -C ../neo-angband-mod-borg switch -c pr/<slug>`, then back to
