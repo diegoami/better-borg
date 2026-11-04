@@ -49,8 +49,8 @@
  * issued) - that record stays as committed (append-only), and every record
  * from here on counts the killing decision.
  *
- * Determinism (rule 5): the seed fixes the game, the seed fixes the Borg's
- * private stream, and this module adds no randomness of its own. Wall-clock
+ * Determinism (rule 5): the birth input fixes the game, and the Borg starts
+ * its private stream exactly as the shipped plugin does (#54). Wall-clock
  * durations are recorded as metadata and never influence a result.
  */
 
@@ -58,6 +58,10 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { birthReplayDataOf, type BirthReplayData } from "./records/birth-replay.js";
+import type { KnownWorldData, LoadoutSimulation } from "@rpgm-tools/neo-angband-mod-sdk";
+import { itemView, playerView, simulationView } from "./api2/world.js";
+import type { GradeFloors } from "./api2/records.js";
 import { dirname, join, sep } from "node:path";
 import type * as Core from "@rpgm-tools/neo-angband-core";
 import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
@@ -134,20 +138,94 @@ export function packSource(dir: string): string {
   }
 }
 
+function playGradeFloors(game: Core.StartedGame): GradeFloors {
+  return new Map(game.players.timed.map((effect) => {
+    let floor = 1;
+    const grades = new Map<string, number>();
+    for (const grade of effect.grades) {
+      if (grade.name && !grades.has(grade.name)) grades.set(grade.name, floor);
+      floor = grade.max + 1;
+    }
+    return [effect.name, grades];
+  }));
+}
+
+function playView(core: typeof Core, game: Core.StartedGame, raw: Core.AgentView,
+  deps: Core.AgentViewDeps, floors: GradeFloors): Core.AgentView {
+  // This is the same public known-world builder the real API2 host invokes.
+  const known = core.buildKnownWorld(game.state, deps) as unknown as KnownWorldData;
+  if (!known.player || !known.level) throw new Error("The play harness has no known player/level");
+  const player = playerView(known.player, floors);
+  const { width, height } = known.level;
+  const cells = new Map(known.level.cells.map((cell) => [cell.y * width + cell.x, cell]));
+  const names = new Map((known.monsters ?? []).map((monster) => [`${monster.grid.x},${monster.grid.y}`, monster]));
+  const monsters = core.trueMonsterViews(game.state, deps).flatMap((monster) => {
+    if (!core.monsterIsObvious(game.state.monsters[monster.id]!)) return [];
+    const named = names.get(`${monster.grid.x},${monster.grid.y}`);
+    return named?.raceIndex === monster.raceIndex ? [{ ...monster, id: named.id }] : [];
+  });
+  const occupants = new Map(monsters.map((monster) => [monster.grid.y * width + monster.grid.x, monster.id]));
+  return {
+    ...raw,
+    player: () => structuredClone(player),
+    monsters: () => structuredClone(monsters),
+    mapBounds: () => ({ width, height }),
+    cell: (x, y) => {
+      if (x < 0 || y < 0 || x >= width || y >= height) return null;
+      const monster = player.grid.x === x && player.grid.y === y ? -1 : (occupants.get(y * width + x) ?? 0);
+      const remembered = cells.get(y * width + x);
+      if (!remembered) return { x, y, feat: 0, passable: false, inView: false, known: false,
+        monster, objectCount: 0, knownObjectCount: 0, glow: false, trap: false };
+      const memory = remembered.remembered;
+      return { x, y, feat: memory.feat, passable: memory.passable, inView: remembered.visible,
+        known: true, monster, objectCount: memory.objects.length, knownObjectCount: memory.objects.length,
+        glow: remembered.glow, trap: memory.traps.some((trap) => !trap.disabled
+          && game.booted.registries.traps?.[trap.index]?.flags.has(core.TRF.TRAP)),
+        ...(memory.featCode === undefined ? {} : { featCode: memory.featCode }) };
+    },
+    inventory: () => (known.inventory ?? []).map(itemView),
+    equipment: () => (known.equipment ?? []).map((item) => item === null ? null : itemView(item)),
+    quiver: () => (known.quiver ?? []).map(itemView),
+    floorItems: (x, y) => (x === player.grid.x && y === player.grid.y
+      ? (known.floorHere ?? []) : (cells.get(y * width + x)?.remembered.items ?? [])).map(itemView),
+    target: () => known.target === null ? null : { midx: known.target.monster ?? 0, grid: { ...known.target.grid } },
+    stores: () => (known.stores ?? []).map((store) => ({ ...structuredClone(store),
+      stock: store.stock.map((item) => ({ ...itemView(item), index: item.index,
+        ...(item.price === undefined ? {} : { price: item.price }) })) })),
+    spellbooks: () => structuredClone(known.spellbooks ?? []) as unknown as Core.SpellbookView[],
+    simulateLoadout: (change) => {
+      const result = raw.simulateLoadout?.(change);
+      return result ? simulationView(floors)(core.knownLoadoutSimulation(game.state, result) as unknown as LoadoutSimulation) : null;
+    },
+  };
+}
+
 export function loadPack(dir: string): GamePack {
   const json = <T,>(name: string): T =>
     JSON.parse(readFileSync(join(dir, `${name}.json`), "utf8")) as T;
   const records = <T,>(name: string): T[] => json<{ records: T[] }>(name).records;
+  const optionalRecords = <T,>(name: string): T[] => existsSync(join(dir, `${name}.json`)) ? records<T>(name) : [];
   return {
     constants: json("constants"),
     terrain: records("terrain"),
     roomTemplates: records("room_template"),
     vaults: records("vault"),
     dungeonProfiles: records("dungeon_profile"),
+    /* FORK: Mandos #54, DEFECT in our loader. Match the desktop's full
+     * GamePack: omitted shops changed initialization RNG and left the
+     * benchmark playing a different world despite an identical seed. */
+    chestTraps: records("chest_trap"),
+    world: records("world"),
     projection: records("projection"),
     trap: records("trap"),
+    messageTypes: optionalRecords("message_type"),
+    tvals: optionalRecords("tval"),
+    monsterSpells: records<{ type?: unknown }>("monster_spell").filter((record) => typeof record.type === "string"),
     names: records("names"),
+    store: records("store"),
     quest: records("quest"),
+    uiKnowledge: records("ui_knowledge"),
+    hints: records("hints"),
     obj: {
       objectBase: json("object_base"),
       object: json("object"),
@@ -170,7 +248,6 @@ export function loadPack(dir: string): GamePack {
       summons: records("summon"),
       pits: records("pit"),
     },
-    mon2: undefined,
     player: {
       races: records("p_race"),
       classes: records("class"),
@@ -246,21 +323,20 @@ interface LifeObservation {
 export function observingLife(
   core: typeof Core,
   game: StartedGame,
-  seed: number,
 ): LifeObservation {
   const state: GameState = game.state;
+  // The real host marks a character when its autoplayer takes control.
+  state.actor.player.noscore |= core.NOSCORE.BORG;
   const resolver = new core.ContentIdResolver({
     objects: game.booted.registries.objects,
     playerRaces: game.players.races,
     playerClasses: game.players.classes,
   });
   const borg = createBorg({
-    /* Vary the Borg's private stream with the game seed. Every run used to
-     * share one starting seed, so all four "different" runs drove an identical
-     * draw sequence and the suite was structurally blind to anything that
-     * depends on the Borg's own rolls: tie-breaks, retry counters, the twitchy
-     * fallback. A regression there would have shown up on no seed at all. */
-    rngSeed: (seed * 2654435761) >>> 0 || 1,
+    /* FORK: Mandos #54, DEFECT in our measurement/replay driver. Use the
+     * shipped plugin's default private stream; hashing the world seed here
+     * made this a different Borg even with an identical game state. Tests
+     * can still exercise explicit private seeds through createBorg. */
     resolvers: makeCoreResolvers({
       races: game.booted.registries.monsters.races,
       objects: game.booted.registries.objects,
@@ -271,6 +347,8 @@ export function observingLife(
       blowMethods: game.booted.registries.monsters.blowMethods.values(),
     }),
   });
+  const viewDeps = { resolver, reg: game.booted.registries.objects };
+  const floors = playGradeFloors(game);
 
   /* The latch the host installs for the same reason (main.ts): runGameLoop
    * asks nextCommand for as long as the player has energy, so a controller
@@ -294,9 +372,14 @@ export function observingLife(
   let decision = 0;
   const session = core.installController(
     state,
-    (view, act) => {
+    (legacyView, legacyAct) => {
       if (!armed) return null;
       armed = false;
+      const view = playView(core, game, legacyView, viewDeps, floors);
+      const act = { ...legacyAct, setTargetMonster: (id: number) => {
+        const actual = core.knownMonsterMidx(state, id);
+        return actual === null ? false : legacyAct.setTargetMonster(actual);
+      } };
       const cmd = borg.controller(view, act);
       if (cmd) commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
       decision += 1;
@@ -335,7 +418,7 @@ export function observingLife(
       });
       return cmd;
     },
-    { viewDeps: { resolver, reg: game.booted.registries.objects } },
+    { viewDeps },
   );
 
   return {
@@ -476,7 +559,7 @@ function jitterOf(life: LifeObservation): number {
 }
 
 /** What a run did, in the terms a stall shows up in. */
-export interface RunReport {
+export interface RunReport extends BirthReplayData {
   /** The game seed this character was born under. */
   seed: number;
   /** 1-based life number within the seed's session (one character per life). */
@@ -615,10 +698,10 @@ export function playSession(
 
   const runs: RunReport[] = [];
   for (let life = 1; life <= lives; life++) {
-    /* The Borg starts each life as it started the first: same private-stream
-     * derivation from the seed, fresh world model (the previous character's
+    /* The Borg starts each life as it started the first: the plugin's default
+     * private stream, fresh world model (the previous character's
      * map is not this character's knowledge), fresh resolvers. */
-    const observed = observingLife(core, game, opts.seed);
+    const observed = observingLife(core, game);
     const turnStart = state.turn;
     const startedAt = Date.now();
 
@@ -628,6 +711,8 @@ export function playSession(
     const depthsSorted = [...observed.depths].sort((a, b) => a - b);
     runs.push({
       seed: opts.seed,
+      ...birthReplayDataOf(state),
+      ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
       life,
       race: player.race.name,
       class: player.cls.name,
@@ -783,6 +868,8 @@ function runReportOf(core: typeof Core, state: GameState, outcome: SdkRunReport[
     /* FORK: Mandos #54 (DEFECT). Forward the engine's retained original
      * seed, as the web host does; legacy states may have no provenance. */
     ...(state.masterSeed === undefined ? {} : { seed: state.masterSeed }),
+    ...birthReplayDataOf(state),
+    ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
     score: core.totalPoints(player),
     scored: false,
     endedAt: 0,
@@ -802,7 +889,7 @@ function killsOf(state: GameState): number {
 }
 
 /** One pack character's life, with its records read back from the journal's slots. */
-export interface SessionLife {
+export interface SessionLife extends BirthReplayData {
   readonly seed: number;
   /** 1-based life number within the session (one character per life). */
   readonly life: number;
@@ -910,6 +997,8 @@ export interface LibrarySlot {
 
 /** How a pack session is asked for. */
 export interface PackSessionOptions {
+  /** #54: one recorded character's accepted birth input, for a verified replay/control. */
+  birthInput?: BirthReplayData;
   /** The seeds to play, in order; each character boots only behind its predecessor's death or retirement. */
   readonly seeds: readonly number[];
   /** The decision cap for each life. */
@@ -943,6 +1032,14 @@ export async function playPackSession(
   strategy: StrategyPack,
   options: PackSessionOptions,
 ): Promise<SessionOutcome> {
+  const birth = birthReplayDataOf(options.birthInput);
+  if (options.birthInput !== undefined && options.seeds.length !== 1) {
+    throw new Error("A recorded birth input belongs to exactly one seed");
+  }
+  if ((options.birthInput?.birthRngState !== undefined && birth.birthRngState === undefined)
+    || (options.birthInput?.birthOptions !== undefined && birth.birthOptions === undefined)) {
+    throw new Error("Invalid accepted-birth input");
+  }
   /* The port's engine constants (FEAT, TV, ...) are live bindings that the
    * host fills from the engine it hands the mod; the vitest setup file
    * stands in for that in tests, and here the session binds the one engine
@@ -986,6 +1083,8 @@ export async function playPackSession(
       className: strategy.className,
       roller: "point",
       birthStats: [...plan.baseStats],
+      ...(birth.birthRngState === undefined ? {} : { rngState: birth.birthRngState }),
+      ...(birth.birthOptions === undefined ? {} : { optionOverrides: birth.birthOptions }),
     });
     const state: GameState = game.state;
     /* The host's event bus, attached before anything can arrive on a level:
@@ -1021,7 +1120,7 @@ export async function playPackSession(
      * the listeners are attached and before the first changeLevel. */
     game.announceArrival();
 
-    const observed = observingLife(core, game, seed);
+    const observed = observingLife(core, game);
     const startedAt = Date.now();
     const { dead, taken, attained } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
 
@@ -1099,6 +1198,8 @@ export async function playPackSession(
 
     lives.push({
       seed,
+      ...birthReplayDataOf(state),
+      ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
       life: lives.length + 1,
       dead,
       decisions: taken,

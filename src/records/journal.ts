@@ -69,6 +69,7 @@ import type {
   RunReport,
 } from "@rpgm-tools/neo-angband-mod-sdk";
 import type { UnsurePoint } from "../uncertainty.js";
+import { birthReplayDataOf, type BirthReplayData } from "./birth-replay.js";
 
 /** The events domain's subscribe half, the slice this module needs. */
 type Events = Pick<Api2Events, "on" | "off">;
@@ -95,7 +96,7 @@ export interface DepthMilestone {
 }
 
 /** One finished run, as the game's own run report told it. */
-export interface GraveyardEntry {
+export interface GraveyardEntry extends BirthReplayData {
   /** How the run ended: "death", "winner" or "retired". */
   readonly outcome: RunOutcome;
   /** The cause of death as the game reported it (the report's own string). */
@@ -114,8 +115,8 @@ export interface GraveyardEntry {
   /**
    * FORK (Mandos #54), additive: the master seed the run ran on, when the
    * engine reports it (`RunReport.seed`, neo-angband PR #433, carried on our
-   * fork). With the class, race and mod version it replays the run
-   * headless. Absent on an engine without the field, and in entries written
+   * fork). Exact replay also needs the accepted birth input and matching
+   * code/controller. Absent on an engine without the field, and in entries written
    * before #54.
    */
   readonly seed?: number;
@@ -278,6 +279,7 @@ function entryOf(value: JsonValue): GraveyardEntry | null {
     turn: numberOr(value["turn"], null),
     score: numberOr(value["score"], null),
     ...(typeof value["seed"] === "number" && Number.isInteger(value["seed"]) ? { seed: value["seed"] } : {}),
+    ...birthReplayDataOf(value),
   };
 }
 
@@ -507,6 +509,7 @@ export function graveyardEntryOf(report: RunReport): GraveyardEntry {
     score: typeof report.score === "number" ? report.score : null,
     /* Feature-detected (#54): the published SDK's RunReport has no seed yet. */
     ...seedOf(report),
+    ...birthReplayDataOf(report),
   };
 }
 
@@ -531,6 +534,10 @@ function storeGraveyardEntry(entry: GraveyardEntry): JsonValue {
     ...(entry.turn === null ? {} : { turn: entry.turn }),
     ...(entry.score === null ? {} : { score: entry.score }),
     ...(entry.seed === undefined ? {} : { seed: entry.seed }),
+    ...(entry.birthRngState === undefined ? {} : {
+      birthRngState: { ...entry.birthRngState, state: [...entry.birthRngState.state] },
+    }),
+    ...(entry.birthOptions === undefined ? {} : { birthOptions: { ...entry.birthOptions } }),
   };
 }
 

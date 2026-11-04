@@ -77,6 +77,13 @@ field list is a contract, not a suggestion:
   `meta.wallClockMs` - wall clock is metadata and never influences a result
   (rule 5).
 
+The optional `birthRngState` and `birthOptions` fields are #54's accepted
+birth inputs. A desktop birth may consume background/name draws before
+world generation, so the master seed alone is insufficient. These fields
+are validated and copied into new records and supplied to replay; their
+absence in old records is not invented provenance. The schema id stays
+`better-borg/runs@1`, and historical records are unchanged.
+
 The `unsure` field is #27's ADDITION (the schema id stays `better-borg/runs@1`,
 the same additive rule the stage fields keep): `{ total, points }`, where
 `total` counts the decisions that marked themselves unsure and `points` carries

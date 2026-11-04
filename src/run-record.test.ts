@@ -19,6 +19,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, existsSync } from "node:f
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it, afterAll } from "vitest";
+import { Rng } from "@rpgm-tools/neo-angband-core";
 import {
   RUNS_SCHEMA_ID,
   buildRunsJson,
@@ -120,6 +121,22 @@ afterAll(() => {
 });
 
 describe("buildRunsJson", () => {
+  it("preserves accepted-birth inputs without aliasing them or changing legacy entries (#54)", () => {
+    const session = fixtureSession();
+    const birthRngState = new Rng(4242).getState();
+    const birthOptions = { birth_force_descend: true };
+    session.runs[0] = fixtureRun({ birthRngState, birthOptions });
+    const doc = buildRunsJson(session);
+    expect(doc.runs[0]).toMatchObject({ birthRngState, birthOptions });
+    const originalWord = birthRngState.state[0];
+    birthRngState.state[0] = (originalWord! + 1) >>> 0;
+    birthOptions.birth_force_descend = false;
+    expect(doc.runs[0]!.birthRngState!.state[0]).toBe(originalWord);
+    expect(doc.runs[0]!.birthOptions).toEqual({ birth_force_descend: true });
+    expect(doc.runs[1]).not.toHaveProperty("birthRngState");
+    expect(doc.runs[1]).not.toHaveProperty("birthOptions");
+  });
+
   it("gives the document the exact top-level shape", () => {
     const doc = buildRunsJson(fixtureSession());
     expect(Object.keys(doc)).toEqual([

@@ -9,3 +9,6 @@
 # Windows batch files are only reliably CRLF.
 *.bat text eol=crlf
 *.cmd text eol=crlf
+
+# Unified patches require a space on blank context lines; preserve their format.
+*.patch -whitespace

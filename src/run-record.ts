@@ -22,9 +22,10 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { RunReport } from "./play-session.js";
+import { birthReplayDataOf, type BirthReplayData } from "./records/birth-replay.js";
 import { reachRate } from "./measure/bakeoff.js";
 
-/** Identifies the runs.json shape; bump when the schema gains a field. */
+/** Stable identifier; optional additive fields are compatible, incompatible formats need a new id. */
 export const RUNS_SCHEMA_ID = "better-borg/runs@1";
 /* ^ Deliberately NOT renamed with the mod (#19): this is a FORMAT identifier
  * committed byte-identically into existing records (rule 8), not branding.
@@ -78,7 +79,7 @@ export interface SessionRecord {
 }
 
 /** A run as serialized: RunReport with the wall-clock duration as metadata. */
-interface RunEntry {
+interface RunEntry extends BirthReplayData {
   seed: number;
   life: number;
   race: string;
@@ -143,6 +144,7 @@ export interface RunsJsonDocument {
 function runEntry(run: RunReport): RunEntry {
   return {
     seed: run.seed,
+    ...birthReplayDataOf(run),
     life: run.life,
     race: run.race,
     class: run.class,

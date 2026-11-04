@@ -652,6 +652,10 @@ var Rng = class {
   reseed(seed) {
     this.value = seed >>> 0;
   }
+  /** Preserve the private stream before an unsubmitted speculative decision. */
+  snapshot() {
+    return this.value;
+  }
   randint0(m) {
     if (m > 268435456) throw new RangeError(`Rand_div: m must be <= 0x10000000, got ${m}`);
     if (m <= 1) return 0;
@@ -16595,10 +16599,10 @@ function createBorg(opts = {}) {
   const spells = buildSpellTable(session.resolvers.spellMessages ?? []);
   const tables = { hitBy: blows.hitBy, spell: spells.spell, spellInvisible: spells.spellInvisible };
   let lastDepth = -1;
-  let before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false };
+  let before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false, rng: rng.snapshot() };
   const controller = hostController((view, act) => {
     const ctx = { world, view, act, rng };
-    before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false };
+    before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false, rng: rng.snapshot() };
     world.clock += 1;
     world.self.timeThisPanel += 1;
     const depth = view.player().depth;
@@ -16662,6 +16666,7 @@ function createBorg(opts = {}) {
     session.lastGrid = before.lastGrid;
     session.arrivalPickup = before.arrival;
     session.rechargeRest = before.rechargeRest;
+    rng.reseed(before.rng);
   };
   return { world, rng, controller, rewind };
 }
@@ -16685,8 +16690,8 @@ function equippedActivation(item, objects) {
 function findActivatedItem(ctx, act, checkCharge, objects) {
   for (const item of ctx.view.equipment()) {
     if (!item) continue;
-    const record = equippedActivation(item, objects);
-    if (!record || actToken(record) !== act) continue;
+    const record2 = equippedActivation(item, objects);
+    if (!record2 || actToken(record2) !== act) continue;
     if (checkCharge && item.timeout >= 1) continue;
     return item;
   }
@@ -16697,23 +16702,23 @@ function makeCoreResolvers(input) {
   const resolveMonsterFacts = (ctx, killIndex) => {
     const kill = ctx.world.kills.at(killIndex);
     const race = byRidx.get(kill.rIdx);
-    const record = input.raceRecord?.(kill.rIdx) ?? (race ? raceRecord(race) : void 0);
-    if (!record) return defaultResolveMonsterFacts(ctx, killIndex);
+    const record2 = input.raceRecord?.(kill.rIdx) ?? (race ? raceRecord(race) : void 0);
+    if (!record2) return defaultResolveMonsterFacts(ctx, killIndex);
     return {
-      rIdx: record.ridx,
-      flags: record.flags,
-      level: record.level,
-      sleep: record.sleep,
-      spellPower: record.spellPower,
-      freqInnate: record.freqInnate,
-      freqSpell: record.freqSpell,
-      hasFriends: record.hasFriends,
-      blows: record.blows.map((b) => ({
+      rIdx: record2.ridx,
+      flags: record2.flags,
+      level: record2.level,
+      sleep: record2.sleep,
+      spellPower: record2.spellPower,
+      freqInnate: record2.freqInnate,
+      freqSpell: record2.freqSpell,
+      hasFriends: record2.hasFriends,
+      blows: record2.blows.map((b) => ({
         dice: b.dice,
         sides: b.sides,
         effect: borgMonBlowEffect(b.effect)
       })),
-      spells: record.spells
+      spells: record2.spells
     };
   };
   const objects = input.objects;
@@ -16925,13 +16930,13 @@ function joined(value) {
 }
 async function trapKinds(api) {
   const records = await valueOf2(api.content.records("trap")) ?? [];
-  return records.map((record) => recordFlags(record["flags"]).has("TRAP"));
+  return records.map((record2) => recordFlags(record2["flags"]).has("TRAP"));
 }
 async function blowActions(api) {
   const records = await valueOf2(api.content.records("blow_methods")) ?? [];
   const out = [];
-  for (const record of records) {
-    const act = record["act"];
+  for (const record2 of records) {
+    const act = record2["act"];
     if (!Array.isArray(act)) continue;
     for (const line of act) if (typeof line === "string") out.push(line);
   }
@@ -16941,22 +16946,22 @@ async function spellMessages(api) {
   const records = await valueOf2(api.content.records("monster_spell")) ?? [];
   const table = RSF;
   const out = [];
-  for (const record of records) {
-    const name = record["name"];
+  for (const record2 of records) {
+    const name = record2["name"];
     const index = typeof name === "string" ? table[name] : void 0;
     if (index === void 0) continue;
     const level = (rec) => ({ message: joined(rec["message-vis"]), blindMessage: joined(rec["message-invis"]), missMessage: joined(rec["message-miss"]) });
-    const cutoffs = Array.isArray(record["power-cutoff"]) ? record["power-cutoff"] : [];
+    const cutoffs = Array.isArray(record2["power-cutoff"]) ? record2["power-cutoff"] : [];
     out.push({
       index,
-      levels: [level(record), ...cutoffs.filter((cut) => cut !== null && typeof cut === "object" && !Array.isArray(cut)).map(level)]
+      levels: [level(record2), ...cutoffs.filter((cut) => cut !== null && typeof cut === "object" && !Array.isArray(cut)).map(level)]
     });
   }
   return out;
 }
 async function kindCosts(api) {
   const records = await valueOf2(api.content.records("object")) ?? [];
-  return records.map((record) => typeof record["cost"] === "number" ? record["cost"] : 0);
+  return records.map((record2) => typeof record2["cost"] === "number" ? record2["cost"] : 0);
 }
 var DEFAULT_CONSTANTS = {
   moveEnergy: 100,
@@ -16997,8 +17002,8 @@ var CONSTANT_SOURCES = {
 async function gameConstants(api) {
   const records = await valueOf2(api.content.records("constants")) ?? [];
   const lookup = (section, label) => {
-    for (const record of records) {
-      const entries = record[section];
+    for (const record2 of records) {
+      const entries = record2[section];
       if (!Array.isArray(entries)) continue;
       for (const entry of entries) {
         if (entry !== null && typeof entry === "object" && !Array.isArray(entry) && entry["label"] === label && typeof entry["value"] === "number") return entry["value"];
@@ -17042,9 +17047,9 @@ var TIMED_RECORDS = {
 async function gradeFloors(api) {
   const records = await valueOf2(api.content.records("player_timed")) ?? [];
   const out = /* @__PURE__ */ new Map();
-  for (const record of records) {
-    const name = record["name"];
-    const grades = record["grade"];
+  for (const record2 of records) {
+    const name = record2["name"];
+    const grades = record2["grade"];
     if (typeof name !== "string" || !Array.isArray(grades)) continue;
     const floors = /* @__PURE__ */ new Map();
     let floor = 1;
@@ -17082,9 +17087,9 @@ function writable(value) {
 function playerView(known, floors) {
   const { status, recall, descent, ...rest } = writable(known);
   const timed = {};
-  for (const [field, record] of Object.entries(TIMED_RECORDS)) {
+  for (const [field, record2] of Object.entries(TIMED_RECORDS)) {
     const grade = status[field];
-    timed[field] = grade === null ? 0 : floors.get(record)?.get(grade) ?? 1;
+    timed[field] = grade === null ? 0 : floors.get(record2)?.get(grade) ?? 1;
   }
   return { ...rest, status: { ...timed, food: status.food * 100, fearful: status.fearful }, recall: recall ? 1 : 0, descent: descent ? 1 : 0 };
 }
@@ -17911,7 +17916,7 @@ async function recordNames(mod2, table) {
   if (typeof mod2.content?.records !== "function") return null;
   const read = await mod2.content.records(table);
   if (!read.ok) return null;
-  const names = read.value.map((record) => record.name).filter((name) => typeof name === "string");
+  const names = read.value.map((record2) => record2.name).filter((name) => typeof name === "string");
   return names.length > 0 ? names : null;
 }
 function plannedBirth(mod2, core) {
@@ -17959,6 +17964,32 @@ function plannedBirth(mod2, core) {
   });
 }
 
+// src/records/birth-replay.ts
+function record(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function uint32(value) {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 4294967295;
+}
+function birthReplayDataOf(value) {
+  if (!record(value)) return {};
+  const s = value["birthRngState"];
+  const birthRngState = record(s) && typeof s["quick"] === "boolean" && typeof s["fixed"] === "boolean" && uint32(s["value"]) && uint32(s["stateI"]) && s["stateI"] < 32 && uint32(s["fixval"]) && Array.isArray(s["state"]) && s["state"].length === 32 && s["state"].every(uint32) ? {
+    quick: s["quick"],
+    fixed: s["fixed"],
+    value: s["value"],
+    stateI: s["stateI"],
+    fixval: s["fixval"],
+    state: [...s["state"]]
+  } : void 0;
+  const options = value["birthOptions"];
+  const birthOptions = record(options) && Object.entries(options).every(([name, enabled]) => name.startsWith("birth_") && typeof enabled === "boolean") ? { ...options } : void 0;
+  return {
+    ...birthRngState === void 0 ? {} : { birthRngState },
+    ...birthOptions === void 0 ? {} : { birthOptions }
+  };
+}
+
 // src/records/journal.ts
 var JOURNAL_FORMAT = 1;
 var GRAVEYARD_KEY = "graveyard";
@@ -18002,7 +18033,8 @@ function entryOf(value) {
     gold: numberOr(value["gold"], null),
     turn: numberOr(value["turn"], null),
     score: numberOr(value["score"], null),
-    ...typeof value["seed"] === "number" && Number.isInteger(value["seed"]) ? { seed: value["seed"] } : {}
+    ...typeof value["seed"] === "number" && Number.isInteger(value["seed"]) ? { seed: value["seed"] } : {},
+    ...birthReplayDataOf(value)
   };
 }
 function parseJournal(value) {
@@ -18163,7 +18195,8 @@ function graveyardEntryOf(report) {
     turn: typeof report.turn === "number" ? report.turn : null,
     score: typeof report.score === "number" ? report.score : null,
     /* Feature-detected (#54): the published SDK's RunReport has no seed yet. */
-    ...seedOf(report)
+    ...seedOf(report),
+    ...birthReplayDataOf(report)
   };
 }
 function seedOf(report) {
@@ -18183,7 +18216,11 @@ function storeGraveyardEntry(entry) {
     ...entry.gold === null ? {} : { gold: entry.gold },
     ...entry.turn === null ? {} : { turn: entry.turn },
     ...entry.score === null ? {} : { score: entry.score },
-    ...entry.seed === void 0 ? {} : { seed: entry.seed }
+    ...entry.seed === void 0 ? {} : { seed: entry.seed },
+    ...entry.birthRngState === void 0 ? {} : {
+      birthRngState: { ...entry.birthRngState, state: [...entry.birthRngState.state] }
+    },
+    ...entry.birthOptions === void 0 ? {} : { birthOptions: { ...entry.birthOptions } }
   };
 }
 async function archiveFinishedRun(deps, report, dossier = {}) {

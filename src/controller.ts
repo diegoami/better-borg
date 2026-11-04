@@ -118,12 +118,12 @@ export function createBorg(opts: BorgOptions = {}): Borg {
   const tables = { hitBy: blows.hitBy, spell: spells.spell, spellInvisible: spells.spellInvisible };
 
   let lastDepth = -1;
-  let before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false };
+  let before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false, rng: rng.snapshot() };
 
   /* The host's view and actions arrive wrapped by the adapter (core-api.ts). */
   const controller: AgentController = hostController((view, act) => {
     const ctx: BorgContext = { world, view, act, rng };
-    before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false };
+    before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false, rng: rng.snapshot() };
 
     /* 1. Advance the clocks exactly once (borg-think.c:447). */
     world.clock += 1;
@@ -257,6 +257,9 @@ export function createBorg(opts: BorgOptions = {}): Borg {
      * speculative pass may queue or consume R75 before any command was
      * submitted. Restore the entry value in both directions on retry. */
     session.rechargeRest = before.rechargeRest;
+    /* FORK: Mandos #54. An abandoned API2 loadout pass must not spend the
+     * dice intended for this decision or shift every later submitted one. */
+    rng.reseed(before.rng);
   };
 
   return { world, rng, controller, rewind };
