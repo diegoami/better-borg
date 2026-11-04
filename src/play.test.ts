@@ -122,7 +122,9 @@ suite("the Borg plays a real game", () => {
 
   /* Four seeds rather than one: each of the three loops this test was written
    * for showed on some seeds and not others, and the wield loop was the only one
-   * that showed on all four. */
+   * that showed on all four. The 300s wall-time budget matches the pack
+   * cases below: slow CI runners exceeded the former 120s while completing
+   * these same bounded 1500-decision runs (#76). */
   for (const seed of [1, 7, 42, 99]) {
     when(`keeps playing for 1500 decisions (seed ${String(seed)})`, () => {
       const r = playRun(Core, pack!, seed, 1500);
@@ -195,7 +197,7 @@ suite("the Borg plays a real game", () => {
        * dying run is short by one, which is why the rule is asserted here. */
       const issued = Object.values(r.commands).reduce((a, b) => a + b, 0);
       expect(issued, `seed ${String(seed)}: census vs decisions`).toBe(r.decisions);
-    }, 120_000);
+    }, 300_000);
   }
 
   when("gets into the dungeon and back out under its own steam", () => {
@@ -207,7 +209,7 @@ suite("the Borg plays a real game", () => {
     expect(r.depths.some((d) => d >= 1)).toBe(true);
     expect(r.commands["descend"] ?? 0).toBeGreaterThan(0);
     expect(r.commands["ascend"] ?? 0).toBeGreaterThan(0);
-  }, 120_000);
+  }, 300_000);
 });
 
 /* ==================================================================
