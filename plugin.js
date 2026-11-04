@@ -4217,7 +4217,7 @@ function borgSpellFailRate(ctx, spell, playerHas2) {
   chance -= trait3(ctx, 33 /* FAIL1 */);
   if (trait3(ctx, 113 /* ISAFRAID */)) chance += 20;
   let minfail = trait3(ctx, 34 /* FAIL2 */);
-  const zeroFail = playerHas2 ? playerHas2("ZERO_FAIL") : classOf(ctx) === CLASS_MAGE;
+  const zeroFail = playerHas2 ? playerHas2("ZERO_FAIL") : (ctx.view.player().classFlags ?? []).includes("ZERO_FAIL");
   if (!zeroFail) {
     if (minfail < 5) minfail = 5;
   }
@@ -4235,7 +4235,7 @@ function borgSpellFailRate(ctx, spell, playerHas2) {
 function borgOnLitGrid(ctx) {
   const { x, y } = ctx.world.self.c;
   if (!ctx.world.map.inBounds(x, y)) return false;
-  return (ctx.world.map.at(x, y).info & 18) !== 0;
+  return (ctx.world.map.at(x, y).info & BORG_LIGHT) !== 0;
 }
 function borgSpellOkayFail(ctx, spell, allowFail, playerHas2) {
   if (borgSpellFailRate(ctx, spell, playerHas2) > allowFail) return false;
@@ -15953,7 +15953,7 @@ function perceive(world, view, memo, tables = emptyMessageTables(), valuation = 
   world.self.c.y = p.grid.y;
   world.facts.depth = p.depth;
   ingestMap(world, view);
-  borgUpdateLight(world);
+  borgUpdateLight(world, view);
   const seen = ingestMonsters(world, view);
   ingestFloor(world, view, oldX, oldY, valuation);
   borgReactMessages(world, view.messages(), seen.ids, seen.names, tables);
@@ -16001,7 +16001,7 @@ function ingestMap(world, view) {
     }
   }
 }
-function borgUpdateLight(world) {
+function borgUpdateLight(world, view) {
   const map = world.map;
   for (let y = 0; y < map.height; y++) {
     for (let x = 0; x < map.width; x++) {
@@ -16017,16 +16017,19 @@ function borgUpdateLight(world) {
     map.at(x, y).info |= BORG_LIGHT;
   };
   const floorAt = (y, x) => borgCaveFloorBold(world, y, x);
-  if (radius <= 0) return;
+  const lamp = view.equipment()[5];
+  if (!lamp || lamp.number <= 0) return;
   lightUp(cy, cx);
-  lightUp(cy + 1, cx);
-  lightUp(cy - 1, cx);
-  lightUp(cy, cx + 1);
-  lightUp(cy, cx - 1);
-  lightUp(cy + 1, cx + 1);
-  lightUp(cy + 1, cx - 1);
-  lightUp(cy - 1, cx + 1);
-  lightUp(cy - 1, cx - 1);
+  if (radius >= 1) {
+    lightUp(cy + 1, cx);
+    lightUp(cy - 1, cx);
+    lightUp(cy, cx + 1);
+    lightUp(cy, cx - 1);
+    lightUp(cy + 1, cx + 1);
+    lightUp(cy + 1, cx - 1);
+    lightUp(cy - 1, cx + 1);
+    lightUp(cy - 1, cx - 1);
+  }
   if (radius >= 2 && cy + 2 < AUTO_MAX_Y && cy - 2 > 0 && cx + 2 < AUTO_MAX_X && cx - 2 > 0) {
     if (floorAt(cy + 2, cx)) {
       lightUp(cy + 2, cx);
