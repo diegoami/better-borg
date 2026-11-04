@@ -341,6 +341,17 @@ base. Two shapes, both **owner-verified 2026-11-03**. The engine they bundle
 is the lab branch's (noteSpot-fixed); the mod folder's NAME must equal the
 manifest id (`mandos`) - clone into a folder called exactly that.
 
+**Start it with `node tools/lab.mjs start`** (`status` to look first). The lab's
+two halves drift on their own: no merge updates the mod clone in
+`<data>/mods/mandos` or rebuilds the engine's lab branch. Found 2026-11-04:
+the clone was three merges behind main, and the build was missing the lab
+branch's input-flush commit. The tool fast-forwards the clone to
+`origin/main` and rebuilds the engine when the lab branch head differs from
+the last build (`artifacts/lab-build.json`). It refuses a dirty or wrong-branch
+engine, launches, and prints the mod and engine commits it is running. A
+lab check for a release names those two commits. The manual shape below is
+what the tool runs.
+
 **Desktop (WSL, WSLg provides the display):**
 
     mkdir -p <data>/mods
