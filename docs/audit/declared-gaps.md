@@ -44,8 +44,8 @@ All corrected in #58.
 
 | Site | Divergence | Why it stays |
 | --- | --- | --- |
-| `src/item/item-id.ts:8` | IDd items are not inscribed with their powers | UI-only in the C; the engine has no inscribe command |
-| `src/think-ladder.ts:496` | the destroy-floor rung (borg-think-dungeon.c:1205) yields | the engine has no ignore or destroy command |
+| `src/item/item-id.ts:8` | IDd items are not inscribed with their powers | UI-only in the C (a shorthand of powers). Correction (2026-11-04): the engine DOES register an `inscribe` command (obj-cmd.js), so the note's "no inscribe verb" is stale; the gap stays only because porting it has no gameplay value |
+| `src/think-ladder.ts:496` | the destroy-floor rung (borg-think-dungeon.c:1205) yields | the C ignores the item (`k`); the engine registers no ignore or destroy command. The act facade has a `destroy(handle)` builder, but no engine handler takes its `destroy` code (checked 2026-11-04) |
 | `src/item/item-use.ts:191` | EF_NOURISH food filter read as "any aware food" | `ItemView` carries no effect data |
 | `src/store/home.ts:195`, `:329`, `src/store/sell.ts:405` | random-power egos read as "needs *ID*" | `ItemView` carries no random-power data |
 | `src/store/home.ts:411` | KF_GOOD dungeon books via a seam | no kind-flag data on the view |
@@ -64,4 +64,4 @@ All corrected in #58.
 
 ## Next
 
-#59 (the play-step branches), then #50's rungs, in the order a measured run says they bite. Then step 3 (#31, the class × seed grid) and step 4 (#34's subsystem audit).
+Done since: #59 (the play-step branches, PR #62) and #50's borg_play_magic (PR #63, upstream neo-angband#441). Next: #50's remaining rungs, in the order a measured run says they bite. Then step 3 (#31, the class × seed grid) and step 4 (#34's subsystem audit).
