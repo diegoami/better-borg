@@ -262,13 +262,19 @@ the cherry-pick.
 `main` carries the rebrand and scaffold; a PR head from it would show all of
 that. Instead:
 
-1. Forks exist for exactly this: `diegoami/neo-angband-mod-borg` and
-   `diegoami/neo-angband` (plain forks of upstream, no working tree of their
-   own).
+1. Our forks host isolated proposal branches and the target upstream-defect
+   trackers: `diegoami/neo-angband-mod-borg` for port defects;
+   `diegoami/neo-angband` for C Borg, Angband game and Neo engine defects.
+   Mandos remains the port development workspace and keeps its own work.
+   [Evaluation #2](https://github.com/diegoami/neo-angband/issues/2) plans
+   migration and a separate C/game/engine session before community outreach;
+   existing trackers remain authoritative until moved with history/links.
 2. After `tools/upstream-sync.mjs` refreshes the pristine checkouts, cut an
    isolated PR worktree from the relevant `origin/master` (neostryder),
-   cherry-pick ONLY the fix commits, rebuild its plugin where needed, push
-   to our fork and open the PR from `diegoami:<branch>`. In the engine
+   keep the fork default branch current by fast-forward only, preserving
+   proposal heads (report divergence; never force-push). Cherry-pick ONLY
+   the fix commits, rebuild its plugin where needed, push to our fork and
+   open the PR from `diegoami:<branch>`. In the engine
    checkout, the remote named `upstream` is **angband/angband**, not
    neostryder; do not assume a remote name identifies the PR base.
 3. One PR per defect; the PR body is the issue body plus the diff. Suggest
@@ -285,8 +291,14 @@ gaps go to the engine tracker the same way (#428). The mod-borg stance is
 survey-only: a PR there needs an acknowledged defect and zero debate.
 
 **C bugs: our catalogue and local proposals** (owner, 2026-11-05):
-maintain [docs/C-BUGS.md](C-BUGS.md) from its canonical
-[JSON data](c-bugs.json), with links to our issues, evidence and fix PRs.
+maintain [docs/C-BUGS.md](C-BUGS.md) from its temporary
+[JSON catalogue input](c-bugs.json), with links to our issues, evidence and fix PRs.
+The single-file input is temporary. Before community outreach, complete
+[the fork-owned tracking/session evaluation](https://github.com/diegoami/neo-angband/issues/2):
+C Borg/C game/Neo engine work in a dedicated fork session; upstream port
+trackers in our mod fork; Mandos-specific issues/integration here. Preserve
+stable finding IDs, provenance, history, patch/PR links and one live status
+source during migration. No issue transfer is performed by this policy edit.
 **No angband/angband submissions now**: no issues, PRs or comments there.
 We are not assuming the upstream C maintainer role and do not routinely
 seek submission approval. Only a later explicit owner instruction changes
@@ -313,7 +325,9 @@ engine vehicle. Use ordinary commits/pushes; keep the reference/parent pin
 visible and re-evaluate proposals when it changes. A proposal may be parked closed/unmerged with c-proposal/postponed labels;
 retain its commit, branch and patch links. It does not create an upstream
 maintenance job. Contributor reuse/submission instructions are included
-in the C catalogue and docs/c-fix-handoff.md.
+in the C catalogue: direct compare/open-PR is the easy method. Copying,
+patch/report-only alternatives and follow-up details live separately in
+[the reuse guide](c-fix-handoff.md).
 
 For a validated C-game consequence, build/test the C game with the C Borg
 and retain a reproducible natural or synthetic legal/reachable state,
@@ -428,10 +442,14 @@ upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
    `pnpm verify` plus a run-record re-baseline decides whether existing
    records carry over. An ENGINE change bumps the published floor - records
    must say what they ran on.
-4. The GitHub forks (`diegoami/neo-angband`, `diegoami/neo-angband-mod-borg`)
-   are PR vehicles only: `gh repo sync` them on demand when cutting a §6 PR.
-   No permanent product working trees; the isolated PR worktrees from §6
-   are disposable. Fork branches are ahead only for their offered change.
+4. The GitHub forks host proposal branches and the target defect trackers.
+   Refresh their default branches from the corresponding Neo upstream by
+   fast-forward only during sync/PR preparation; preserve every topic head
+   and report divergence rather than force-pushing. C reference branches
+   are separately pinned C snapshots, not Neo default branches. The planned
+   dedicated C/game/engine session and issue migration are evaluated in
+   [fork issue #2](https://github.com/diegoami/neo-angband/issues/2).
+   Keep proposal work isolated in task worktrees and retain unique evidence.
 5. The local game checkout: `master` follows upstream, ff-only. Published
    fix and lab branches use new commits and normal pushes: no amend and
    never force-push. Refresh the lab through ordinary merges/cherry-picks,

@@ -21,6 +21,19 @@ observations, not live status. Use `node tools/upstream-watch.mjs`,
 
 ## Our threads: one tracking issue each
 
+### Target issue homes and pre-outreach evaluation
+
+The owner selected our mod fork for upstream port-defect trackers and our
+engine fork for C Borg, Angband game and Neo engine trackers. Mandos keeps
+its own defects/integration and the Neo Borg development workspace.
+[Evaluation #2](https://github.com/diegoami/neo-angband/issues/2) is ready
+before community outreach: replace the temporary monolithic catalogue
+input with a scalable model, define the dedicated C/game/engine session,
+and preserve history/IDs/links in migration. Existing trackers remain
+current until moved; watch tools must follow their new homes as part of
+that migration. Keep proposal-fork default branches current by fast-forward
+only, preserving all topic heads.
+
 ### Carry status and attribution
 
 Current issue state takes priority over new triage or implementation. Inspect

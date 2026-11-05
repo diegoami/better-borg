@@ -22,7 +22,7 @@ the issues' labels: `status:ready` and `priority:*`.
 - **Current priority**: current bug-status reconciliation and board monitoring,
   then triage/list maintenance, then Neo port fixes (issue -> PR -> carry).
   C local proposals follow only without actionable port bugs; C carry is a
-  second pass after its intake/proposal backlog. Rules 16-19 and #111 apply.
+  second pass after its intake/proposal backlog. Rules 16-20 and #111 apply.
 - **Current scope**: rule 15 authorizes bug hunting and fixing only. The
   roadmap's strategies, learning, snapshots and new unattended stage-resume
   functionality remain parked until the owner changes scope.
@@ -56,8 +56,13 @@ is ANOTHER DEVELOPER (upstream) - never "us", never conflated with our
 forks. Four repos, two each: `neostryder/neo-angband` (upstream ENGINE) and
 `neostryder/neo-angband-mod-borg` (upstream MOD - the 4.2.6 borg PORT our
 fork imported; "the port" means THEIRS unless qualified) versus
-`diegoami/neo-angband` and `diegoami/neo-angband-mod-borg` (OUR forks -
-PR vehicles only, never working trees). A defect found in our tree that
+`diegoami/neo-angband` and `diegoami/neo-angband-mod-borg` (OUR forks, hosting isolated proposal branches and the target upstream
+issue trackers). [Fork/session evaluation #2](https://github.com/diegoami/neo-angband/issues/2)
+plans the transition: port trackers in our mod fork, C/game/engine trackers
+in our engine fork, Mandos-specific work in Mandos. Neo Borg development
+stays here; implementation uses task worktrees, preserving pristine upstream
+reference checkouts. Keep fork default branches current by fast-forward only,
+without changing proposal heads. A defect found in our tree that
 also exists at the import boundary `70145c5` is inherited from their
 TypeScript port, not introduced by Mandos. It may also originate in C;
 verify both sources before attributing (the

@@ -46,7 +46,9 @@ point; [docs/process.md](docs/process.md) and
    Bulky by-products go to `artifacts/` (ignored).
 9. **Task files own their scope.** Build what the task asks; report defects
    outside it; each Done-when is one command a CI or reviewer can run.
-10. **Upstream credit stays**, and tags never move.
+10. **Upstream credit stays**, and tags never move. Keep our PR-vehicle
+    forks' default branches aligned with upstream by fast-forward only.
+    Preserve proposal heads; report divergence rather than force-pushing.
 11. **A bug always wins over a new feature** (owner, 2026-11-03). Stability
     and defects - upstream ones above all - preempt any feature in flight:
     park the feature, open an issue for the defect at once, fix it (or ask
@@ -102,3 +104,14 @@ point; [docs/process.md](docs/process.md) and
     postponed when parked; closed/unmerged records retain usable branches,
     commits and patch links. Others may reuse or submit them themselves.
     Rule 12's pause on our angband/angband submissions remains in force.
+
+20. **Issue homes and session split** (owner, 2026-11-05). Target upstream
+    port-defect trackers to our neo-angband-mod-borg fork; target C Borg,
+    Angband game and Neo engine trackers to our neo-angband fork. Mandos
+    keeps its own defects/integration work and remains the Neo Borg port's
+    development workspace. The monolithic JSON/catalogue is temporary.
+    Complete [the fork-tracking evaluation](https://github.com/diegoami/neo-angband/issues/2)
+    before community outreach, including a separate C/game/engine fix-and-PR
+    session and migration preserving issue history, stable IDs and links.
+    Existing issue homes remain authoritative until migrated; this rule
+    does not silently relocate trackers or authorize C submissions.

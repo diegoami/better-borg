@@ -12,7 +12,8 @@
       "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3"
     },
     "note": "Local proposal ownership, evidence and application are independent. A local C PR never implies a Neo parity fix or an applied Mandos correction.",
-    "carry_priority": "validated-bugs-from-both-C-and-Neo"
+    "carry_priority": "validated-bugs-from-both-C-and-Neo",
+    "management_evaluation": "https://github.com/diegoami/neo-angband/issues/2"
   },
   "sources": {
     "borg_rs": {
@@ -1019,7 +1020,8 @@
           "url": "https://github.com/diegoami/neo-angband/pull/1",
           "base": "c-borg-reference",
           "head": "540f621960e674d9fde227a175eeb1d27cc02132",
-          "validation": "c-game-reproduced"
+          "validation": "c-game-reproduced",
+          "branch": "pr/c-borg-map-dump-cancel"
         }
       ],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",

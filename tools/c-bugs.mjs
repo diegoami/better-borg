@@ -48,6 +48,7 @@ for (const finding of data.findings) {
     if (!pr.repository.startsWith(data.owner + "/")) fail("C fix proposal is outside our repositories: " + finding.id);
     if (pr.url !== "https://github.com/" + pr.repository + "/pull/" + pr.number) fail("PR URL/repository mismatch " + finding.id);
     if (pr.repository === data.policy.local_pr_base.repository && pr.base !== data.policy.local_pr_base.branch) fail("C-source PR has wrong base " + finding.id);
+    if (pr.repository === data.policy.local_pr_base.repository && (!pr.branch || !/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(pr.branch))) fail("C-source proposal needs a branch for its compare link: " + finding.id);
   }
 }
 for (const group of data.groups) for (const id of group.findings) {
@@ -72,14 +73,18 @@ const tick = String.fromCharCode(96);
 const code = (value) => tick + value + tick;
 const esc = (value) => String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
 const issue = (number) => number ? "[#" + number + "](https://github.com/diegoami/mandos/issues/" + number + ")" : "intake [#93](https://github.com/diegoami/mandos/issues/93)";
-const proposals = (finding) => (finding.local_fix_proposals ?? []).length ? finding.local_fix_proposals.map((pr) => "[" + pr.repository + "#" + pr.number + "](" + pr.url + ") — " + pr.validation).join("; ") : "none";
+const compareForkUrl = (pr) => pr.repository === data.policy.local_pr_base.repository && pr.branch
+  ? "https://github.com/angband/angband/compare/master..." + pr.repository.replace("/", ":") + ":" + pr.branch
+  : null;
+const proposals = (finding) => (finding.local_fix_proposals ?? []).length ? finding.local_fix_proposals.map((pr) => {
+  const compare = compareForkUrl(pr);
+  return (compare ? "[Compare forks / open PR](" + compare + ") · " : "")
+    + "[" + pr.repository + "#" + pr.number + "](" + pr.url + ") — " + pr.validation
+    + (compare ? "" : " ([patch reuse guide](c-fix-handoff.md#patchreport-only-proposals))");
+}).join("; ") : "none";
 const refUrl = (ref) => "https://github.com/" + ref.repository + "/blob/" + ref.commit + "/" + ref.path + "#L" + ref.start + (ref.end === ref.start ? "" : "-L" + ref.end);
 const roleName = { c: "C", neo: "Neo", mandos: "Mandos", borg_rs: "borg-rs" };
 const refLink = (ref) => "[" + roleName[ref.role] + " " + ref.path + ":" + ref.start + (ref.end === ref.start ? "" : "–" + ref.end) + "](" + refUrl(ref) + ")";
-const compactRefs = (finding) => {
-  const refs = ["c", "neo", "mandos"].map((role) => finding.references.find((ref) => ref.role === role)).filter(Boolean);
-  return (refs.length ? refs : finding.references.filter((ref) => ref.role === "borg_rs").slice(0, 1)).map(refLink).join("<br>");
-};
 const readable = (value) => String(value).replaceAll("-", " ");
 const applicabilityNames = {
   shared: "present in both",
@@ -105,7 +110,15 @@ const reported = data.findings.filter((f) => f.evidence === "reported-lead").len
 const lines = [
   "# C Borg bugs and candidates",
   "",
-  "[Findings](#classified-findings) · [Reuse a fix](#reusing-a-local-c-fix) · [Source inventory](#complete-source-group-inventory)",
+  "## Open a new PR directly from the existing C branch",
+  "",
+  "[Compare the map-dump fix with Angband master](https://github.com/angband/angband/compare/master...diegoami:neo-angband:pr/c-borg-map-dump-cancel)",
+  "",
+  "**This is the easy method:** review the cross-fork diff and choose **Create pull request** when your GitHub account has the required permissions. Link the local proposal and its evidence. Opening the comparison submits nothing.",
+  "",
+  "For copying into your own fork, patch/report-only proposals, permissions and recording the upstream result, see [Reusing a local C fix](c-fix-handoff.md).",
+  "",
+  "[Findings](#classified-findings) · [Source inventory](#complete-source-group-inventory)",
   "",
   "This is the C-only catalogue for eventual Angband community use. Port omissions stay on our internal issues. **We make no submissions to angband/angband now**; another developer may reuse our linked local proposals. Lead sources may be borg-rs, our own audits/runs or community reports, and validation attribution is kept separate.",
   "",
@@ -132,9 +145,8 @@ const lines = [
   "",
   "Current priority: board status first, then triage/catalogue maintenance, then Neo port fixes. With no actionable port bugs, complete the C local-proposal pass; carry validated C corrections in a second pass. Internal issues own current state."
 ];
-lines.push("", readFileSync(join(root, "docs/c-fix-handoff.md"), "utf8"));
-lines.push("", "A proposal branch, a patch stored on main and a fix applied to a maintained consumer are different states. The C proposal does not automatically correct Neo/Mandos. Neo's C-parity policy still applies; an unmerged proposal in our fork is not an upstream C correction.", "", "## Classified findings", "", "| ID | Finding | Priority | Evidence | Pinned references | Neo/Mandos | Fix proposal | Internal issue (status) |", "| --- | --- | --- | --- | --- | --- | --- | --- |");
-for (const f of data.findings) lines.push("| [" + f.id + "](#" + f.id.toLowerCase() + ") | " + esc(f.title) + " | " + f.priority + " | " + readable(f.evidence) + " | " + compactRefs(f) + " | " + applicability(f) + " | " + proposals(f) + " | " + issue(f.tracker) + " |");
+lines.push("", "A proposal branch, a patch stored on main and a fix applied to a maintained consumer are different states. The C proposal does not automatically correct Neo/Mandos. Neo's C-parity policy still applies; an unmerged proposal in our fork is not an upstream C correction.", "", "## Classified findings", "", "| ID | Finding | Priority | Evidence | Neo/Mandos | Fix proposal | Internal issue (status) |", "| --- | --- | --- | --- | --- | --- | --- |");
+for (const f of data.findings) lines.push("| [" + f.id + "](#" + f.id.toLowerCase() + ") | " + esc(f.title) + " | " + f.priority + " | " + readable(f.evidence) + " | " + applicability(f) + " | " + proposals(f) + " | " + issue(f.tracker) + " |");
 for (const f of data.findings) {
   lines.push("", "### " + f.id, "", "**" + f.title + "**", "",
     "Checked " + f.checked + "; borg-rs group(s) " + f.source_groups.join(", ") + ".", "", "Pinned source references:", "");
@@ -157,7 +169,9 @@ for (const group of data.groups) lines.push("| " + group.number + " | " + refLin
 lines.push("", "## Maintenance", "",
   "Board/source review: " + code("node tools/upstream-watch.mjs") + " and " + code("node tools/c-upstream-watch.mjs") + ". Review signals never close bugs or apply patches automatically.",
   "",
-  "Canonical data: [c-bugs.json](c-bugs.json). Regenerate with " + code("node tools/c-bugs.mjs --write") + "; verify with " + code("node tools/c-bugs.mjs --check") + ". The tool is offline and never posts or applies a fix.",
+  "Temporary catalogue input: [c-bugs.json](c-bugs.json); individual issue labels/bodies own live status. Regenerate with " + code("node tools/c-bugs.mjs --write") + "; verify with " + code("node tools/c-bugs.mjs --check") + ". The tool is offline and never posts or applies a fix.",
+  "",
+  "The single-file catalogue is a temporary arrangement. Before community outreach, complete [the fork issue-tracking and dedicated-session evaluation](" + data.policy.management_evaluation + "). Target: port-defect trackers in our neo-angband-mod-borg fork; C Borg, Angband game and Neo engine trackers in our neo-angband fork; Mandos-specific issues/integration in Mandos. Existing trackers remain authoritative until a linked migration preserves their history and references.",
   "",
   "On a borg-rs/source update, compare pinned content (including edits within existing groups), split independent causes, deduplicate shared callers, recheck C/Neo/Mandos separately and update checked dates. Revisit after a local proposal changes, a fix merges, a consumer adopts/reverts it, or an upstream reference changes. A new file or PR is not proof of application.",
   "",
