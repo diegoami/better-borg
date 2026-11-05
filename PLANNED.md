@@ -37,7 +37,9 @@ Neo parity; Mandos may carry an earlier marked CHOICE. C correctness must be
 checked, not assumed. Leads from our own runs/audits and borg-rs (#86) need
 the same independent verification.
 
-Port-defect restorations are offered upstream after explicit owner approval.
+The owner authorized confirmed port-defect reports and PRs directly to Neo
+Angband (2026-11-05), after attribution, reproduction and duplicate checks.
+C submissions still require approval of the specific internal report.
 Deliberate policy changes
 are named CHOICEs and remain marked in Mandos. Defects take priority over
 new features; tuning a broken policy would measure the defect instead of

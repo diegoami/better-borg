@@ -127,7 +127,9 @@ C proposals need reproducible scenarios with meaningful consequences,
 negative controls, duplicate review and explicit owner approval before
 external posting. The [upstream workflow](UPSTREAM.md#carry-status-and-attribution)
 is the detailed reference for evidence, patches, consumer scope and regular
-reviews. [AGENTS.md](../AGENTS.md) is the shared agent entry point and
+reviews. Confirmed Neo port defects have standing posting authorization
+(owner, 2026-11-05), after attribution, reproduction and duplicate checks;
+the specific-report approval gate above applies to C proposals. [AGENTS.md](../AGENTS.md) is the shared agent entry point and
 [RULES.md](../RULES.md) holds the numbered rules. CLAUDE.md only loads them.
 
 ## Documentation map

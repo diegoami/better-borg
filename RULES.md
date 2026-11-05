@@ -51,10 +51,12 @@ point; [docs/process.md](docs/process.md) and
     and defects - upstream ones above all - preempt any feature in flight:
     park the feature, open an issue for the defect at once, fix it (or ask
     the owner) before the feature resumes.
-12. **Upstream posts wait for the owner.** We are not maintainers there; we
-    post issues and PRs only after the owner's explicit approval
-    (draft, show, post). Our own tracker is written freely. Process §6 says
-    what qualifies and how it is shaped.
+12. **Route upstream posts by provenance.** The owner authorized direct
+    Neo Angband issues/PRs for confirmed port defects (2026-11-05), after
+    source attribution, reproduction and duplicate checks. C proposals
+    still require internal evidence and explicit owner approval of the
+    specific report before posting to angband/angband. Our own tracker is
+    written freely. Process §6 defines the evidence and submission shape.
 13. **A question is not a request to edit files.** Answer it; propose any
     fix and wait (the rule the owner's other projects carry).
 14. **No AI-attribution trailer, ever** (owner, 2026-11-04; upstream's own

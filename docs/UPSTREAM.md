@@ -73,8 +73,10 @@ the correction as applicable. C and Neo saves need equivalent states, not
 a shared binary save. Prove a meaningful consequence in plain language;
 do not infer death prevention from changed flags or scores alone.
 
-Keep evidence internal, check current source and open/closed duplicates,
-then obtain explicit owner OK before external posting. C patches belong
+For C proposals, keep evidence internal, check current source and open/closed
+duplicates, then obtain explicit owner OK before external posting. The owner
+separately authorized confirmed Neo port-defect reports/PRs directly
+(2026-11-05), after the same attribution, reproduction and duplicate checks. C patches belong
 in `patches/upstream-c/`; the combined pnpm engine patch keeps one hunk
 group/PR marker per fix. Do not send a Mandos CHOICE to Neo as a port fix.
 
