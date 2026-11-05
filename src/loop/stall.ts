@@ -63,14 +63,11 @@ export interface SceneView {
 }
 
 /**
- * The timed afflictions that wear off with time. A command repeated while one
- * of them counts down is waiting it out, not stalling (#65: a confused
- * warrior with one food item - so, faithfully to the C, it may not rest -
- * kept trying a locked door; each try took a turn and the confusion fell,
- * but the scene looked unchanged, and the watch called it a stall where the
- * C borg would have got through once the confusion ended). Food is left
- * out on purpose: it falls every turn, so a rest that changes nothing else
- * would never read as a stall.
+ * FORK: Mandos #99 retains the shared headless/desktop watch while adopting
+ * Neo's published-grade tests. An effect clearing or crossing a grade changes
+ * the scene; an unseen countdown within one grade does not. Presence of an
+ * affliction alone does not prove that a repeated command spent a turn.
+ * Food remains outside the key so it cannot hide an otherwise unchanged rest.
  */
 const AFFLICTIONS = ["blind", "confused", "afraid", "poisoned", "cut", "stun", "paralyzed"] as const;
 

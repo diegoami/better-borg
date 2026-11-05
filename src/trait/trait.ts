@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * borg_notice / borg_notice_player - fill borg.trait[BI_*] (ctx.world.self.trait)
  * from the perceived player and items. Faithful port of
@@ -141,6 +144,11 @@ export function borgNotice(ctx: BorgContext, opts: BorgTraitOpts = {}): void {
   borgNoticePlayer(c);
   borgNoticeEquipment(c);
   borgNoticeInventory(c);
+  /* borg-trait.c:1122-1129 counts occupied quiver entries for power penalties.
+   * Engine packSlotsUsed (game/gear.ts:551-575) instead charges one pack slot
+   * per 40 weighted missiles; pack capacity keeps that engine calculation. */
+  const carried = new Set(c.inven.filter(present).map((item) => item.handle));
+  t[BI.QUIVER_SLOTS] = (view.quiver?.() ?? []).filter((item) => present(item) && carried.has(item.handle)).length;
   finishNotice(c);
 
   /* Publish the finished buffer. */
@@ -227,11 +235,12 @@ function borgNoticePlayer(c: Ctx): void {
   if (p.status.stun && p.status.stun <= 50) t[BI.ISSTUN] = 1;
   if (p.status.stun > 50) t[BI.ISHEAVYSTUN] = 1;
   if (p.status.paralyzed > 50) t[BI.ISPARALYZED] = 1;
-  /* ISIMAGE (hallucination) and ISFORGET (amnesia) have no AgentView field;
-   * left 0 (caveat). FORK (Mandos #50), a DEFECT fix toward the C: ISSTUDY is
-   * player->upkeep->new_spells > 0, which the view carries as
-   * learnableSpells - the "no field" note was stale, and borg_play_magic's
-   * study arm reads it. */
+  /* Hallucination and amnesia (trait.c:3116-3122). The status carries both as
+   * timers, optional on a game that predates them. */
+  if ((p.status.image ?? 0) > 0) t[BI.ISIMAGE] = 1;
+  if ((p.status.amnesia ?? 0) > 0) t[BI.ISFORGET] = 1;
+  /* ISSTUDY is player->upkeep->new_spells > 0 (borg-trait.c:3125), which the
+   * view carries as learnableSpells. */
   t[BI.ISSTUDY] = (p as { readonly learnableSpells?: number }).learnableSpells ? 1 : 0;
 
   /* Stats: CSTR..CCON = stat_cur (natural). ISFIX* (drained) from frame. */

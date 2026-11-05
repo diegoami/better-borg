@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Perception: fold what the Borg can see (the frozen AgentView) into its own
  * world model (BorgWorld). This is the port of borg_update / borg_update_map
@@ -25,11 +28,12 @@
  */
 
 import type { ItemView } from "@rpgm-tools/neo-angband-core";
-import type { BorgView } from "./core-api.js";
+import { FEAT, type BorgView } from "./core-api.js";
 import {
   AUTO_MAX_X,
   AUTO_MAX_Y,
   BORG_GLOW,
+  BORG_IGNORE_MAP,
   BORG_LIGHT,
   BORG_MARK,
   BORG_VIEW,
@@ -70,6 +74,7 @@ export function perceive(
   memo: PerceiveMemo,
   tables: BorgMessageTables = emptyMessageTables(),
   valuation: TakeValuation = {},
+  raceSymbol?: (killIndex: number) => string | undefined,
 ): void {
   const p = view.player();
 
@@ -78,9 +83,11 @@ export function perceive(
   const oldY = world.self.c.y;
 
   // Level change: depth changed (or first sight) -> forget the old level.
-  const newLevel = !memo.initialized || p.depth !== memo.lastDepth;
+  const newLevel = world.resetLevel || !memo.initialized || p.depth !== memo.lastDepth;
   if (newLevel) {
     world.wipeLevel(p.depth);
+    world.resetLevel = false;
+    world.lastMorgoth = 1;
     memo.lastDepth = p.depth;
     memo.initialized = true;
   }
@@ -98,16 +105,28 @@ export function perceive(
 
   ingestMap(world, view);
   borgUpdateLight(world, view);
-  const seen = ingestMonsters(world, view);
+  const seen = ingestMonsters(world, view, raceSymbol);
   ingestFloor(world, view, oldX, oldY, valuation);
 
-  // Consume the message stream (drains view.messages() exactly once). The C
-  // also force-deletes all records while hallucinating (borg-update.c:1557);
-  // PlayerView exposes no hallucination flag, so that branch is omitted (the
-  // borg simply trusts the exact-id view it is given).
+  // Consume the message stream (drains view.messages() exactly once). The
+  // hallucination branches of borg_update (:538, :1557, :1585) sit in
+  // ingestMonsters and ingestFloor, driven by the ISIMAGE trait.
   borgReactMessages(world, view.messages(), seen.ids, seen.names, tables);
 
   world.seeded = true;
+}
+
+/**
+ * The two "forget goals" tests at the end of borg_update (borg-update.c:3017-3026).
+ * Any impairment drops the current goal: blind, confused, afraid or hallucinating,
+ * and then weak, poisoned, bleeding or stunned. Call once per think, after the
+ * missing-monster pass and the fear re-stamp, as the C does.
+ */
+export function borgForgetGoalWhileImpaired(world: BorgWorld): void {
+  const t = world.self.trait;
+  const on = (i: number): boolean => (t[i] ?? 0) !== 0;
+  if (on(BI.ISBLIND) || on(BI.ISCONFUSED) || on(BI.ISAFRAID) || on(BI.ISIMAGE)) world.self.goal.type = 0;
+  if (on(BI.ISWEAK) || on(BI.ISPOISONED) || on(BI.ISCUT) || on(BI.ISSTUN) || on(BI.ISHEAVYSTUN)) world.self.goal.type = 0;
 }
 
 /**
@@ -165,8 +184,17 @@ function ingestMap(world: BorgWorld, view: BorgView): void {
       if (!c.known && !c.inView) continue;
 
       const g = world.map.at(x, y);
-      g.feat = c.feat;
+      /* Unseen terrain keeps the excavation result (borg-update.c:287-295). */
+      if (c.feat !== FEAT.NONE && (c.inView || !(g.info & BORG_IGNORE_MAP))) {
+        g.feat = c.feat;
+        if (c.inView) g.info &= ~BORG_IGNORE_MAP;
+      }
       g.trap = c.trap;
+
+      /* Interior permanent walls mark vault levels (borg-update.c:418-420). */
+      if (g.feat === FEAT.PERM && world.facts.depth && x && y && x !== bounds.width - 1 && y !== bounds.height - 1) {
+        world.facts.vaultOnLevel = true;
+      }
 
       let info = g.info | BORG_MARK;
       if (c.inView) info |= BORG_VIEW;
@@ -308,6 +336,7 @@ function borgUpdateLight(world: BorgWorld, view: BorgView): void {
 function ingestMonsters(
   world: BorgWorld,
   view: BorgView,
+  raceSymbol?: (killIndex: number) => string | undefined,
 ): { ids: Set<number>; names: Map<number, string> } {
   // Clear the grid.kill back-pointers; rebuilt below from live positions.
   for (const [, k] of world.kills.entries()) {
@@ -326,9 +355,13 @@ function ingestMonsters(
     if (k.mIdx !== 0) byMidx.set(k.mIdx, i);
   }
 
+  /* While hallucinating the C records no monster at all, new or already
+   * tracked (borg-update.c:538), so nothing below runs and nothing is seen. */
+  const hallucinating = (world.self.trait[BI.ISIMAGE] ?? 0) !== 0;
+
   const visibleIds = new Set<number>();
   const names = new Map<number, string>();
-  for (const m of view.monsters()) {
+  for (const m of hallucinating ? [] : view.monsters()) {
     if (!m.visible) continue;
     visibleIds.add(m.id);
     names.set(m.id, m.race);
@@ -348,6 +381,7 @@ function ingestMonsters(
     const k = world.kills.at(idx);
     k.mIdx = m.id;
     k.rIdx = m.raceIndex;
+    k.isMorgoth = m.race.toLowerCase().startsWith("morgoth");
     k.known = true;
     k.ox = k.pos.x;
     k.oy = k.pos.y;
@@ -372,6 +406,16 @@ function ingestMonsters(
     k.seen = true;
     k.when = world.clock;
 
+    /* borg_new_kill (borg-flow-kill.c:861-864) counts arrivals, not survivors. */
+    if (!k.nastyCounted) {
+      const symbol = raceSymbol?.(idx);
+      if (symbol !== undefined) {
+        const nasty = "ZAVULWD".indexOf(symbol);
+        if (nasty >= 0) world.facts.nastiesCount[nasty] = (world.facts.nastiesCount[nasty]! + 1) & 0xff;
+        k.nastyCounted = true;
+      }
+    }
+
     if (world.map.inBounds(m.grid.x, m.grid.y)) {
       world.map.at(m.grid.x, m.grid.y).kill = idx;
     }
@@ -379,8 +423,13 @@ function ingestMonsters(
 
   // Expiry pass: forget records unseen for >= 2000 borg-turns
   // (borg-update.c:1553). Visible records were just refreshed (when == clock).
+  // A recently seen record is kept, except for a hallucinating borg that is
+  // also afraid: the C test is `!(ISIMAGE && ISAFRAID)` (:1557), so that case
+  // falls through to the delete even though the comment above it says the
+  // opposite. The code is what runs, so the code is what is ported.
+  const imageAndAfraid = hallucinating && (world.self.trait[BI.ISAFRAID] ?? 0) !== 0;
   for (const [i, k] of world.kills.entries()) {
-    if (world.clock - k.when < BORG_EXPIRE_TURNS) continue;
+    if (world.clock - k.when < BORG_EXPIRE_TURNS && !imageAndAfraid) continue;
     world.kills.delete(i, world);
   }
 
@@ -515,8 +564,12 @@ function ingestFloor(
     byPos.set(`${t.pos.x},${t.pos.y}`, i);
   }
 
+  /* While hallucinating the C records no object (borg-update.c:538) and deletes
+   * every one it holds (:1585), so the floor is not read at all. */
+  const hallucinating = (world.self.trait[BI.ISIMAGE] ?? 0) !== 0;
+
   const bounds = view.mapBounds();
-  const maxY = Math.min(bounds.height, world.map.height);
+  const maxY = hallucinating ? 0 : Math.min(bounds.height, world.map.height);
   const maxX = Math.min(bounds.width, world.map.width);
 
   for (let y = 0; y < maxY; y++) {
@@ -538,6 +591,8 @@ function ingestFloor(
       // binds the real object kind; tval carries the broad category.
       t.kIdx = head.tval > 0 ? head.tval : 1;
       t.tval = head.tval;
+      t.sval = head.sval;
+      t.aware = head.aware;
       t.known = false;
       t.pos.x = x;
       t.pos.y = y;
@@ -552,7 +607,7 @@ function ingestFloor(
     const underMe =
       (t.pos.x === world.self.c.x && t.pos.y === world.self.c.y) ||
       (t.pos.x === oldX && t.pos.y === oldY);
-    if (underMe) {
+    if (underMe || hallucinating) {
       world.takes.delete(i);
       continue;
     }

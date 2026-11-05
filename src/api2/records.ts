@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * The game's content records, read once and turned into the plain data the
  * decision code takes.
@@ -9,8 +12,10 @@
  */
 
 import type { JsonRecord, KnownPlayer, ModApi2 } from "@rpgm-tools/neo-angband-mod-sdk";
-import type { GameConstants } from "@rpgm-tools/neo-angband-core";
+import type { GameConstants, ItemView } from "@rpgm-tools/neo-angband-core";
+import type { ItemAnalysis } from "../item/deps.js";
 import { RSF } from "../core-api.js";
+import type { BorgContext } from "../context.js";
 
 type Content = Pick<ModApi2, "content">;
 
@@ -86,6 +91,123 @@ export async function spellMessages(api: Content): Promise<SpellMessages[]> {
 export async function kindCosts(api: Content): Promise<readonly number[]> {
   const records = (await valueOf(api.content.records("object"))) ?? [];
   return records.map((record) => (typeof record["cost"] === "number" ? record["cost"] : 0));
+}
+
+/** Bound indexes survive refused mod records; symbols inherit from monster bases. */
+export async function monsterSymbols(api: Content): Promise<ReadonlyMap<number, string>> {
+  const [races, bases, bound] = await Promise.all([
+    valueOf(api.content.records("monster")), valueOf(api.content.records("monster_base")),
+    valueOf(api.content.boundRecords("monster")),
+  ]);
+  const baseSymbols = new Map((bases ?? []).map((base) => [base["name"], base["glyph"]]));
+  const byName = new Map<string, string>();
+  for (const race of races ?? []) {
+    const name = race["name"];
+    const symbol = race["glyph"] ?? baseSymbols.get(race["base"]);
+    if (typeof name === "string" && typeof symbol === "string" && !byName.has(name)) byName.set(name, symbol);
+  }
+  const symbols = new Map<number, string>();
+  for (const race of bound ?? []) {
+    const symbol = byName.get(race.name);
+    if (symbol !== undefined) symbols.set(race.index, symbol);
+  }
+  return symbols;
+}
+
+export type ItemAnalyzer = (item: ItemView) => ItemAnalysis;
+const ITEM_ANALYZERS = new WeakMap<Content["content"], Promise<ItemAnalyzer>>();
+
+/** borg-item-analyze.c:43-259,413-425,646-655 reads costs, dice and flag properties. */
+export function itemAnalyzer(api: Content): Promise<ItemAnalyzer> {
+  const cached = ITEM_ANALYZERS.get(api.content);
+  if (cached) return cached;
+  const read = async (): Promise<ItemAnalyzer> => {
+    const [objects, egos, artifacts, properties] = await Promise.all([
+      valueOf(api.content.records("object")), valueOf(api.content.records("ego_item")),
+      valueOf(api.content.records("artifact")), valueOf(api.content.records("object_property")),
+    ]);
+    return itemAnalyzerFromRecords(objects, egos, artifacts, properties);
+  };
+  const result = read();
+  ITEM_ANALYZERS.set(api.content, result);
+  return result;
+}
+
+/** Shared content analysis for the API2 host and its real-game replay harness. */
+export function itemAnalyzerFromRecords(
+  objects: readonly JsonRecord[] | null, egos: readonly JsonRecord[] | null,
+  artifacts: readonly JsonRecord[] | null, properties: readonly JsonRecord[] | null,
+): ItemAnalyzer {
+  /* ItemView names identify static entries; duplicate names keep the stack estimate. */
+  const byName = (records: readonly JsonRecord[] | null) => {
+    const names = new Map<unknown, JsonRecord | null>();
+    for (const record of records ?? []) names.set(record["name"], names.has(record["name"]) ? null : record);
+    return names;
+  };
+  const egoNames = byName(egos);
+  const artifactNames = byName(artifacts);
+  const negative = new Set((properties ?? []).filter((record) => record["type"] === "flag"
+    && typeof record["power"] === "number" && record["power"] < 0).map((record) => record["code"]));
+  const number = (value: unknown): number | null => typeof value === "number" ? value : null;
+  const field = (value: unknown, key: string): unknown => value && typeof value === "object" && !Array.isArray(value) ? (value as JsonRecord)[key] : undefined;
+  return (item) => {
+    const index = /^kind:(\d+)$/.exec(item.kindKey);
+    const kind = index ? objects?.[Number(index[1])] : undefined;
+    const ego = egoNames.get(item.egoName);
+    const artifact = artifactNames.get(item.artifactName);
+    const dice = /^(\d+)d(\d+)$/.exec(String(field(kind?.["attack"], "hd") ?? ""));
+    const flags = recordFlags(ego?.["flags"]);
+    return {
+      cost: kind ? number(kind["cost"]) ?? 0 : null,
+      egoCost: ego ? number(field(ego["info"], "cost")) ?? 0 : null,
+      artifactCost: artifact ? number(artifact["cost"]) ?? 0 : null,
+      dd: dice ? Number(dice[1]) : item.dd, ds: dice ? Number(dice[2]) : item.ds,
+      cursed: item.curses.length > 0 || item.flags.some((flag) => negative.has(flag)),
+      oneRing: artifact ? artifact["act"] === "BIZARRE" : item.artifactName === "'The One Ring'",
+      randomPower: item.ego && (!ego || ["RAND_POWER", "RAND_SUSTAIN", "RAND_BASE_RES", "RAND_HI_RES", "RAND_RES_POWER"].some((flag) => flags.has(flag))),
+    };
+  };
+}
+
+/** Book kinds follow global registration order; shared names reuse a kind (borg-magic.c:689-694). */
+export async function magicRecords(
+  api: Content,
+  effects: readonly { name: string; aim: boolean }[],
+): Promise<{ bookKind: NonNullable<BorgContext["bookKind"]>; spellEffect: NonNullable<BorgContext["spellEffect"]> }> {
+  const [objects, classes] = await Promise.all([valueOf(api.content.boundRecords("object")), valueOf(api.content.records("class"))]);
+  const kinds = new Map<string, { tval: number; sval: number }>();
+  const counts = new Map<number, number>();
+  const spells = new Map<string, { name: string; aim: boolean }>();
+  const effectAim = new Map(effects.map((effect) => [effect.name, effect.aim]));
+  /* Bound kinds include class books and artifact bases. Each tval's ordinal is
+   * its sval, as assigned by the engine's object and book registration. */
+  for (const object of [...(objects ?? [])].sort((a, b) => a.index - b.index)) {
+    const tval = object.tval;
+    if (tval === undefined) continue;
+    const sval = (counts.get(tval) ?? 0) + 1;
+    counts.set(tval, sval);
+    kinds.set(`${String(tval)}:${object.name}`, { tval, sval });
+  }
+  for (const cls of classes ?? []) {
+    let sidx = 0;
+    for (const book of Array.isArray(cls["book"]) ? cls["book"] : []) {
+      if (book === null || typeof book !== "object" || Array.isArray(book)) continue;
+      for (const spell of Array.isArray(book["spell"]) ? book["spell"] : []) {
+        if (spell === null || typeof spell !== "object" || Array.isArray(spell)) continue;
+        /* The C stores the first effect, including RANDOM (borg-magic.c:759). */
+        const effect = Array.isArray(spell["effect"]) ? spell["effect"][0] : null;
+        if (effect !== null && typeof effect === "object" && !Array.isArray(effect) && typeof effect["eff"] === "string") {
+          const name = effect["eff"];
+          spells.set(`${String(cls["name"])}:${String(sidx)}`, { name, aim: effectAim.get(name) ?? false });
+        }
+        sidx++;
+      }
+    }
+  }
+  return {
+    bookKind: (tval, name) => kinds.get(`${String(tval)}:${name}`) ?? null,
+    spellEffect: (cls, sidx) => spells.get(`${cls}:${String(sidx)}`) ?? null,
+  };
 }
 
 /** The constants the game reads from its constants records; every other one keeps its built-in value. */

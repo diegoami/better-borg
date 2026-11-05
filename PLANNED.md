@@ -107,3 +107,9 @@ byte-for-byte in [docs/history/upstream-playability.md](docs/history/upstream-pl
 Its completed seam work and old release plan explain the port's history;
 Mandos's current roadmap is the one linked above. Provenance is recorded in
 [the history index](docs/history/README.md).
+
+
+The B99 Neo upgrade moves the current replay-test baseline to the
+[98-command desktop case](docs/runs/2026-11-05-b99-desktop-death-replay/README.md).
+The older B54 case remains unchanged and valid with its recorded code and
+engine; changing the controller requires a fresh record, not editing history.

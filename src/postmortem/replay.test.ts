@@ -53,8 +53,8 @@ import type { BirthReplayData } from "../records/birth-replay.js";
 const PACK_DIR = packRoot();
 const suite = PACK_DIR ? describe : describe.skip;
 
-/** B54's verified desktop death fixture; older records remain byte-immutable. */
-const RECORD_DIR = "docs/runs/2026-11-04-b54-desktop-death-replay";
+/** B99's upgraded desktop death fixture; B54 remains byte-immutable for its code. */
+const RECORD_DIR = "docs/runs/2026-11-05-b99-desktop-death-replay";
 const SEED = 99110530;
 const REPLAY_PACK = packForClass("Mage");
 
@@ -117,7 +117,7 @@ function factsOf(run: RecordedRun, cap: number, stage: { clvl: number; depth: nu
 suite("the death replay (#29)", () => {
   const pack = PACK_DIR ? loadPack(PACK_DIR) : null;
 
-  it(`reproduces the desktop's recorded death line exactly (seed ${String(SEED)}, the giant yellow centipede)`, async () => {
+  it(`reproduces the desktop's recorded death line exactly (seed ${String(SEED)}, the yellow mold)`, async () => {
     const { run, header } = recordedRun();
     const replay = await replayDeadRun(
       Core,

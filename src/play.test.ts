@@ -299,16 +299,16 @@ suite("the pack restart chain, headless", () => {
   }
 
   when("boots the next planned character behind a death and stops behind a survivor (the loop's chain rule)", async () => {
-    // #54's complete content/API2 view saves the old warrior death fixtures.
-    // A measured Human Mage dies on seed 1 and survives seed 2 at cap 600.
+    // #99's measured cap-600 Mage fixtures follow the upgraded Neo controller.
+    // A measured Human Mage dies on seed 3 and survives seed 7 at cap 600.
     const session = await playPackSession(Core, pack!, CHAIN_PACK, {
-      seeds: [1, 2, 34, 49], capFor: () => 600,
+      seeds: [3, 7, 34, 49], capFor: () => 600,
     });
     expect(session.lives).toHaveLength(2);
-    expect(session.lives[0]!.seed).toBe(1);
-    expect(session.lives[0]!.dead, "seed 1's death is what booted seed 2").toBe(true);
-    expect(session.lives[1]!.seed).toBe(2);
-    expect(session.lives[1]!.dead, "seed 2 survived its slice, so no third boot").toBe(false);
+    expect(session.lives[0]!.seed).toBe(3);
+    expect(session.lives[0]!.dead, "seed 3's death is what booted seed 7").toBe(true);
+    expect(session.lives[1]!.seed).toBe(7);
+    expect(session.lives[1]!.dead, "seed 7 survived its slice, so no third boot").toBe(false);
     const plan = CHAIN_PACK.planFor(Core, pack!);
     for (const life of session.lives) {
       expect(life.race).toBe(plan.raceName);
@@ -323,9 +323,9 @@ suite("the pack restart chain, headless", () => {
     // Exercise the production gate, with a real first death followed by a
     // single-decision living character. The third seed must never boot.
     const session = await playPackSession(Core, pack!, CHAIN_PACK, {
-      seeds: [1, 2, 34], capFor: (seed) => seed === 2 ? 1 : 600,
+      seeds: [3, 7, 34], capFor: (seed) => seed === 7 ? 1 : 600,
     });
-    expect(session.lives.map((life) => life.seed)).toEqual([1, 2]);
+    expect(session.lives.map((life) => life.seed)).toEqual([3, 7]);
     expect(session.lives[0]!.dead).toBe(true);
     expect(session.lives[1]!.dead).toBe(false);
     expect(session.lives[1]!.decisions).toBe(1);
@@ -357,9 +357,9 @@ suite("the pack restart chain, headless", () => {
      * character boots - the loop's journal-before-create ordering - and the
      * ONE record writer turning the lives into the runs.json schema
      * (better-borg/runs@1). B69 saves the former opening death seed 14.
-     * The B54 cap-600 record pins Mage seed 1's death and seed 2's surviving slice,
+     * The B99 cap-600 records pin Mage seed 3's death and seed 7's surviving slice,
      * so this session exercises both an archive and a rebirth. */
-    const seeds = [1, 2, 34];
+    const seeds = [3, 7, 34];
     const session = await playPackSession(Core, pack!, CHAIN_PACK, { seeds, capFor: () => 600 });
 
     /* AT LEAST ONE DEATH AND ONE REBIRTH, which is this test's requirement

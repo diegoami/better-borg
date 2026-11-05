@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Misc flow routines: a faithful port of reference/src/borg/borg-flow-misc.c --
  * the leash / reverse-flow / far-from-stairs helpers every other family relies
@@ -12,8 +15,7 @@
  * - Panel-relative scans (w_x/w_y + SCREEN_*) become full-map scans, since the
  *   port has no panel concept; the borg's own remembered map is the same data.
  * - borg_flow_spastic's borg_detect_door sector suppression is dropped (treated
- *   as "not detected", i.e. searchable). borg_primarily_caster is the store's
- *   faithful borgPrimarilyCaster since #57 (it was "has spell points").
+ *   as "not detected", i.e. searchable).
  */
 
 import type { AgentCommand } from "@rpgm-tools/neo-angband-core";
@@ -199,17 +201,15 @@ export function borgHappyGridBold(ctx: BorgContext, flow: FlowState, y: number, 
  * raises regional fear (perceive-messages.ts), and a level-one character's
  * CURHP/20 is zero, so any fear at all is enough to keep it on its feet.
  *
- * The PF_COMBAT_REGEN arm (misc.c:1218-1221) was left out by the port because
- * the frozen view did not carry player flags. It does (classFlags), and since
- * #55 the arm is ported. The vault arm is skipped for the reason danger/fear.ts documents: the
+ * The PF_COMBAT_REGEN arm (misc.c:1218-1221) reads the class's player flags
+ * from the view (classFlags). The vault arm is skipped for the reason danger/fear.ts documents: the
  * remembered map has no vault flag.
  */
 export function borgCheckRest(ctx: BorgContext, flow: FlowState, y: number, x: number): boolean {
   const w = ctx.world;
 
-  /* FORK (Mandos #55), DEFECT fix toward the C (misc.c:1218-1221, inherited
-   * gap): never rest to recover SP at full HP if SP only returns in combat -
-   * a Blackguard's SP drains at rest, so the rest could never end. */
+  /* Never rest to recover SP at full HP if SP only returns in combat
+   * (misc.c:1218-1221): a Blackguard's SP drains at rest. */
   if (trait(w, BI.CURHP) === trait(w, BI.MAXHP) && playerHas(ctx, "COMBAT_REGEN")) return false;
 
   /* Do not rest recently after killing a multiplier (misc.c:1223-1228): avoids
@@ -326,11 +326,9 @@ export function borgCheckRest(ctx: BorgContext, flow: FlowState, y: number, x: n
 
 /**
  * borg_flow_recover's "do I need to recover some?" (borg-flow-misc.c:242-256):
- * a primary caster recovers for SP as well as HP; every other class only for
- * HP, cuts, stuns and fear. FORK (Mandos #57), a DEFECT fix toward the C: the
- * branch is borg_primarily_caster() (borg-magic.c:264, num_books > 3 - mage,
- * druid, priest, necromancer), not "has spell points", which also made
- * paladins, rogues, rangers and blackguards recover for SP (inherited).
+ * A primary caster with mana capacity also recovers at or below one quarter SP
+ * (borg-magic.c:264-266: num_books > 3). Every class recovers at or below
+ * one third HP, or for cuts, stuns and fear.
  */
 export function borgNeedsRecover(ctx: BorgContext): boolean {
   const w = ctx.world;

@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Borg's best-attack chooser and damage simulator - a faithful port of
  * reference/src/borg/borg-fight-attack.c.
@@ -21,11 +24,8 @@
  *  - r_ptr->speed (race base speed) is not on MonsterFacts; the status-spell
  *    branches use kill.speed for both sides of the `kill->speed < r_ptr->speed-5`
  *    test (so the guard never fires), documented per site.
- *  - r_ptr->d_char is unavailable; the OLD_DRAIN "Egv" symbol guard is dropped
+ *  - the OLD_DRAIN "Egv" symbol guard remains unported
  *    (the RF_UNDEAD/RF_DEMON guards remain).
- *  - borg_takes carry tval but not sval/aware; borg_launch_destroy_stuff applies
- *    the base tval penalty only (the ring-of-speed / cool-potion specials are
- *    skipped).
  */
 
 import type { AgentCommand, ItemView } from "@rpgm-tools/neo-angband-core";
@@ -51,7 +51,7 @@ import {
   CLASS_RANGER,
   CLASS_PALADIN,
 } from "../trait/trait-index.js";
-import { trait } from "../item/deps.js";
+import { trait, needsIdent, perItemValue } from "../item/deps.js";
 import type { BorgKill } from "../world/kill.js";
 import { FEAT, borgCaveFloorGrid } from "../flow/flow-consts.js";
 import { GOAL_KILL } from "../world/model.js";
@@ -84,6 +84,7 @@ import {
 import { borgSlot } from "../item/deps.js";
 import { borgExtractDir } from "../flow/flow-consts.js";
 import { getFightState, idiv, iabs, type FightState } from "./state.js";
+import { getDerived } from "../trait/state.js";
 import { BA, BF, BTH_PLUS_ADJ } from "./bf.js";
 import { borgOffsetProjectable, borgTarget } from "./projection.js";
 import { methodLabel, noteAttackValuation } from "../uncertainty.js";
@@ -805,22 +806,28 @@ function borgLaunchBoltAuxHack(
   return d;
 }
 
-/** borg_launch_destroy_stuff (attack.c:1344). GAP: takes carry tval only. */
+/** borg_launch_destroy_stuff (attack.c:1344). */
 function borgLaunchDestroyStuff(ctx: BorgContext, takeIdx: number, typ: number): number {
   if (!ctx.world.takes.has(takeIdx)) return 0;
   const t = ctx.world.takes.at(takeIdx);
   switch (typ) {
     case BA.ACID:
-      if (t.tval === TV.BOOTS) return 20;
+      if (t.tval === TV.BOOTS && !t.aware) return 20;
       break;
     case BA.ELEC:
-      if (t.tval === TV.RING) return 20;
+      if (t.tval === TV.RING && !t.aware) return 20;
+      if (t.tval === TV.RING && t.sval === SVAL.ring.speed) return 2000;
       break;
     case BA.FIRE:
-      if (t.tval === TV.BOOTS) return 20;
+      if (t.tval === TV.BOOTS && !t.aware) return 20;
       break;
     case BA.COLD:
-      if (t.tval === TV.POTION) return 20;
+      if (t.tval === TV.POTION) {
+        const stats = [SVAL.potion.inc_str, SVAL.potion.inc_int, SVAL.potion.inc_wis, SVAL.potion.inc_dex, SVAL.potion.inc_con];
+        if (!t.aware || t.sval === SVAL.potion.healing || t.sval === SVAL.potion.star_healing || t.sval === SVAL.potion.life
+          || stats.some((sval, stat) => t.sval === sval && getDerived(ctx.world).needStatgain[stat])) return 2000;
+        return 20;
+      }
       break;
   }
   return 0;
@@ -1171,15 +1178,15 @@ function auxLaunch(ctx: BorgContext, fs: FightState): number {
   let bAmmo: ItemView | null = null;
   const ammoTval = trait(ctx, BI.AMMO_TVAL);
 
-  for (const item of ctx.view.inventory()) {
+  for (const item of ctx.view.quiver?.() ?? []) {
     if (item.number <= 0) continue;
     if (item.tval !== ammoTval) continue;
-    if ((item.value ?? 0) <= 0) continue;
+    if (perItemValue(item) <= 0) continue;
     let d = idiv(item.dd * (item.ds + 1), 2);
     d = d + item.toD + bow.toD;
     d = d * trait(ctx, BI.AMMO_POWER) * trait(ctx, BI.SHOTS);
-    const v = item.value ?? 0;
-    /* unID boost omitted (needs note-needs-id); faithful conservative default. */
+    const v = perItemValue(item);
+    if (needsIdent(item)) d *= 99;
     if (d <= 0) continue;
     const n = borgLaunchBolt(ctx, fs, 0, d, BA.ARROW, 6 + 2 * trait(ctx, BI.AMMO_POWER), item);
     if (n === bN && v >= bV) continue;
@@ -1350,6 +1357,14 @@ function auxSpellBolt(
   fs.pending = borgSpell(ctx, spell);
   fs.successfulTarget = -1;
   return bN;
+}
+
+/** borg-flow-kill.c:1941-1966 reuses the attack scan's targets and simulation flag. */
+export function borgHasDistanceAttack(ctx: BorgContext): boolean {
+  const fs = getFightState(ctx.world);
+  return auxSpellBolt(ctx, fs, Spell.MAGIC_MISSILE, 0, 10, BA.MISSILE, maxRange(ctx), false) > 0
+    || auxSpellBolt(ctx, fs, Spell.NETHER_BOLT, 0, 10, BA.NETHER, maxRange(ctx), false) > 0
+    || auxLaunch(ctx, fs) > 0;
 }
 
 /** borg_attack_aux_spell_bolt_reserve (attack.c:2518): emergency MM (neg mana). */
@@ -2339,10 +2354,9 @@ export function borgAttack(ctx: BorgContext, boostedBravery = false): AgentComma
 
     if (!ctx.world.map.inBounds(kill.pos.x, kill.pos.y)) continue;
     const ag = ctx.world.map.at(kill.pos.x, kill.pos.y);
-    /* FORK (Mandos #69), a DEFECT fix toward the C (inherited): the C's
-     * BORG_OKAY test ("on the current panel") is treated as set, as
-     * flow-kill.ts does - the port has no panel and never sets the flag, so
-     * requiring it left this scan with no monster at all. */
+    /* BORG_OKAY ("on the current panel") is treated as set, as flow-kill.ts
+     * does: the port has no panel and never sets the flag, so requiring it
+     * left this scan with no monster at all. */
     if (!(ag.info & 0x20 /* BORG_VIEW */)) continue;
     if (dist(ctx.world.self.c.y, ctx.world.self.c.x, kill.pos.y, kill.pos.x) > maxRange(ctx)) continue;
     if (!ag.kill) ag.kill = i;

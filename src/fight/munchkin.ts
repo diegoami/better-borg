@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * "Munchkin mode" attacks - the super-cautious early-game stair-scum combat, a
  * faithful port of reference/src/borg/borg-attack-munchkin.c.
@@ -72,10 +75,9 @@ export function borgMunchkinMage(ctx: BorgContext): AgentCommand | null {
     }
     if (!ctx.world.map.inBounds(kill.pos.x, kill.pos.y)) continue;
     const ag = ctx.world.map.at(kill.pos.x, kill.pos.y);
-    /* FORK (Mandos #69), a DEFECT fix toward the C (inherited): the C's
-     * BORG_OKAY test ("on the current panel") is treated as set, as
-     * flow-kill.ts does - the port has no panel and never sets the flag, so
-     * requiring it left this scan with no monster at all. */
+    /* BORG_OKAY ("on the current panel") is treated as set, as flow-kill.ts
+     * does: the port has no panel and never sets the flag, so requiring it
+     * left this scan with no monster at all. */
     if (!(ag.info & 0x20)) continue; /* BORG_VIEW */
     if (dist(ctx.world.self.c.y, ctx.world.self.c.x, kill.pos.y, kill.pos.x) > maxRange(ctx)) continue;
     fs.tempX[fs.tempN] = kill.pos.x;
@@ -141,10 +143,9 @@ export function borgMunchkinMelee(ctx: BorgContext): AgentCommand | null {
     }
     if (!ctx.world.map.inBounds(kill.pos.x, kill.pos.y)) continue;
     const ag = ctx.world.map.at(kill.pos.x, kill.pos.y);
-    /* FORK (Mandos #69), a DEFECT fix toward the C (inherited): the C's
-     * BORG_OKAY test ("on the current panel") is treated as set, as
-     * flow-kill.ts does - the port has no panel and never sets the flag, so
-     * requiring it left this scan with no monster at all. */
+    /* BORG_OKAY ("on the current panel") is treated as set, as flow-kill.ts
+     * does: the port has no panel and never sets the flag, so requiring it
+     * left this scan with no monster at all. */
     if (!(ag.info & 0x20)) continue;
     if (dist(ctx.world.self.c.y, ctx.world.self.c.x, kill.pos.y, kill.pos.x) !== 1) continue;
     fs.tempX[fs.tempN] = kill.pos.x;

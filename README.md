@@ -53,6 +53,13 @@ They predate #54's complete-content loader correction and do not establish
 current desktop reliability.
 [Run records](docs/runs/README.md) retain the raw facts and older baselines.
 
+The [B99 upgrade record](docs/tasks/B99.md) adopts Neo Borg source74a017d
+and Neo engine0cc75b4af, retaining our own packs and run instrumentation.
+Its [current desktop replay](docs/runs/2026-11-05-b99-desktop-death-replay/README.md)
+verifies all98 commands and death facts. The paired small-cohort results are
+recorded honestly; this upgrade does not establish a uniform survival gain.
+The [patch index](patches/README.md) names each independent engine carry.
+
 Bug leads come from our runs, tests and source audits, and from the related
 [borg-rs port](https://github.com/diegoami/borg-rs) (tracked in #86). Each lead
 needs verification against the relevant source revision.
@@ -83,7 +90,7 @@ happen offline; a live character follows a fixed deterministic policy.
 The current checkout requires **our engine fork**,
 [diegoami/neo-angband](https://github.com/diegoami/neo-angband), on its
 `neowarrior-lab` branch. The manifest accepts
-`>=1.23.0-beta.2-mandos.1 <1.23.0`; stock Neo Angband is outside that range.
+`>=1.23.0-beta.2-mandos.2 <1.23.0`; stock Neo Angband is outside that range.
 The lab carries engine fixes and seams offered upstream. Mandos itself
 ships no engine code.
 

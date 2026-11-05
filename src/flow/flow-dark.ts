@@ -1,13 +1,14 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Flow toward "interesting" (dark/unexplored) grids: a faithful port of
  * reference/src/borg/borg-flow-dark.c (borg_flow_dark and its five methods,
  * borg_flow_dark_interesting/reachable, borg_flow_direct, borg_flow_border).
  *
- * ADAPTATION. Method 1 scans the C borg_light[] torch-lit list, which perceive
- * (P8.6) does not populate yet, so collectLightGrids reads grids flagged
- * BORG_LIGHT (currently none) and method 1 no-ops until then; methods 2-5 scan
- * the remembered map directly and are fully functional. Danger uses
- * FlowHooks.danger via computeFear.
+ * ADAPTATION. Method 1 scans grids flagged BORG_LIGHT, which perceive sets for
+ * the worn light (none for a torchless Necromancer). Methods 2-5 scan the
+ * remembered map directly. Danger uses FlowHooks.danger via computeFear.
  */
 
 import type { AgentCommand } from "@rpgm-tools/neo-angband-core";

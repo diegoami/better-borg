@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Borg's aggregate world model - a faithful port of the upstream global
  * singletons: struct borg_struct `borg` (borg-trait.h), the borg_grids map, the
@@ -47,6 +50,7 @@ export interface Goals {
   ware: number; /* next item to buy there */
   item: number; /* next item to sell there */
   doBest: boolean;
+  bestItems?: Array<{ tval: number; sval: number; pval: number; home: boolean } | null>;
 }
 
 /** A fresh, zeroed goal set. */
@@ -219,6 +223,8 @@ export function makeBorgSelf(): BorgSelf {
 
 /** Per-level facts the Borg derives from what it perceives (borg-flow-kill.h). */
 export interface LevelFacts {
+  /** ZAVULWD counts since level entry (borg-update.c:2212-2217). */
+  nastiesCount: number[];
   uniqueOnLevel: number;
   scaryGuyOnLevel: boolean;
   morgothOnLevel: boolean;
@@ -231,6 +237,7 @@ export interface LevelFacts {
 /** Fresh per-level facts. */
 export function makeLevelFacts(): LevelFacts {
   return {
+    nastiesCount: [25, 0, 0, 0, 0, 0, 0],
     uniqueOnLevel: 0,
     scaryGuyOnLevel: false,
     morgothOnLevel: false,
@@ -247,8 +254,10 @@ export function makeLevelFacts(): LevelFacts {
  */
 export class BorgWorld {
   readonly map = new BorgMap();
-  readonly kills = new BorgKills();
-  readonly takes = new BorgTakes();
+  readonly kills = new BorgKills(this);
+  readonly takes = new BorgTakes(this);
+  /** borg-flow-kill.c:423-424 reads the flow queue when deleting a target. */
+  flowTarget?: { readonly flowX: ArrayLike<number>; readonly flowY: ArrayLike<number> };
   /** borg_detect_wall/trap/door/evil/obj (borg-update.c:82-86). See world/panel.ts. */
   readonly detect = new BorgDetectGrid();
   readonly self = makeBorgSelf();
@@ -263,6 +272,18 @@ export class BorgWorld {
 
   /** True once at least one perception has populated the model. */
   seeded = false;
+
+  /** A forced level update restarts exploration (borg-think-dungeon.c:1195, 2113). */
+  resetLevel = false;
+
+  /** Morgoth's sighting clock starts at one (borg-update.c:2017). */
+  lastMorgoth = 1;
+
+  /** No hunted unique has depth 127 (borg-update.c:2294-2300). */
+  depthHuntedUnique = 127;
+  liveUniques = 0;
+  /** Recall queues its depth answer (borg-escape.c:63-115). */
+  resetRecallDepth = false;
 
   /**
    * Reset everything for a new level (borg_init_cave + the new-level branch of
@@ -282,8 +303,8 @@ export class BorgWorld {
    */
   wipeLevel(depth: number): void {
     this.map.wipe();
-    this.kills.wipe();
-    this.takes.wipe();
+    this.kills.wipe(false);
+    this.takes.wipe(false);
     this.facts = makeLevelFacts();
 
     const g = this.self.goal;
@@ -292,6 +313,8 @@ export class BorgWorld {
     this.self.goal = makeGoals();
     this.self.goal.rising = depth === 0 ? false : rising;
     this.self.goal.fleeingToTown = depth === 0 || depth >= 2 ? false : fleeingToTown;
+    /* borg-update.c:2155-2157 requests equipment optimization on town entry. */
+    this.self.goal.doBest = depth === 0;
 
     /* "Do not use any stairs" (borg-update.c:2135). */
     this.self.stairLess = false;

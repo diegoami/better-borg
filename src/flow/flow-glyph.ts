@@ -1,13 +1,16 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Flow to / lay glyphs of warding: a faithful port of
  * reference/src/borg/borg-flow-glyph.c (borg_flow_glyph, the "sea of runes" the
  * borg builds around itself before facing Morgoth).
  *
- * ADAPTATION. Laying the glyph itself is an action (spell / rune scroll), so
+ * ADAPTATION. Laying the glyph itself is an action (spell / scroll / activation), so
  * on arrival the port calls FlowHooks.layGlyph(ctx), which the session wires
- * to Glyph of Warding or a Rune of Protection scroll (think-session.ts; #58).
- * If it returns null (no means to lay one) the flow yields, exactly as
- * upstream's cast/read/activate chain failing. The room
+ * to the C's spell, scroll, activation chain (think-session.ts). If it
+ * returns null (no means to lay one) the flow yields, exactly as upstream's
+ * cast/read/activate chain failing. The room
  * search, scoring, and flow are ported verbatim.
  */
 

@@ -8,18 +8,19 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
+import * as Core from "@rpgm-tools/neo-angband-core";
 import type { AgentCommand, AgentController, ItemView } from "@rpgm-tools/neo-angband-core";
 import type { Api2Prompt } from "@rpgm-tools/neo-angband-mod-sdk";
-import { fakeGame } from "../harness-api2.js";
+import { fakeGame, knownWorld } from "../harness-api2.js";
 import { createActFacade, intentOf, REST_COMPLETE } from "./act.js";
 import { createTick, promptAnswer, IDLE_BEFORE_RELEASE, REFUSALS_BEFORE_RELEASE, STALLS_BEFORE_FORGET, STALLS_BEFORE_RELEASE, type Decider } from "./controller.js";
-import type { Bridge } from "./host.js";
+import { createBridge, type Bridge } from "./host.js";
 import type { World } from "./world.js";
 import { createBorg } from "../controller.js";
 import * as Think from "../think.js";
 import { buildItemDeps, getThinkSession } from "../think-session.js";
 import { borgWearRecharge } from "../item/item-wear.js";
-import { TV } from "../item/svals.js";
+import { TV, SVAL } from "../item/svals.js";
 
 describe("the act verbs", () => {
   it("turn a command into the intent the game takes", () => {
@@ -77,27 +78,29 @@ function decider(controller: AgentController, rewinds: { count: number } = { cou
 
 const WALK: AgentCommand = { code: "walk", dir: 6 } as AgentCommand;
 
-describe("recharge continuation across API2 retries (#76)", () => {
-  it("does not consume private RNG draws for an abandoned loadout pass (#54)", async () => {
-    const selection = vi.spyOn(Think, "think").mockImplementation((ctx) =>
-      ctx.act.move([1, 2, 3, 4, 6, 7, 8, 9][ctx.rng.randint0(8)]!));
-    const run = async (retry: boolean) => {
-      const game = fakeGame();
-      const borg = createBorg({ rngSeed: 1 });
-      let pending = retry;
-      const tick = createTick(bridge({
-        readWorld: () => Promise.resolve({ view: game.view, facts: { shopnum: null, kinds: new Map() } } as World),
-        loadoutsPending: () => pending,
-        settleLoadouts: () => { pending = false; return Promise.resolve(1); },
-      }), borg);
-      await tick(game.mod, game.input());
-      await tick(game.mod, game.input());
-      return game.submitted.map((entry) => entry.intent);
-    };
-    try { expect(await run(true)).toEqual(await run(false)); }
-    finally { selection.mockRestore(); }
-  });
+const AFFLICTION_GRADES = [
+  { field: "blind", name: "BLIND", grade: [{ name: "Blind", max: 10000 }] },
+  { field: "confused", name: "CONFUSED", grade: [{ name: "Confused", max: 10000 }] },
+  { field: "afraid", name: "AFRAID", grade: [{ name: "Afraid", max: 10000 }] },
+  { field: "poisoned", name: "POISONED", grade: [{ name: "Poisoned", max: 10000 }] },
+  { field: "paralyzed", name: "PARALYZED", grade: [{ name: "Paralyzed!", max: 10000 }] },
+  { field: "cut", name: "CUT", grade: [{ name: "Graze", max: 10 }, { name: "Light Cut", max: 25 }] },
+  { field: "stun", name: "STUN", grade: [{ name: "Stun", max: 50 }, { name: "Heavy Stun", max: 150 }] },
+] as const;
 
+async function publishedGame() {
+  const game = fakeGame({ scenario: { player: { grid: { x: 5, y: 5 }, depth: 2 } }, engine: { core: Core } });
+  const known = knownWorld(game.view);
+  const player = known.player!;
+  const status = { ...player.status };
+  (game.mod.view as { world: unknown }).world = () => Promise.resolve({ ok: true, value: { ...known, player: { ...player, status } } });
+  (game.mod.content as { records: unknown }).records = (file: string) => Promise.resolve({ ok: true, value: file === "player_timed" ? AFFLICTION_GRADES.map(({ name, grade }) => ({ name, grade })) : [] });
+  const host = createBridge(game.mod);
+  await host.prime();
+  return { game, host, status };
+}
+
+describe("recharge continuation across API2 retries", () => {
   it.each([false, true])("preserves wear/rest order when a loadout retry starts with pending rest=%s", async (pendingRest) => {
     const game = fakeGame();
     const amulet: ItemView = {
@@ -107,17 +110,17 @@ describe("recharge continuation across API2 retries (#76)", () => {
       modifiers: [], brands: [], slays: [], resists: [], curses: [], egoName: null,
       artifactName: null, activation: true, timeout: 10, inscription: null,
     };
-    const view = { ...game.view, inventory: () => [amulet] };
+    const food = { ...amulet, handle: 8, tval: TV.FOOD, sval: SVAL.food.ration!, number: 5, timeout: 0 };
+    const view = { ...game.view, inventory: () => pendingRest ? [food] : [food, amulet], equipment: () => pendingRest ? [amulet] : [] };
     const borg = createBorg({ rngSeed: 1 });
     const session = getThinkSession(borg.world);
-    session.rechargeRest = pendingRest;
-    const realThink = Think.think;
-    // Isolate selection of this late rung. The real controller snapshot,
-    // real queued-rest consumer, item selector and API2 retry all run.
+    session.rechargeRest = pendingRest ? amulet.handle : false;
+    const decide = Think.think;
+    // The controller and queued-rest consumer share the production item deps.
     const selection = vi.spyOn(Think, "think").mockImplementation((ctx) => {
       const state = getThinkSession(ctx.world);
-      return state.rechargeRest ? realThink(ctx)
-        : borgWearRecharge(ctx, { ...buildItemDeps(state), canRest: true });
+      return state.rechargeRest ? decide(ctx)
+        : borgWearRecharge(ctx, buildItemDeps(state));
     });
     let pending = true;
     let rounds = 0;
@@ -135,6 +138,8 @@ describe("recharge continuation across API2 retries (#76)", () => {
           : { code: "wield", args: { handle: 7 } } },
       ]);
       if (!pendingRest) {
+        view.inventory = () => [food];
+        view.equipment = () => [amulet];
         await tick(game.mod, game.input());
         expect(game.submitted[1]!.intent).toEqual({ kind: "command", command: { code: "rest", args: { count: 75 } } });
       }
@@ -274,21 +279,80 @@ describe("one tick", () => {
     expect(game.released).toEqual([]);
   });
 
-  it("does not count a command repeated while an affliction wears off (#65)", async () => {
-    /* A confused character trying a locked door: each try takes a turn and the
-     * confusion falls, so it is waiting it out, not stalling. */
-    const game = fakeGame({ scenario: { player: { grid: { x: 5, y: 5 }, depth: 2 } } });
-    let confused = STALLS_BEFORE_RELEASE * 3;
-    const world = () => {
-      confused -= 1;
-      const view = Object.create(game.view) as typeof game.view;
-      const base = game.view.player();
-      (view as { player: unknown }).player = () => ({ ...base, status: { ...base.status, confused } });
-      return Promise.resolve({ view, facts: { shopnum: null, kinds: new Map() } } as unknown as World);
-    };
-    const tick = createTick(bridge({ readWorld: world }), { controller: () => ({ code: "open", dir: 2 }) as AgentCommand, rewind: () => undefined, forget: () => undefined });
-    for (let n = 0; n < STALLS_BEFORE_RELEASE * 2; n++) await tick(game.mod, game.input());
+  it.each(AFFLICTION_GRADES)("resets the stall count when $field clears in the published view", async ({ field, grade }) => {
+    const { game, host, status } = await publishedGame();
+    status[field] = grade[0].name;
+    const seen: number[] = [];
+    const tick = createTick(host, decider((view) => {
+      seen.push(view.player().status[field]);
+      return { code: "open", dir: 2 } as AgentCommand;
+    }));
+    for (let n = 0; n < STALLS_BEFORE_RELEASE; n++) await tick(game.mod, game.input());
+    expect(seen).toEqual(Array<number>(STALLS_BEFORE_RELEASE).fill(1));
+    status[field] = null;
+    for (let n = 0; n < STALLS_BEFORE_RELEASE; n++) await tick(game.mod, game.input());
+    expect(seen.slice(STALLS_BEFORE_RELEASE)).toEqual(Array<number>(STALLS_BEFORE_RELEASE).fill(0));
     expect(game.released).toEqual([]);
+    await tick(game.mod, game.input());
+    expect(game.released).toHaveLength(1);
+    await host.dispose();
+  });
+
+  it.each([
+    { field: "cut", higher: "Light Cut", lower: "Graze", floor: 11 },
+    { field: "stun", higher: "Heavy Stun", lower: "Stun", floor: 51 },
+  ] as const)("resets the stall count when $field crosses a published grade boundary", async ({ field, higher, lower, floor }) => {
+    const { game, host, status } = await publishedGame();
+    status[field] = higher;
+    const seen: number[] = [];
+    const tick = createTick(host, decider((view) => {
+      seen.push(view.player().status[field]);
+      return { code: "open", dir: 2 } as AgentCommand;
+    }));
+    for (let n = 0; n < STALLS_BEFORE_RELEASE; n++) await tick(game.mod, game.input());
+    expect(seen).toEqual(Array<number>(STALLS_BEFORE_RELEASE).fill(floor));
+    status[field] = lower;
+    for (let n = 0; n < STALLS_BEFORE_RELEASE; n++) await tick(game.mod, game.input());
+    expect(seen.slice(STALLS_BEFORE_RELEASE)).toEqual(Array<number>(STALLS_BEFORE_RELEASE).fill(1));
+    expect(game.released).toEqual([]);
+    await tick(game.mod, game.input());
+    expect(game.released).toHaveLength(1);
+    await host.dispose();
+  });
+
+  it.each(AFFLICTION_GRADES)("counts identical commands while $field stays in one published grade", async ({ field, grade }) => {
+    const { game, host, status } = await publishedGame();
+    status[field] = grade[0].name;
+    const forgotten: string[] = [];
+    const tick = createTick(host, {
+      controller: (view) => {
+        expect(view.player().status[field]).toBe(1);
+        return { code: "open", dir: 2 } as AgentCommand;
+      },
+      rewind: () => undefined,
+      forget: (x, y) => void forgotten.push(`${String(x)},${String(y)}`),
+    });
+    for (let n = 0; n < STALLS_BEFORE_RELEASE; n++) await tick(game.mod, game.input());
+    expect(game.released).toEqual([]);
+    expect(forgotten).toHaveLength(Math.floor((STALLS_BEFORE_RELEASE - 1) / STALLS_BEFORE_FORGET));
+    await tick(game.mod, game.input());
+    expect(game.released).toHaveLength(1);
+    expect(game.submitted).toHaveLength(STALLS_BEFORE_RELEASE);
+    await host.dispose();
+  });
+
+  it("counts identical commands when only the published food percentage changes", async () => {
+    const { game, host, status } = await publishedGame();
+    const tick = createTick(host, decider((view) => {
+      expect(view.player().status.food).toBe(status.food * 100);
+      return { code: "open", dir: 2 } as AgentCommand;
+    }));
+    for (let n = 0; n <= STALLS_BEFORE_RELEASE; n++) {
+      status.food = 90 - n;
+      await tick(game.mod, game.input());
+    }
+    expect(game.released).toHaveLength(1);
+    await host.dispose();
   });
 
   it("reads no world at a wait with a prompt, and waits out a death or other phase", async () => {
@@ -304,88 +368,25 @@ describe("one tick", () => {
   });
 });
 
-describe("the replay release (#29)", () => {
-  /** A world whose turn the fake watcher counts up from, as the wiring's
-   * does from the game's own counter. */
-  const worldAt = (turn: number): World =>
-    ({ view: { turn: () => turn, player: () => ({ grid: { x: 1, y: 1 } }), monsters: () => [] } as never, facts: { shopnum: null, kinds: new Map() } }) as World;
 
-  it("releases with the banner at the release point and submits nothing ever again", async () => {
-    /* The one-shot is the point: after the hand-over the owner owns the
-     * keyboard, and a host that asks the controller again gets NOTHING -
-     * not a decision after the release, not a second release. */
-    const game = fakeGame();
-    let turn = 5020;
-    let released = 0;
-    const tick = createTick(
-      bridge({ readWorld: () => Promise.resolve(worldAt(turn)) }),
-      {
-        controller: () => WALK,
-        rewind: () => undefined,
-        replay: {
-          releaseAt: (world) => world.view.turn() >= 5029,
-          banner: () => "Death replay: the recorded character died at turn 5049 - the keyboard is yours for the last 20 turns.",
-          onReleased: () => {
-            released += 1;
-          },
-        },
-      },
-    );
-    await tick(game.mod, game.input());
-    turn = 5029;
-    await tick(game.mod, game.input());
-    turn = 5030;
-    await tick(game.mod, game.input());
-    expect(game.submitted).toHaveLength(1); /* the pre-release decision only */
-    expect(game.released).toEqual([
-      "Death replay: the recorded character died at turn 5049 - the keyboard is yours for the last 20 turns.",
-    ]);
-    expect(released).toBe(1);
-  });
-
-  it("outranks the stage watch: an armed replay hands the keyboard over rather than retiring", async () => {
-    /* A deliberately armed replay wins over everything the grind would do -
-     * the owner asked for these last turns, not for another retire. */
-    const game = fakeGame();
-    let attained = 0;
-    const tick = createTick(
-      bridge({ readWorld: () => Promise.resolve(worldAt(5029)) }),
-      {
-        controller: () => WALK,
-        rewind: () => undefined,
-        stage: {
-          attained: () => true,
-          onAttained: () => {
-            attained += 1;
-          },
-        },
-        replay: {
-          releaseAt: () => true,
-          banner: () => "Death replay: the release turn 5029 is reached - the keyboard is yours.",
-        },
-      },
-    );
-    await tick(game.mod, game.input());
-    expect(attained).toBe(0);
-    expect(game.submitted).toEqual([]);
-    expect(game.released).toHaveLength(1);
-  });
-
-  it("plays the ordinary grind untouched while the release point is not reached", async () => {
-    const game = fakeGame();
-    const tick = createTick(
-      bridge({ readWorld: () => Promise.resolve(worldAt(10)) }),
-      {
-        controller: () => WALK,
-        rewind: () => undefined,
-        replay: {
-          releaseAt: (world) => world.view.turn() >= 5029,
-          banner: () => "never",
-        },
-      },
-    );
-    for (let n = 0; n < 3; n++) await tick(game.mod, game.input());
-    expect(game.submitted).toHaveLength(3);
-    expect(game.released).toEqual([]);
+describe("Mandos abandoned-pass private RNG (#54)", () => {
+  it("does not consume private RNG draws for an abandoned loadout pass (#54)", async () => {
+    const selection = vi.spyOn(Think, "think").mockImplementation((ctx) =>
+      ctx.act.move([1, 2, 3, 4, 6, 7, 8, 9][ctx.rng.randint0(8)]!));
+    const run = async (retry: boolean) => {
+      const game = fakeGame();
+      const borg = createBorg({ rngSeed: 1 });
+      let pending = retry;
+      const tick = createTick(bridge({
+        readWorld: () => Promise.resolve({ view: game.view, facts: { shopnum: null, kinds: new Map() } } as World),
+        loadoutsPending: () => pending,
+        settleLoadouts: () => { pending = false; return Promise.resolve(1); },
+      }), borg);
+      await tick(game.mod, game.input());
+      await tick(game.mod, game.input());
+      return game.submitted.map((entry) => entry.intent);
+    };
+    try { expect(await run(true)).toEqual(await run(false)); }
+    finally { selection.mockRestore(); }
   });
 });

@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Flow toward objects to take: a faithful port of the navigation core of
  * reference/src/borg/borg-flow-take.c (borg_flow_take and borg_flow_take_scum).
@@ -5,11 +8,11 @@
  * ADAPTATIONS
  * - "Require one empty pack slot" (borg_items[PACK_SLOTS-1].iqty) is
  *   FlowHooks.packFull, which the session wires to the inventory model
- *   (think-session.ts; #58).
+ *   (think-session.ts).
  * - The gold-scumming book/ammo-kind cheats need k_info; they are gated by the
  *   same GOLD >= 500000 guard as upstream (default gold 0 -> inactive) and left
  *   out. The lunal-mode take variant (heavily inventory/quiver dependent) is a
- *   P8.5 follow-up and is not ported here.
+ *   not ported here.
  */
 
 import type { AgentCommand } from "@rpgm-tools/neo-angband-core";

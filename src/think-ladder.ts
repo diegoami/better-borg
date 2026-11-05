@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * borg_think_dungeon - the priority-ordered decision ladder
  * (reference/src/borg/borg-think-dungeon.c) plus its helpers from
@@ -13,14 +16,13 @@
  * stubs (see NOT-YET-PORTED below) so the ladder shape stays faithful.
  *
  * NOT-YET-PORTED subsystem calls (represented as ladder stages that yield):
- *   borg_swap_rings / borg_wear_rings (#4), and borg_destroy_floor (the
- *     engine lacks ignore). #50 restores borg_drop_hole, borg_drop_slow,
- *     borg_dump_quiver, borg_wear_recharge and borg_play_magic.
- *     borg_drop_junk is
+ *   borg_destroy_floor.
+ *   borg_play_magic (borg-magic-play.c) is ported in src/item/magic-play.ts.
+ *   The drop_hole / drop_slow / dump_quiver / wear_recharge rungs
+ *   run here; borg_drop_junk is
  *     mapped to the ported borgCrushJunk (borg-junk.c's junk-dropping routine).
  *   borg_must_return_to_town (borg-prepared.c:828) is ported with both of its
- *   guards (mustReturnToTown below; #58 - this note used to call it an
- *   approximation).
+ *   guards (mustReturnToTown below).
  *
  * SCUM MODES. borg_think_dungeon_lunal / _munchkin and borg_money_scum are
  * gated by the borg config flags BORG_SELF_LUNAL / BORG_MUNCHKIN_START /
@@ -34,7 +36,7 @@
  */
 
 import type { AgentCommand, ItemView } from "@rpgm-tools/neo-angband-core";
-import { FEAT, REST_COMPLETE } from "./core-api.js";
+import { FEAT, REST_COMPLETE, REST_ALL_POINTS } from "./core-api.js";
 import type { BorgContext } from "./context.js";
 import { distance } from "./think.js";
 import {
@@ -42,6 +44,7 @@ import {
   borgNotice,
   borgPrepared,
   borgRestock,
+  borgCfg,
 } from "./trait/index.js";
 import {
   GOAL_BORE,
@@ -56,6 +59,9 @@ import {
   GOAL_RECOVER,
 } from "./world/model.js";
 import { borgFlowOld } from "./flow/index.js";
+import { AUTO_TEMP_MAX, ddx_ddd, ddy_ddd, inBoundsFully } from "./flow/flow-consts.js";
+import { BORG_DARK, BORG_GLOW, BORG_IGNORE_MAP, BORG_MARK } from "./world/grid.js";
+import { CLASS_NECROMANCER } from "./trait/trait-index.js";
 import {
   borgAttack,
   borgCaution,
@@ -66,13 +72,16 @@ import {
   borgDimensionDoor,
   borgShadowShift,
   getFightState,
+  borgTarget,
 } from "./fight/index.js";
-import { getDangerGlobals, borgDanger } from "./danger/index.js";
+import { getDangerGlobals, getFearCaches, borgDanger } from "./danger/index.js";
 import {
   BorgNeed,
   borgMaintainLight,
   borgUseThings,
   borgWearStuff,
+  borgSwapRings,
+  borgWearRings,
   borgRemoveStuff,
   borgCrushJunk,
   borgDropHole,
@@ -83,10 +92,14 @@ import {
   borgTestStuff,
   borgEnchanting,
   borgRecharging,
-  borgCheckLightOnly,
+  borgSpellLegal,
+  borgSpellOkay,
+  borgZapRod,
   borgCheckLight,
   borgLightBeam,
   borgSpell,
+  borgSpellOkayFail,
+  borgActivateRing,
   borgReadScroll,
   borgUseStaff,
   borgActivateItem,
@@ -252,16 +265,18 @@ const NOT_PORTED: () => AgentCommand | null = () => null;
 /* --------------------------------------------------------- borg_leave_level */
 
 /** borg_time_to_stay_on_level (borg-think-dungeon-util.c:569). */
-function timeToStayOnLevel(ctx: BorgContext, bored: boolean): number {
+export function timeToStayOnLevel(ctx: BorgContext, bored: boolean): number {
   const clevel = T(ctx, BI.CLEVEL);
-  // borg_feeling_stuff is 0 in the port (no level-feeling stream); the C's
+  // borg_feeling_stuff is 0 in the port (no level-feeling stream), so the C's
+  // "clevel < 5 || !borg_feeling_stuff" guard always holds and
   // borg_stuff_feeling[0] == 50000 governs the not-yet-felt case.
   const STUFF0 = 50000;
-  if (clevel < 5) {
+  const feelingStuff = 0;
+  if (clevel < 5 || !feelingStuff) {
     if (clevel < 10) return clevel * 50;
     if (clevel < 15 && T(ctx, BI.FOOD) < 3) return T(ctx, BI.REG) ? 2000 : 2500;
     // z_info->feeling_need * 10 (feeling_need is 10 in 4.2.6) for low maxlevel.
-    if (T(ctx, BI.MAXCLEVEL) < 20) return 100;
+    if (T(ctx, BI.MAXCLEVEL) < 20 && feelingStuff === 0) return 100;
   }
   return bored ? STUFF0 / 10 : STUFF0;
 }
@@ -280,20 +295,38 @@ export function borgLeaveLevel(
   const g = self.goal;
   const flow = session.flow;
   let dir = 0;
+  let needRestock = false;
+  const cfg = borgCfg();
+  const fight = getFightState(w);
 
   /* Waiting for recall other than depth 1 (util:605). */
   if (g.recalling && T(ctx, BI.CDEPTH) !== 1) return null;
+
+  /* A recent Morgoth sighting cancels boredom (borg-think-dungeon-util.c:609). */
+  if (T(ctx, BI.CDEPTH) === 100 && w.facts.morgothOnLevel && w.clock - w.lastMorgoth < 5000) {
+    g.leaving = false;
+    g.rising = false;
+    bored = false;
+  }
 
   /* Town (util:633). */
   if (!T(ctx, BI.CDEPTH)) {
     g.rising = false;
     if (!bored) return null;
 
+    /* The Borg crawls when depth 100 needs supplies (borg-think-dungeon-util.c:641-659). */
+    if (T(ctx, BI.MAXDEPTH) === 100 && !cfg.playsRisky && borgRestock(ctx, 100) !== null) {
+      g.fleeing = true;
+      g.leaving = true;
+      self.stairMore = true;
+      return flow.toStairs(ctx, true, GOAL_BORE, false, false);
+    }
+
     /* Recall into dungeon if deep enough and have recalls (util:663). */
     if (
-      T(ctx, BI.MAXDEPTH) >= 8 &&
+      T(ctx, BI.MAXDEPTH) >= (cfg.worshipsGold ? 10 : 8) &&
       T(ctx, BI.RECALL) >= 3 &&
-      borgPrepared(ctx, Math.trunc((T(ctx, BI.MAXDEPTH) * 6) / 10)) === null
+      (borgPrepared(ctx, Math.trunc((T(ctx, BI.MAXDEPTH) * 6) / 10)) === null || cfg.playsRisky)
     ) {
       const rc = borgRecall(ctx);
       if (rc) return rc;
@@ -348,7 +381,15 @@ export function borgLeaveLevel(
         dir = -1;
       }
     }
-    if (mustReturnToTown(ctx, session.flow.state.borgBegan) !== null) g.rising = true;
+    if (mustReturnToTown(ctx, session.flow.state.borgBegan) !== null) {
+      g.rising = true;
+      needRestock = true;
+    }
+    /* The Borg fetches stored battle supplies (borg-think-dungeon-util.c:788-792). */
+    if (prepCur.includes("Collect from house")) {
+      g.rising = true;
+      needRestock = true;
+    }
   }
 
   /* Playing too shallow -> town to recall deeper (util:796). */
@@ -362,9 +403,25 @@ export function borgLeaveLevel(
   }
 
   /* Return to town to sell (util:813). */
+  if ((cfg.worshipsGold || T(ctx, BI.MAXCLEVEL) < 15) && T(ctx, BI.MAXCLEVEL) <= 25 && sellCount >= 12)
+    g.rising = true;
   if (bored && T(ctx, BI.MAXCLEVEL) >= 26 && sellCount >= 12) g.rising = true;
   if (T(ctx, BI.ISFIXLEV)) g.rising = true;
   if (bored && T(ctx, BI.ISFIXEXP) && T(ctx, BI.CLEVEL) !== 50) g.rising = true;
+
+  /* Long trips and shallow scumming trigger a return (borg-think-dungeon-util.c:835-855). */
+  const timeAway = fight.timeTown + w.clock - flow.state.borgBegan;
+  if ((!g.rising && bored && !w.facts.vaultOnLevel && !fight.fightingUnique && timeAway > 8000) || timeAway > 12000) {
+    if (T(ctx, BI.MAXDEPTH) < 99 || !w.facts.uniqueOnLevel) g.rising = true;
+  }
+  if (T(ctx, BI.MAXDEPTH) >= T(ctx, BI.CDEPTH) + 10 && T(ctx, BI.CDEPTH) <= 12 && timeAway > 3500)
+    g.rising = true;
+
+  /* The Borg stores battle potions (borg-think-dungeon-util.c:858-862). */
+  if (!w.facts.vaultOnLevel && T(ctx, BI.PREP_BIG_FIGHT) && (T(ctx, BI.AEZHEAL) >= 3 || T(ctx, BI.ALIFE) >= 1))
+    g.rising = true;
+  /* The Borg scums on 98 after Sauron dies (borg-think-dungeon-util.c:870-875). */
+  if (T(ctx, BI.CDEPTH) === 99 && T(ctx, BI.SAURON_DEAD) && self.readyMorgoth !== 1) dir = -1;
 
   /* Power dive if King / prepared for 99 (util:868). */
   if (T(ctx, BI.KING)) dir = 1;
@@ -372,6 +429,10 @@ export function borgLeaveLevel(
 
   /* if returning to town, go up (util:883). */
   if (!dir && g.rising) dir = -1;
+
+  /* Time on depth 1 rotates shops (borg-think-dungeon-util.c:887-892). */
+  if (T(ctx, BI.CLEVEL) > 10 && T(ctx, BI.CDEPTH) === 1 && w.clock - flow.state.borgBegan < 200 && dir < 0 && T(ctx, BI.FOOD) > 1)
+    dir = 0;
 
   /* Do not hang out on boring levels too long (util:895). */
   if (!dir && w.clock - flow.state.borgBegan > timeToStayOnLevel(ctx, bored)) {
@@ -384,12 +445,24 @@ export function borgLeaveLevel(
   /* Go Up (util:911). */
   if (dir < 0) {
     if (!flow.state.hooks.forceDescend) self.stairLess = true;
-    if (g.rising && T(ctx, BI.CDEPTH) >= 5) {
-      const rc = borgRecall(ctx);
-      if (rc) return rc;
+    /* Depth and trip time gate upward recall (borg-think-dungeon-util.c:919-938). */
+    if (T(ctx, BI.CDEPTH) < 100 || borgPrepared(ctx, 99) === null) {
+      if (g.rising && timeAway > 200 && T(ctx, BI.CDEPTH) >= 5) {
+        const rc = borgRecall(ctx);
+        if (rc) return rc;
+      }
+      if (needRestock && T(ctx, BI.CDEPTH) >= 5) {
+        const rc = borgRecall(ctx);
+        if (rc) return rc;
+      }
     }
     const up = flow.toStairs(ctx, false, GOAL_BORE, false);
     if (up) return up;
+    /* The Borg recalls after failing to find stairs (borg-think-dungeon-util.c:949-954). */
+    if (g.rising && bored && w.clock - flow.state.borgBegan >= 1000) {
+      const rc = borgRecall(ctx);
+      if (rc) return rc;
+    }
     if (flow.state.less.num === 0) dir = 1; /* no up stairs -> go down */
   }
 
@@ -407,11 +480,7 @@ export function borgLeaveLevel(
 
 /**
  * borg_think_dungeon_light (borg-think-dungeon-util.c:147): survive running out
- * of light. Ported subset: consume food, refuel/wear light, recall/escape, take
- * up stairs, flee to stairs. The name-based Call-Light illumination pass needs
- * the detect/illuminate spell surface not in the ported item light API and is
- * documented as omitted (borgCheckLightOnly / borgLightBeam cover the ported
- * illumination path).
+ * of light by refuelling, recalling, resting on glow, illuminating, or fleeing.
  */
 export function borgThinkDungeonLight(
   ctx: BorgContext,
@@ -428,9 +497,8 @@ export function borgThinkDungeonLight(
 
   const noLight = !T(ctx, BI.LIGHT);
   if (noLight && T(ctx, BI.CDEPTH) >= 1) {
-    /* Recalling: sit tight (util:163). "&": rest as needed - the recall's own
-     * countdown, or a disturbance, ends it; there is no HP/SP target here. */
-    if (w.self.goal.recalling) return ctx.act.rest(REST_COMPLETE);
+    /* The recall countdown advances during nine turns of rest (borg-think-dungeon-util.c:164-170). */
+    if (w.self.goal.recalling) return ctx.act.rest(9);
 
     /* Wear stuff and see if it glows (util:172). */
     const wear = borgWearStuff(ctx, deps);
@@ -450,6 +518,68 @@ export function borgThinkDungeonLight(
     /* On an up stair -> take it (util:194). */
     if (!session.flow.state.hooks.forceDescend && standingFeat(ctx) === FEAT.LESS) {
       return ctx.act.ascend();
+    }
+
+    const { x: px, y: py } = w.self.c;
+    const necromancer = T(ctx, BI.CLASS) === CLASS_NECROMANCER;
+    const fear = getFearCaches(w);
+    /* A glowing grid supports mana recovery before illumination (borg-think-dungeon-util.c:203-249). */
+    if (
+      T(ctx, BI.CURSP) < T(ctx, BI.MAXSP) && T(ctx, BI.MAXSP) > 0 &&
+      ((w.map.at(px, py).info & BORG_GLOW) || necromancer) &&
+      !T(ctx, BI.ISWEAK) &&
+      (borgSpellLegal(ctx, Spell.HERBAL_CURING) || borgSpellLegal(ctx, Spell.REMOVE_HUNGER) ||
+        T(ctx, BI.FOOD) >= T(ctx, BI.CDEPTH)) &&
+      (borgSpellLegal(ctx, Spell.CALL_LIGHT) || borgSpellLegal(ctx, Spell.LIGHT_ROOM)) &&
+      !borgSpellOkay(ctx, Spell.CALL_LIGHT) && !borgSpellOkay(ctx, Spell.LIGHT_ROOM)
+    ) {
+      let notSafe = false;
+      for (let i = 0; i < 8; i++) {
+        const x = px + ddx_ddd[i]!;
+        const y = py + ddy_ddd[i]!;
+        if (inBoundsFully(x, y) && w.map.at(x, y).kill) notSafe = true;
+      }
+      if (fear.region(py, px) > Math.trunc(T(ctx, BI.CURHP) / 10)) notSafe = true;
+      if (fear.monsters(py, px) > Math.trunc(T(ctx, BI.CURHP) / 10)) notSafe = true;
+      if (!notSafe) return ctx.act.rest(REST_ALL_POINTS);
+    }
+
+    /* Adjacent darkness triggers illumination after more than seven turns (borg-think-dungeon-util.c:251-319). */
+    if (!w.self.whenCallLight || w.clock - w.self.whenCallLight > 7) {
+      for (let i = 0; i < 8; i++) {
+        const x = px + ddx_ddd[i]!;
+        const y = py + ddy_ddd[i]!;
+        if (!inBoundsFully(x, y)) continue;
+        const ag = w.map.at(x, y);
+        if (ag.feat >= FEAT.RUBBLE && ag.feat <= FEAT.PERM) continue;
+        if ((ag.feat === FEAT.OPEN || ag.feat === FEAT.BROKEN) && y === py && x === px) {
+          if (ctx.view.cell(px, py)?.glow) ag.info |= BORG_GLOW;
+          continue;
+        }
+        if (!necromancer) {
+          if ((ag.info & BORG_DARK) || ag.feat === FEAT.NONE || !(ag.info & BORG_MARK) || !(ag.info & BORG_GLOW)) {
+            const cmd =
+              borgActivateItem(ctx, "act_illumination", deps) ??
+              borgActivateItem(ctx, "act_light", deps) ??
+              borgZapRod(ctx, SVAL.rod.illumination!, deps) ??
+              borgUseStaff(ctx, SVAL.staff.light!, deps) ??
+              borgReadScroll(ctx, SVAL.scroll.light!, deps) ??
+              borgSpell(ctx, Spell.CALL_LIGHT) ?? borgSpell(ctx, Spell.LIGHT_ROOM);
+            if (cmd) {
+              w.self.whenCallLight = w.clock;
+              return cmd;
+            }
+            const beam = borgLightBeam(ctx, deps);
+            if (beam) return beam;
+          }
+        } else if (!(ag.info & BORG_DARK) || ag.feat === FEAT.NONE || !(ag.info & BORG_MARK) || (ag.info & BORG_GLOW)) {
+          const cmd = borgSpell(ctx, Spell.CREATE_DARKNESS);
+          if (cmd) {
+            w.self.whenCallLight = w.clock;
+            return cmd;
+          }
+        }
+      }
     }
 
     /* Flee to stairs (util:322). */
@@ -481,6 +611,58 @@ export function borgMoneyScum(ctx: BorgContext): AgentCommand | null {
   return null; /* BORG_MONEY_SCUM_AMOUNT == 0 in the stock port config */
 }
 
+/** Excavate vault walls from range (borg-think-dungeon-util.c:986-1108). */
+function borgExcavateVault(ctx: BorgContext, session: ThinkSession, range: number): AgentCommand | null {
+  const w = ctx.world;
+  const st = session.flow.state;
+  st.tempN = 0;
+  if (!w.facts.vaultOnLevel) return null;
+  if (!borgSpellOkayFail(ctx, Spell.TURN_STONE_TO_MUD, 30) && !borgSpellOkayFail(ctx, Spell.SHATTER_STONE, 30)) return null;
+
+  for (let y = 0; y < w.map.height; y++) {
+    for (let x = 0; x < w.map.width; x++) {
+      if (distance(w.self.c.x, w.self.c.y, x, y) > range) continue;
+      const feat = w.map.at(x, y).feat;
+      if (feat !== FEAT.GRANITE && feat !== FEAT.RUBBLE && feat !== FEAT.QUARTZ && feat !== FEAT.MAGMA && feat !== FEAT.QUARTZ_K && feat !== FEAT.MAGMA_K) continue;
+      for (let i = 0; i < 8; i++) {
+        const bx = x + ddx_ddd[i]!;
+        const by = y + ddy_ddd[i]!;
+        if (!inBoundsFully(bx, by) || w.map.at(bx, by).feat !== FEAT.PERM) continue;
+        let ii = 0;
+        for (; ii < st.tempN; ii++) {
+          if (st.tempY[ii] === y && st.tempX[ii] === x) break;
+        }
+        if (ii === st.tempN && ii < AUTO_TEMP_MAX) {
+          st.tempX[ii] = x;
+          st.tempY[ii] = y;
+          st.tempN++;
+        }
+      }
+    }
+  }
+
+  const deps = buildItemDeps(session);
+  for (let i = 0; i < st.tempN; i++) {
+    const x = st.tempX[i]!;
+    const y = st.tempY[i]!;
+    if (!st.hooks.los(w, w.self.c.y, w.self.c.x, y, x)) continue;
+    borgTarget(ctx, y, x);
+    const cmd =
+      borgSpell(ctx, Spell.TURN_STONE_TO_MUD) ??
+      borgActivateRing(ctx, SVAL.ring.digging!) ??
+      borgActivateItem(ctx, "act_stone_to_mud", deps) ??
+      (distance(w.self.c.x, w.self.c.y, x, y) === 1 ? borgSpell(ctx, Spell.SHATTER_STONE) : null);
+    if (!cmd) continue;
+    const grid = w.map.at(x, y);
+    grid.info &= ~BORG_GLOW;
+    grid.info |= BORG_GLOW | BORG_IGNORE_MAP;
+    grid.feat = FEAT.FLOOR;
+    st.vein.wipe();
+    return cmd;
+  }
+  return null;
+}
+
 /* ---------------------------------------------- borg_think_dungeon (LADDER) */
 
 /**
@@ -496,11 +678,17 @@ export function borgThinkDungeon(
   const g = self.goal;
   const flow = session.flow;
   const st = flow.state;
-  /* FORK (#50), DEFECT: finish wear_recharge's queued R75 before asking
-   * the decision ladder again (the C queues both key sequences together). */
+  if (session.ringTakeoff) {
+    const handle = session.ringTakeoff;
+    session.ringTakeoff = false;
+    if (ctx.view.equipment().some((item) => item?.handle === handle)) return ctx.act.takeoff(handle);
+  }
+  /* borg-item-wear.c:1516-1528 queues R75 after wearing. The API submits
+   * wearing separately, so the equipment view confirms its completion. */
   if (session.rechargeRest) {
+    const handle = session.rechargeRest;
     session.rechargeRest = false;
-    return ctx.act.rest(75);
+    if (ctx.view.equipment().some((item) => item?.handle === handle)) return ctx.act.rest(75);
   }
   /* Primes the per-world fight state before the ladder runs; the fight rungs read
    * it back through the same memo rather than from here. */
@@ -513,6 +701,7 @@ export function borgThinkDungeon(
     (w.clock >= 12000 && w.clock <= 12025) ||
     (w.clock >= 25000 && w.clock <= 25025)
   ) {
+    w.resetLevel = true;
     return ctx.act.hold();
   }
 
@@ -667,7 +856,7 @@ export function borgThinkDungeon(
     }
     const rec = borgRecover(ctx, itemDeps);
     if (rec) return rec;
-    /* FORK (#50), DEFECT: restore borg_drop_hole(false), C :1562. */
+    /* borg-think-dungeon.c:1562 makes room before shopping. */
     {
       const cmd = rememberJunkDrop(ctx, session, borgDropHole(ctx, false, itemDeps));
       if (cmd) return cmd;
@@ -684,8 +873,7 @@ export function borgThinkDungeon(
     if (cmd) return cmd;
   }
 
-  /* Learn useful spells immediately (:1579). FORK (Mandos #50), a DEFECT fix
-   * toward the C: borg_play_magic, once "not ported". */
+  /* Learn useful spells immediately (:1579). */
   {
     const cmd = borgPlayMagic(ctx, false);
     if (cmd) return cmd;
@@ -709,9 +897,9 @@ export function borgThinkDungeon(
     if (cmd) return cmd;
   }
 
-  /* Wear/swap gear (:1601). borg_swap_rings / borg_wear_rings not ported. */
+  /* Wear/swap gear (:1601-1607). */
   {
-    const cmd = borgWearStuff(ctx, itemDeps);
+    const cmd = borgWearStuff(ctx, itemDeps) ?? borgSwapRings(ctx, itemDeps) ?? borgWearRings(ctx, itemDeps);
     if (cmd) return cmd;
   }
 
@@ -732,7 +920,7 @@ export function borgThinkDungeon(
     if (cmd) return cmd;
   }
 
-  /* FORK (#50), DEFECT: restore borg_dump_quiver, C :1627. */
+  /* borg-think-dungeon.c:1627 dumps bad quiver ammunition. */
   {
     const cmd = rememberJunkDrop(ctx, session, borgDumpQuiver(ctx, itemDeps));
     if (cmd) return cmd;
@@ -777,9 +965,7 @@ export function borgThinkDungeon(
     !self.temp.hero &&
     !self.temp.berserk &&
     !self.temp.fastcast &&
-    /* FORK (Mandos #55), DEFECT fix toward the C: dungeon.c:1655's
-     * !player_has(player, PF_COMBAT_REGEN), left out by the port. */
-    !playerHas(ctx, "COMBAT_REGEN")
+    !playerHas(ctx, "COMBAT_REGEN") /* dungeon.c:1655 */
   ) {
     const track = T(ctx, BI.CDEPTH) ? st.less : st.more;
     for (let i = 0; i < track.num; i++) {
@@ -940,7 +1126,7 @@ export function borgThinkDungeon(
       return cmd;
     }
   }
-  /* FORK (#50), DEFECT: restore pack-space and weight rungs (:1862, :1866). */
+  /* borg-think-dungeon.c:1862,1866 makes space, then sheds weight. */
   {
     const cmd = rememberJunkDrop(ctx, session, borgDropHole(ctx, false, itemDeps));
     if (cmd) return cmd;
@@ -1039,6 +1225,22 @@ export function borgThinkDungeon(
     if (cmd) return cmd;
   }
 
+  /* Vaults prefer close targets, excavation and exploration (borg-think-dungeon.c:1973-1995). */
+  if (w.facts.vaultOnLevel) {
+    let cmd = flow.toKills(ctx, (ctx.view.constants().maxRange ?? 20) + 1, false);
+    if (cmd) return cmd;
+    cmd = flow.toTakes(ctx, false, 35);
+    if (cmd) return cmd;
+    cmd = flow.toVein(ctx, false, 35);
+    if (cmd) return cmd;
+    cmd = borgExcavateVault(ctx, session, (ctx.view.constants().maxRange ?? 20) - 2);
+    if (cmd) return cmd;
+    cmd = flow.toVault(ctx, 35);
+    if (cmd) return cmd;
+    cmd = flow.toDark(ctx, true);
+    if (cmd) return cmd;
+  }
+
   /*** Explore the dungeon (:1998) ***/
 
   /* Chase old monsters/objects (:1998). */
@@ -1081,9 +1283,15 @@ export function borgThinkDungeon(
 
   /*** Leave the level (:2037) ***/
 
-  /* Study/test boring spells (:2038). FORK (Mandos #50): borg_play_magic. */
+  /* Study/test boring spells (:2038). */
   if (!ctx.world.self.goal.fleeing) {
     const cmd = borgPlayMagic(ctx, true);
+    if (cmd) return cmd;
+  }
+
+  /* Detection precedes each spastic search (borg-think-dungeon.c:2042-2044, 2074-2076). */
+  if (!self.whenDetectDoors || w.clock - self.whenDetectDoors >= 500) {
+    const cmd = borgCheckLight(ctx, itemDeps);
     if (cmd) return cmd;
   }
 
@@ -1098,7 +1306,7 @@ export function borgThinkDungeon(
     if (cmd) return cmd;
   }
 
-  /* FORK (#50), DEFECT: restore borg_wear_recharge (C :2056). */
+  /* borg-think-dungeon.c:2056 recharges before leaving the level. */
   {
     const cmd = borgWearRecharge(ctx, itemDeps);
     if (cmd) return cmd;
@@ -1107,6 +1315,12 @@ export function borgThinkDungeon(
   /* Leave the level (:2059). */
   {
     const cmd = borgLeaveLevel(ctx, session, true);
+    if (cmd) return cmd;
+  }
+
+  /* Detection precedes each spastic search (borg-think-dungeon.c:2042-2044, 2074-2076). */
+  if (!self.whenDetectDoors || w.clock - self.whenDetectDoors >= 500) {
+    const cmd = borgCheckLight(ctx, itemDeps);
     if (cmd) return cmd;
   }
 
@@ -1125,11 +1339,15 @@ export function borgThinkDungeon(
     g.recalling &&
     borgDanger(ctx, self.c.y, self.c.x, 1, true, false) <= 0
   ) {
-    /* "&": rest as needed, same reasoning as the light-path recall wait above. */
-    return ctx.act.rest(REST_COMPLETE);
+    /* Recall waits last nine turns (borg-think-dungeon.c:2090-2099). */
+    return ctx.act.rest(9);
   }
 
   /*** Nothing to do ***/
+
+  /* A stuck Borg re-explores and shops again (borg-think-dungeon.c:2111-2113). */
+  if ((T(ctx, BI.CDEPTH) === 0 && w.clock - st.borgBegan > 800) || w.clock > 28000)
+    w.resetLevel = true;
 
   /* Not allowed to retreat for 5 rounds (:2116). */
   self.noRetreat = 5;

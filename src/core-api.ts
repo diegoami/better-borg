@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * The ONE place the Borg reaches into the engine for a runtime value.
  *
@@ -80,6 +83,8 @@ export let MON_SPELL_ENTRIES!: typeof Core.MON_SPELL_ENTRIES;
  * API 2: a host-interpreted declaration (a named rest mode in the command args).
  */
 export let REST_COMPLETE!: number;
+/** HP/SP recovery mode for glowing-grid rest (borg-think-dungeon-util.c:245). */
+export let REST_ALL_POINTS!: number;
 
 let bound = false;
 
@@ -94,6 +99,7 @@ export function bindCore(core: typeof Core): void {
   MON_RACE_FLAG_ENTRIES = core.MON_RACE_FLAG_ENTRIES;
   MON_SPELL_ENTRIES = core.MON_SPELL_ENTRIES;
   REST_COMPLETE = core.REST_COMPLETE;
+  REST_ALL_POINTS = core.REST_ALL_POINTS;
   bound = true;
 }
 
@@ -252,6 +258,7 @@ export interface RaceBlow {
 /** The parts of a monster race the danger evaluator reads, as plain data. */
 export interface RaceRecord {
   readonly ridx: number;
+  readonly dChar?: string | undefined;
   /** RF_* code names for the set flags (index == RF value). */
   readonly flags: Set<string>;
   readonly level: number;
@@ -276,6 +283,7 @@ export function racesByIndex(races: readonly MonsterRace[]): Map<number, Monster
 export function raceRecord(race: MonsterRace): RaceRecord {
   return {
     ridx: race.ridx,
+    dChar: race.dChar,
     flags: raceFlagNames(race),
     level: race.level,
     sleep: race.sleep,
@@ -414,8 +422,7 @@ export function borgView(host: AgentView): BorgView {
     mapBounds: () => host.mapBounds(),
     // view: the pack, each item from its known twin. API 2: view.world().inventory.
     inventory: () => host.inventory(),
-    // FORK (Mandos #50), DEFECT: dump_quiver needs membership, while the
-    // inventory master list already includes these handles for ammo notice.
+    // borg-junk.c:1189 scans quiver slots; inventory also includes these handles.
     quiver: () => host.quiver?.() ?? [],
     // view: worn gear by slot, each item from its known twin. API 2: view.world().equipment.
     equipment: () => host.equipment(),

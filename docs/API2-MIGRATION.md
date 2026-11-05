@@ -2,7 +2,7 @@
 
 Mandos is a mod API 2 plugin. Its manifest declares schema version 2,
 API range `>=2.0.0 <3.0.0`, and engine range
-`>=1.23.0-beta.2-mandos.1 <1.23.0`. That range selects our engine fork's
+`>=1.23.0-beta.2-mandos.2 <1.23.0`. That range selects our engine fork's
 lab builds. `plugin.ts` exports `start`, `stop`, `armed` and `controller`.
 It drives the game through commands rather than installing engine rule
 hooks or adding game content. The bridge began in neostryder's Borg port;

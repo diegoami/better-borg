@@ -1,7 +1,3 @@
-/** Production-path regressions adopted from neostryder/neo-angband-mod-borg
- * 887d433ed2217536e20fc67d885e441fc837d417 (successor PR #47).
- * Mandos #96: preserve upstream coverage while adopting the missing item deps.
- */
 import { describe, expect, it, vi } from "vitest";
 import type { AgentView, ItemView, SpellbookView } from "@rpgm-tools/neo-angband-core";
 import { makeScenarioView, makeFakeActions, type Scenario } from "../harness.js";
@@ -87,7 +83,13 @@ function step(options: {
   };
   const world = new BorgWorld();
   const act = makeFakeActions();
-  const ctx = { world, view, act, rng: makeBorgRng() };
+  /* The fixture's pack holds each class book at its 1-based position, so the
+   * shared book lookup answers with that position as the sval. */
+  const bookKind = (tval: number, name: string) => {
+    const position = books.findIndex((b) => b.tval === tval && b.name === name);
+    return position < 0 ? null : { tval, sval: position + 1 };
+  };
+  const ctx = { world, view, act, rng: makeBorgRng(), bookKind };
   borgNotice(ctx);
   perceive(world, view, makePerceiveMemo());
   const session = buildThinkSession(makeCoreResolvers({
@@ -231,5 +233,22 @@ describe("borg_play_step door random draws (borg-flow.c:941-966)", () => {
     const draw = vi.spyOn(ctx.rng, "randint0").mockReturnValueOnce(1).mockReturnValueOnce(second);
     expect(play()?.code).toBe(code);
     expect(draw.mock.calls).toEqual([[100], [100]]);
+  });
+});
+
+describe("borg_play_step Maggot guard (borg-flow.c:749-751)", () => {
+  /* Only a unique, in town, below character level 5 is left alone; every other
+   * adjacent monster on the route is attacked. */
+  it.each([
+    [true, 0, 3, null],
+    [true, 0, 5, "walk"],
+    [true, 2, 3, "walk"],
+    [false, 0, 3, "walk"],
+  ] as const)("with unique %s at depth %i and level %i", (unique, depth, level, code) => {
+    const { play } = step({
+      player: { depth, level },
+      monsters: [{ race: "Grip", raceFlags: unique ? ["UNIQUE"] : [], grid: { x: 11, y: 10 } }],
+    });
+    expect(play()?.code ?? null).toBe(code);
   });
 });

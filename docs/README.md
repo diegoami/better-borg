@@ -79,7 +79,7 @@ study and test spells, and eligible attack spells enter the combat chooser.
 ## Engine and permissions
 
 The current manifest requires **our engine fork**, with range
-`>=1.23.0-beta.2-mandos.1 <1.23.0`, and mod API `>=2.0.0 <3.0.0`.
+`>=1.23.0-beta.2-mandos.2 <1.23.0`, and mod API `>=2.0.0 <3.0.0`.
 Use the `neowarrior-lab` branch of
 [diegoami/neo-angband](https://github.com/diegoami/neo-angband) and follow the
 [lab runbook](process.md#8-watched-runs-lab-builds). The mod folder must be

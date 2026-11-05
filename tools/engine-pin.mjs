@@ -36,5 +36,8 @@ export function enginePin(repoRoot) {
   if (!existsSync(patchPath)) return `${base} + patch ${entry[2]} (MISSING)`;
   const prs = [...readFileSync(patchPath, "utf8").matchAll(/Mandos carries neostryder\/neo-angband PR #(\d+) \(fixes #(\d+)/g)]
     .map((m) => `PR #${m[1]} (fixes #${m[2]})`);
-  return `${base} + carried patches: ${prs.length > 0 ? prs.join(", ") : entry[2]}`;
+  const commits = [...readFileSync(patchPath, "utf8").matchAll(/Mandos carries neostryder\/neo-angband commit ([a-f0-9]+) \(([^;)]*)/g)]
+    .map((m) => "commit " + m[1] + " (" + m[2] + ")");
+  const carried = [...prs, ...commits];
+  return base + " + carried patches: " + (carried.length > 0 ? carried.join(", ") : entry[2]);
 }

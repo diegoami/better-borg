@@ -1,9 +1,12 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Flow toward stairs: a faithful port of reference/src/borg/borg-flow-stairs.c
  * (borg_flow_cost_stair, borg_flow_stair_less/more/both).
  *
  * ADAPTATION. Upstream, borg_update fills track_less / track_more as the borg
- * sees stairs. Perception (perceive.ts) does not track stairs yet (P8.6), so
+ * sees stairs. Perception (perceive.ts) does not track stairs, so
  * syncStairsFromMap rebuilds the two tracks from the borg's own remembered map
  * (FEAT_LESS / FEAT_MORE grids) before each stair flow. This is the same data
  * the C borg would hold; only the moment of collection differs.
@@ -214,7 +217,8 @@ export function borgFlowStairMore(
 /**
  * borg_prep_leave_level_spells (borg-flow-stairs.c:252): buff before stepping
  * onto a staircase, in upstream's order -- haste, resistance, mana channel,
- * berserk strength, heroism, rapid regeneration, smite evil, venom. Each sets
+ * berserk strength, heroism, rapid regeneration, smite evil, venom, protection
+ * from evil and blessing. Each sets
  * `noRestPrep` so the borg does not immediately rest the buff away, and each
  * returns as soon as one casts, so a full set takes one turn per spell.
  *
@@ -301,6 +305,22 @@ export function borgPrepLeaveLevelSpells(
     const cmd = borgSpellFail(ctx, Spell.VENOM, 15);
     if (cmd) {
       self.noRestPrep = 18000;
+      return cmd;
+    }
+  }
+
+  /* The Borg protects itself before leaving (borg-flow-stairs.c:325-342). */
+  if (!temp.protFromEvil) {
+    const cmd = borgSpellFail(ctx, Spell.PROTECTION_FROM_EVIL, 15);
+    if (cmd) {
+      self.noRestPrep = trait(w, BI.CLEVEL) * 1000;
+      return cmd;
+    }
+  }
+  if (!temp.bless) {
+    const cmd = borgSpellFail(ctx, Spell.BLESS, 15) ?? borgSpellFail(ctx, Spell.DEMON_BANE, 15);
+    if (cmd) {
+      self.noRestPrep = 11000;
       return cmd;
     }
   }

@@ -1,11 +1,12 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * borg_play_magic (borg-magic-play.c:87): study new spells, and test untried
  * ones in town when there is nothing better to do.
  *
- * FORK (Mandos #50), a DEFECT fix toward the C, inherited: the port's think
- * ladder said "borg_play_magic not ported" at both of its rungs
- * (borg-think-dungeon.c:1579 and :2038), so no caster ever learned a spell.
- * Ported in the C's order:
+ * Called from both of its think-ladder rungs (borg-think-dungeon.c:1579 and
+ * :2038). Ported in the C's order:
  *
  *   1. never without magic, blind, confused, unlit or on a dark grid;
  *   2. the best learnable spell (status OKAY) from a carried book, by the
@@ -17,12 +18,8 @@
  *
  * Learning is the engine's "study" command (do_cmd_study: the book's handle,
  * and for PF_CHOOSE_SPELLS classes the spell; the others learn at random from
- * the book, as the C's keypresses do). borg_can_play_spell's effect checks
- * (EF_BRAND_BOLTS, EF_CREATE_ARROWS, EF_BRAND_AMMO, EF_ENCHANT, EF_IDENTIFY,
- * EF_RECHARGE) read an effect the frozen SpellView does not carry, so they
- * are named by spell here; magic-play.test.ts pins that list to the game's
- * own class data, so a renamed or added spell with one of those effects fails
- * there. The munchkin-mode exceptions are left out with munchkin mode itself,
+ * the book, as the C's keypresses do). The first effect comes from class content,
+ * matching borg-magic.c:759. The munchkin-mode exceptions apply to munchkin mode,
  * which is off in stock config.
  */
 
@@ -35,6 +32,7 @@ import {
   BORG_MAGIC_TEST,
   Spell,
   borgBookPossessed,
+  borgBookHandle,
   borgSpell,
   borgSpellStatus,
   classOf,
@@ -62,34 +60,20 @@ const NOT_TESTED_BY_NAME: ReadonlySet<Spell> = new Set([
 ]);
 
 /**
- * borg_can_play_spell's effect checks (borg-magic-play.c:70-81), by the spells
- * that carry those effects in the game's data (pinned in magic-play.test.ts).
+ * borg_can_play_spell's first-effect checks (borg-magic-play.c:70-81).
  */
-export const NOT_TESTED_BY_EFFECT: ReadonlySet<Spell> = new Set([
-  Spell.CREATE_ARROWS /* EF_CREATE_ARROWS */,
-  Spell.BRAND_AMMUNITION /* EF_BRAND_AMMO */,
-  Spell.ENCHANT_WEAPON /* EF_ENCHANT */,
-  Spell.ENCHANT_ARMOUR /* EF_ENCHANT */,
-  Spell.IDENTIFY_RUNE /* EF_IDENTIFY */,
-  Spell.RECHARGING /* EF_RECHARGE */,
+export const NOT_TESTED_BY_EFFECT: ReadonlySet<string> = new Set([
+  "BRAND_BOLTS",
+  "CREATE_ARROWS",
+  "BRAND_AMMO",
+  "ENCHANT",
+  "IDENTIFY",
+  "RECHARGE",
 ]);
 
 /** borg_can_play_spell (borg-magic-play.c:44). */
-export function borgCanPlaySpell(spell: Spell): boolean {
-  return !NOT_TESTED_BY_NAME.has(spell) && !NOT_TESTED_BY_EFFECT.has(spell);
-}
-
-/** The pack's copy of the book holding spell sidx `bidx` (the C's book_idx), or null. */
-function bookHandle(ctx: BorgContext, bidx: number): number | null {
-  const books = ctx.view.spellbooks();
-  const book = books[bidx];
-  if (!book) return null;
-  let svalPos = 0;
-  for (let i = 0; i <= bidx; i++) if (books[i] && books[i]!.tval === book.tval) svalPos++;
-  for (const item of ctx.view.inventory()) {
-    if (item.number > 0 && item.tval === book.tval && item.sval === svalPos) return item.handle;
-  }
-  return null;
+export function borgCanPlaySpell(spell: Spell, effect: string): boolean {
+  return !NOT_TESTED_BY_NAME.has(spell) && !NOT_TESTED_BY_EFFECT.has(effect);
 }
 
 /** borg_play_magic(bored) (borg-magic-play.c:87): the command, or null. */
@@ -122,7 +106,7 @@ export function borgPlayMagic(ctx: BorgContext, bored: boolean): AgentCommand | 
 
   /* Study. */
   if (trait(ctx, BI.ISSTUDY) && bestRating > 0 && best >= 0) {
-    const handle = bookHandle(ctx, views.get(best)!.bidx);
+    const handle = borgBookHandle(ctx, views.get(best)!.bidx);
     if (handle !== null) return ctx.act.raw("study", { handle, spell: best });
   }
 
@@ -134,11 +118,18 @@ export function borgPlayMagic(ctx: BorgContext, bored: boolean): AgentCommand | 
     if (view === undefined || !borgBookPossessed(ctx, view.bidx)) continue;
     if (borgSpellStatus(ctx, view) !== BORG_MAGIC_TEST) continue;
     const spell = ratings[sidx]!.spell;
-    if (!borgCanPlaySpell(spell)) continue;
+    const effect = ctx.spellEffect?.(ctx.view.player().cls, sidx);
+    if (!effect || !borgCanPlaySpell(spell, effect.name)) continue;
     const cmd = borgSpell(ctx, spell);
     if (cmd !== null) {
-      /* The C aims an aimed test cast at the borg itself ('*' 't'). */
-      ctx.act.setTargetLocation(w.self.c.x, w.self.c.y);
+      /* The C targets self for aimed, random and teleport-to effects
+       * (borg-magic-play.c:208-212). TELEPORT_TO asks its direction inside the effect. */
+      if (effect.aim || effect.name === "RANDOM" || effect.name === "TELEPORT_TO") {
+        ctx.act.setTargetLocation(w.self.c.x, w.self.c.y);
+      }
+      /* The C supplies Maggot's glyph to Banishment (borg-magic-play.c:215-218). */
+      if (effect.name === "BANISH") return ctx.act.raw("cast", { spell: sidx, tgtsymbol: "h" });
+      if (effect.name === "TELEPORT_TO") return ctx.act.raw("cast", { spell: sidx, tgtdir: 5 });
       return cmd;
     }
   }

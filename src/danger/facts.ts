@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * MonsterFacts: the exact r_info[] + borg_kill fields the danger evaluator reads
  * about a monster's race, gathered into one struct so the damage math can be a
@@ -32,6 +35,8 @@ export interface BlowFacts {
 export interface MonsterFacts {
   /** r_idx. */
   rIdx: number;
+  /** r_ptr->d_char, independent of the player's display glyph overrides. */
+  dChar?: string | undefined;
   /** RF_* codes present on the race (r_ptr->flags). */
   flags: ReadonlySet<string>;
   /** r_ptr->level. */

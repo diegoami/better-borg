@@ -9,10 +9,17 @@ both. While our engine PRs are unreleased upstream it is our fork only.
 ## Unreleased
 
 **Works on**: our engine fork only, and the game now enforces it. The
-manifest's engine range is `>=1.23.0-beta.2-mandos.1 <1.23.0`, which accepts
+manifest's engine range is `>=1.23.0-beta.2-mandos.2 <1.23.0`, which accepts
 the builds of diegoami/neo-angband's `neowarrior-lab` (1.23.0-beta.2 plus
-neo-angband PR #429, #432 and #433, reporting 1.23.0-beta.2-mandos.N), and a
+neo-angband PR #429, #432 and #433 plus commit0cc75b4af, reporting 1.23.0-beta.2-mandos.N), and a
 stock engine refuses the mod.
+
+- [Visible] [DEFECT] **Adopt Neo Borg's reviewed parity corrections** (#99).
+  Includes shared spell-book lookup, safe retries and tracking, item knowledge
+  and value, light/vault/town/recall decisions, home loadout search, ring
+  handling and the restored banishment/Morgoth defences. Mandos's packs and
+  stage/replay instruments remain. The required lab engine is mandos.2, which
+  also carries Neo0cc75b4af's Rogue book spell-count correction (#100).
 
 - [Visible] [DEFECT] **Align the harness and lab on the
   1.23.0-beta.2 engine base with carried fixes** (#54, owner). The harness moved from

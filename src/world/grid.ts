@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Borg's own remembered map - a faithful port of the borg_grid struct and
  * the borg_grids[][] cache (reference/src/borg/borg-cave.h, borg-cave-view.h).
@@ -32,6 +35,7 @@ export const BORG_LIGHT = 0x10; /* lit by the torch */
 export const BORG_VIEW = 0x20; /* in line of sight */
 export const BORG_TEMP = 0x40; /* temporary flag */
 export const BORG_XTRA = 0x80; /* extra flag */
+export const BORG_IGNORE_MAP = 0x100; /* prefer remembered terrain while unseen */
 
 /**
  * A single grid in the Borg's remembered dungeon (struct borg_grid). `feat` is
