@@ -25,7 +25,16 @@
       "state_before": "CLOSED",
       "title": "B01: the door-closing defect",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABb6pp-w",
+      "comments_before": 1,
+      "created_at_before": "2026-11-02T18:19:39Z",
+      "destination": {
+        "repository": "diegoami/neo-angband-mod-borg",
+        "number": 1,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/1"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABczwJ3Q"
     },
     {
       "source": {
@@ -49,7 +58,19 @@
       "state_before": "OPEN",
       "title": "B03: the swap subsystem",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABb6pwuA",
+      "comments_before": 0,
+      "created_at_before": "2026-11-02T18:19:45Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "destination": {
+        "repository": "diegoami/neo-angband-mod-borg",
+        "number": 2,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/2"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABczyYgg"
     },
     {
       "source": {
@@ -85,7 +106,27 @@
       "state_before": "OPEN",
       "title": "Backlog: PF_COMBAT_REGEN engine seam",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABb6q-Xw",
+      "comments_before": 0,
+      "created_at_before": "2026-11-02T18:20:57Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz0H2w",
+        "number": 3,
+        "url": "https://github.com/diegoami/neo-angband/issues/3",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 3,
+        "url": "https://github.com/diegoami/neo-angband/issues/3"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz0H2w"
     },
     {
       "source": {
@@ -109,7 +150,27 @@
       "state_before": "OPEN",
       "title": "Upstream: engine setFeat drops square_note_spot (#428 / PR #429)",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABb7UIwQ",
+      "comments_before": 2,
+      "created_at_before": "2026-11-02T19:04:40Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz22gQ",
+        "number": 4,
+        "url": "https://github.com/diegoami/neo-angband/issues/4",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 4,
+        "url": "https://github.com/diegoami/neo-angband/issues/4"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz22gQ"
     },
     {
       "source": {
@@ -121,7 +182,27 @@
       "state_before": "CLOSED",
       "title": "Verify upstream #415 against our pin: remembered-terrain reads in the mod",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABb7jiaQ",
+      "comments_before": 4,
+      "created_at_before": "2026-11-02T19:20:45Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi7J88AAAABcz3AAQ",
+        "number": 3,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/3",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband-mod-borg"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband-mod-borg",
+        "number": 3,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/3"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz3AAQ"
     },
     {
       "source": {
@@ -361,7 +442,64 @@
       "state_before": "OPEN",
       "title": "The borg audit: cover all classes, strategies and configuration options - find every issue and derive its provenance (the pivot)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcMo2uA",
+      "comments_before": 2,
+      "created_at_before": "2026-11-03T16:56:28Z",
+      "author_before": "diegoami",
+      "milestone_before": {
+        "url": "https://api.github.com/repos/diegoami/mandos/milestones/2",
+        "html_url": "https://github.com/diegoami/mandos/milestone/2",
+        "labels_url": "https://api.github.com/repos/diegoami/mandos/milestones/2/labels",
+        "id": 19201113,
+        "node_id": "MI_kwDOVgdVFM4BJPxZ",
+        "number": 2,
+        "title": "0.2.0",
+        "description": "Top priority (owner, 2026-11-04): class and race are options, not fixed to warrior. #16 and #17 together: borg.class is 0 = a class drawn per birth (the neutral default) or 1-9 to pin one; 11 race toggles form the draw pool. Then the audit chassis: #31 (the class x seed wide baseline) and #34 (the borg audit).",
+        "creator": {
+          "login": "diegoami",
+          "id": 2590711,
+          "node_id": "MDQ6VXNlcjI1OTA3MTE=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/2590711?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/diegoami",
+          "html_url": "https://github.com/diegoami",
+          "followers_url": "https://api.github.com/users/diegoami/followers",
+          "following_url": "https://api.github.com/users/diegoami/following{/other_user}",
+          "gists_url": "https://api.github.com/users/diegoami/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/diegoami/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/diegoami/subscriptions",
+          "organizations_url": "https://api.github.com/users/diegoami/orgs",
+          "repos_url": "https://api.github.com/users/diegoami/repos",
+          "events_url": "https://api.github.com/users/diegoami/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/diegoami/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "open_issues": 13,
+        "closed_issues": 4,
+        "state": "open",
+        "created_at": "2026-11-04T09:26:40Z",
+        "updated_at": "2026-11-04T20:47:32Z",
+        "due_on": null,
+        "closed_at": null
+      },
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi7J88AAAABcz3JvQ",
+        "number": 4,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/4",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband-mod-borg"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband-mod-borg",
+        "number": 4,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/4"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz3JvQ"
     },
     {
       "source": {
@@ -445,7 +583,27 @@
       "state_before": "OPEN",
       "title": "Upstream: disturb() input-flush (#414 / PR #432)",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcQGQbQ",
+      "comments_before": 1,
+      "created_at_before": "2026-11-03T20:49:26Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz3UWQ",
+        "number": 5,
+        "url": "https://github.com/diegoami/neo-angband/issues/5",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 5,
+        "url": "https://github.com/diegoami/neo-angband/issues/5"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz3UWQ"
     },
     {
       "source": {
@@ -457,7 +615,27 @@
       "state_before": "OPEN",
       "title": "Upstream: the master seed for mods (#431 / PR #433) - a seam; replay of watched lineages waits",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcQGS7w",
+      "comments_before": 3,
+      "created_at_before": "2026-11-03T20:49:29Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz3d4w",
+        "number": 6,
+        "url": "https://github.com/diegoami/neo-angband/issues/6",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 6,
+        "url": "https://github.com/diegoami/neo-angband/issues/6"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz3d4w"
     },
     {
       "source": {
@@ -469,7 +647,27 @@
       "state_before": "OPEN",
       "title": "Upstream: ModSaves.load cannot resume a mod's controller (#430 / PR #442)",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcQGVjw",
+      "comments_before": 2,
+      "created_at_before": "2026-11-03T20:49:32Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz3pAw",
+        "number": 7,
+        "url": "https://github.com/diegoami/neo-angband/issues/7",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 7,
+        "url": "https://github.com/diegoami/neo-angband/issues/7"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz3pAw"
     },
     {
       "source": {
@@ -481,7 +679,27 @@
       "state_before": "CLOSED",
       "title": "Upstream: track_step never ported (neo-angband#434 / mod-borg PR #22)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcQGX6A",
+      "comments_before": 0,
+      "created_at_before": "2026-11-03T20:49:34Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi7J88AAAABcz3zMQ",
+        "number": 5,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/5",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband-mod-borg"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband-mod-borg",
+        "number": 5,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/5"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz3zMQ"
     },
     {
       "source": {
@@ -493,7 +711,27 @@
       "state_before": "OPEN",
       "title": "Upstream: seams we depend on (#418 headless first-party, #385 run-end storage) - watch",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcQGaKA",
+      "comments_before": 0,
+      "created_at_before": "2026-11-03T20:49:37Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz362w",
+        "number": 8,
+        "url": "https://github.com/diegoami/neo-angband/issues/8",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 8,
+        "url": "https://github.com/diegoami/neo-angband/issues/8"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz362w"
     },
     {
       "source": {
@@ -529,7 +767,64 @@
       "state_before": "CLOSED",
       "title": "borgPlayStep crashes on a goal's stale kill index after the monster list is wiped (inherited port defect)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcRNAoA",
+      "comments_before": 2,
+      "created_at_before": "2026-11-03T22:10:55Z",
+      "author_before": "diegoami",
+      "milestone_before": {
+        "url": "https://api.github.com/repos/diegoami/mandos/milestones/1",
+        "html_url": "https://github.com/diegoami/mandos/milestone/1",
+        "labels_url": "https://api.github.com/repos/diegoami/mandos/milestones/1/labels",
+        "id": 19186791,
+        "node_id": "MI_kwDOVgdVFM4BJMRn",
+        "number": 1,
+        "title": "0.1.0",
+        "description": "The first tagged release: a stable baseline before the audit. Must-fix: #35; #38/#39 triaged and attributed (fixed if port defects). Exit: pnpm verify fully green with the play suite run (no tolerated red since B40; CI runs it since B46), a c2d1 run record at the release commit (docs/runs/2026-11-04-release-0-1-0-stage-c2d1: 4/4), a CHANGELOG 0.1.0 section, one milestone review (docs/review-prompt.md), the owner's desktop-lab check of the candidate, started with node tools/lab.mjs start (process 8), then tag v0.1.0. Deferred to 0.2.0: #17, #16, #31, #34.",
+        "creator": {
+          "login": "diegoami",
+          "id": 2590711,
+          "node_id": "MDQ6VXNlcjI1OTA3MTE=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/2590711?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/diegoami",
+          "html_url": "https://github.com/diegoami",
+          "followers_url": "https://api.github.com/users/diegoami/followers",
+          "following_url": "https://api.github.com/users/diegoami/following{/other_user}",
+          "gists_url": "https://api.github.com/users/diegoami/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/diegoami/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/diegoami/subscriptions",
+          "organizations_url": "https://api.github.com/users/diegoami/orgs",
+          "repos_url": "https://api.github.com/users/diegoami/repos",
+          "events_url": "https://api.github.com/users/diegoami/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/diegoami/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "open_issues": 0,
+        "closed_issues": 7,
+        "state": "closed",
+        "created_at": "2026-11-03T20:43:37Z",
+        "updated_at": "2026-11-04T09:26:37Z",
+        "due_on": null,
+        "closed_at": "2026-11-04T09:26:37Z"
+      },
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi7J88AAAABcz4CqQ",
+        "number": 6,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/6",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband-mod-borg"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband-mod-borg",
+        "number": 6,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/6"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz4CqQ"
     },
     {
       "source": {
