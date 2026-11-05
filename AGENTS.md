@@ -7,6 +7,7 @@ PLAN.md, session.json, docs/SESSION.md and the latest checkpoint36 comment.
 git status --short
 gh issue view 36 -R diegoami/mandos --comments
 node tools/check-session.mjs
+node tools/upstream-watch.mjs
 ```
 
 This session owns Mandos-only defects, its product/strategy packs, harness,
