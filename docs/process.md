@@ -55,3 +55,11 @@ Do not repurpose it for either repair session. tools/lab.mjs, tools/runs.mjs,
 postmortem tools and docs/runs/README.md document current instruments; original
 setup/lab procedure is archived at history/repository-split/process-before.md.
 That archive is historical context, not a competing queue/scope policy.
+
+## Fresh clone hooks
+
+Clone the source trackers using their canonical names alongside better-borg.
+Set git config core.hooksPath .githooks in Mandos. The wrappers prefer the
+new neo-angband-tracker hook source (or explicit NEO_ANGBAND_REPO), with the
+old lab path only as compatibility fallback. No live lab checkout is needed
+to commit Mandos work on a fresh three-session setup.

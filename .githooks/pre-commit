@@ -1,14 +1,20 @@
 #!/bin/sh
 # Mandos's pre-commit: runs the engine checkout's own hook (the privacy scan and the
-# no-AI-trailer check, CLAUDE.md rule 14). Upstream stores its hooks without
+# no-AI-trailer check, RULES.md). Upstream stores its hooks without
 # the executable bit (100644), so pointing core.hooksPath straight at them
 # runs nothing on Linux; this executable wrapper calls them with sh instead,
-# and keeps the engine checkout untouched. Setup: process.md section 1.
+# and keeps the engine checkout untouched. Setup: docs/process.md.
 TOP=$(git rev-parse --show-toplevel)
-ENGINE=${NEO_ANGBAND_REPO:-$TOP/../neo-angband}
+if [ -n "${NEO_ANGBAND_REPO:-}" ]; then
+  ENGINE=$NEO_ANGBAND_REPO
+elif [ -d "$TOP/../neo-angband-tracker/.githooks" ]; then
+  ENGINE=$TOP/../neo-angband-tracker
+else
+  ENGINE=$TOP/../neo-angband
+fi
 HOOK="$ENGINE/.githooks/pre-commit"
 if [ ! -f "$HOOK" ]; then
-  echo "pre-commit: no engine checkout hook at $HOOK (set NEO_ANGBAND_REPO or clone ../neo-angband)" >&2
+  echo "pre-commit: no engine checkout hook at $HOOK (set NEO_ANGBAND_REPO or clone ../neo-angband-tracker)" >&2
   exit 1
 fi
 exec sh "$HOOK" "$@"
