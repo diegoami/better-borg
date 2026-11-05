@@ -83,7 +83,7 @@ happen offline; a live character follows a fixed deterministic policy.
 The current checkout requires **our engine fork**,
 [diegoami/neo-angband](https://github.com/diegoami/neo-angband), on its
 `neowarrior-lab` branch. The manifest accepts
-`>=1.23.0-beta.2-mandos.1 <1.23.0`; stock Neo Angband is outside that range.
+`>=1.23.0-beta.2-mandos.2 <1.23.0`; stock Neo Angband is outside that range.
 The lab carries engine fixes and seams offered upstream. Mandos itself
 ships no engine code.
 

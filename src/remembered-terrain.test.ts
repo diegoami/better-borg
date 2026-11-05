@@ -259,7 +259,7 @@ describe("light.ts:254 - borgCheckDarkOnly counts remembered glow and passabilit
       studyEligible: false,
       infoLine: "",
     };
-    return makeRememberingCtx(
+    const ctx = makeRememberingCtx(
       { player: { grid: { x: 20, y: 12 }, depth: 5, cls: "Necromancer" }, cells },
       { CLASS: CLASS_NECROMANCER, CDEPTH: 5, CLEVEL: 10, CURSP: 50, MAXSP: 50, LIGHT: 1 },
       {
@@ -267,6 +267,9 @@ describe("light.ts:254 - borgCheckDarkOnly counts remembered glow and passabilit
         spellbooks: [{ tval: TV.MAGIC_BOOK, name: "Book of Death", realm: "death", spells: [darkness] }],
       },
     );
+    /* This fixture has one named book; production uses composed kind records. */
+    ctx.bookKind = (tval) => ({ tval, sval: 1 });
+    return ctx;
   }
 
   it("casts darkness over eleven glowing floors it can see", () => {

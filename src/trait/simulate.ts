@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * borg.power for a loadout the Borg is NOT wearing.
  *
@@ -74,6 +77,8 @@ import type { BorgWorld } from "../world/model.js";
 import { borgNotice } from "./trait.js";
 import { borgPower } from "./power.js";
 import type { BorgTraitOpts } from "./config.js";
+import { borgDanger } from "../danger/danger.js";
+import { getDangerState } from "../danger/state.js";
 
 /**
  * Where one item in a hypothetical loadout comes from: a gear handle for
@@ -91,6 +96,8 @@ export type BorgLoadoutRef =
  * `LoadoutChange`). Fields compose, applied release -> remove -> wield -> carry.
  */
 export interface BorgLoadoutChange {
+  /** Place equipment in a specific body slot (borg-item-wear.c:1299). */
+  readonly wieldAt?: readonly { readonly item: BorgLoadoutRef; readonly slot: number }[];
   /** Wear or wield these, each into the slot wield_slot picks for its tval. */
   readonly wield?: readonly BorgLoadoutRef[];
   /** Take these into the pack without wearing them (a purchase). */
@@ -160,6 +167,17 @@ function shadowView(view: BorgView, answer: BorgLoadoutAnswer): BorgView {
   };
 }
 
+/** borg-junk.c:659-688 reads inventory traits with the candidate stack absent. */
+export function borgNoticeWithout(ctx: BorgContext, handle: number): BorgContext {
+  const reduced: BorgContext = {
+    ...ctx,
+    world: shadowWorld(ctx.world),
+    view: { ...ctx.view, inventory: () => ctx.view.inventory().filter((item) => item.handle !== handle) },
+  };
+  borgNotice(reduced);
+  return reduced;
+}
+
 /**
  * borg.power for the loadout `change` would produce, or null when the view has
  * no live derive behind it (a worldless harness). The agent API declares the
@@ -192,4 +210,18 @@ export function borgSimulatePower(
    * it. Running anything less here would score a half-built self-model. */
   borgNotice(simCtx, opts);
   return borgPower(simCtx, opts);
+}
+
+/** borg-item-wear.c:874,955 rejects a ring swap that raises local danger. */
+export function borgSimulateDanger(ctx: BorgContext, change: BorgLoadoutChange): number | null {
+  const answer = (ctx.view as LoadoutCapableView).simulateLoadout?.(change);
+  if (!answer) return null;
+  const simCtx: BorgContext = { ...ctx, world: shadowWorld(ctx.world), view: shadowView(ctx.view, answer) };
+  borgNotice(simCtx);
+  const live = getDangerState(ctx.world);
+  const scratch = getDangerState(simCtx.world);
+  scratch.globals = { ...live.globals, tpOtherIndices: [...live.globals.tpOtherIndices] };
+  scratch.fear = live.fear;
+  scratch.maxRange = live.maxRange;
+  return borgDanger(simCtx, ctx.world.self.c.y, ctx.world.self.c.x, 1, true, false);
 }

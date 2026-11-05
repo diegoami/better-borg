@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Host resolver factory: build the BorgResolvers seams from real engine data.
  *
@@ -41,7 +44,7 @@ import type { BorgResolvers } from "./think-session.js";
 import type { BlowFacts, FactsResolver, MonsterFacts } from "./danger/facts.js";
 import { defaultResolveMonsterFacts } from "./danger/facts.js";
 import { borgMonBlowEffect } from "./danger/tables.js";
-import { borgSimulatePower } from "./trait/simulate.js";
+import { borgSimulatePower, borgSimulateDanger } from "./trait/simulate.js";
 
 /** The one field every activation source (kind/ego/artifact) carries. */
 interface ActivationLike {
@@ -76,6 +79,10 @@ export interface CoreShopLookup {
 
 /** What the host supplies to build real resolvers. */
 export interface CoreResolverInput {
+  /** Default race symbols from composed content, indexed by bound race index. */
+  raceSymbol?: (ridx: number) => string | undefined;
+  bookKind?: BorgContext["bookKind"];
+  spellEffect?: BorgContext["spellEffect"];
   /** The bound monster-race registry (booted.registries...); indexed by ridx. Absent when `raceRecord` answers instead. */
   races?: readonly MonsterRace[];
   /**
@@ -190,10 +197,11 @@ export function makeCoreResolvers(input: CoreResolverInput): BorgResolvers {
     const record = input.raceRecord?.(kill.rIdx) ?? (race ? raceRecord(race) : undefined);
     // Unknown race (e.g. a mod race the registry lacks): fall back to the
     // MonsterView-derived defaults rather than throwing.
-    if (!record) return defaultResolveMonsterFacts(ctx, killIndex);
+    if (!record) return { ...defaultResolveMonsterFacts(ctx, killIndex), dChar: input.raceSymbol?.(kill.rIdx) };
 
     return {
       rIdx: record.ridx,
+      dChar: record.dChar ?? input.raceSymbol?.(kill.rIdx),
       flags: record.flags,
       level: record.level,
       sleep: record.sleep,
@@ -258,6 +266,8 @@ export function makeCoreResolvers(input: CoreResolverInput): BorgResolvers {
 
   return {
     resolveMonsterFacts,
+    bookKind: input.bookKind,
+    spellEffect: input.spellEffect,
     resolveActivation,
     activateHandle,
     inShop,
@@ -269,5 +279,6 @@ export function makeCoreResolvers(input: CoreResolverInput): BorgResolvers {
     // when there is no live derive behind it (a worldless harness) - so this is
     // correct without asking the host anything.
     loadoutPower: (ctx, change) => borgSimulatePower(ctx, change),
+    loadoutDanger: (ctx, change) => borgSimulateDanger(ctx, change),
   };
 }

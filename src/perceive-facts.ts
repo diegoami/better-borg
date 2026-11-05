@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Per-level fact derivation - a faithful port of borg_near_monster_type
  * (reference/src/borg/borg-flow-kill.c:2687) plus the Morgoth / breeder / vault
@@ -209,7 +212,10 @@ export function borgNearMonsterType(ctx: BorgContext, dist: number): void {
       if (has("QUESTOR")) fight.fightingUnique += 10;
       fight.fightingUnique += 1;
       if (has("EVIL")) fight.fightingEvilUnique = true;
-      if (prefixI(name, "Morgoth")) morgoth = true;
+      if (prefixI(name, "Morgoth")) {
+        morgoth = true;
+        w.lastMorgoth = w.clock;
+      }
     }
 
     /*** Summoners ***/

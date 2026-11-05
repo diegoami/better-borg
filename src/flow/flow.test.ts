@@ -263,8 +263,8 @@ describe("determinism", () => {
   });
 });
 
-/* FORK (Mandos #59): borg_play_step's trap and door magic (borg-flow.c:898-987). */
-describe("borg_play_step's trap and door magic (#59)", () => {
+/* borg_play_step's trap and door magic (borg-flow.c:898-987). */
+describe("borg_play_step's trap and door magic", () => {
   const cast = { code: "cast", spell: 1 } as unknown as AgentCommand;
   type Calls = { trap: Array<[number, number, boolean]>; door: Array<[number, number]> };
   const hooked = (

@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * borg_prepared / borg_restock - the depth-readiness gate
  * (reference/src/borg/borg-prepared.c). borg_prepared(depth) returns a reason
@@ -29,6 +32,8 @@ import {
 } from "./trait-index.js";
 import { resolveOpts, type BorgTraitOpts, type ResolvedOpts } from "./config.js";
 import { getDerived, has, type BorgDerived } from "./state.js";
+import { getFightState } from "../fight/state.js";
+import { noticeHomeFull } from "../store/home.js";
 
 /**
  * borg_prepared - is the Borg ready to dive to `depth`? Returns the blocking
@@ -84,6 +89,12 @@ export function borgPrepared(
   }
 
   if (depth >= 82 && t[BI.MAXDEPTH]! >= 97) {
+    /* Preparedness counts stored battle supplies (borg-prepared.c:592-616). */
+    if (opts.home === undefined) {
+      const home = noticeHomeFull(ctx);
+      R.home.numEzhealTrue = home.num_ezheal;
+      R.home.numLifeTrue = home.num_life;
+    }
     const heals =
       R.home.numEzhealTrue + t[BI.AEZHEAL]! + R.home.numLifeTrue + t[BI.ALIFE]!;
     if (heals < 30) return `Scumming *Heal* potions (${30 - heals} to go).`;
@@ -430,7 +441,9 @@ export function borgRestock(
     return "restock heal";
   if (depth <= 99) return null;
 
-  /* Level 100: the just-arrived-low-on-heals check needs level timing; skipped. */
+  /* The Borg leaves depth 100 while short of *Healing* (borg-prepared.c:821). */
+  if (ctx.world.clock - getFightState(ctx.world).began < 10 && t[BI.AEZHEAL]! < 15)
+    return "restock *heal*";
   void R;
   return null;
 }

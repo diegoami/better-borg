@@ -1,0 +1,227 @@
+{
+  "schema": "better-borg/runs@1",
+  "recorded": "2026-11-05T08:48:07.259Z",
+  "label": "b99-upgrade-before",
+  "runner": {
+    "tool": "tools/runs.mjs",
+    "decisions": 600,
+    "seeds": [
+      1,
+      2
+    ],
+    "lives": 2,
+    "stage": {
+      "clvl": 2,
+      "depth": 1
+    }
+  },
+  "build": {
+    "commit": "task/B99-neo-upgrade@514fc0e7",
+    "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428), PR #433 (fixes #431)",
+    "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+    "borg": "warrior pack (stock parameters)"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "birthRngState": {
+        "quick": false,
+        "fixed": false,
+        "value": 1,
+        "stateI": 0,
+        "fixval": 0,
+        "state": [
+          3670942305,
+          2487453432,
+          2705736050,
+          3062977964,
+          2748570573,
+          462480776,
+          707198584,
+          761322284,
+          3511437186,
+          600267848,
+          4136301852,
+          2452716636,
+          1571971226,
+          3095463936,
+          2299448152,
+          1807462684,
+          3285267579,
+          318192120,
+          3194817798,
+          2925558412,
+          3739394363,
+          4102773496,
+          3293296320,
+          3461183372,
+          391154304,
+          3207013960,
+          2737093568,
+          2333248316,
+          2178914144,
+          1584599216,
+          156254912,
+          2958403964
+        ]
+      },
+      "birthOptions": {
+        "birth_randarts": false,
+        "birth_connect_stairs": true,
+        "birth_force_descend": false,
+        "birth_no_recall": false,
+        "birth_no_artifacts": false,
+        "birth_stacking": true,
+        "birth_lose_arts": false,
+        "birth_feelings": true,
+        "birth_no_selling": false,
+        "birth_start_kit": true,
+        "birth_ai_learn": true,
+        "birth_know_runes": false,
+        "birth_know_flavors": false,
+        "birth_levels_persist": false,
+        "birth_percent_damage": false
+      },
+      "life": 1,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 42,
+      "turns": 430,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 2,
+      "gold": 134,
+      "kills": 1,
+      "places": 24,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 2,
+        "walk": 38,
+        "ascend": 1,
+        "open": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 1176
+      }
+    },
+    {
+      "seed": 2,
+      "birthRngState": {
+        "quick": false,
+        "fixed": false,
+        "value": 2,
+        "stateI": 0,
+        "fixval": 0,
+        "state": [
+          300872550,
+          2745701619,
+          3444183012,
+          3922434198,
+          2153790814,
+          1268276139,
+          3013808608,
+          4235377504,
+          200821432,
+          1975633534,
+          2023259232,
+          903437180,
+          2604693656,
+          4020017558,
+          3916691616,
+          1433636544,
+          3179974298,
+          2120707021,
+          112263836,
+          2730728610,
+          3148766586,
+          3544637389,
+          1347142864,
+          2730617688,
+          1591406932,
+          2134128688,
+          1322019320,
+          1404349944,
+          2168945636,
+          942731936,
+          1590053072,
+          293666712
+        ]
+      },
+      "birthOptions": {
+        "birth_randarts": false,
+        "birth_connect_stairs": true,
+        "birth_force_descend": false,
+        "birth_no_recall": false,
+        "birth_no_artifacts": false,
+        "birth_stacking": true,
+        "birth_lose_arts": false,
+        "birth_feelings": true,
+        "birth_no_selling": false,
+        "birth_start_kit": true,
+        "birth_ai_learn": true,
+        "birth_know_runes": false,
+        "birth_know_flavors": false,
+        "birth_levels_persist": false,
+        "birth_percent_damage": false
+      },
+      "life": 2,
+      "race": "Human",
+      "class": "Warrior",
+      "baseStats": [
+        18,
+        10,
+        10,
+        10,
+        17
+      ],
+      "decisions": 10,
+      "turns": 107,
+      "depths": [
+        0,
+        1
+      ],
+      "maxDepth": 1,
+      "clvl": 4,
+      "gold": 140,
+      "kills": 1,
+      "places": 6,
+      "dead": false,
+      "causeOfDeath": null,
+      "commands": {
+        "descend": 1,
+        "walk": 8,
+        "open": 1
+      },
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "stageAttained": true,
+      "retired": true,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "meta": {
+        "wallClockMs": 256
+      }
+    }
+  ]
+}

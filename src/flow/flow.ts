@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * The core of the Borg flow/pathfinding subsystem: a faithful port of
  * reference/src/borg/borg-flow.c. This owns the borg_data cost/flow/hard/know/
@@ -15,16 +18,13 @@
  *   instead. borg_flow_old therefore returns AgentCommand | null (null == "no
  *   step / goal cancelled") and every goal-flow function returns that up.
  * - borg_danger and the trait[] self-model reach the flow through injectable
- *   FlowHooks (#58: they are ported; the session wires FlowHooks.danger to
- *   borgDanger, think-session.ts). The defaults (danger 0, the degenerate "no
+ *   FlowHooks; both are ported, and the session wires FlowHooks.danger to
+ *   borgDanger (think-session.ts). The defaults (danger 0, the degenerate "no
  *   danger" value) serve only unit tests that build a bare flow. The BFS, cost
  *   model, fear thresholds, goal ordering, AUTO_FLOW_MAX (1536), the 250-grid
  *   path assumption and the play-step branch order are ported verbatim.
- * - Spell/ring/activation branches inside borg_play_step (disable traps,
- *   destroy doors, stone-to-mud at doors) are NOT ported: the play step falls
- *   through to the physical action (tunnel / disarm / open). The magic and
- *   activation helpers they need exist now, so this is a real gap, #59 - not
- *   a missing subsystem.
+ * - Trap and door magic uses the session's spell/item hooks (borg-flow.c:903-987).
+ *   Wall melting uses the same session item dependencies (borg-flow.c:1034-1044).
  */
 
 import type { AgentCommand } from "@rpgm-tools/neo-angband-core";
@@ -94,9 +94,24 @@ export class BorgTrack {
 }
 
 /**
+ * The history follows borg-update.c:2466-2479, including the inclusive shift at
+ * 75, because back-away and visited-grid checks read the same indexed entries.
+ */
+export function borgTrackStep(track: BorgTrack, y: number, x: number): void {
+  track.add(y, x);
+  if (track.num >= 75) {
+    for (let i = 0; i <= 75; i++) {
+      track.x[i] = track.x[i + 1]!;
+      track.y[i] = track.y[i + 1]!;
+    }
+    track.num = 75;
+  }
+}
+
+/**
  * Injectable dependencies the flow code reaches for in other subsystems. All
  * of them are ported and the session wires every one (think-session.ts,
- * buildFlowHooks; #58). The defaults are the "nothing available" values (no
+ * buildFlowHooks). The defaults are the "nothing available" values (no
  * danger, no digging magic, no ranged attack) for unit tests that build a
  * bare flow, never for play.
  */
@@ -113,19 +128,20 @@ export interface FlowHooks {
   /** Lay a glyph of warding at the current grid (spell/scroll/activation). */
   layGlyph: (ctx: BorgContext) => AgentCommand | null;
   /**
-   * FORK (Mandos #59), a DEFECT fix toward the C: borg_play_step's trap magic
-   * (borg-flow.c:901-924). The disable-traps activation aimed at the trap
-   * grid, else - when `spellOk` (SP above 4/5) - the Disable Traps, Destroy
-   * Doors spell. Null when neither is available.
+   * borg_play_step's trap magic (borg-flow.c:901-924): the disable-traps
+   * activation aimed at the trap grid, else - when `spellOk` (SP above 4/5) -
+   * the Disable Traps, Destroy Doors spell. Null when neither is available.
    */
   disableTrap: (ctx: BorgContext, y: number, x: number, spellOk: boolean) => AgentCommand | null;
   /**
-   * FORK (Mandos #59): borg_play_step's door magic (borg-flow.c:963-987).
-   * "destroy" is the Disable Traps, Destroy Doors spell or the destroy-doors
-   * activation; "melt" is Stone to Mud, Shatter Stone, a ring of digging or
-   * the stone-to-mud activation, aimed at the door. Null when none applies.
+   * borg_play_step's door magic (borg-flow.c:963-987). "destroy" is the
+   * Disable Traps, Destroy Doors spell or the destroy-doors activation;
+   * "melt" is Stone to Mud, Shatter Stone, a ring of digging or the
+   * stone-to-mud activation, aimed at the door. Null when none applies.
    */
   forceDoor: (ctx: BorgContext, y: number, x: number) => { readonly cmd: AgentCommand; readonly via: "destroy" | "melt" } | null;
+  /** Melt a wall before tunneling (borg-flow.c:1034-1044). */
+  meltWall: (ctx: BorgContext, y: number, x: number) => AgentCommand | null;
   /** OPT(player, birth_force_descend): the level cannot be climbed. */
   forceDescend: boolean;
   /** borg_prepared(depth + 1) == NULL: safe to dive one level deeper. */
@@ -137,7 +153,8 @@ export interface FlowHooks {
   /**
    * rf_has(r_info[kill->r_idx].flags, RF_<flag>): does a tracked monster's race
    * carry a flag ("UNIQUE", "MULTIPLY", "NEVER_MOVE", "GROUP_AI", "PASS_WALL",
-   * "KILL_WALL"). Needs the monster-race model (P8.6); defaults to false.
+   * "KILL_WALL"). The session answers from the monster race records
+   * (think-session.ts); the bare-flow default is false.
    */
   monsterHasFlag: (world: BorgWorld, killIndex: number, flag: string) => boolean;
   /**
@@ -166,6 +183,7 @@ export function defaultFlowHooks(): FlowHooks {
     layGlyph: () => null,
     disableTrap: () => null,
     forceDoor: () => null,
+    meltWall: () => null,
     forceDescend: false,
     preparedToDescend: () => true,
     countSell: () => 0,
@@ -688,9 +706,13 @@ export function borgPlayStep(
     const kill = w.kills.at(ag.kill);
     if (kill.rIdx === 0) return null;
     if (trait(w, BI.ISAFRAID) || trait(w, BI.CRSFEAR)) return null;
-    /* Ignore town uniques until level 5 (Maggot) -- kept via known level */
-    if (trait(w, BI.CDEPTH) === 0 && trait(w, BI.CLEVEL) < 5) {
-      /* RF_UNIQUE detection is refined in P8.6; skip walking into it */
+    /* Ignore Maggot until later (borg-flow.c:749-751): only a unique, in town,
+     * below character level 5. */
+    if (
+      flow.hooks.monsterHasFlag(w, ag.kill, "UNIQUE") &&
+      trait(w, BI.CDEPTH) === 0 &&
+      trait(w, BI.CLEVEL) < 5
+    ) {
       return null;
     }
     return act.melee(dir);
@@ -719,8 +741,7 @@ export function borgPlayStep(
     !w.facts.scaryGuyOnLevel &&
     ag.trap
   ) {
-    /* FORK (Mandos #59), a DEFECT fix toward the C (inherited gap): the
-     * disable-traps activation, then the spell when near full mana. Both
+    /* The disable-traps activation, then the spell when near full mana. Both
      * only disable the trap, so the borg does not rest next to it. */
     const magic = flow.hooks.disableTrap(ctx, y, x, trait(w, BI.CURSP) > Math.trunc((trait(w, BI.MAXSP) * 4) / 5));
     if (magic !== null) {
@@ -744,9 +765,8 @@ export function borgPlayStep(
       if (ag2.kill && trait(w, BI.CLEVEL) < 15 && !trait(w, BI.ISAFRAID))
         return null;
     }
-    /* FORK (Mandos #59), a DEFECT fix toward the C (inherited gap): "use
-     * other techniques from time to time" (borg-flow.c:963-987). The draw
-     * happens on every door, as the C's `!randint0(100) || ...` does. */
+    /* The second draw follows the monster guard even at 500 panel turns
+     * (borg-flow.c:966); the first draw above is the paranoia check at :941. */
     if (ctx.rng.randint0(100) === 0 || w.self.timeThisPanel >= 500) {
       const forced = flow.hooks.forceDoor(ctx, y, x);
       if (forced !== null) {
@@ -769,6 +789,13 @@ export function borgPlayStep(
       w.self.goal.type = 0;
       return null;
     }
+    const magic = flow.hooks.meltWall(ctx, y, x);
+    if (magic !== null) {
+      flow.vein.wipe();
+      return magic;
+    }
+    /* Vault digging keeps the draw but ignores its abort (borg-flow.c:1048). */
+    if (ctx.rng.randint0(500) <= 5 && !w.facts.vaultOnLevel) return null;
     flow.vein.wipe();
     return act.tunnel(dir);
   }

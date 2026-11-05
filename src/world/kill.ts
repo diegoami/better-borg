@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Monster tracking - a faithful port of struct borg_kill and the borg_kills[]
  * list (reference/src/borg/borg-flow-kill.h).
@@ -9,10 +12,16 @@
  * behaviorally load-bearing and preserved here.
  */
 
+import { GOAL_KILL, type BorgWorld } from "./model.js";
+
 /** Estimated monster record (struct borg_kill). Faithful field-for-field. */
 export interface BorgKill {
   /** Race index (r_idx). */
   rIdx: number;
+  /** Race identity persists when Morgoth leaves the visible view. */
+  isMorgoth: boolean;
+  /** Historical nasty counts include each new tracked monster once. */
+  nastyCounted: boolean;
   /** Verified race (not just guessed from a symbol). */
   known: boolean;
   /** Probably awake. */
@@ -72,6 +81,8 @@ export interface BorgKill {
 export function makeBorgKill(): BorgKill {
   return {
     rIdx: 0,
+    isMorgoth: false,
+    nastyCounted: false,
     known: false,
     awake: false,
     confused: false,
@@ -105,6 +116,8 @@ export function makeBorgKill(): BorgKill {
  * subsystems can use nonzero grid.kill as "present".
  */
 export class BorgKills {
+  constructor(private readonly world?: BorgWorld) {}
+
   private readonly list: BorgKill[] = [makeBorgKill()];
   /** borg_kills_cnt: highest allocated index + 1. */
   count = 1;
@@ -114,14 +127,12 @@ export class BorgKills {
   summoner = 0;
 
   /**
-   * The record at index i (i >= 1). FORK (Mandos #48), a DEFECT fix toward
-   * the C, offered upstream as neostryder/neo-angband-mod-borg#24: upstream's
-   * borg_kills is a FIXED array, so &borg_kills[i] is always a record and a
-   * wiped or never-used slot reads r_idx == 0 (borg-flow.c:738-742 abandons
-   * the step on exactly that). This list grows and wipe() truncates it, so a
-   * goal grid still naming a pre-wipe index read undefined and crashed
-   * borgPlayStep. A slot the list does not hold reads as an empty record -
-   * a fresh one, not stored, so nothing written through it can survive.
+   * The record at index i (i >= 1). The C's borg_kills is a fixed array, so
+   * &borg_kills[i] is always a record and a wiped or never-used slot reads
+   * r_idx == 0 (borg-flow.c:738-742 abandons the step on exactly that). This
+   * list grows and wipe() truncates it, so a slot it does not hold reads as
+   * an empty record - a fresh one, not stored, so nothing written through it
+   * survives.
    */
   at(i: number): BorgKill {
     return this.list[i] ?? makeBorgKill();
@@ -160,12 +171,28 @@ export class BorgKills {
   delete(i: number, stamp?: { self: { whenLastKillMult: number }; clock: number }): void {
     if (i < 1 || i >= this.list.length) return;
     const kill = this.list[i]!;
+    if (!kill.rIdx) return;
+    const world = this.world;
+    if (world) {
+      /* borg-flow-kill.c:422-428 compares the flow queue's first grid. */
+      const flow = world.flowTarget;
+      if (
+        world.self.goal.type === GOAL_KILL &&
+        flow?.flowX[0] === kill.pos.x &&
+        flow.flowY[0] === kill.pos.y
+      )
+        world.self.goal.type = 0;
+      world.map.at(kill.pos.x, kill.pos.y).kill = 0;
+    }
+    stamp ??= world;
     if (stamp && kill.isMultiplier) stamp.self.whenLastKillMult = stamp.clock;
     this.list[i] = makeBorgKill();
   }
 
-  /** Reset the whole list on level change. */
-  wipe(): void {
+  /** Reset tracking slots; level changes zero records (borg-update.c:2221). */
+  wipe(deleteRecords = true): void {
+    /* borg-think-dungeon.c:1323-1329 deletes records before resetting slots. */
+    if (deleteRecords) for (const [i] of this.entries()) this.delete(i);
     this.list.length = 1;
     this.list[0] = makeBorgKill();
     this.count = 1;

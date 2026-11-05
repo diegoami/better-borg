@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * The decision context handed to every Borg subsystem. Bundling the world
  * model, the perceive/act facades, and the Borg's private RNG into one object
@@ -19,4 +22,8 @@ export interface BorgContext {
   act: BorgActions;
   /** Borg's private simulation RNG (never the game RNG). */
   rng: Rng;
+  /** Registered book identity (borg-magic.c:689-694). */
+  bookKind?: ((tval: number, name: string) => { tval: number; sval: number } | null) | undefined;
+  /** The spell's first effect (borg-magic.c:759). */
+  spellEffect?: ((cls: string, sidx: number) => { name: string; aim: boolean } | null) | undefined;
 }

@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Borg controller: an AgentController (the frozen decision seam) backed by
  * the Borg's world model, private RNG, and think ladder. This is what a host
@@ -25,10 +28,11 @@
 import type { AgentController } from "@rpgm-tools/neo-angband-core";
 import { BorgWorld } from "./world/model.js";
 import { makeBorgRng, type Rng } from "./rng.js";
-import { perceive, makePerceiveMemo } from "./perceive.js";
+import { perceive, makePerceiveMemo, borgForgetGoalWhileImpaired } from "./perceive.js";
 import { buildHitByTable, buildSpellTable } from "./perceive-messages.js";
 import { borgUpdateMonsterFear } from "./danger/index.js";
 import { borgFollowMissingKills } from "./flow/index.js";
+import { borgTrackStep } from "./flow/flow.js";
 import { think } from "./think.js";
 import { borgNotice, borgPower, borgCfg, setBorgCfg, BI, type BorgCfg } from "./trait/index.js";
 import { getFightState } from "./fight/index.js";
@@ -79,12 +83,19 @@ export interface Borg {
   controller: AgentController;
   /**
    * Undo what the last decision did to the Borg's own counters (the clocks and
-   * the arrival latch), so the same view can be decided again as if it were the
-   * first look. A host whose reads arrive after the decision that wanted them
+   * the arrival latch) and mark its retry as sharing the same position entry.
+   * A host whose reads arrive after the decision that wanted them
    * (API 2 loadout simulations) decides again with the answers in hand; without
    * this each extra pass would age the Borg's clock by one more turn.
    */
   rewind(): void;
+}
+
+const CONTROLLER_WORLDS = new WeakMap<AgentController, BorgWorld>();
+
+/** The controller owns its recall prompt answer (borg-escape.c:63-115). */
+export function recallDepthAnswer(controller: AgentController): boolean {
+  return CONTROLLER_WORLDS.get(controller)?.resetRecallDepth ?? false;
 }
 
 /**
@@ -118,12 +129,22 @@ export function createBorg(opts: BorgOptions = {}): Borg {
   const tables = { hitBy: blows.hitBy, spell: spells.spell, spellInvisible: spells.spellInvisible };
 
   let lastDepth = -1;
-  let before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false, rng: rng.snapshot() };
+  let retry = false;
+  let before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup,
+    rechargeRest: session.rechargeRest ?? false, ringTakeoff: session.ringTakeoff ?? false,
+    panel: 0, resetLevel: world.resetLevel, junked: new Set(session.junked), rng: rng.snapshot() };
 
   /* The host's view and actions arrive wrapped by the adapter (core-api.ts). */
   const controller: AgentController = hostController((view, act) => {
-    const ctx: BorgContext = { world, view, act, rng };
-    before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup, rechargeRest: session.rechargeRest ?? false, rng: rng.snapshot() };
+    const ctx: BorgContext = { world, view, act, rng, bookKind: session.resolvers.bookKind, spellEffect: session.resolvers.spellEffect };
+    const recordStep = !retry;
+    retry = false;
+    before = { lastGrid: session.lastGrid, arrival: session.arrivalPickup,
+      rechargeRest: session.rechargeRest ?? false, ringTakeoff: session.ringTakeoff ?? false,
+      panel: world.self.timeThisPanel, resetLevel: world.resetLevel, junked: new Set(session.junked), rng: rng.snapshot() };
+
+    /* Unknown recall effects keep the depth (borg-messages-react.c:229-242). */
+    world.resetRecallDepth = false;
 
     /* 1. Advance the clocks exactly once (borg-think.c:447). */
     world.clock += 1;
@@ -133,14 +154,14 @@ export function createBorg(opts: BorgOptions = {}): Borg {
      * perception, because everything perception writes is stamped with the
      * clock and the clock is one of the things a new level resets. */
     const depth = view.player().depth;
-    if (depth !== lastDepth) {
+    if (world.resetLevel || depth !== lastDepth) {
       const fs = getFightState(world);
       /* borg_time_town: time since the last visit to town, accumulated across
        * every level in between (:2011-2014). Leaving town zeroes it. Nothing
        * had ever written it, so the two arms that read it - the restock grace
        * in borg_caution and the bravery boost in borg_attack - were measuring
        * time on the current level instead. */
-      if (lastDepth <= 0) fs.timeTown = 0;
+      if (!world.resetLevel && lastDepth <= 0) fs.timeTown = 0;
       else fs.timeTown += world.clock - fs.began;
 
       /* Restart the clock (:2017). Upstream's borg_t is a PER-LEVEL counter,
@@ -171,7 +192,19 @@ export function createBorg(opts: BorgOptions = {}): Borg {
       st.closed.wipe();
       st.glyph.wipe();
       st.vein.wipe();
+      /* Level updates clear purchase and sale records (borg-update.c:2040-2056). */
+      const mem = session.storeMem;
+      mem.soldNum = mem.boughtNum = 0;
+      mem.soldNxt = mem.boughtNxt = 1;
+      for (const records of [mem.soldTval, mem.soldSval, mem.soldPval, mem.soldStore,
+        mem.boughtTval, mem.boughtSval, mem.boughtPval, mem.boughtStore]) {
+        records.length = 10;
+        records.fill(0);
+      }
       session.junked.clear();
+      before.junked.clear();
+      before.panel = 0;
+      before.resetLevel = false;
 
       lastDepth = depth;
     }
@@ -183,30 +216,15 @@ export function createBorg(opts: BorgOptions = {}): Borg {
     perceive(world, view, memo, tables, {
       kindCost: session.resolvers.kindCost,
       junked: session.junked,
-    });
+    }, (i) => session.resolvers.resolveMonsterFacts?.(ctx, i).dChar);
 
-    /* FORK (Mandos #32), a DEFECT fix toward the C, inherited from the port.
-     * 3a. Mark this grid as having been stepped on (borg-update.c:2466-2475,
-     * immediately after borg_update_map inside borg_update). track_step is
-     * what the back-away bounce detection (caution.ts, caution.c:1725) and
-     * borg_happy_grid's recently-stepped check read; it had never been
-     * written here, so both guards were reading an empty track - the bounce
-     * guard could not fire at ANY health. The cap compacts exactly as the C:
-     * at 75 entries shift the oldest out and reset the count to 75 (the
-     * 100-slot array makes the [i+1] read inside the shift safe). */
-    {
-      const track = session.flow.state.step;
-      track.x[track.num] = world.self.c.x;
-      track.y[track.num] = world.self.c.y;
-      track.num += 1;
-      if (track.num >= 75) {
-        for (let i = 0; i <= 75; i++) {
-          /* i+1 <= 76 is always inside the 100-slot, zero-filled track. */
-          track.x[i] = track.x[i + 1]!;
-          track.y[i] = track.y[i + 1]!;
-        }
-        track.num = 75;
-      }
+    /* borg-update.c:2466-2479 records after the map update. Loadout retries
+     * share the decision's entry, matching one borg_update per dungeon decision
+     * (borg-think.c:455-456). Store decisions return before borg_update
+     * (borg-think.c:324-369). */
+    const shopNum = session.resolvers.inShop?.(ctx) ?? null;
+    if (recordStep && (shopNum === null || shopNum < 0)) {
+      borgTrackStep(session.flow.state.step, world.self.c.y, world.self.c.x);
     }
 
     /* 3b. The tail of borg_update, in its own order. The wiring session is
@@ -219,6 +237,7 @@ export function createBorg(opts: BorgOptions = {}): Borg {
     primeSession(session, ctx);
     borgFollowMissingKills(ctx, session.flow.state);
     borgUpdateMonsterFear(ctx);
+    borgForgetGoalWhileImpaired(world);
 
     /* 4. Score the world (borg_power, :459). */
     world.self.power = borgPower(ctx);
@@ -246,21 +265,24 @@ export function createBorg(opts: BorgOptions = {}): Borg {
   });
 
   const rewind = (): void => {
-    /* Each decision adds one to both clocks, even on the pass that restarts the
-     * level clock, so taking one back leaves them where the pass began. A level
-     * change is not undone: the second pass sees the new depth already counted. */
+    retry = true;
+    /* A retry keeps the level transition and repeats the decision at the same
+     * level clock. The panel snapshot also covers borg_dump_quiver's increment. */
     world.clock -= 1;
-    world.self.timeThisPanel -= 1;
+    world.self.timeThisPanel = before.panel;
     session.lastGrid = before.lastGrid;
     session.arrivalPickup = before.arrival;
-    /* FORK (Mandos #76), DEFECT in B50's API2 command continuation: a
-     * speculative pass may queue or consume R75 before any command was
-     * submitted. Restore the entry value in both directions on retry. */
+    /* borg-junk.c:1224-1241 and borg-item-wear.c:1516-1528 queue side
+     * effects with their commands. A discarded decision restores them. */
     session.rechargeRest = before.rechargeRest;
-    /* FORK: Mandos #54. An abandoned API2 loadout pass must not spend the
-     * dice intended for this decision or shift every later submitted one. */
+    world.resetLevel = before.resetLevel;
+    session.ringTakeoff = before.ringTakeoff;
+    session.junked.clear();
+    for (const key of before.junked) session.junked.add(key);
+    /* FORK: Mandos #54 keeps abandoned loadout passes from spending RNG. */
     rng.reseed(before.rng);
   };
 
+  CONTROLLER_WORLDS.set(controller, world);
   return { world, rng, controller, rewind };
 }

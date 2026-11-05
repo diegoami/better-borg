@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Consumable use decisions - a faithful port of borg-item-use.c: quaff/read/
  * eat/zap/use/aim/activate helpers, the device fail checks, borg_use_things and
@@ -6,8 +9,8 @@
  *
  * The C borg_quaff_potion(sval) etc. locate the pack slot with borg_slot then
  * press the letter; here the port locates the ItemView and builds the verb from its
- * handle. The "clear shop goals" bookkeeping the C does after each use is
- * intentionally omitted (goal management is P8.6's concern).
+ * handle. Reading a scroll clears the shopping goals (borg-item-use.c:182);
+ * zapping a rod does not.
  */
 
 import type { BorgContext, ItemView, AgentCommand } from "./types.js";
@@ -17,6 +20,7 @@ import { TV, SVAL } from "./svals.js";
 import type { ItemDeps } from "./deps.js";
 import {
   trait,
+  noLight,
   borgSlot,
   deviceFail,
   itemLevel,
@@ -123,7 +127,7 @@ export function borgReadScroll(
   sval: number,
   d?: ItemDeps,
 ): AgentCommand | null {
-  if (trait(ctx, BI.LIGHT) <= 0) return null; /* no_light */
+  if (noLight(ctx)) return null; /* no_light */
   if (
     trait(ctx, BI.ISBLIND) ||
     trait(ctx, BI.ISCONFUSED) ||
@@ -132,6 +136,8 @@ export function borgReadScroll(
     return null;
   const item = borgSlot(ctx, TV.SCROLL, sval, d);
   if (!item) return null;
+  /* Reading clears shopping goals (borg-item-use.c:182). */
+  ctx.world.self.goal.shop = ctx.world.self.goal.ware = ctx.world.self.goal.item = -1;
   return ctx.act.read(item.handle);
 }
 
@@ -148,7 +154,7 @@ export function borgReadUnknown(
     n = item;
   }
   if (!n) return null;
-  if (trait(ctx, BI.LIGHT) <= 0) return null;
+  if (noLight(ctx)) return null;
   if (trait(ctx, BI.ISBLIND) || trait(ctx, BI.ISCONFUSED)) return null;
   return ctx.act.read(n.handle);
 }

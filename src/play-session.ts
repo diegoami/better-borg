@@ -59,9 +59,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { birthReplayDataOf, type BirthReplayData } from "./records/birth-replay.js";
-import type { KnownWorldData, LoadoutSimulation } from "@rpgm-tools/neo-angband-mod-sdk";
+import type { JsonRecord, KnownWorldData, LoadoutSimulation } from "@rpgm-tools/neo-angband-mod-sdk";
 import { itemView, playerView, simulationView } from "./api2/world.js";
-import type { GradeFloors } from "./api2/records.js";
+import { itemAnalyzerFromRecords, type ItemAnalyzer, type GradeFloors } from "./api2/records.js";
 import { dirname, join, sep } from "node:path";
 import type * as Core from "@rpgm-tools/neo-angband-core";
 import type { GamePack, GameState, StartedGame } from "@rpgm-tools/neo-angband-core";
@@ -151,11 +151,12 @@ function playGradeFloors(game: Core.StartedGame): GradeFloors {
 }
 
 function playView(core: typeof Core, game: Core.StartedGame, raw: Core.AgentView,
-  deps: Core.AgentViewDeps, floors: GradeFloors): Core.AgentView {
+  deps: Core.AgentViewDeps, floors: GradeFloors, analyze: ItemAnalyzer): Core.AgentView {
   // This is the same public known-world builder the real API2 host invokes.
   const known = core.buildKnownWorld(game.state, deps) as unknown as KnownWorldData;
   if (!known.player || !known.level) throw new Error("The play harness has no known player/level");
   const player = playerView(known.player, floors);
+  const adapt = (item: Parameters<typeof itemView>[0]) => itemView(item, analyze);
   const { width, height } = known.level;
   const cells = new Map(known.level.cells.map((cell) => [cell.y * width + cell.x, cell]));
   const names = new Map((known.monsters ?? []).map((monster) => [`${monster.grid.x},${monster.grid.y}`, monster]));
@@ -183,14 +184,14 @@ function playView(core: typeof Core, game: Core.StartedGame, raw: Core.AgentView
           && game.booted.registries.traps?.[trap.index]?.flags.has(core.TRF.TRAP)),
         ...(memory.featCode === undefined ? {} : { featCode: memory.featCode }) };
     },
-    inventory: () => (known.inventory ?? []).map(itemView),
-    equipment: () => (known.equipment ?? []).map((item) => item === null ? null : itemView(item)),
-    quiver: () => (known.quiver ?? []).map(itemView),
+    inventory: () => (known.inventory ?? []).map(adapt),
+    equipment: () => (known.equipment ?? []).map((item) => item === null ? null : adapt(item)),
+    quiver: () => (known.quiver ?? []).map(adapt),
     floorItems: (x, y) => (x === player.grid.x && y === player.grid.y
-      ? (known.floorHere ?? []) : (cells.get(y * width + x)?.remembered.items ?? [])).map(itemView),
+      ? (known.floorHere ?? []) : (cells.get(y * width + x)?.remembered.items ?? [])).map(adapt),
     target: () => known.target === null ? null : { midx: known.target.monster ?? 0, grid: { ...known.target.grid } },
     stores: () => (known.stores ?? []).map((store) => ({ ...structuredClone(store),
-      stock: store.stock.map((item) => ({ ...itemView(item), index: item.index,
+      stock: store.stock.map((item) => ({ ...adapt(item), index: item.index,
         ...(item.price === undefined ? {} : { price: item.price }) })) })),
     spellbooks: () => structuredClone(known.spellbooks ?? []) as unknown as Core.SpellbookView[],
     simulateLoadout: (change) => {
@@ -323,8 +324,13 @@ interface LifeObservation {
 export function observingLife(
   core: typeof Core,
   game: StartedGame,
+  pack: GamePack,
 ): LifeObservation {
   const state: GameState = game.state;
+  /* FORK: Mandos #99 keeps the measurement on the shipped API2 item analysis. */
+  const records = (value: unknown) => (value as { records: JsonRecord[] }).records;
+  const analyze = itemAnalyzerFromRecords(records(pack.obj.object), records(pack.obj.egoItem),
+    records(pack.obj.artifact), records(pack.obj.objectProperty));
   // The real host marks a character when its autoplayer takes control.
   state.actor.player.noscore |= core.NOSCORE.BORG;
   const resolver = new core.ContentIdResolver({
@@ -338,6 +344,16 @@ export function observingLife(
      * made this a different Borg even with an identical game state. Tests
      * can still exercise explicit private seeds through createBorg. */
     resolvers: makeCoreResolvers({
+      bookKind: (tval, name) => {
+        const kind = game.booted.registries.objects.kinds.find((kind) => kind.tval === tval && kind.name === name);
+        return kind ? { tval, sval: kind.sval } : null;
+      },
+      spellEffect: (cls, sidx) => {
+        const spell = game.players.classes.find((entry) => entry.name === cls)?.magic.books
+          .flatMap((book) => book.spells).find((entry) => entry.sidx === sidx);
+        const effect = spell?.effectsRaw[0] as { eff?: string } | undefined;
+        return effect?.eff ? { name: effect.eff, aim: core.EFFECT_ENTRIES.find((entry) => entry.name === effect.eff)?.aim ?? false } : null;
+      },
       races: game.booted.registries.monsters.races,
       objects: game.booted.registries.objects,
       state: state as never,
@@ -375,7 +391,7 @@ export function observingLife(
     (legacyView, legacyAct) => {
       if (!armed) return null;
       armed = false;
-      const view = playView(core, game, legacyView, viewDeps, floors);
+      const view = playView(core, game, legacyView, viewDeps, floors, analyze);
       const act = { ...legacyAct, setTargetMonster: (id: number) => {
         const actual = core.knownMonsterMidx(state, id);
         return actual === null ? false : legacyAct.setTargetMonster(actual);
@@ -701,7 +717,7 @@ export function playSession(
     /* The Borg starts each life as it started the first: the plugin's default
      * private stream, fresh world model (the previous character's
      * map is not this character's knowledge), fresh resolvers. */
-    const observed = observingLife(core, game);
+    const observed = observingLife(core, game, pack);
     const turnStart = state.turn;
     const startedAt = Date.now();
 
@@ -1120,7 +1136,7 @@ export async function playPackSession(
      * the listeners are attached and before the first changeLevel. */
     game.announceArrival();
 
-    const observed = observingLife(core, game);
+    const observed = observingLife(core, game, pack);
     const startedAt = Date.now();
     const { dead, taken, attained } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
 

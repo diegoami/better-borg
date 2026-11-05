@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * The think session: the per-Borg wiring hub that binds the abstract subsystem
  * seams (flow hooks, danger globals, item/store deps, the monster-race and
@@ -43,13 +46,16 @@ import {
   getDangerState,
 } from "./danger/index.js";
 import type { Flow, FlowHooks } from "./flow/index.js";
-import type { WearDeps, SpaceDeps, RechargeDeps } from "./item/index.js";
+import type { WearDeps, SpaceDeps, RechargeDeps, JunkDeps } from "./item/index.js";
+import { guessedValue, hasRandomPower, isCursed, isIdent, needsIdent, perItemValue } from "./item/deps.js";
+import { borgItemWorthId } from "./item/item-wear.js";
 import { borgCheckRest, createFlow } from "./flow/index.js";
 import { BI } from "./trait/index.js";
 import { borgCfg, borgPrepared } from "./trait/index.js";
 import {
   borgCountSell,
   borgFirstEmptyInventorySlot,
+  packSlots,
   createStoreMemory,
   type StoreDeps,
   type StoreMemory,
@@ -60,18 +66,24 @@ import {
   borgActivateRing,
   borgReadScroll,
   borgSpell,
+  borgSpellFail,
   borgSpellLegal,
   borgSpellOkayFail,
   SVAL,
 } from "./item/index.js";
 import type { BorgWorld } from "./world/model.js";
 import { borgTarget } from "./fight/index.js";
+import { borgHasDistanceAttack } from "./fight/attack.js";
 
 /**
  * Injection points a host supplies via createBorg. All optional; each defaults
  * to the faithful conservative behavior documented on the field.
  */
 export interface BorgResolvers {
+  /** Local danger after a simulated equipment change. */
+  loadoutDanger?: (ctx: BorgContext, change: BorgLoadoutChange) => number | null;
+  bookKind?: BorgContext["bookKind"];
+  spellEffect?: BorgContext["spellEffect"];
   /**
    * Resolve a tracked kill index to its full MonsterFacts (r_info blow[]/freq/
    * spell_power/...). Default: MonsterView-derived facts with zero blows/freq
@@ -150,8 +162,10 @@ export interface ThinkSession {
   readonly resolvers: BorgResolvers;
   /** The live decision context for this think (refreshed by the controller). */
   ctx: BorgContext | null;
-  /** FORK (#50): continuation of the C's queued wear + R75 input sequence. */
-  rechargeRest?: boolean;
+  /** Gear handle for the queued R75 (borg-item-wear.c:1516-1528). */
+  rechargeRest?: number | false;
+  /** The second takeoff queued by borg_swap_rings. */
+  ringTakeoff?: number | false;
   /**
    * Is the Borg still in the arrival moment on this grid? True from the think
    * after it steps somewhere new, until it issues any command other than a
@@ -203,18 +217,14 @@ function buildFlowHooks(session: ThinkSession): FlowHooks {
         borgSpellLegal(c, Spell.SHATTER_STONE)
       );
     },
-    hasDistanceAttack: (_world) => {
-      // Proxy for borg_has_distance_attack: the borg can shoot if it has shots
-      // (a launcher + ammo). A real ranged-damage evaluator can replace this.
-      return (ctx().view.player().shots ?? 0) > 0;
-    },
+    hasDistanceAttack: (_world) => borgHasDistanceAttack(ctx()),
     layGlyph: (c) =>
-      borgSpell(c, Spell.GLYPH_OF_WARDING) ??
-      borgReadScroll(c, SVAL.scroll.rune_of_protection!),
-    /* FORK (Mandos #59, follow-up #96): adopt Neo 887d433's item lookup.
-     * borg_play_step's trap and door magic
-     * (borg-flow.c:901-924, 963-987), each aimed at the step grid the way the
-     * C's borg_target(goal.g) / direction keypress aims it. */
+      borgSpellFail(c, Spell.GLYPH_OF_WARDING, 30) ??
+      borgReadScroll(c, SVAL.scroll.rune_of_protection!) ??
+      borgActivateItem(c, "act_glyph", buildItemDeps(session)),
+    /* borg-flow.c:903, 969, 977 resolves charged equipment through
+     * borg_activate_item (borg-item-use.c:936-948). The session supplies
+     * that lookup; borg_target at :911 and the direction at :979 aim it. */
     disableTrap: (c, y, x, spellOk) => {
       const activation = borgActivateItem(c, "act_disable_traps", buildItemDeps(session));
       if (activation !== null) {
@@ -234,6 +244,15 @@ function buildFlowHooks(session: ThinkSession): FlowHooks {
       if (melt === null) return null;
       borgTarget(c, y, x);
       return { cmd: melt, via: "melt" as const };
+    },
+    meltWall: (c, y, x) => {
+      const melt =
+        borgSpell(c, Spell.TURN_STONE_TO_MUD) ??
+        borgSpell(c, Spell.SHATTER_STONE) ??
+        borgActivateRing(c, SVAL.ring.digging!) ??
+        borgActivateItem(c, "act_stone_to_mud", buildItemDeps(session));
+      if (melt !== null) borgTarget(c, y, x);
+      return melt;
     },
     forceDescend: session.resolvers.forceDescend ?? false,
     preparedToDescend: (world) =>
@@ -303,7 +322,7 @@ function powerOf(
 }
 
 /** Per-think memo for the simulated baseline (see powerOf). */
-const BASELINES = new WeakMap<ThinkSession, { clock: number; base: number | null }>();
+const BASELINES = new WeakMap<ThinkSession, { ctx: BorgContext; base: number | null }>();
 
 function simulationBaseline(
   session: ThinkSession,
@@ -311,9 +330,9 @@ function simulationBaseline(
   resolve: (c: BorgContext, change: BorgLoadoutChange) => number | null,
 ): number | null {
   const cached = BASELINES.get(session);
-  if (cached && cached.clock === ctx.world.clock) return cached.base;
+  if (cached && cached.ctx === ctx) return cached.base;
   const base = resolve(ctx, {}) ?? null;
-  BASELINES.set(session, { clock: ctx.world.clock, base });
+  BASELINES.set(session, { ctx, base });
   return base;
 }
 
@@ -326,7 +345,7 @@ function simulationBaseline(
  * invisible to every call site, which is the shape of the bug this whole file is
  * closing rather than one to add.
  */
-export function buildItemDeps(session: ThinkSession): WearDeps & SpaceDeps & RechargeDeps {
+export function buildItemDeps(session: ThinkSession): WearDeps & SpaceDeps & RechargeDeps & JunkDeps {
   const c = session.ctx;
   if (!c) throw new Error("buildItemDeps outside a think");
   const w = c.world;
@@ -337,6 +356,17 @@ export function buildItemDeps(session: ThinkSession): WearDeps & SpaceDeps & Rec
   const res = session.resolvers;
   return {
     danger: dangerHere,
+    isIdent,
+    needsIdent,
+    worthId: borgItemWorthId,
+    randomPower: hasRandomPower,
+    /* borg-item-analyze.c:611-622 selects kind cost for aware, unknown gear. */
+    itemValue: (item) => {
+      if (isCursed(item)) return perItemValue(item);
+      if (!item.aware) return guessedValue(item);
+      if (!isIdent(item)) return res.kindCost?.(item.tval, item.sval)?.cost ?? perItemValue(item);
+      return perItemValue(item);
+    },
     avoidance: w.self.trait[BI.CURHP] ?? 0,
     /* borg_check_rest(borg.c.y, borg.c.x): the real gate, not a constant. Every
      * rest in borg-recover.c is behind it, so a hardcoded `true` is the Borg
@@ -345,7 +375,11 @@ export function buildItemDeps(session: ThinkSession): WearDeps & SpaceDeps & Rec
     clock: w.clock,
     /* borg_began, for borg_wear_stuff's "sitting on this level forever" guard. */
     began: session.flow.state.borgBegan,
-    restAfterWear: () => { session.rechargeRest = true; },
+    hasHole: borgFirstEmptyInventorySlot(c) !== -1,
+    emptySlots: packSlots(c) - c.view.inventory().filter((item) => item.number > 0
+      && !(c.view.quiver?.() ?? []).some((ammo) => ammo.handle === item.handle)).length,
+    queueRingTakeoff: (handle) => { session.ringTakeoff = handle; },
+    restAfterWear: (handle) => { session.rechargeRest = handle; },
     fearRegion: fear.region(py, px),
     ...(res.resolveActivation
       ? {
@@ -358,15 +392,36 @@ export function buildItemDeps(session: ThinkSession): WearDeps & SpaceDeps & Rec
       : {}),
     ...(res.loadoutPower
       ? {
-          /* borg_wear_stuff (wear.c:858): the power if this pack item were worn.
-           * The engine picks the slot, so a ring goes to the hand wield_slot
-           * would put it in rather than to a hand this code guessed at. */
-          wearEval: (item: ItemView) =>
-            powerOf(session, c, {
+          /* borg_wear_stuff (wear.c:858,947) simulates each full ring slot.
+           * Other equipment uses the engine's default destination. */
+          wearEval: (item: ItemView, slot?: number) =>
+            powerOf(session, c, slot === undefined ? {
               wield: [{ from: "gear", handle: item.handle }],
-            }),
-          /* FORK (#50), DEFECT: the C reruns notice/power after releasing
-           * a stack (hole) or one item (slow). A missing derive declines. */
+            } : { wieldAt: [{ item: { from: "gear", handle: item.handle }, slot }] }),
+          wearDanger: (item: ItemView, slot: number) => res.loadoutDanger?.(c, {
+            wieldAt: [{ item: { from: "gear", handle: item.handle }, slot }],
+          }) ?? null,
+          removeEval: (slot: number) => {
+            const score = res.loadoutPower!(c, { remove: [slot] });
+            if (score === null) return null;
+            const base = simulationBaseline(session, c, res.loadoutPower!);
+            return base === null ? null : w.self.power + score - base;
+          },
+          bestEval: (wieldAt) => {
+            const score = res.loadoutPower!(c, { wieldAt });
+            const base = simulationBaseline(session, c, res.loadoutPower!);
+            return score === null || base === null ? null : w.self.power + score - base;
+          },
+          /* borg-junk.c:1319-1357 keeps the item in the pack during removal. */
+          simRemove: (item: ItemView) => {
+            const slot = c.view.equipment().findIndex((worn) => worn?.handle === item.handle);
+            if (slot < 0) return false;
+            const score = res.loadoutPower!(c, { remove: [slot] });
+            if (score === null) return false;
+            const base = simulationBaseline(session, c, res.loadoutPower!);
+            return base !== null && score >= base;
+          },
+          /* borg-junk.c:659-668,1047-1057 scores the reduced inventory. */
           dropEval: (item: ItemView, quantity: number) => {
             const score = res.loadoutPower!(c, { release: [{ handle: item.handle, number: quantity }] });
             if (score === null) return null;
@@ -399,9 +454,11 @@ function storeCfg(): Pick<StoreDeps, "worshipsGold" | "selfScum" | "usesSwaps"> 
 /** Build the store deps for this think (shares the anti-loop memory). */
 export function buildStoreDeps(session: ThinkSession): StoreDeps {
   const res = session.resolvers;
-  if (!res.loadoutPower) return { mem: session.storeMem, ...storeCfg() };
+  const began = session.flow.state.borgBegan;
+  if (!res.loadoutPower) return { mem: session.storeMem, began, ...storeCfg() };
   return {
     mem: session.storeMem,
+    began,
     ...storeCfg(),
     /* borg_think_shop_buy_useful (borg-store-buy.c:363/388). A ware the borg
      * would WIELD is worn; anything else joins the pack. Both cost their weight,

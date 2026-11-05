@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * borg_caution / borg_heal - "try not to die": the life-preservation ladder, a
  * faithful port of reference/src/borg/borg-caution.c.
@@ -11,7 +14,7 @@
  * nasty-situation detection, the surrounded check, the flee/leave goal flags,
  * the class-ordered heal/defend attempt, the restock check, the *** Stairs ***
  * section, starvation relief, the escape attempt, *** Back away ***, and the
- * final emergency ez-heal. What is left to later stages of the think ladder is
+ * final emergency ez-heal, recall and recall waiting. What is left to later stages of the think ladder is
  * the cure ladder from caution.c:1846 and the food/light maintenance flows,
  * which belong to the item and flow subsystems that own those commands.
  *
@@ -33,10 +36,13 @@ import {
   borgCaveFloorGrid,
   featIsShop,
 } from "../flow/flow-consts.js";
+import { GOAL_FLEE } from "../world/model.js";
 import { distance } from "../danger/geometry.js";
 import { borgThrustDamageOne } from "./attack.js";
 import type { FlowState } from "../flow/flow.js";
-import { borgPrepLeaveLevelSpells } from "../flow/flow-stairs.js";
+import { borgCheckRest } from "../flow/flow-misc.js";
+import { borgPrepLeaveLevelSpells, borgFlowStairLess } from "../flow/flow-stairs.js";
+import { getThinkSession } from "../think-session.js";
 import { borgRestock } from "../trait/prepared.js";
 import { TV, SVAL } from "../item/svals.js";
 import { Spell, borgSpell, borgSpellFail } from "../item/magic.js";
@@ -45,6 +51,7 @@ import {
   borgQuaffCrit,
   borgQuaffUnknown,
   borgReadUnknown,
+  borgReadScroll,
   borgEat,
   borgEatUnknown,
   borgUseUnknown,
@@ -55,8 +62,9 @@ import {
   borgActivateFailure,
 } from "../item/item-use.js";
 import { borgSlot } from "../item/deps.js";
+import { borgMaintainLight, currentLight, BorgNeed } from "../item/light.js";
 import { getFightState, idiv } from "./state.js";
-import { borgSurrounded, borgEscape, borgFreedom } from "./escape.js";
+import { borgSurrounded, borgEscape, borgFreedom, borgRecall, borgCautionPhase } from "./escape.js";
 import { borgDefend } from "./defend.js";
 
 function av(ctx: BorgContext): number {
@@ -389,11 +397,26 @@ export function borgCaution(
 
   /* Nasty-situation flags (caution.c:807). */
   let nasty = false;
-  if (!trait(ctx, BI.LIGHT) && g.lightTimeout < 250) nasty = true;
+  if (!trait(ctx, BI.LIGHT) && (currentLight(ctx)?.timeout ?? 0) < 250) nasty = true;
   if (trait(ctx, BI.ISWEAK)) nasty = true;
   if (trait(ctx, BI.ISBLIND)) nasty = true;
   if (trait(ctx, BI.ISCONFUSED)) nasty = true;
   if (trait(ctx, BI.ISIMAGE)) nasty = true;
+
+  /* An unprepared Borg leaves depth 100 on arrival (borg-caution.c:829-852). */
+  if (trait(ctx, BI.CDEPTH) === 100 && ctx.world.clock - fs.began < 10 && !g.morgothPosition) {
+    if (ctx.world.self.readyMorgoth <= 0 && !trait(ctx, BI.KING)) {
+      const escape = borgSpell(ctx, Spell.TELEPORT_LEVEL) ?? borgReadScroll(ctx, SVAL.scroll.teleport_level!);
+      if (escape) return escape;
+      const handle = getThinkSession(ctx.world).resolvers.activateHandle?.(ctx, "act_tele_level");
+      if (handle !== undefined && handle !== null) return ctx.act.activate(handle);
+      if (!ctx.world.self.goal.leaving) {
+        ctx.world.self.goal.leaving = true;
+        const up = borgFlowStairLess(ctx, flow, GOAL_FLEE, false);
+        if (up) return up;
+      }
+    }
+  }
 
   /* Surrounded? (caution.c:857). */
   const surrounded = borgSurrounded(ctx);
@@ -440,6 +463,20 @@ export function borgCaution(
       const d = borgDefend(ctx, posDanger);
       if (d) return d;
     }
+  }
+
+  /* The Borg rests for recall in the dungeon (borg-caution.c:1033-1048). */
+  if (ctx.world.self.goal.recalling && borgCheckRest(ctx, flow, ctx.world.self.c.y, ctx.world.self.c.x)
+    && trait(ctx, BI.CDEPTH) && !trait(ctx, BI.ISHUNGRY)) {
+    ctx.world.self.inShop = false;
+    return ctx.act.rest(500);
+  }
+
+  /* The Borg prepares before town recall engages (borg-caution.c:1050-1055). */
+  const ratio = ctx.world.self.gameRatio;
+  if (ctx.world.self.goal.recalling && ctx.world.self.goal.recalling <= ratio * 2 && !trait(ctx, BI.CDEPTH)) {
+    const prep = borgPrepLeaveLevelSpells(ctx);
+    if (prep) return prep;
   }
 
   /* Impending doom: out of crucial supplies (caution.c:1064). FIRST arm of the
@@ -562,6 +599,13 @@ export function borgCaution(
     }
   }
 
+  /* Fuel maintenance precedes starvation relief (borg-caution.c:1211-1227). */
+  if (!trait(ctx, BI.LIGHT)) {
+    const light = borgMaintainLight(ctx);
+    if (light.need === BorgNeed.MET_NEED && light.cmd) return light.cmd;
+    if (light.need === BorgNeed.UNMET_NEED && trait(ctx, BI.CDEPTH)) self.goal.leaving = true;
+  }
+
   /* Prevent starvation (caution.c:1230): eat / cast / restore-mana. */
   if (trait(ctx, BI.ISWEAK)) {
     const c = firstCmd(
@@ -613,8 +657,41 @@ export function borgCaution(
     if (c) return c;
   }
 
+  /* The Borg flees with recall (borg-caution.c:1967-1977). */
+  if (self.goal.fleeing && !self.goal.fleeingMunchkin && !self.goal.fleeingToTown && trait(ctx, BI.CDEPTH) >= 1) {
+    const recall = borgRecall(ctx);
+    if (recall) return recall;
+  }
+
+  /* The Borg buys time until recall engages (borg-caution.c:1982-2019). */
+  if (self.goal.recalling && posDanger > av(ctx) * 2) {
+    if (!trait(ctx, BI.ISCONFUSED) && !trait(ctx, BI.ISBLIND) && trait(ctx, BI.MAXSP) > 60
+      && trait(ctx, BI.CURSP) < Math.trunc(trait(ctx, BI.CURSP) / 4)) {
+      const mana = borgQuaffPotion(ctx, SVAL.potion.restore_mana!) ?? borgActivateItem(ctx, "act_restore_mana");
+      if (mana) return mana;
+    }
+    if (borgCautionPhase(ctx, 50, 1)) {
+      const phase = borgReadScroll(ctx, SVAL.scroll.phase_door!) ??
+        borgSpellFail(ctx, Spell.PHASE_DOOR, 30) ?? borgSpellFail(ctx, Spell.PORTAL, 30) ??
+        borgActivateItem(ctx, "act_tele_phase");
+      if (phase) return phase;
+    }
+    if (trait(ctx, BI.MAXHP) - trait(ctx, BI.CURHP) < 100) {
+      const cure = borgQuaffCrit(ctx, true) ?? borgQuaffPotion(ctx, SVAL.potion.cure_serious!) ??
+        borgQuaffPotion(ctx, SVAL.potion.cure_light!);
+      if (cure) return cure;
+    }
+    if (trait(ctx, BI.MAXHP) - trait(ctx, BI.CURHP) > 150) {
+      const heal = borgZapRod(ctx, SVAL.rod.healing!) ?? borgQuaffPotion(ctx, SVAL.potion.healing!) ??
+        borgQuaffPotion(ctx, SVAL.potion.star_healing!) ?? borgQuaffPotion(ctx, SVAL.potion.life!) ??
+        borgQuaffCrit(ctx, true) ?? borgQuaffPotion(ctx, SVAL.potion.cure_serious!) ??
+        borgQuaffPotion(ctx, SVAL.potion.cure_light!);
+      if (heal) return heal;
+    }
+  }
+
   /* Remaining C tail (the cure ladder from caution.c:1846 on, and the
-   * food/light maintenance flows) emits item and flow commands whose owning
+   * food maintenance flows) emits item and flow commands whose owning
    * subsystems sit later in the ladder; yield to it. */
   return null;
 }

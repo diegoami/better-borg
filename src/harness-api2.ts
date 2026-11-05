@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * A fake game for the API 2 bridge: a `ModApi2` object whose known world is built
  * from a harness scenario (harness.ts), so a test drives the bridge and the
@@ -280,6 +283,7 @@ export function fakeGame(options: FakeGameOptions = {}): FakeGame {
       },
     },
     content: {
+      boundRecords: (): ReturnType<ModApi2["content"]["boundRecords"]> => ok([]),
       records: (_file: string): ReturnType<ModApi2["content"]["records"]> => ok([] as readonly JsonRecord[]),
       activation: () => ok(null),
     },

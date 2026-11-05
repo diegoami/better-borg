@@ -1,3 +1,6 @@
+/** FORK: Mandos #99 adopts Neo Borg 74a017d's C-parity corrections.
+ * Upstream credit: neostryder; retained Mandos differences are marked locally.
+ */
 /**
  * Flow toward monsters to kill: a faithful port of the navigation routines in
  * reference/src/borg/borg-flow-kill.c (borg_flow_kill, borg_flow_kill_aim,
@@ -7,8 +10,8 @@
  *
  * ADAPTATIONS
  * - Monster race-flag tests (RF_UNIQUE / RF_MULTIPLY / RF_NEVER_MOVE /
- *   RF_GROUP_AI / RF_PASS_WALL / RF_KILL_WALL) use FlowHooks.monsterHasFlag
- *   (default false) until the monster-race model lands (P8.6).
+ *   RF_GROUP_AI / RF_PASS_WALL / RF_KILL_WALL) use FlowHooks.monsterHasFlag,
+ *   which the session answers from the monster race records (think-session.ts).
  * - Danger uses FlowHooks.danger; the distance-attack / dig-magic / line-of-sight
  *   dependencies use FlowHooks.hasDistanceAttack / canDigMagic / los.
  * - In the corridor's "summoner out of LOS" branch, borg_detect_wall panel data
@@ -54,6 +57,7 @@ export function borgFlowKill(
   nearness: number,
 ): AgentCommand | null {
   const w = ctx.world;
+  w.flowTarget = flow;
 
   if (!w.kills.count || w.kills.count <= 1) return null;
 
@@ -192,6 +196,7 @@ export function borgFlowKill(
  */
 export function borgFlowKillAim(ctx: BorgContext, flow: FlowState, viewable: boolean): AgentCommand | null {
   const w = ctx.world;
+  w.flowTarget = flow;
 
   if (!w.kills.count || w.kills.count <= 1) return null;
   if (w.self.timeThisPanel > 500) return null;
@@ -318,6 +323,7 @@ function scorePattern(
  */
 export function borgFlowKillCorridor(ctx: BorgContext, flow: FlowState): AgentCommand | null {
   const w = ctx.world;
+  w.flowTarget = flow;
 
   flow.borgDigging = false;
 
@@ -677,10 +683,10 @@ function borgFollowKill(ctx: BorgContext, flow: FlowState, i: number): void {
  */
 export function borgFollowMissingKills(ctx: BorgContext, flow: FlowState): void {
   const w = ctx.world;
+  w.flowTarget = flow;
 
-  /* Blind or hallucinating: the C skips the whole pass. PlayerView carries no
-   * hallucination flag, so only blindness is checked. */
-  if (trait(w, BI.ISBLIND)) return;
+  /* Blind or hallucinating: the C skips the whole pass (borg-update.c:2920). */
+  if (trait(w, BI.ISBLIND) || trait(w, BI.ISIMAGE)) return;
 
   for (const [i, kill] of w.kills.entries()) {
     /* Skip seen monsters */

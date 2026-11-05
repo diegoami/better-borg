@@ -420,17 +420,16 @@ describe("the breeder-rest guard (when_last_kill_mult)", () => {
   });
 });
 
-/* FORK (Mandos #55): borg_check_rest's PF_COMBAT_REGEN arm
- * (borg-flow-misc.c:1218-1221), inherited as missing. */
-describe("resting when SP only returns in combat (#55)", () => {
+/* borg_check_rest's PF_COMBAT_REGEN arm (borg-flow-misc.c:1218-1221). */
+describe("resting when SP only returns in combat", () => {
   const blackguard = { grid: AWAY, hp: 20, maxHp: 20, sp: 0, maxSp: 2, classFlags: ["CHOOSE_SPELLS", "SHIELD_BASH", "COMBAT_REGEN"] };
-  /* Clear of the unrelated food/light arm (misc.c:1288), as the kill-window
-   * test above does, so these cases isolate the one guard. */
+  /* Clear of the unrelated food/light arm (misc.c:1288) and past the
+   * multiplier-kill window (misc.c:1223), which a fresh world's clock 0 and
+   * whenLastKillMult 0 would otherwise sit inside, so these cases isolate the
+   * one guard. */
   const fed = (scenario: Scenario): { ctx: BorgContext; world: BorgWorld } => {
     const made = ctxFor(scenario);
     made.world.self.trait[BI.FOOD] = 10;
-    /* Past the multiplier-kill window (misc.c:1223), which a fresh world's
-     * clock 0 and whenLastKillMult 0 would otherwise sit inside. */
     made.world.clock = 10;
     return made;
   };

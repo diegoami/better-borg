@@ -10,9 +10,10 @@ const suite = content === null ? describe.skip : describe;
 
 suite("desktop/harness controller initialization (#54)", () => {
   it("does not expose API1 line-of-sight grids that the API2 known world cannot see", () => {
-    const game = Core.startGame(loadPack(content!), { seed: 99110530, depth: 1 });
+    const pack = loadPack(content!);
+    const game = Core.startGame(pack, { seed: 99110530, depth: 1 });
     const factory = vi.spyOn(Controller, "createBorg");
-    const observation = observingLife(Core, game);
+    const observation = observingLife(Core, game, pack);
     const borg = factory.mock.results[0]!.value as Controller.Borg;
     const input = vi.spyOn(borg, "controller").mockImplementation((view) => {
       const known = Core.buildKnownWorld(game.state);
@@ -44,13 +45,14 @@ suite("desktop/harness controller initialization (#54)", () => {
   });
 
   it.each([1, 73])("starts the same private stream as the shipped plugin on world seed %i", (seed) => {
-    const game = Core.startGame(loadPack(content!), { seed });
+    const pack = loadPack(content!);
+    const game = Core.startGame(pack, { seed });
     // plugin.ts supplies resolvers/config, and uses createBorg's default stream.
     const desktop = Controller.createBorg();
     const factory = vi.spyOn(Controller, "createBorg");
     let observation: ReturnType<typeof observingLife> | undefined;
     try {
-      observation = observingLife(Core, game);
+      observation = observingLife(Core, game, pack);
       const harness = factory.mock.results[0]!.value as Controller.Borg;
       const draws = (borg: Controller.Borg): number[] =>
         Array.from({ length: 32 }, () => borg.rng.randint0(1_000_000));
