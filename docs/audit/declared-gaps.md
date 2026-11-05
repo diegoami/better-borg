@@ -82,3 +82,7 @@ older inventory as the live queue.
 Use the [reviewed classifications](c-classification.md) and the task issues
 for subsequent defects and limitations. The active order remains on the
 [checkpoint issue](https://github.com/diegoami/mandos/issues/36).
+
+B99 subsequently adopts Neo74a017d's home search, defenses and ring routines;
+see [B99](../tasks/B99.md) and the issue carry records. #4 still covers the
+separate weapon/armour swap subsystem. This older marker inventory is unchanged.

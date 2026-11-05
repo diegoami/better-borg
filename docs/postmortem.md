@@ -159,3 +159,9 @@ what you observe as a different run. See the
   sharing is visible).
 - **A diagnosis is analysis, never a live-run mutation** (rule 5). It
   reads code and dossiers and writes text.
+
+
+The B99 Neo upgrade moves the current replay-test baseline to the
+[98-command desktop case](runs/2026-11-05-b99-desktop-death-replay/README.md).
+The older B54 case remains unchanged and valid with its recorded code and
+engine; changing the controller requires a fresh record, not editing history.

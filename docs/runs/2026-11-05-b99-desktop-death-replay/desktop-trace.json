@@ -1,0 +1,1386 @@
+[
+  {
+    "turn": 0,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 0,
+    "command": {
+      "code": "study",
+      "args": {
+        "handle": 5,
+        "spell": 0
+      }
+    }
+  },
+  {
+    "turn": 20,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 0,
+    "command": {
+      "code": "cast",
+      "args": {
+        "spell": 0
+      }
+    }
+  },
+  {
+    "turn": 30,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 10,
+    "sp": 1,
+    "depth": 0,
+    "command": {
+      "code": "cast",
+      "args": {
+        "spell": 0
+      }
+    }
+  },
+  {
+    "turn": 40,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 10,
+    "sp": 0,
+    "depth": 0,
+    "command": {
+      "code": "rest",
+      "args": {
+        "count": -2
+      }
+    }
+  },
+  {
+    "turn": 1030,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 0,
+    "command": {
+      "code": "descend"
+    }
+  },
+  {
+    "turn": 1030,
+    "grid": {
+      "x": 130,
+      "y": 12
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1050,
+    "grid": {
+      "x": 131,
+      "y": 12
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1060,
+    "grid": {
+      "x": 132,
+      "y": 12
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1070,
+    "grid": {
+      "x": 133,
+      "y": 12
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1080,
+    "grid": {
+      "x": 134,
+      "y": 12
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1090,
+    "grid": {
+      "x": 134,
+      "y": 12
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1100,
+    "grid": {
+      "x": 134,
+      "y": 12
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1110,
+    "grid": {
+      "x": 134,
+      "y": 12
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1120,
+    "grid": {
+      "x": 134,
+      "y": 12
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 1
+    }
+  },
+  {
+    "turn": 1130,
+    "grid": {
+      "x": 133,
+      "y": 13
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "read",
+      "args": {
+        "handle": 4
+      }
+    }
+  },
+  {
+    "turn": 1140,
+    "grid": {
+      "x": 133,
+      "y": 13
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    }
+  },
+  {
+    "turn": 1150,
+    "grid": {
+      "x": 133,
+      "y": 14
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    }
+  },
+  {
+    "turn": 1160,
+    "grid": {
+      "x": 133,
+      "y": 15
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    }
+  },
+  {
+    "turn": 1170,
+    "grid": {
+      "x": 133,
+      "y": 16
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    }
+  },
+  {
+    "turn": 1180,
+    "grid": {
+      "x": 133,
+      "y": 17
+    },
+    "hp": 6,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "rest",
+      "args": {
+        "count": 500
+      }
+    }
+  },
+  {
+    "turn": 1340,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 8,
+    "sp": 2,
+    "depth": 0,
+    "command": {
+      "code": "rest",
+      "args": {
+        "count": -2
+      }
+    }
+  },
+  {
+    "turn": 1530,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 0,
+    "command": {
+      "code": "descend"
+    }
+  },
+  {
+    "turn": 1530,
+    "grid": {
+      "x": 46,
+      "y": 47
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 8
+    }
+  },
+  {
+    "turn": 1550,
+    "grid": {
+      "x": 46,
+      "y": 46
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 8
+    }
+  },
+  {
+    "turn": 1560,
+    "grid": {
+      "x": 46,
+      "y": 45
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 8
+    }
+  },
+  {
+    "turn": 1570,
+    "grid": {
+      "x": 46,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 8
+    }
+  },
+  {
+    "turn": 1580,
+    "grid": {
+      "x": 46,
+      "y": 43
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 8
+    }
+  },
+  {
+    "turn": 1590,
+    "grid": {
+      "x": 46,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "pickup"
+    }
+  },
+  {
+    "turn": 1591,
+    "grid": {
+      "x": 46,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "wield",
+      "args": {
+        "handle": 7
+      }
+    }
+  },
+  {
+    "turn": 1601,
+    "grid": {
+      "x": 46,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1611,
+    "grid": {
+      "x": 45,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1621,
+    "grid": {
+      "x": 44,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1631,
+    "grid": {
+      "x": 43,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1641,
+    "grid": {
+      "x": 42,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1651,
+    "grid": {
+      "x": 41,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1661,
+    "grid": {
+      "x": 40,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1671,
+    "grid": {
+      "x": 39,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1681,
+    "grid": {
+      "x": 38,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1691,
+    "grid": {
+      "x": 39,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1701,
+    "grid": {
+      "x": 40,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1711,
+    "grid": {
+      "x": 41,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1721,
+    "grid": {
+      "x": 42,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1731,
+    "grid": {
+      "x": 43,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1741,
+    "grid": {
+      "x": 44,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1751,
+    "grid": {
+      "x": 45,
+      "y": 42
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 3
+    }
+  },
+  {
+    "turn": 1761,
+    "grid": {
+      "x": 46,
+      "y": 43
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 3
+    }
+  },
+  {
+    "turn": 1771,
+    "grid": {
+      "x": 47,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1781,
+    "grid": {
+      "x": 48,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1791,
+    "grid": {
+      "x": 49,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1801,
+    "grid": {
+      "x": 50,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1811,
+    "grid": {
+      "x": 51,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1821,
+    "grid": {
+      "x": 52,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1831,
+    "grid": {
+      "x": 53,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1841,
+    "grid": {
+      "x": 54,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 1851,
+    "grid": {
+      "x": 55,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    }
+  },
+  {
+    "turn": 1861,
+    "grid": {
+      "x": 55,
+      "y": 45
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 7
+    }
+  },
+  {
+    "turn": 1871,
+    "grid": {
+      "x": 54,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1881,
+    "grid": {
+      "x": 53,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1891,
+    "grid": {
+      "x": 52,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1901,
+    "grid": {
+      "x": 51,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1911,
+    "grid": {
+      "x": 50,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1921,
+    "grid": {
+      "x": 49,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1931,
+    "grid": {
+      "x": 48,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 1941,
+    "grid": {
+      "x": 47,
+      "y": 44
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 1
+    }
+  },
+  {
+    "turn": 1951,
+    "grid": {
+      "x": 46,
+      "y": 45
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    }
+  },
+  {
+    "turn": 1961,
+    "grid": {
+      "x": 46,
+      "y": 46
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    }
+  },
+  {
+    "turn": 1971,
+    "grid": {
+      "x": 46,
+      "y": 47
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "ascend"
+    }
+  },
+  {
+    "turn": 1971,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 0,
+    "command": {
+      "code": "descend"
+    }
+  },
+  {
+    "turn": 1971,
+    "grid": {
+      "x": 88,
+      "y": 21
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 8
+    }
+  },
+  {
+    "turn": 2001,
+    "grid": {
+      "x": 88,
+      "y": 20
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 8
+    }
+  },
+  {
+    "turn": 2011,
+    "grid": {
+      "x": 88,
+      "y": 19
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 8
+    }
+  },
+  {
+    "turn": 2021,
+    "grid": {
+      "x": 88,
+      "y": 18
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 3
+    }
+  },
+  {
+    "turn": 2031,
+    "grid": {
+      "x": 89,
+      "y": 19
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 2041,
+    "grid": {
+      "x": 90,
+      "y": 19
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 2051,
+    "grid": {
+      "x": 91,
+      "y": 19
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 6
+    }
+  },
+  {
+    "turn": 2061,
+    "grid": {
+      "x": 92,
+      "y": 19
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "cast",
+      "args": {
+        "spell": 0
+      }
+    }
+  },
+  {
+    "turn": 2071,
+    "grid": {
+      "x": 92,
+      "y": 19
+    },
+    "hp": 10,
+    "sp": 1,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 9
+    }
+  },
+  {
+    "turn": 2081,
+    "grid": {
+      "x": 93,
+      "y": 18
+    },
+    "hp": 9,
+    "sp": 1,
+    "depth": 1,
+    "command": {
+      "code": "cast",
+      "args": {
+        "spell": 0
+      }
+    }
+  },
+  {
+    "turn": 2091,
+    "grid": {
+      "x": 93,
+      "y": 18
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 1
+    }
+  },
+  {
+    "turn": 2101,
+    "grid": {
+      "x": 92,
+      "y": 19
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 2111,
+    "grid": {
+      "x": 91,
+      "y": 19
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 2121,
+    "grid": {
+      "x": 90,
+      "y": 19
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 2131,
+    "grid": {
+      "x": 89,
+      "y": 19
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 1
+    }
+  },
+  {
+    "turn": 2141,
+    "grid": {
+      "x": 88,
+      "y": 20
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    }
+  },
+  {
+    "turn": 2151,
+    "grid": {
+      "x": 88,
+      "y": 21
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "ascend"
+    }
+  },
+  {
+    "turn": 2151,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 0,
+    "command": {
+      "code": "descend"
+    }
+  },
+  {
+    "turn": 2151,
+    "grid": {
+      "x": 71,
+      "y": 21
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "ascend"
+    }
+  },
+  {
+    "turn": 2151,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 0,
+    "command": {
+      "code": "descend"
+    }
+  },
+  {
+    "turn": 2151,
+    "grid": {
+      "x": 168,
+      "y": 16
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 1,
+    "command": {
+      "code": "ascend"
+    }
+  },
+  {
+    "turn": 2151,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 9,
+    "sp": 0,
+    "depth": 0,
+    "command": {
+      "code": "rest",
+      "args": {
+        "count": -2
+      }
+    }
+  },
+  {
+    "turn": 3091,
+    "grid": {
+      "x": 25,
+      "y": 4
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 0,
+    "command": {
+      "code": "descend"
+    }
+  },
+  {
+    "turn": 3091,
+    "grid": {
+      "x": 107,
+      "y": 12
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 3111,
+    "grid": {
+      "x": 106,
+      "y": 12
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 3121,
+    "grid": {
+      "x": 105,
+      "y": 12
+    },
+    "hp": 10,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 3131,
+    "grid": {
+      "x": 105,
+      "y": 12
+    },
+    "hp": 7,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 3141,
+    "grid": {
+      "x": 105,
+      "y": 12
+    },
+    "hp": 5,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 3151,
+    "grid": {
+      "x": 105,
+      "y": 12
+    },
+    "hp": 3,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  },
+  {
+    "turn": 3161,
+    "grid": {
+      "x": 105,
+      "y": 12
+    },
+    "hp": 0,
+    "sp": 2,
+    "depth": 1,
+    "command": {
+      "code": "walk",
+      "dir": 4
+    }
+  }
+]

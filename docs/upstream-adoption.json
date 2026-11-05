@@ -9,7 +9,9 @@
     "published": "1.23.0-beta.2",
     "acceptedSourceCommit": "0cc75b4afcbe6f5128730e4b910408c7be4ac5c5",
     "tracker": 100,
-    "labVersion": "1.23.0-beta.2-mandos.2"
+    "labVersion": "1.23.0-beta.2-mandos.2",
+    "labCommit": "9d6ae21ec5f733134f8411414359bae3019c7c2d",
+    "combinedPatch": "patches/@rpgm-tools__neo-angband-core@1.23.0-beta.2.patch"
   },
   "task": 99
 }
