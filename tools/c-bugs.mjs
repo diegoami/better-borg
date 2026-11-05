@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /** Local C-bug catalogue renderer. Offline; never posts, fetches or applies patches. */
+import { validateSourceSnapshot } from "./c-bugs-source.mjs";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join, dirname } from "node:path";
@@ -64,6 +65,8 @@ for (const claim of data.report_coverage.source_claims) {
 }
 for (const group of data.groups) if (!data.report_coverage.source_claims.some((claim) => claim.group === group.number))
   fail("uncovered source group " + group.number);
+
+validateSourceSnapshot(data, readFileSync(join(root, data.sources.borg_rs.snapshot.path), "utf8"));
 
 const tick = String.fromCharCode(96);
 const code = (value) => tick + value + tick;

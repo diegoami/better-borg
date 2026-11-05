@@ -4,11 +4,11 @@
 
 This is the C-only catalogue for eventual Angband community use. Port omissions stay on our internal issues. **We make no submissions to angband/angband now**; another developer may reuse our linked local proposals. Lead sources may be borg-rs, our own audits/runs or community reports, and validation attribution is kept separate.
 
-Updated 2026-11-05. Credit: [borg-rs catalogue](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md), plus our independent source/scenario checks. Current refresh [#110](https://github.com/diegoami/mandos/issues/110), carry queue [#111](https://github.com/diegoami/mandos/issues/111), broader audit [#93](https://github.com/diegoami/mandos/issues/93).
+Updated 2026-11-05. Credit: [borg-rs catalogue](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md), plus our independent source/scenario checks. Current refresh [#110](https://github.com/diegoami/mandos/issues/110), carry queue [#111](https://github.com/diegoami/mandos/issues/111), broader audit [#93](https://github.com/diegoami/mandos/issues/93).
 
-The source has **36 numbered groups**. This page maps all **116 substantive leaf reports** to **118 C findings/observations**: 1 native C-game outcome reproduction, 1 flags-only reproduction, 18 source checks and 98 reported leads. Some reports contain related sub-symptoms; shared causes are deduplicated. These are not counts of independently confirmed gameplay bugs.
+The source has **40 numbered groups**. This page maps all **141 substantive leaf reports** to **143 C findings/observations**: 1 native C-game outcome reproduction, 1 flags-only reproduction, 18 source checks and 123 reported leads. Some reports contain related sub-symptoms; shared causes are deduplicated. These are not counts of independently confirmed gameplay bugs.
 
-The latest borg-rs source retains 36 groups and116 substantive reports. Its group17 Teleport Other note now describes a Rust bounds panic at255 candidates and says that boundary is not practically reachable; this is source-reported evidence, not our independent reproduction. All reports remain mapped explicitly.
+Source now has40 groups. This refresh adds junk37 (missed during the prior pin update) plus init38, miscellaneous flow39 and caution40. New entries are reported leads, not independent Mandos reproductions. A retained source snapshot now checks group and report-bullet coverage.
 
 A source check establishes code/predicate/state flow, not legal reachability or a changed outcome. Priority ranks validation work. Harmless/dead branches and unproven stacked-ring reachability are explicitly kept below demonstrated failures.
 
@@ -19,7 +19,7 @@ These pins identify affected/reference code. Fix links identify correction propo
 - C: `e473720ed88a0f0c7ca66815cef3000eb4a38bc3`. The imported 4.2.6 snapshot is a different reference.
 - Neo Borg: `74a017d2f695939eb2f046b7c9ff286ef1e82568`.
 - Mandos affected baseline inspected: `48405e9621ffc400f7af43e7fd1ed2385225ca1f`.
-- Rust source: `c4969c0c57590c0b0e6e72b8fd90429db243c8b6`; prior `590783e1f3bd26a4dc99cc60ca6b43131876f04b`.
+- Rust source: `3fed84b19506ea9cc9d5d07fc3de213856a39a7f`; prior `c4969c0c57590c0b0e6e72b8fd90429db243c8b6`.
 
 ## Local fix workflow
 
@@ -223,6 +223,31 @@ A proposal branch, a patch stored on main and a fix applied to a maintained cons
 | [CBUG-0116](#cbug-0116) | borg_think_home_sell_best(): for a staff or wand, each trial takes charge_each charges off the pack item, but the restore after the trial only puts… | med | reported lead | [C src/borg/borg-store-sell.c:398–524](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L398-L524) | unreviewed | none | intake [#93](https://github.com/diegoami/mandos/issues/93) |
 | [CBUG-0117](#cbug-0117) | borg_good_sell(): the "ego item not fully identified" test asks borg_ego_has_random_power() about the ego of the cloak slot (borg_items[INVEN_OUTER… | med | reported lead | [C src/borg/borg-store-sell.c:816–941](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L816-L941) | unreviewed | none | intake [#93](https://github.com/diegoami/mandos/issues/93) |
 | [CBUG-0118](#cbug-0118) | borg_count_sell(): an unidentified item that is not part of a pile makes the function return false (0) at once | med | reported lead | [C src/borg/borg-store-sell.c:1162–1266](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L1162-L1266) | unreviewed | none | intake [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0119](#cbug-0119) | Junk-drop note prints the last scanned value rather than the selected item value | med | reported lead | [C src/borg/borg-junk.c:250–493](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L250-L493) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0120](#cbug-0120) | Drop-hole high-level device and consumable protection uses always-true subtype conditions | med | reported lead | [C src/borg/borg-junk.c:516–951](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L516-L951) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0121](#cbug-0121) | Drop-hole desperate value boost overwrites earlier category boosts | low | reported lead | [C src/borg/borg-junk.c:516–951](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L516-L951) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0122](#cbug-0122) | Slow-drop equipment command branches are unreachable after equipment is skipped | med | reported lead | [C src/borg/borg-junk.c:961–1147](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L961-L1147) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0123](#cbug-0123) | Equipment removal selects the last non-worsening slot and leaves stale scratch contents | med | reported lead | [C src/borg/borg-junk.c:1261–1369](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L1261-L1369) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0124](#cbug-0124) | Failed Brawn consumption falls through into later potion cases | low | reported lead | [C src/borg/borg-junk.c:76–245](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L76-L245) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0125](#cbug-0125) | Malformed integer settings can leave the configuration parser spinning | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0126](#cbug-0126) | Bare minus and overflowing integer settings are parsed as unintended values | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0127](#cbug-0127) | Setting names are prefix-matched and section whitespace handling is inconsistent | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0128](#cbug-0128) | Missing or unreopenable borg.txt can leave configuration or file pointers NULL | med | reported lead | [C src/borg/borg-init.c:168–335](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L168-L335) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0129](#cbug-0129) | Ignore-reset assumes the saved ego-ignore array has already been allocated | low | reported lead | [C src/borg/borg-init.c:337–369](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L337-L369) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0130](#cbug-0130) | Spastic reverse flow stops at its origin and never produces a move | med | reported lead | [C src/borg/borg-flow-misc.c:467–765](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L467-L765) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0131](#cbug-0131) | Spastic scoring reads the last neighbour extra value rather than the candidate value | med | reported lead | [C src/borg/borg-flow-misc.c:467–765](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L467-L765) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0132](#cbug-0132) | Vault flow reuses uncleared queue/cost state and lists duplicate excavation grids | med | reported lead | [C src/borg/borg-flow-misc.c:879–970](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L879-L970) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0133](#cbug-0133) | Rest safety checks the wrong vault neighbourhood and mutates shared scan state | med | reported lead | [C src/borg/borg-flow-misc.c:1213–1363](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L1213-L1363) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0134](#cbug-0134) | Twentieth twitchy random choice enters the surrounded scan even when valid | med | reported lead | [C src/borg/borg-flow-misc.c:975–1084](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L975-L1084) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0135](#cbug-0135) | Vein scan redundantly clears the flow for every candidate | low | reported lead | [C src/borg/borg-flow-misc.c:348–455](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L348-L455) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0136](#cbug-0136) | Tracked-stair flags remain false in caution danger checks | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0137](#cbug-0137) | Desperation stair search retains the farthest free staircase | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0138](#cbug-0138) | Strategic retreat monster-adjacency rejection only exits its inner scan | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0139](#cbug-0139) | Back-away monster state leaks between candidate grids and a trap ends the whole scan | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0140](#cbug-0140) | Excessive-danger fleeing guard is enabled only when ready for Morgoth | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0141](#cbug-0141) | Recall-in-danger mana threshold compares current mana with itself | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0142](#cbug-0142) | Critical poison and bleeding healing can return with pretend full mana | med | reported lead | [C src/borg/borg-caution.c:60–667](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L60-L667) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0143](#cbug-0143) | Second healing-rod attempt bypasses the earlier escape-reserve guard | med | reported lead | [C src/borg/borg-caution.c:60–667](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L60-L667) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
 
 ### CBUG-0001
 
@@ -234,12 +259,12 @@ Pinned source references:
 
 - [C src/borg/borg-log.c:190–204](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-log.c#L190-L204) — if (ask && get_string
 - [C src/borg/borg-log.c:666–668](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-log.c#L666-L668) — file_close(borg_map_file);
-- [borg-rs docs/c-bugs.md:167–181](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L167-L181) — discovery group 13
-- [borg-rs docs/c-bugs.md:173–177](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L173-L177) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:167–181](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L167-L181) — discovery group 13
+- [borg-rs docs/c-bugs.md:173–177](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L173-L177) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:173–177](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L173-L177)
+[borg-rs docs/c-bugs.md:173–177](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L173-L177)
 
 > `borg_write_map(true)` (the `^z` map command, not in any suite): when the
 >   file prompt is cancelled or the file cannot be opened, the file stays
@@ -271,12 +296,12 @@ Pinned source references:
 - [C src/borg/borg.c:310–314](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg.c#L310-L314) — borg.dont_react = false;
 - [C src/borg/borg-messages-react.c:45–49](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-messages-react.c#L45-L49) — if (borg_dont_react
 - [C src/borg/borg-messages.c:439–448](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-messages.c#L439-L448) — borg_dont_react = true;
-- [borg-rs docs/c-bugs.md:182–198](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L182-L198) — discovery group 14
-- [borg-rs docs/c-bugs.md:184–193](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L184-L193) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:182–198](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L182-L198) — discovery group 14
+- [borg-rs docs/c-bugs.md:184–193](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L184-L193) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:184–193](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L184-L193)
+[borg-rs docs/c-bugs.md:184–193](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L184-L193)
 
 > `borg-messages.c` sets the global `borg_dont_react` on "You have been
 >   knocked out." and "You are paralyzed"; `borg_react()`
@@ -311,12 +336,12 @@ Pinned source references:
 - [C src/borg/borg-cave-light.c:135–143](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-cave-light.c#L135-L143) — /* West of the player */
 - [Neo src/perceive.ts:285–290](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/perceive.ts#L285-L290) — if (floorAt(cy, cx - 2))
 - [Mandos src/perceive.ts:288–293](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/perceive.ts#L288-L293) — if (floorAt(cy, cx - 2))
-- [borg-rs docs/c-bugs.md:41–54](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L41-L54) — discovery group 4
-- [borg-rs docs/c-bugs.md:45–52](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L45-L52) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:41–54](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L41-L54) — discovery group 4
+- [borg-rs docs/c-bugs.md:45–52](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L45-L52) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:45–52](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L45-L52)
+[borg-rs docs/c-bugs.md:45–52](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L45-L52)
 
 > The "East" block lights (y, x+2), (y+1, x+2), (y-1, x+2), but the "West"
 >   block lights (y, x-2), (y+2, x-2), (y-2, x-2) instead of (y+1, x-2) and
@@ -351,12 +376,12 @@ Pinned source references:
 - [C src/borg/borg-danger.c:262–276](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L262-L276) — case MONBLOW_COLD:
 - [Neo src/danger/danger.ts:206–219](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/danger/danger.ts#L206-L219) — case MONBLOW.COLD:
 - [Mandos src/danger/danger.ts:209–222](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/danger/danger.ts#L209-L222) — case MONBLOW.COLD:
-- [borg-rs docs/c-bugs.md:226–264](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L226-L264) — discovery group 17
-- [borg-rs docs/c-bugs.md:231–232](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L231-L232) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:226–264](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L226-L264) — discovery group 17
+- [borg-rs docs/c-bugs.md:231–232](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L231-L232) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:231–232](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L231-L232)
+[borg-rs docs/c-bugs.md:231–232](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L231-L232)
 
 > COLD blows test the temporary *acid* resistance (`borg.temp.res_acid`),
 >     not `res_cold`.
@@ -383,12 +408,12 @@ Pinned source references:
 - [C src/borg/borg-store-buy.c:127–133](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L127-L133) — && borg.trait[BI_CLASS] == CLASS_ROGUE)
 - [Neo src/store/buy.ts:189–193](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L189-L193) — item.sval === Ro.teleport_other
 - [Mandos src/store/buy.ts:189–193](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L189-L193) — item.sval === Ro.teleport_other
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:614–617](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L614-L617) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:614–617](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L614-L617) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:614–617](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L614-L617)
+[borg-rs docs/c-bugs.md:614–617](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L614-L617)
 
 > `borg_good_buy()`: the Black Market Rod of Teleport Other test reads
 >   `class != CLASS_MAGE && class == CLASS_ROGUE` (comment: "mage and rogue
@@ -417,12 +442,12 @@ Pinned source references:
 - [C src/borg/borg-store-buy.c:281–288](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L281-L288) — /* Special check for 'immediate shopping' */
 - [Neo src/store/buy.ts:294–303](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L294-L303) — /* immediate-shopping food gate
 - [Mandos src/store/buy.ts:294–303](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L294-L303) — /* immediate-shopping food gate
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:618–622](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L618-L622) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:618–622](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L618-L622) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:618–622](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L618-L622)
+[borg-rs docs/c-bugs.md:618–622](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L618-L622)
 
 > `borg_think_shop_buy_useful()`: the "immediate shopping" test (no food)
 >   is `tval != TV_FOOD && (tval != TV_SCROLL && sval !=
@@ -452,12 +477,12 @@ Pinned source references:
 - [C src/borg/borg-store-buy.c:501–523](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L501-L523) — borg_shops[BORG_HOME].ware[n].iqty -= qty;
 - [Neo src/store/buy.ts:348–387](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L348-L387) — borgThinkHomeBuyUseful
 - [Mandos src/store/buy.ts:348–387](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L348-L387) — borgThinkHomeBuyUseful
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L623-L629) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L623-L629) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L623-L629)
+[borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L623-L629)
 
 > `borg_think_home_buy_useful()`: the two "require two empty slots"
 >   `continue`s come after the ware was taken out of the home
@@ -490,12 +515,12 @@ Pinned source references:
 - [C src/borg/borg-store-buy.c:542–548](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L542-L548) — p_left = borg_power();
 - [Neo src/store/buy.ts:348–387](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L348-L387) — borgThinkHomeBuyUseful
 - [Mandos src/store/buy.ts:348–387](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L348-L387) — borgThinkHomeBuyUseful
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L623-L629) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L623-L629) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L623-L629)
+[borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L623-L629)
 
 > `borg_think_home_buy_useful()`: the two "require two empty slots"
 >   `continue`s come after the ware was taken out of the home
@@ -528,12 +553,12 @@ Pinned source references:
 - [C src/borg/borg-store-buy.c:567–571](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L567-L571) — borg_items[INVEN_RIGHT].iqty = qty;
 - [Neo src/store/buy.ts:371–376](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L371-L376) — const sim: BuySim
 - [Mandos src/store/buy.ts:371–376](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L371-L376) — const sim: BuySim
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L623-L629) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L623-L629) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L623-L629)
+[borg-rs docs/c-bugs.md:623–629](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L623-L629)
 
 > `borg_think_home_buy_useful()`: the two "require two empty slots"
 >   `continue`s come after the ware was taken out of the home
@@ -565,12 +590,12 @@ Pinned source references:
 - [C src/borg/borg-store-buy.c:859–896](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L859-L896) — skip_it = false;
 - [Neo src/store/buy.ts:494–510](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L494-L510) — let skip = false;
 - [Mandos src/store/buy.ts:494–510](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L494-L510) — let skip = false;
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:630–631](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L630-L631) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:630–631](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L630-L631) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:630–631](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L630-L631)
+[borg-rs docs/c-bugs.md:630–631](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L630-L631)
 
 > `borg_think_home_grab_useless()`: `skip_it` is never reset, so after the
 >   first ware that was just sold to the home, every later ware is skipped.
@@ -598,12 +623,12 @@ Pinned source references:
 - [C src/borg/borg-store-buy.c:1088–1099](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L1088-L1099) — = -1L;
 - [Neo src/store/buy.ts:548–551](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L548-L551) — const evalFn
 - [Mandos src/store/buy.ts:548–551](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L548-L551) — const evalFn
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:632–638](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L632-L638) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:632–638](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L632-L638) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:632–638](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L632-L638)
+[borg-rs docs/c-bugs.md:632–638](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L632-L638)
 
 > `borg_think_home_buy_swap_weapon()` / `_armour()`: when there is no
 >   hole, they return without restoring `weapon_swap_value` /
@@ -636,12 +661,12 @@ Pinned source references:
 - [C src/borg/borg-store-buy.c:1112–1136](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L1112-L1136) — memcpy(&borg_items[hole]
 - [Neo src/store/buy.ts:543–571](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L543-L571) — borgThinkHomeBuySwap
 - [Mandos src/store/buy.ts:543–571](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L543-L571) — borgThinkHomeBuySwap
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:632–638](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L632-L638) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:632–638](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L632-L638) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:632–638](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L632-L638)
+[borg-rs docs/c-bugs.md:632–638](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L632-L638)
 
 > `borg_think_home_buy_swap_weapon()` / `_armour()`: when there is no
 >   hole, they return without restoring `weapon_swap_value` /
@@ -682,14 +707,14 @@ Pinned source references:
 - [Mandos src/store/sell.ts:410–414](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/sell.ts#L410-L414) — i < mem.boughtNum
 - [Neo src/store/buy.ts:362–366](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L362-L366) — i < mem.soldNum
 - [Mandos src/store/buy.ts:362–366](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L362-L366) — i < mem.soldNum
-- [borg-rs docs/c-bugs.md:582–610](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L582-L610) — discovery group 33
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:599–603](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L599-L603) — reported C observation; not an independent validation
-- [borg-rs docs/c-bugs.md:639–643](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L639-L643) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:582–610](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L582-L610) — discovery group 33
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:599–603](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L599-L603) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:639–643](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L639-L643) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:599–603](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L599-L603)
+[borg-rs docs/c-bugs.md:599–603](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L599-L603)
 
 > The sale list: `borg_think_shop_sell()` sets `sold_item_num` to the
 >   index just written (not a count), and every reader (here and in
@@ -697,7 +722,7 @@ Reported by borg-rs (lead text, not independent validation):
 >   never seen. `sold_item_nxt` wraps at 9, so slot 9 is never used.
 >   borg-store-buy.c does the same with its `bought_item_*` list.
 
-[borg-rs docs/c-bugs.md:639–643](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L639-L643)
+[borg-rs docs/c-bugs.md:639–643](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L639-L643)
 
 > `bought_item_num` is the index of the last entry written, but the
 >   readers (`borg_store_sell`) loop `p < bought_item_num`, so the latest
@@ -730,14 +755,14 @@ Pinned source references:
 - [Mandos src/store/store.ts:150–158](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/store.ts#L150-L158) — if (mem.boughtNxt >= 9)
 - [Neo src/store/store.ts:132–140](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/store.ts#L132-L140) — if (mem.soldNxt >= 9)
 - [Mandos src/store/store.ts:135–143](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/store.ts#L135-L143) — if (mem.soldNxt >= 9)
-- [borg-rs docs/c-bugs.md:582–610](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L582-L610) — discovery group 33
-- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) — discovery group 34
-- [borg-rs docs/c-bugs.md:599–603](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L599-L603) — reported C observation; not an independent validation
-- [borg-rs docs/c-bugs.md:639–643](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L639-L643) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:582–610](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L582-L610) — discovery group 33
+- [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) — discovery group 34
+- [borg-rs docs/c-bugs.md:599–603](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L599-L603) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:639–643](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L639-L643) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:599–603](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L599-L603)
+[borg-rs docs/c-bugs.md:599–603](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L599-L603)
 
 > The sale list: `borg_think_shop_sell()` sets `sold_item_num` to the
 >   index just written (not a count), and every reader (here and in
@@ -745,7 +770,7 @@ Reported by borg-rs (lead text, not independent validation):
 >   never seen. `sold_item_nxt` wraps at 9, so slot 9 is never used.
 >   borg-store-buy.c does the same with its `bought_item_*` list.
 
-[borg-rs docs/c-bugs.md:639–643](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L639-L643)
+[borg-rs docs/c-bugs.md:639–643](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L639-L643)
 
 > `bought_item_num` is the index of the last entry written, but the
 >   readers (`borg_store_sell`) loop `p < bought_item_num`, so the latest
@@ -775,12 +800,12 @@ Pinned source references:
 - [C src/borg/borg-escape.c:780–835](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L780-L835) — borg.trait[BI_CURSP] = borg.trait[BI_MAXSP];
 - [Neo src/fight/escape.ts:533–563](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L533-L563) — /* critical emergency attempts
 - [Mandos src/fight/escape.ts:536–566](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L536-L566) — /* critical emergency attempts
-- [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L646-L670) — discovery group 35
-- [borg-rs docs/c-bugs.md:649–654](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L649-L654) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L646-L670) — discovery group 35
+- [borg-rs docs/c-bugs.md:649–654](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L649-L654) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:649–654](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L649-L654)
+[borg-rs docs/c-bugs.md:649–654](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L649-L654)
 
 > `borg_escape()`, danger level 1: before the "critical" attempts (1.1 to
 >   1.3) the Borg pretends to have full mana
@@ -812,12 +837,12 @@ Pinned source references:
 - [C src/borg/borg-escape.c:905–920](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L905-L920) — (borg_escape_stair() \|\| borg_caution_phase(25
 - [Neo src/fight/escape.ts:618–632](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L618-L632) — (borgEscapeStair(ctx) \|\| borgCautionPhase(ctx, 25
 - [Mandos src/fight/escape.ts:621–635](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L621-L635) — (borgEscapeStair(ctx) \|\| borgCautionPhase(ctx, 25
-- [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L646-L670) — discovery group 35
-- [borg-rs docs/c-bugs.md:655–662](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L655-L662) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L646-L670) — discovery group 35
+- [borg-rs docs/c-bugs.md:655–662](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L655-L662) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:655–662](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L655-L662)
+[borg-rs docs/c-bugs.md:655–662](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L655-L662)
 
 > Danger levels 3.1, 4.1, 5.1, 6.1 and 8 test
 >   `(borg_escape_stair() || borg_caution_phase(..)) && ... && (phase spell
@@ -852,12 +877,12 @@ Pinned source references:
 - [Mandos src/fight/escape.ts:438–440](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L438-L440) — resetAntisummon
 - [Neo src/fight/escape.ts:597–612](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L597-L612) — borgCautionPhase(ctx, 50, 2)
 - [Mandos src/fight/escape.ts:600–615](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L600-L615) — borgCautionPhase(ctx, 50, 2)
-- [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L646-L670) — discovery group 35
-- [borg-rs docs/c-bugs.md:663–665](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L663-L665) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L646-L670) — discovery group 35
+- [borg-rs docs/c-bugs.md:663–665](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L663-L665) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:663–665](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L663-L665)
+[borg-rs docs/c-bugs.md:663–665](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L663-L665)
 
 > The anti-summon reset (`if (borg_timer(borg.time.antisummon) < 50)
 >   borg.time.antisummon = 0;`) after 2.2, 3.1, 3.3, 4.1, 4.3, 6.1 and the
@@ -885,12 +910,12 @@ Pinned source references:
 - [C src/borg/borg-escape.c:569–621](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L569-L621) — borg_dimension_door
 - [Neo src/fight/escape.ts:317–342](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L317-L342) — borgDimensionDoor
 - [Mandos src/fight/escape.ts:320–345](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L320-L345) — borgDimensionDoor
-- [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L646-L670) — discovery group 35
-- [borg-rs docs/c-bugs.md:666–669](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L666-L669) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L646-L670) — discovery group 35
+- [borg-rs docs/c-bugs.md:666–669](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L666-L669) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:666–669](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L666-L669)
+[borg-rs docs/c-bugs.md:666–669](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L666-L669)
 
 > `borg_dimension_door()` targets the least dangerous grid of the 100x100
 >   box (offsets -50..49) that is in bounds, without checking that it is a
@@ -919,12 +944,12 @@ Pinned source references:
 - [C src/borg/borg-think-store.c:105–157](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-think-store.c#L105-L157) — /* If poisoned or bleeding
 - [Neo src/store/think-store.ts:70–118](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/think-store.ts#L70-L118) — /* If poisoned or bleeding
 - [Mandos src/store/think-store.ts:73–121](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/think-store.ts#L73-L121) — /* If poisoned or bleeding
-- [borg-rs docs/c-bugs.md:671–685](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L671-L685) — discovery group 36
-- [borg-rs docs/c-bugs.md:674–682](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L674-L682) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:671–685](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L671-L685) — discovery group 36
+- [borg-rs docs/c-bugs.md:674–682](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L674-L682) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:674–682](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L674-L682)
+[borg-rs docs/c-bugs.md:674–682](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L674-L682)
 
 > `borg_choose_shop()`: "If poisoned or bleeding -- flow to temple"
 >   (`goal.shop = 3`) and "flow to general store" (`goal.shop = 0`) have no
@@ -961,12 +986,12 @@ Pinned source references:
 - [Mandos src/store/think-store.ts:63–66](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/think-store.ts#L63-L66) — /* Must be in town
 - [Neo src/store/think-store.ts:113–117](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/think-store.ts#L113-L117) — !st(ctx, BI.CDEPTH)
 - [Mandos src/store/think-store.ts:116–120](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/think-store.ts#L116-L120) — !st(ctx, BI.CDEPTH)
-- [borg-rs docs/c-bugs.md:671–685](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L671-L685) — discovery group 36
-- [borg-rs docs/c-bugs.md:683–684](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L683-L684) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:671–685](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L671-L685) — discovery group 36
+- [borg-rs docs/c-bugs.md:683–684](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L683-L684) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:683–684](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L683-L684)
+[borg-rs docs/c-bugs.md:683–684](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L683-L684)
 
 > The money-scumming test repeats `!borg.trait[BI_CDEPTH]`, already
 >   returned on at the top of the function.
@@ -991,11 +1016,11 @@ Checked 2026-11-05; borg-rs group(s) 1.
 Pinned source references:
 
 - [C src/borg/borg-fight-defend.c:2474–2659](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-fight-defend.c#L2474-L2659) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:15–19](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L15-L19) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:15–19](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L15-L19) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:15–19](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L15-L19)
+[borg-rs docs/c-bugs.md:15–19](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L15-L19)
 
 > `using_artifact = borg_equips_item(act_loskill, true) && borg.has[BI_CURHP] > 100;`
 >   `borg.has[]` is indexed by object kind, so `BI_CURHP` is treated as a
@@ -1023,11 +1048,11 @@ Checked 2026-11-05; borg-rs group(s) 2.
 Pinned source references:
 
 - [C src/borg/borg-item-val.c:261–516](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-val.c#L261-L516) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:25–30](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L25-L30) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:25–30](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L25-L30) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:25–30](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L25-L30)
+[borg-rs docs/c-bugs.md:25–30](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L25-L30)
 
 > `borg-item-val.c`, `borg_init_item_val`, all seeds, startup:
 >   `sv_wand_confuse_monster` is looked up as "Scare Monster" (the same as
@@ -1056,11 +1081,11 @@ Checked 2026-11-05; borg-rs group(s) 3.
 Pinned source references:
 
 - [C src/borg/borg-formulas-calc.c:445–471](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-formulas-calc.c#L445-L471) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:34–40](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L34-L40) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:34–40](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L34-L40) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:34–40](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L34-L40)
+[borg-rs docs/c-bugs.md:34–40](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L34-L40)
 
 > borg-formulas-calc.c, `adjust_order_operations()`: the blocks passed to
 >   `adjust_order_ops_depth_block(f, pdepth, start, itoken - 1)` are scanned
@@ -1090,11 +1115,11 @@ Checked 2026-11-05; borg-rs group(s) 4.
 Pinned source references:
 
 - [C src/borg/borg-cave-light.c:69–223](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-cave-light.c#L69-L223) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:45–52](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L45-L52) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:45–52](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L45-L52) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:45–52](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L45-L52)
+[borg-rs docs/c-bugs.md:45–52](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L45-L52)
 
 > The "East" block lights (y, x+2), (y+1, x+2), (y-1, x+2), but the "West"
 >   block lights (y, x-2), (y+2, x-2), (y-2, x-2) instead of (y+1, x-2) and
@@ -1125,11 +1150,11 @@ Checked 2026-11-05; borg-rs group(s) 5.
 Pinned source references:
 
 - [C src/borg/borg-magic.c:744–766](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-magic.c#L744-L766) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:57–63](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L57-L63) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:57–63](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L57-L63) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:57–63](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L57-L63)
+[borg-rs docs/c-bugs.md:57–63](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L57-L63)
 
 > `borg-magic.c`, `borg_init_spell()`, all caster seeds, startup:
 >   `spell->status = spell_okay_to_cast(player, spell_num);` stores a `bool`
@@ -1159,11 +1184,11 @@ Checked 2026-11-05; borg-rs group(s) 5.
 Pinned source references:
 
 - [C src/borg/borg-magic.c:677–718](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-magic.c#L677-L718) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:64–65](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L64-L65) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:64–65](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L64-L65) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:64–65](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L64-L65)
+[borg-rs docs/c-bugs.md:64–65](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L64-L65)
 
 > `borg_cheat_spells()` resets `borg.book_idx[0..9]` but only cheats books
 >   0..7 (`book_idx < 8`); no class has a ninth book.
@@ -1188,11 +1213,11 @@ Checked 2026-11-05; borg-rs group(s) 5.
 Pinned source references:
 
 - [C src/borg/borg-magic.c:239–249](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-magic.c#L239-L249) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:66–67](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L66-L67) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:66–67](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L66-L67) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:66–67](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L66-L67)
+[borg-rs docs/c-bugs.md:66–67](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L66-L67)
 
 > `borg_spell_stat()` tests `&books[0].spells[0] != NULL`, which is always
 >   true.
@@ -1217,11 +1242,11 @@ Checked 2026-11-05; borg-rs group(s) 6.
 Pinned source references:
 
 - [C src/borg/borg-formulas.c:123–132](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-formulas.c#L123-L132) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:75–85](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L75-L85) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:75–85](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L75-L85) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:75–85](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L75-L85)
+[borg-rs docs/c-bugs.md:75–85](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L75-L85)
 
 > Three callers pass `format(...)` as the `error` argument of
 >   `borg_formula_error()`: "value type (first parameter '%s') not found" and
@@ -1255,11 +1280,11 @@ Checked 2026-11-05; borg-rs group(s) 7.
 Pinned source references:
 
 - [C src/borg/borg-formulas.c:273–345](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-formulas.c#L273-L345) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:91–95](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L91-L95) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:91–95](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L91-L95) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:91–95](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L91-L95)
+[borg-rs docs/c-bugs.md:91–95](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L91-L95)
 
 > borg-formulas.c, `parse_range()`, only with `borg_uses_dynamic_calcs`.
 >   A missing ')' is reported as "** first value is not a number", and a first
@@ -1287,11 +1312,11 @@ Checked 2026-11-05; borg-rs group(s) 8.
 Pinned source references:
 
 - [C src/borg/borg-home-power.c:33–352](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-home-power.c#L33-L352) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:101–103](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L101-L103) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:101–103](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L101-L103) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:101–103](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L101-L103)
+[borg-rs docs/c-bugs.md:101–103](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L101-L103)
 
 > Spell stat: the last tier is `20 * 100L + 6 * 300L + (s - 26) * 5L`; the
 >   tier below it starts from `20 * 400L`. So the home value of the spell stat
@@ -1317,11 +1342,11 @@ Checked 2026-11-05; borg-rs group(s) 8.
 Pinned source references:
 
 - [C src/borg/borg-home-power.c:33–352](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-home-power.c#L33-L352) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:104–106](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L104-L106) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:104–106](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L104-L106) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:104–106](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L104-L106)
+[borg-rs docs/c-bugs.md:104–106](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L104-L106)
 
 > Amulets: `if (num_neck > 3) ... else if (num_neck > 3) value -= (num_neck
 >   - 3) * 700L;` repeats the condition, so the 700 penalty never applies
@@ -1347,11 +1372,11 @@ Checked 2026-11-05; borg-rs group(s) 9.
 Pinned source references:
 
 - [C src/borg/borg-magic-play.c:88–229](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-magic-play.c#L88-L229) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:111–117](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L111-L117) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:111–117](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L111-L117) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:111–117](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L111-L117)
+[borg-rs docs/c-bugs.md:111–117](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L111-L117)
 
 > `borg-magic-play.c`, `borg_play_magic()`, every call (study and town
 >   spell testing): `if (borg_grids[borg.c.y][borg.c.x].info == BORG_DARK)`
@@ -1381,11 +1406,11 @@ Checked 2026-11-05; borg-rs group(s) 10.
 Pinned source references:
 
 - [C src/borg/borg-prepared.c:538–686](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-prepared.c#L538-L686) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:126–134](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L126-L134) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:126–134](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L126-L134) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:126–134](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L126-L134)
+[borg-rs docs/c-bugs.md:126–134](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L126-L134)
 
 > `borg_prepared()` calls `borg_restock()` first and returns "Clevel <
 >   depth" when `max clevel < depth` (below 50), so in `borg_prepared_aux()`:
@@ -1417,11 +1442,11 @@ Checked 2026-11-05; borg-rs group(s) 10.
 Pinned source references:
 
 - [C src/borg/borg-prepared.c:694–826](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-prepared.c#L694-L826) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:135–136](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L135-L136) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:135–136](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L135-L136) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:135–136](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L135-L136)
+[borg-rs docs/c-bugs.md:135–136](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L135-L136)
 
 > `borg_restock()`: "restock fuel" and "restock fuel < 2" need light 0,
 >   which already returned "restock light radius < 1".
@@ -1446,11 +1471,11 @@ Checked 2026-11-05; borg-rs group(s) 10.
 Pinned source references:
 
 - [C src/borg/borg-prepared.c:538–686](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-prepared.c#L538-L686) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:137–139](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L137-L139) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:137–139](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L137-L139) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:137–139](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L137-L139)
+[borg-rs docs/c-bugs.md:137–139](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L137-L139)
 
 > "Scumming *Heal* potions (%d to go)" tests the home counts from before
 >   `borg_notice_home()` but prints `10 - num_ezheal` from after it, and
@@ -1476,11 +1501,11 @@ Checked 2026-11-05; borg-rs group(s) 11.
 Pinned source references:
 
 - [C src/borg/borg-reincarnate.c:304–362](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-reincarnate.c#L304-L362) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:143–152](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L143-L152) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:143–152](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L143-L152) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:143–152](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L143-L152)
+[borg-rs docs/c-bugs.md:143–152](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L143-L152)
 
 > `borg-reincarnate.c`, `borg_reincarnate_start()`, only when the Borg
 >   respawns (game option `cheat_live` on and `borg_cheat_death` off, or
@@ -1513,11 +1538,11 @@ Checked 2026-11-05; borg-rs group(s) 12.
 Pinned source references:
 
 - [C src/borg/borg-home-notice.c:343–932](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-home-notice.c#L343-L932) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:158–161](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L158-L161) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:158–161](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L158-L161) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:158–161](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L158-L161)
+[borg-rs docs/c-bugs.md:158–161](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L158-L161)
 
 > Sustains on items: the five `of_has(item->flags, OF_SUST_*)` tests all
 >   add to `num_sustain_str`, so `num_sustain_int/wis/dex/con` only ever count
@@ -1544,11 +1569,11 @@ Checked 2026-11-05; borg-rs group(s) 12.
 Pinned source references:
 
 - [C src/borg/borg-home-notice.c:343–932](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-home-notice.c#L343-L932) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:162–164](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L162-L164) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:162–164](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L162-L164) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:162–164](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L162-L164)
+[borg-rs docs/c-bugs.md:162–164](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L162-L164)
 
 > `num_genocide` is reset but never counted (scrolls of Banishment are not
 >   looked for), so the home power reward for them is always 0. (The
@@ -1574,11 +1599,11 @@ Checked 2026-11-05; borg-rs group(s) 13.
 Pinned source references:
 
 - [C src/borg/borg-log.c:145–669](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-log.c#L145-L669) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:170–172](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L170-L172) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:170–172](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L170-L172) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:170–172](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L170-L172)
+[borg-rs docs/c-bugs.md:170–172](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L170-L172)
 
 > `borg_write_map()`: "Your hands are glowing dull red." tests
 >   `TMD_CONFUSED` again (it meant a different timed effect), so a confused
@@ -1604,11 +1629,11 @@ Checked 2026-11-05; borg-rs group(s) 13.
 Pinned source references:
 
 - [C src/borg/borg-log.c:775–1326](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-log.c#L775-L1326) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:178–180](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L178-L180) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:178–180](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L178-L180) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:178–180](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L178-L180)
+[borg-rs docs/c-bugs.md:178–180](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L178-L180)
 
 > `borg_display_status()`: for "Demon" and "Dragon" the slay's blue is
 >   always overwritten (`if (WS) blue; if (WK) green; else slate;`), so a
@@ -1634,11 +1659,11 @@ Checked 2026-11-05; borg-rs group(s) 14.
 Pinned source references:
 
 - [C src/borg/borg-messages-react.c:95–324](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-messages-react.c#L95-L324) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:194–196](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L194-L196) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:194–196](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L194-L196) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:194–196](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L194-L196)
+[borg-rs docs/c-bugs.md:194–196](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L194-L196)
 
 > Harmless, same file: `borg_react_prompted()` returns `key` (a pointer)
 >   from a `bool` function in three places; it is never NULL, so this is
@@ -1664,11 +1689,11 @@ Checked 2026-11-05; borg-rs group(s) 15.
 Pinned source references:
 
 - [C src/borg/borg-item-id.c:38–138](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-id.c#L38-L138) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:201–209](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L201-L209) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:201–209](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L201-L209) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:201–209](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L201-L209)
+[borg-rs docs/c-bugs.md:201–209](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L201-L209)
 
 > `borg-item-id.c`, `borg_object_fully_id()`, by code reading. The loop
 >   runs to `QUIVER_END`, and every slot from `INVEN_WIELD` up is selected
@@ -1700,11 +1725,11 @@ Checked 2026-11-05; borg-rs group(s) 16.
 Pinned source references:
 
 - [C src/borg/borg-inventory.c:88–127](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-inventory.c#L88-L127) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:215–219](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L215-L219) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:215–219](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L215-L219) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:215–219](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L215-L219)
+[borg-rs docs/c-bugs.md:215–219](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L215-L219)
 
 > `borg_slot()`: the "Prefer largest pval (even if smaller pile)" test
 >   skips an item only when `item->iqty > borg_items[n].iqty`, but the
@@ -1732,11 +1757,11 @@ Checked 2026-11-05; borg-rs group(s) 16.
 Pinned source references:
 
 - [C src/borg/borg-inventory.c:255–267](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-inventory.c#L255-L267) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:220–224](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L220-L224) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:220–224](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L220-L224) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:220–224](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L220-L224)
+[borg-rs docs/c-bugs.md:220–224](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L220-L224)
 
 > `borg_first_empty_inventory_slot()` scans down from the last pack slot
 >   for the last used one and returns the slot after it. With an empty pack
@@ -1764,11 +1789,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:64–545](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L64-L545) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:233](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L233) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:233](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L233) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:233](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L233)
+[borg-rs docs/c-bugs.md:233](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L233)
 
 > LOSE_CON blows add the "below 8" fear when `BI_CSTR < 8` (strength).
 
@@ -1792,11 +1817,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:64–545](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L64-L545) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:234–235](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L234-L235) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:234–235](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L234-L235) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:234–235](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L234-L235)
+[borg-rs docs/c-bugs.md:234–235](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L234-L235)
 
 > HURT: the stun test `z > d_dice * d_side` comes right after
 >     `z = d_dice * d_side`, so it is never true (dead code).
@@ -1821,11 +1846,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:64–545](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L64-L545) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:236–238](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L236-L238) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:236–238](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L236-L238) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:236–238](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L236-L238)
+[borg-rs docs/c-bugs.md:236–238](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L236-L238)
 
 > The hit chance `150 - ((ac * 300) / 4 / 1 + (level + power) * 3)` is
 >     below 5 for any armour class of 2 or more, so partial damage
@@ -1851,11 +1876,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:64–545](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L64-L545) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:240–242](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L240-L242) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:240–242](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L240-L242) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:240–242](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L240-L242)
+[borg-rs docs/c-bugs.md:240–242](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L240-L242)
 
 > `bolt` is set by the first bolt spell and never reset, so every later
 >     spell of the same monster (bolt or not) has its damage zeroed when the
@@ -1881,11 +1906,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:64–545](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L64-L545) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:243–247](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L243-L247) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:243–247](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L243-L247) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:243–247](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L243-L247)
+[borg-rs docs/c-bugs.md:243–247](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L243-L247)
 
 > The summon cases' grid scan assigns to the `x`/`y` parameters
 >     (harmless: not read again). S_HI_DRAGON with protection from evil
@@ -1913,11 +1938,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:64–545](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L64-L545) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:249–250](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L249-L250) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:249–250](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L249-L250) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:249–250](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L249-L250)
+[borg-rs docs/c-bugs.md:249–250](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L249-L250)
 
 > The second `borg_crush_spell` block (in the ranged part) clears `v1`
 >     again instead of `v2`.
@@ -1942,11 +1967,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:64–545](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L64-L545) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:251–256](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L251-L256) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:251–256](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L251-L256) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:251–256](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L251-L256)
+[borg-rs docs/c-bugs.md:251–256](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L251-L256)
 
 > The Teleport Other skip list is read with `ii <= borg_tp_other_n`, one
 >     entry past the count.
@@ -1975,11 +2000,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:64–545](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L64-L545) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:257–259](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L257-L259) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:257–259](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L257-L259) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:257–259](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L257-L259)
+[borg-rs docs/c-bugs.md:257–259](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L257-L259)
 
 > The first move simulation tests `feat == FEAT_GRANITE`, the second
 >     `feat >= FEAT_GRANITE` (so it also treats terrain above the permanent
@@ -2005,11 +2030,11 @@ Checked 2026-11-05; borg-rs group(s) 17.
 Pinned source references:
 
 - [C src/borg/borg-danger.c:2824–2865](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L2824-L2865) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:260–262](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L260-L262) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:260–262](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L260-L262) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:260–262](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L260-L262)
+[borg-rs docs/c-bugs.md:260–262](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L260-L262)
 
 > `borg_danger()` overwrites its `full_damage` argument with `true`, so the
 >   partial-damage paths above are only reached through direct
@@ -2035,11 +2060,11 @@ Checked 2026-11-05; borg-rs group(s) 18.
 Pinned source references:
 
 - [C src/borg/borg-item-analyze.c:43–261](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-analyze.c#L43-L261) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:269–275](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L269-L275) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:269–275](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L269-L275) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:269–275](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L269-L275)
+[borg-rs docs/c-bugs.md:269–275](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L269-L275)
 
 > "Give credit for stat bonuses" tests `of_has(item->flags, STAT_STR)` ...
 >   `of_has(item->flags, STAT_CON)`: stat indices (0..4) used as object flag
@@ -2069,19 +2094,19 @@ Checked 2026-11-05; borg-rs group(s) 19, 31.
 Pinned source references:
 
 - [C src/borg/borg-flow-take.c:426–586](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-take.c#L426-L586) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:281–284](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L281-L284) — reported C observation; not an independent validation
-- [borg-rs docs/c-bugs.md:537–540](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L537-L540) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:281–284](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L281-L284) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:537–540](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L537-L540) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:281–284](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L281-L284)
+[borg-rs docs/c-bugs.md:281–284](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L281-L284)
 
 > `borg_flow_take()`, `borg_flow_take_scum()`, `borg_flow_take_lunal()`:
 >   the "nearest up stairs" scan skips a stair when `b_j >= j`, so it keeps
 >   the *farthest* up staircase (the first of equally far ones). The leash
 >   and "too far from the stairs" tests use that one.
 
-[borg-rs docs/c-bugs.md:537–540](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L537-L540)
+[borg-rs docs/c-bugs.md:537–540](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L537-L540)
 
 > `borg_flow_dark()`: the "nearest up stairs" scan skips a stair when
 >   `b_j >= j`, so it keeps the *farthest* up staircase (the first of
@@ -2108,11 +2133,11 @@ Checked 2026-11-05; borg-rs group(s) 19.
 Pinned source references:
 
 - [C src/borg/borg-flow-take.c:426–586](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-take.c#L426-L586) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:286–289](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L286-L289) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:286–289](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L286-L289) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:286–289](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L286-L289)
+[borg-rs docs/c-bugs.md:286–289](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L286-L289)
 
 > `if (!k_ptr) continue;` tests `&k_info[take->kidx]`, which is never
 >     NULL, so dead entries below `borg_takes_nxt` are not skipped: their
@@ -2139,11 +2164,11 @@ Checked 2026-11-05; borg-rs group(s) 19.
 Pinned source references:
 
 - [C src/borg/borg-flow-take.c:426–586](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-take.c#L426-L586) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:290–292](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L290-L292) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:290–292](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L290-L292) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:290–292](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L290-L292)
+[borg-rs docs/c-bugs.md:290–292](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L290-L292)
 
 > `item_bad` is worked out (with its "Lunal Item" notes) but never
 >     read: every entry that passes the view and stairs tests is a target,
@@ -2169,11 +2194,11 @@ Checked 2026-11-05; borg-rs group(s) 19.
 Pinned source references:
 
 - [C src/borg/borg-flow-take.c:155–194](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-take.c#L155-L194) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:295–299](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L295-L299) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:295–299](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L295-L299) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:295–299](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L295-L299)
+[borg-rs docs/c-bugs.md:295–299](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L295-L299)
 
 > `borg_follow_take()`: an object under the Borg is deleted, but the
 >   function goes on with the wiped entry: the "on screen" test reads grid
@@ -2201,11 +2226,11 @@ Checked 2026-11-05; borg-rs group(s) 19.
 Pinned source references:
 
 - [C src/borg/borg-flow-take.c:426–586](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-take.c#L426-L586) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:300–302](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L300-L302) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:300–302](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L300-L302) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:300–302](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L300-L302)
+[borg-rs docs/c-bugs.md:300–302](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L300-L302)
 
 > `observe_take_move()`: the attr test only applies when the kind's char
 >   is `'!'` and its attr is not 11; for every other kind the attr is not
@@ -2231,11 +2256,11 @@ Checked 2026-11-05; borg-rs group(s) 20.
 Pinned source references:
 
 - [C src/borg/borg-item-use.c:1008–1045](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-use.c#L1008-L1045) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:308–312](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L308-L312) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:308–312](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L308-L312) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:308–312](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L308-L312)
+[borg-rs docs/c-bugs.md:308–312](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L308-L312)
 
 > The device fail check `100 * ((skill - lev) - 140) / ((lev - skill) - 90)`
 >   (rods, staffs, rings, `borg_activate_failure`) divides by zero when the
@@ -2263,11 +2288,11 @@ Checked 2026-11-05; borg-rs group(s) 20.
 Pinned source references:
 
 - [C src/borg/borg-item-use.c:46–72](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-use.c#L46-L72) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:313–315](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L313-L315) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:313–315](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L313-L315) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:313–315](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L313-L315)
+[borg-rs docs/c-bugs.md:313–315](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L313-L315)
 
 > `borg_quaff_crit()`: "Avoid drinking CCW twice in a row" returns false
 >   (74 times in 100) when the last CCW was quaffed *more* than 4 game turns
@@ -2293,11 +2318,11 @@ Checked 2026-11-05; borg-rs group(s) 20.
 Pinned source references:
 
 - [C src/borg/borg-item-use.c:726–776](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-use.c#L726-L776) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:316–317](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L316-L317) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:316–317](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L316-L317) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:316–317](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L316-L317)
+[borg-rs docs/c-bugs.md:316–317](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L316-L317)
 
 > `borg_equips_ring()` / `borg_activate_ring()` loop from `INVEN_RIGHT`
 >   to `< INVEN_LEFT`, so only the right ring is ever checked.
@@ -2322,11 +2347,11 @@ Checked 2026-11-05; borg-rs group(s) 20.
 Pinned source references:
 
 - [C src/borg/borg-item-use.c:578–632](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-use.c#L578-L632) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:318–322](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L318-L322) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:318–322](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L318-L322) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:318–322](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L318-L322)
+[borg-rs docs/c-bugs.md:318–322](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L318-L322)
 
 > `borg_use_staff_fail()`: the "desperation" Teleportation branch tests
 >   `fail > 500` again inside `fail > 500`, so a not-confused, not-blind Borg
@@ -2354,11 +2379,11 @@ Checked 2026-11-05; borg-rs group(s) 20.
 Pinned source references:
 
 - [C src/borg/borg-item-use.c:325–407](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-use.c#L325-L407) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:323–325](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L323-L325) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:323–325](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L323-L325) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:323–325](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L323-L325)
+[borg-rs docs/c-bugs.md:323–325](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L323-L325)
 
 > `borg_eat_food_any()`: "when hurting" is `CURHP < 4 || CURHP <= MAXHP`,
 >   which is true whenever current HP is not above the maximum (so nearly
@@ -2384,11 +2409,11 @@ Checked 2026-11-05; borg-rs group(s) 20.
 Pinned source references:
 
 - [C src/borg/borg-item-use.c:1050–1176](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-use.c#L1050-L1176) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:326–327](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L326-L327) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:326–327](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L326-L327) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:326–327](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L326-L327)
+[borg-rs docs/c-bugs.md:326–327](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L326-L327)
 
 > `borg_use_things()`: the Enlightenment potion branch only `break`s
 >   (never quaffs); the comment says "Check the scroll".
@@ -2413,11 +2438,11 @@ Checked 2026-11-05; borg-rs group(s) 21.
 Pinned source references:
 
 - [C src/borg/borg-item-wear.c:534–728](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-wear.c#L534-L728) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:333–335](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L333-L335) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:333–335](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L333-L335) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:333–335](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L333-L335)
+[borg-rs docs/c-bugs.md:333–335](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L333-L335)
 
 > "Pass on the swap which yields the best result" keeps the *higher*
 >     danger: `if (b_p1 <= b_p2) b_p = b_p2 (weapon) else b_p = b_p1
@@ -2443,11 +2468,11 @@ Checked 2026-11-05; borg-rs group(s) 21.
 Pinned source references:
 
 - [C src/borg/borg-item-wear.c:534–728](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-wear.c#L534-L728) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:336–341](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L336-L341) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:336–341](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L336-L341) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:336–341](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L336-L341)
+[borg-rs docs/c-bugs.md:336–341](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L336-L341)
 
 > With an armour swap and no weapon swap, `b_p2` stays 0, so an armour
 >     danger of 0 picks `swap = weapon_swap - 1 = -1` and the key is
@@ -2476,11 +2501,11 @@ Checked 2026-11-05; borg-rs group(s) 21.
 Pinned source references:
 
 - [C src/borg/borg-item-wear.c:534–728](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-wear.c#L534-L728) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:342](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L342) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:342](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L342) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:342](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L342)
+[borg-rs docs/c-bugs.md:342](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L342)
 
 > The `i == -1` fixes are dead (the swap index is non-zero there).
 
@@ -2504,11 +2529,11 @@ Checked 2026-11-05; borg-rs group(s) 21.
 Pinned source references:
 
 - [C src/borg/borg-item-wear.c:1077–1207](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-wear.c#L1077-L1207) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:343–347](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L343-L347) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:343–347](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L343-L347) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:343–347](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L343-L347)
+[borg-rs docs/c-bugs.md:343–347](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L343-L347)
 
 > `borg_one_step_wearing_best()`: `int skipping = skip;` sits inside the
 >   loop, so it is reset on every pass. With `skip > 0` (inventory or home
@@ -2536,11 +2561,11 @@ Checked 2026-11-05; borg-rs group(s) 21.
 Pinned source references:
 
 - [C src/borg/borg-item-wear.c:1212–1321](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-wear.c#L1212-L1321) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:348–352](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L348-L352) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:348–352](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L348-L352) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:348–352](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L348-L352)
+[borg-rs docs/c-bugs.md:348–352](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L348-L352)
 
 > `borg_best_stuff_aux()`: the "don't test the same item in both ring
 >   slots" test for `INVEN_LEFT` (order 8) reads `test[n + 1]`, the
@@ -2568,11 +2593,11 @@ Checked 2026-11-05; borg-rs group(s) 21.
 Pinned source references:
 
 - [C src/borg/borg-item-wear.c:745–1037](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-wear.c#L745-L1037) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:353–356](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L353-L356) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:353–356](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L353-L356) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:353–356](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L353-L356)
+[borg-rs docs/c-bugs.md:353–356](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L353-L356)
 
 > `borg_wear_stuff()`: `track_worn_time` is an `int16_t`, so
 >   `borg.time.now` is truncated; once the time passes 32767 the "worn
@@ -2599,11 +2624,11 @@ Checked 2026-11-05; borg-rs group(s) 22.
 Pinned source references:
 
 - [C src/borg/borg-light.c:683–835](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-light.c#L683-L835) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:362–367](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L362-L367) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:362–367](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L362-L367) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:362–367](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L362-L367)
+[borg-rs docs/c-bugs.md:362–367](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L362-L367)
 
 > `borg_light_beam()`: "Don't do it if on the edge of shifting the panel"
 >   compares the Borg's absolute dungeon row `borg.c.y` with the panel
@@ -2632,11 +2657,11 @@ Checked 2026-11-05; borg-rs group(s) 22.
 Pinned source references:
 
 - [C src/borg/borg-light.c:683–835](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-light.c#L683-L835) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:368–371](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L368-L371) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:368–371](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L368-L371) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:368–371](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L368-L371)
+[borg-rs docs/c-bugs.md:368–371](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L368-L371)
 
 > `borg_light_beam()`: the west test starts at step 1 while north, south
 >   and east start at step 0 (the Borg's own grid), so with a light radius
@@ -2663,11 +2688,11 @@ Checked 2026-11-05; borg-rs group(s) 22.
 Pinned source references:
 
 - [C src/borg/borg-light.c:552–608](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-light.c#L552-L608) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:372–377](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L372-L377) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:372–377](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L372-L377) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:372–377](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L372-L377)
+[borg-rs docs/c-bugs.md:372–377](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L372-L377)
 
 > `borg_refuel_lantern()`: with no flask of oil, the lantern scan starts
 >   at `borg_slot(TV_LIGHT, sv_light_lantern)`, which (lanterns do not
@@ -2696,11 +2721,11 @@ Checked 2026-11-05; borg-rs group(s) 23.
 Pinned source references:
 
 - [C src/borg/borg-item-decurse.c:111–156](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-decurse.c#L111-L156) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:382–385](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L382-L385) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:382–385](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L382-L385) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:382–385](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L382-L385)
+[borg-rs docs/c-bugs.md:382–385](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L382-L385)
 
 > `BI_FIRST_CURSED` is set by `borg_notice()` in the order equipment,
 >   quiver, inventory, so in the quiver branch `BORG_EQUIP` is never set and
@@ -2727,11 +2752,11 @@ Checked 2026-11-05; borg-rs group(s) 23.
 Pinned source references:
 
 - [C src/borg/borg-item-decurse.c:111–156](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-decurse.c#L111-L156) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:386–388](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L386-L388) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:386–388](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L386-L388) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:386–388](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L386-L388)
+[borg-rs docs/c-bugs.md:386–388](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L386-L388)
 
 > A cursed ammo stack in the pack (outside the quiver) sets `BORG_QUILL`,
 >   not `BORG_INVEN`. With such a stack and a cursed quiver slot first, no
@@ -2757,11 +2782,11 @@ Checked 2026-11-05; borg-rs group(s) 23.
 Pinned source references:
 
 - [C src/borg/borg-item-decurse.c:37–69](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-decurse.c#L37-L69) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:389–393](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L389-L393) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:389–393](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L389-L393) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:389–393](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L389-L393)
+[borg-rs docs/c-bugs.md:389–393](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L389-L393)
 
 > `borg_decurse_armour()` / `borg_decurse_weapon()` send
 >   `all_letters_nohjkl[swap - 1]` without checking the swap: with a
@@ -2789,11 +2814,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:243–383](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L243-L383) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:398–399](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L398-L399) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:398–399](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L398-L399) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:398–399](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L398-L399)
+[borg-rs docs/c-bugs.md:398–399](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L398-L399)
 
 > `borg_update_kill_old()`: the "unique is dead" fix-up writes
 >   `borg_race_death[i]` with the *kill* index `i`, not the race index.
@@ -2818,11 +2843,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:709–850](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L709-L850) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:400–403](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L400-L403) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:400–403](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L400-L403) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:400–403](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L400-L403)
+[borg-rs docs/c-bugs.md:400–403](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L400-L403)
 
 > `borg_new_kill()`: `r_ptr` is taken from the slot's race *before*
 >   `kill->r_idx` is set, so the "force the grid to floor / granite" step at
@@ -2849,11 +2874,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:529–704](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L529-L704) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:404–408](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L404-L408) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:404–408](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L404-L408) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:404–408](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L404-L408)
+[borg-rs docs/c-bugs.md:404–408](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L404-L408)
 
 > `borg_follow_kill()`: `randint1(100) < 1` is never true (but still draws
 >   a random number). The "delete monsters that did not really move" test
@@ -2881,11 +2906,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:243–383](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L243-L383) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:409–411](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L409-L411) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:409–411](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L409-L411) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:409–411](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L409-L411)
+[borg-rs docs/c-bugs.md:409–411](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L409-L411)
 
 > `observe_kill_move()`: for a unique, `d = d * 2` changes the parameter,
 >   so the allowed distance stays doubled (and doubles again per unique) for
@@ -2911,11 +2936,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:1651–1917](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L1651-L1917) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:412–415](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L412-L415) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:412–415](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L412-L415) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:412–415](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L412-L415)
+[borg-rs docs/c-bugs.md:412–415](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L412-L415)
 
 > `borg_flow_kill()`: `hall_walls` and `skip_monster` are set up once,
 >   not per monster. `hall_walls` keeps counting from the Borg's own
@@ -2942,11 +2967,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:1951–2035](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L1951-L2035) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:416–417](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L416-L417) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:416–417](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L416-L417) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:416–417](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L416-L417)
+[borg-rs docs/c-bugs.md:416–417](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L416-L417)
 
 > `borg_flow_kill_aim()`: the "next to a monster" check scans slot 0 and
 >   dead slots too (their stale or (0,0) positions).
@@ -2971,11 +2996,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:2882–3084](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L2882-L3084) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:418–420](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L418-L420) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:418–420](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L418-L420) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:418–420](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L418-L420)
+[borg-rs docs/c-bugs.md:418–420](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L418-L420)
 
 > `borg_shoot_scoot_safe()`: the danger of an adjacent monster is
 >   `borg_danger_one_kill(..., i, ...)` with `i` the *direction* index
@@ -3001,11 +3026,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:3300–3339](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L3300-L3339) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:421–424](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L421-L424) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:421–424](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L421-L424) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:421–424](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L421-L424)
+[borg-rs docs/c-bugs.md:421–424](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L421-L424)
 
 > `borg_init_flow_kill()`: the "extract dead uniques" cheat says "skip
 >   non-uniques" but skips uniques, so it marks non-unique races with
@@ -3032,11 +3057,11 @@ Checked 2026-11-05; borg-rs group(s) 24.
 Pinned source references:
 
 - [C src/borg/borg-flow-kill.c:1274–1626](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-kill.c#L1274-L1626) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:425–426](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L425-L426) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:425–426](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L425-L426) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:425–426](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L425-L426)
+[borg-rs docs/c-bugs.md:425–426](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L425-L426)
 
 > `borg_locate_kill()`: `my_strnicmp(who, "It", 2)` treats any name that
 >   starts with "it" (any case) as an invisible monster.
@@ -3061,11 +3086,11 @@ Checked 2026-11-05; borg-rs group(s) 25.
 Pinned source references:
 
 - [C src/borg/borg-item-enchant.c:73–107](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-enchant.c#L73-L107) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:432–440](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L432-L440) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:432–440](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L432-L440) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:432–440](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L432-L440)
+[borg-rs docs/c-bugs.md:432–440](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L432-L440)
 
 > `borg_pick_weapon()` decides whether to send `'/'` (to equipment) or
 >   `'|'` (to quiver) by looking for bows, diggers, hafted weapons,
@@ -3097,11 +3122,11 @@ Checked 2026-11-05; borg-rs group(s) 25.
 Pinned source references:
 
 - [C src/borg/borg-item-enchant.c:39–70](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-item-enchant.c#L39-L70) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:441–442](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L441-L442) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:441–442](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L441-L442) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:441–442](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L441-L442)
+[borg-rs docs/c-bugs.md:441–442](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L441-L442)
 
 > `borg_pick_armor()` tests `TV_HELM` twice; `borg_enchant_to_d()` tests
 >   `BI_AMMO_POWER < 3` twice in its ammo loop (both harmless).
@@ -3126,11 +3151,11 @@ Checked 2026-11-05; borg-rs group(s) 26.
 Pinned source references:
 
 - [C src/borg/borg-recover.c:59–469](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-recover.c#L59-L469) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:448–450](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L448-L450) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:448–450](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L448-L450) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:448–450](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L448-L450)
+[borg-rs docs/c-bugs.md:448–450](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L448-L450)
 
 > The munchkin "cure blindness by resting" branch calls
 >   `borg_note("# Resting to cure problem. (danger %d)...")` without
@@ -3156,11 +3181,11 @@ Checked 2026-11-05; borg-rs group(s) 26.
 Pinned source references:
 
 - [C src/borg/borg-recover.c:59–469](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-recover.c#L59-L469) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:451–453](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L451-L453) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:451–453](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L451-L453) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:451–453](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L451-L453)
+[borg-rs docs/c-bugs.md:451–453](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L451-L453)
 
 > The "expensive" poison cure tries `borg_eat(TV_MUSHROOM,
 >   sv_mush_fast_recovery)` twice in the same `||` chain (the second try
@@ -3186,11 +3211,11 @@ Checked 2026-11-05; borg-rs group(s) 26.
 Pinned source references:
 
 - [C src/borg/borg-recover.c:59–469](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-recover.c#L59-L469) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:454–456](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L454-L456) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:454–456](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L454-L456) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:454–456](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L454-L456)
+[borg-rs docs/c-bugs.md:454–456](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L454-L456)
 
 > The rod recharge rest indexes `borg_items[borg_slot(TV_ROD, sval)]`
 >   without checking for -1; it relies on `borg.has[kind]` meaning the rod
@@ -3216,12 +3241,12 @@ Checked 2026-11-05; borg-rs group(s) 27, 28.
 Pinned source references:
 
 - [C src/borg/borg-flow-stairs.c:253–342](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-stairs.c#L253-L342) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:462–468](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L462-L468) — reported C observation; not an independent validation
-- [borg-rs docs/c-bugs.md:489–492](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L489-L492) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:462–468](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L462-L468) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:489–492](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L489-L492) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:462–468](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L462-L468)
+[borg-rs docs/c-bugs.md:462–468](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L462-L468)
 
 > `borg_prep_leave_level_spells()` sets `borg.no_rest_prep =
 >   borg.trait[BI_CLEVEL] * 1000` after casting Protection from Evil.
@@ -3231,7 +3256,7 @@ Reported by borg-rs (lead text, not independent validation):
 >   borg-think-dungeon.c) treat it as expired at once. borg-fight-defend.c
 >   and borg-fight-perm.c have the same assignment.
 
-[borg-rs docs/c-bugs.md:489–492](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L489-L492)
+[borg-rs docs/c-bugs.md:489–492](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L489-L492)
 
 > Speed and Protection from Evil set the `int16_t` `borg.no_rest_prep`
 >   to `CLEVEL * 1000`, which wraps negative from level 33 on (33000 ->
@@ -3258,11 +3283,11 @@ Checked 2026-11-05; borg-rs group(s) 27.
 Pinned source references:
 
 - [C src/borg/borg-flow-stairs.c:46–71](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-stairs.c#L46-L71) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:469–470](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L469-L470) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:469–470](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L469-L470) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:469–470](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L469-L470)
+[borg-rs docs/c-bugs.md:469–470](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L469-L470)
 
 > `borg_flow_cost_stair()` does not check `b_stair` against
 >   `track_less.num` (it reads any allocated entry).
@@ -3287,11 +3312,11 @@ Checked 2026-11-05; borg-rs group(s) 28.
 Pinned source references:
 
 - [C src/borg/borg-fight-perm.c:428–470](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-fight-perm.c#L428-L470) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:477–481](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L477-L481) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:477–481](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L477-L481) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:477–481](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L477-L481)
+[borg-rs docs/c-bugs.md:477–481](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L477-L481)
 
 > `borg_perma_aux_regen()` has no `if (borg_simulate) return ...;` test,
 >   so the scoring loop of `borg_perma_spell()` really casts Rapid
@@ -3319,11 +3344,11 @@ Checked 2026-11-05; borg-rs group(s) 28.
 Pinned source references:
 
 - [C src/borg/borg-fight-perm.c:522–564](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-fight-perm.c#L522-L564) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:482–483](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L482-L483) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:482–483](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L482-L483) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:482–483](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L482-L483)
+[borg-rs docs/c-bugs.md:482–483](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L482-L483)
 
 > `borg_perma_aux_venom()` checks the cost of `SMITE_EVIL`, not `VENOM`
 >   (for a class without Smite Evil the cost is -1, so it always passes).
@@ -3348,11 +3373,11 @@ Checked 2026-11-05; borg-rs group(s) 28.
 Pinned source references:
 
 - [C src/borg/borg-fight-perm.c:328–370](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-fight-perm.c#L328-L370) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:484–485](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L484-L485) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:484–485](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L484-L485) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:484–485](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L484-L485)
+[borg-rs docs/c-bugs.md:484–485](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L484-L485)
 
 > `borg_perma_aux_fastcast()` scores 5 when simulating but returns 1 when
 >   cast (harmless: the real call's value is not used).
@@ -3377,11 +3402,11 @@ Checked 2026-11-05; borg-rs group(s) 28.
 Pinned source references:
 
 - [C src/borg/borg-fight-perm.c:73–117](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-fight-perm.c#L73-L117) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:486–488](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L486-L488) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:486–488](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L486-L488) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:486–488](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L486-L488)
+[borg-rs docs/c-bugs.md:486–488](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L486-L488)
 
 > `borg_perma_aux_bless()` and `borg_perma_aux_resist()` ignore whether
 >   the cast worked and always set `no_rest_prep`; `..._resist_colluin()`
@@ -3407,11 +3432,11 @@ Checked 2026-11-05; borg-rs group(s) 29.
 Pinned source references:
 
 - [C src/borg/borg-flow-glyph.c:81–329](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-glyph.c#L81-L329) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:498–501](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L498-L501) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:498–501](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L498-L501) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:498–501](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L498-L501)
+[borg-rs docs/c-bugs.md:498–501](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L498-L501)
 
 > The "Skip every non floor/glyph" test is `ag->feat != FEAT_FLOOR &&
 >   ag->glyph`: it skips only glyphed non-floor grids, so every other grid
@@ -3438,11 +3463,11 @@ Checked 2026-11-05; borg-rs group(s) 29.
 Pinned source references:
 
 - [C src/borg/borg-flow-glyph.c:81–329](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-glyph.c#L81-L329) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:502–503](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L502-L503) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:502–503](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L502-L503) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:502–503](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L502-L503)
+[borg-rs docs/c-bugs.md:502–503](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L502-L503)
 
 > In the "old center" branch `tmp_glyph` is never counted, so the score
 >   is always `500 - cost`.
@@ -3467,11 +3492,11 @@ Checked 2026-11-05; borg-rs group(s) 29.
 Pinned source references:
 
 - [C src/borg/borg-flow-glyph.c:81–329](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-glyph.c#L81-L329) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:504–507](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L504-L507) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:504–507](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L504-L507) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:504–507](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L504-L507)
+[borg-rs docs/c-bugs.md:504–507](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L504-L507)
 
 > On arrival `borg_needs_new_sea` is cleared (and the center stored) even
 >   if no glyph can be made. When the cast/read/activation works but the
@@ -3498,11 +3523,11 @@ Checked 2026-11-05; borg-rs group(s) 29.
 Pinned source references:
 
 - [C src/borg/borg-flow-glyph.c:81–329](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-glyph.c#L81-L329) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:508–509](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L508-L509) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:508–509](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L508-L509) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:508–509](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L508-L509)
+[borg-rs docs/c-bugs.md:508–509](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L508-L509)
 
 > The "is the sea complete" check reads `borg_grids[center + ddd]`
 >   without a bounds check (a center on row/column 1 would read index -1).
@@ -3527,11 +3552,11 @@ Checked 2026-11-05; borg-rs group(s) 29.
 Pinned source references:
 
 - [C src/borg/borg-flow-glyph.c:81–329](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-glyph.c#L81-L329) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:510–513](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L510-L513) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:510–513](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L510-L513) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:510–513](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L510-L513)
+[borg-rs docs/c-bugs.md:510–513](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L510-L513)
 
 > `track_glyph.num` can go below 0: borg-messages.c's "The object resists
 >   the spell" / "There is no clear floor" handler does `num--` without a
@@ -3558,11 +3583,11 @@ Checked 2026-11-05; borg-rs group(s) 30.
 Pinned source references:
 
 - [C src/borg/borg-attack-munchkin.c:47–182](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-attack-munchkin.c#L47-L182) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:520–526](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L520-L526) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:520–526](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L520-L526) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:520–526](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L520-L526)
+[borg-rs docs/c-bugs.md:520–526](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L520-L526)
 
 > `borg_munchkin_mage()` sets `borg_attacking = true` before its monster
 >   scan, but the two `return false` inside the scan (a monster adjacent,
@@ -3592,11 +3617,11 @@ Checked 2026-11-05; borg-rs group(s) 30.
 Pinned source references:
 
 - [C src/borg/borg-attack-munchkin.c:47–182](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-attack-munchkin.c#L47-L182) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:527–528](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L527-L528) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:527–528](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L527-L528) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:527–528](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L527-L528)
+[borg-rs docs/c-bugs.md:527–528](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L527-L528)
 
 > Both functions set `borg_simulate = true` and, when no attack scores
 >   above 0, return without setting it back to false.
@@ -3621,11 +3646,11 @@ Checked 2026-11-05; borg-rs group(s) 30.
 Pinned source references:
 
 - [C src/borg/borg-attack-munchkin.c:47–182](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-attack-munchkin.c#L47-L182) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:529–531](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L529-L531) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:529–531](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L529-L531) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:529–531](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L529-L531)
+[borg-rs docs/c-bugs.md:529–531](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L529-L531)
 
 > `borg_munchkin_mage()` has no class check: despite the name and the
 >   comment ("use MM"), every class tries every attack type except
@@ -3651,11 +3676,11 @@ Checked 2026-11-05; borg-rs group(s) 31.
 Pinned source references:
 
 - [C src/borg/borg-flow-dark.c:46–199](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-dark.c#L46-L199) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:541–546](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L541-L546) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:541–546](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L541-L546) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:541–546](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L541-L546)
+[borg-rs docs/c-bugs.md:541–546](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L541-L546)
 
 > `borg_flow_dark_interesting()`: the "Explore visible traps" branch is
 >   dead. It is only reached for features from `FEAT_SECRET` up (closed
@@ -3684,11 +3709,11 @@ Checked 2026-11-05; borg-rs group(s) 31.
 Pinned source references:
 
 - [C src/borg/borg-flow-dark.c:742–849](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-dark.c#L742-L849) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:547–550](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L547-L550) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:547–550](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L547-L550) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:547–550](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L547-L550)
+[borg-rs docs/c-bugs.md:547–550](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L547-L550)
 
 > `borg_flow_dark_4()`: "Clear the edges" sets `borg_data_know` and
 >   `borg_data_icky` of the whole border rectangle to false, so danger marks
@@ -3715,11 +3740,11 @@ Checked 2026-11-05; borg-rs group(s) 31.
 Pinned source references:
 
 - [C src/borg/borg-flow-dark.c:854–939](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-dark.c#L854-L939) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:551–552](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L551-L552) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:551–552](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L551-L552) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:551–552](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L551-L552)
+[borg-rs docs/c-bugs.md:551–552](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L551-L552)
 
 > `borg_flow_dark_5()`: the `clevel <= 5` and `clevel <= 30` spread
 >   branches are identical (short leash).
@@ -3744,11 +3769,11 @@ Checked 2026-11-05; borg-rs group(s) 32.
 Pinned source references:
 
 - [C src/borg/borg-flow.c:255–501](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow.c#L255-L501) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:558–562](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L558-L562) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:558–562](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L558-L562) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:558–562](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L558-L562)
+[borg-rs docs/c-bugs.md:558–562](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L558-L562)
 
 > `borg_flow_spread()` skips a shop entrance that is not the goal shop
 >   only when it is in neither the Borg's row nor its column
@@ -3776,11 +3801,11 @@ Checked 2026-11-05; borg-rs group(s) 32.
 Pinned source references:
 
 - [C src/borg/borg-flow.c:613–1097](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow.c#L613-L1097) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:563–567](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L563-L567) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:563–567](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L563-L567) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:563–567](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L563-L567)
+[borg-rs docs/c-bugs.md:563–567](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L563-L567)
 
 > `borg_play_step()` (breeder levels) skips doors when
 >   `track_door.num >= 255`, but `track_door` has only 100 entries, so the
@@ -3808,11 +3833,11 @@ Checked 2026-11-05; borg-rs group(s) 32.
 Pinned source references:
 
 - [C src/borg/borg-flow.c:613–1097](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow.c#L613-L1097) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:568–570](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L568-L570) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:568–570](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L568-L570) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:568–570](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L568-L570)
+[borg-rs docs/c-bugs.md:568–570](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L568-L570)
 
 > `borg_play_step()` looks up the chest under the goal grid
 >   (`loc(x2, y2)`), not under the grid stepped on; the two are the same
@@ -3838,11 +3863,11 @@ Checked 2026-11-05; borg-rs group(s) 32.
 Pinned source references:
 
 - [C src/borg/borg-flow.c:1122–1203](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow.c#L1122-L1203) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:571–572](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L571-L572) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:571–572](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L571-L572) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:571–572](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L571-L572)
+[borg-rs docs/c-bugs.md:571–572](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L571-L572)
 
 > `borg_flow_old()` reads `borg_data_flow` at the neighbour before its
 >   "avoid screen edges" test (a Borg on row/column 0 would read index -1).
@@ -3867,11 +3892,11 @@ Checked 2026-11-05; borg-rs group(s) 32.
 Pinned source references:
 
 - [C src/borg/borg-flow.c:613–1097](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow.c#L613-L1097) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:573–575](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L573-L575) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:573–575](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L573-L575) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:573–575](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L573-L575)
+[borg-rs docs/c-bugs.md:573–575](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L573-L575)
 
 > `borg_play_step()` ends with a dead `ui_event` "unhook" (a local that is
 >   never set); `borg_free_flow()` frees `borg_data_flow` twice (the second
@@ -3897,11 +3922,11 @@ Checked 2026-11-05; borg-rs group(s) 32.
 Pinned source references:
 
 - [C src/borg/borg-flow.c:506–580](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow.c#L506-L580) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:576–578](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L576-L578) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:576–578](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L576-L578) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:576–578](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L576-L578)
+[borg-rs docs/c-bugs.md:576–578](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L576-L578)
 
 > `borg_flow_enqueue_grid()` computes the danger of every new grid even
 >   when desperate/lunal/munchkin/digging, then ignores it (no effect but
@@ -3927,11 +3952,11 @@ Checked 2026-11-05; borg-rs group(s) 33.
 Pinned source references:
 
 - [C src/borg/borg-store-sell.c:529–643](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L529-L643) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:585–589](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L585-L589) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:585–589](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L585-L589) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:585–589](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L585-L589)
+[borg-rs docs/c-bugs.md:585–589](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L585-L589)
 
 > `borg_think_home_sell_useful()`: the two `memset`s that "clear out our
 >   initial best/test objects" pass
@@ -3959,11 +3984,11 @@ Checked 2026-11-05; borg-rs group(s) 33.
 Pinned source references:
 
 - [C src/borg/borg-store-sell.c:398–524](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L398-L524) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:590–595](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L590-L595) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:590–595](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L590-L595) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:590–595](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L590-L595)
+[borg-rs docs/c-bugs.md:590–595](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L590-L595)
 
 > `borg_think_home_sell_best()`: for a staff or wand, each trial takes
 >   `charge_each` charges off the pack item, but the restore after the
@@ -3992,11 +4017,11 @@ Checked 2026-11-05; borg-rs group(s) 33.
 Pinned source references:
 
 - [C src/borg/borg-store-sell.c:816–941](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L816-L941) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:596–598](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L596-L598) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:596–598](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L596-L598) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:596–598](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L596-L598)
+[borg-rs docs/c-bugs.md:596–598](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L596-L598)
 
 > `borg_good_sell()`: the "ego item not fully identified" test asks
 >   `borg_ego_has_random_power()` about the ego of the cloak slot
@@ -4022,11 +4047,11 @@ Checked 2026-11-05; borg-rs group(s) 33.
 Pinned source references:
 
 - [C src/borg/borg-store-sell.c:1162–1266](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L1162-L1266) — C function context; reported fault site not yet independently checked
-- [borg-rs docs/c-bugs.md:604–608](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L604-L608) — reported C observation; not an independent validation
+- [borg-rs docs/c-bugs.md:604–608](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L604-L608) — reported C observation; not an independent validation
 
 Reported by borg-rs (lead text, not independent validation):
 
-[borg-rs docs/c-bugs.md:604–608](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L604-L608)
+[borg-rs docs/c-bugs.md:604–608](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L604-L608)
 
 > `borg_count_sell()`: an unidentified item that is not part of a pile
 >   makes the function `return false` (0) at once. That return skips the
@@ -4045,48 +4070,831 @@ Fix proposal: none. Tracker: intake [#93](https://github.com/diegoami/mandos/iss
 
 Next: Check the cited C context and current port, separate harmless/unreachable behavior from defects, then retain a legal reproduction and controls before a ready local proposal.
 
+### CBUG-0119
+
+**Junk-drop note prints the last scanned value rather than the selected item value**
+
+Checked 2026-11-05; borg-rs group(s) 37.
+
+Pinned source references:
+
+- [C src/borg/borg-junk.c:250–493](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L250-L493) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:690–692](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L690-L692) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:690–692](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L690-L692)
+
+> `borg_drop_junk()`: the "# Dropping junk %s (valued at %ld)" note prints
+>   `value`, which still holds the value of the *last* item scanned, not
+>   the value of the item being dropped.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0120
+
+**Drop-hole high-level device and consumable protection uses always-true subtype conditions**
+
+Checked 2026-11-05; borg-rs group(s) 37.
+
+Pinned source references:
+
+- [C src/borg/borg-junk.c:516–951](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L516-L951) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:693–699](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L693-L699) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:693–699](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L693-L699)
+
+> `borg_drop_hole()`: the "BIG HACK! don't crush cool stuff" tests for
+>   rods, wands, scrolls and potions (Borg above clevel 35) chain `!=` with
+>   `||`, so they hold for every sval (the svals compared are distinct).
+>   Every aware rod, wand and potion is valued at `iqty * 300000`, every
+>   aware scroll at `iqty * 30000`, and the `value / 2` / `value / 10` else
+>   branches are dead. The staff test is false only for Dispel Evil when
+>   `BI_GOOD_S_CHG >= 2` and `BI_ASTFDEST >= 2`.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0121
+
+**Drop-hole desperate value boost overwrites earlier category boosts**
+
+Checked 2026-11-05; borg-rs group(s) 37.
+
+Pinned source references:
+
+- [C src/borg/borg-junk.c:516–951](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L516-L951) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:700–703](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L700-L703) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:700–703](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L700-L703)
+
+> `borg_drop_hole()`: the second "Skip artifacts" test (`art_idx &&
+>   !ident`) is dead (all artifacts were skipped earlier). In the
+>   desperate pass `value_boost = 7000` overwrites the 10000 (boots, weapon
+>   while digging) and 5000 (unknown runes) boosts set just before it.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0122
+
+**Slow-drop equipment command branches are unreachable after equipment is skipped**
+
+Checked 2026-11-05; borg-rs group(s) 37.
+
+Pinned source references:
+
+- [C src/borg/borg-junk.c:961–1147](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L961-L1147) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:704–706](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L704-L706) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:704–706](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L704-L706)
+
+> `borg_drop_slow()`: the scan skips every equipment slot
+>   (`pack_size <= i <= INVEN_FEET`), so the `/` + equipment letter branches
+>   of the inscribe and drop keys are dead.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0123
+
+**Equipment removal selects the last non-worsening slot and leaves stale scratch contents**
+
+Checked 2026-11-05; borg-rs group(s) 37.
+
+Pinned source references:
+
+- [C src/borg/borg-junk.c:1261–1369](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L1261-L1369) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:707–711](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L707-L711) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:707–711](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L707-L711)
+
+> `borg_remove_stuff()`: `b_p` stays `borg.power`, so the *last*
+>   equipment slot whose removal does not lower the power is taken off, not
+>   the best one, and "Power with" always prints `borg.power`. The hole
+>   slot is restored with `iqty = 0` only: it keeps a copy of the last
+>   tested item during the final `borg_notice()`.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0124
+
+**Failed Brawn consumption falls through into later potion cases**
+
+Checked 2026-11-05; borg-rs group(s) 37.
+
+Pinned source references:
+
+- [C src/borg/borg-junk.c:76–245](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L76-L245) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:712–713](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L712-L713) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:712–713](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L712-L713)
+
+> `borg_consume()`: Brawn (`sv_potion_inc_str2`) has no `break` after a
+>   failed quaff and falls into the other potion tests (harmless).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0125
+
+**Malformed integer settings can leave the configuration parser spinning**
+
+Checked 2026-11-05; borg-rs group(s) 38.
+
+Pinned source references:
+
+- [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:720–724](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L720-L724) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:720–724](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L720-L724)
+
+> `borg_proc_setting()`: for an int setting, a byte after the name that is
+>   not ` `, `=`, `-` or a digit (e.g. `borg_stop_dlevel = x`, or an unknown
+>   key that starts with an int setting's name, `borg_stop_dlevelx 5`) is
+>   never consumed: the loop spins forever and the game hangs at start-up
+>   (seen with the C parser at -O2).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0126
+
+**Bare minus and overflowing integer settings are parsed as unintended values**
+
+Checked 2026-11-05; borg-rs group(s) 38.
+
+Pinned source references:
+
+- [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:725–728](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L725-L728) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:725–728](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L725-L728)
+
+> `borg_proc_setting()`: a `-` with no digits after it still negates the
+>   setting, so `borg_no_deeper -` gives -127 (the default, negated). The
+>   value is `atoi()`, so a number past `INT_MAX` is the low 32 bits of the
+>   `long` (`borg_enchant_limit 99999999999` is 1215752191, then 15).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0127
+
+**Setting names are prefix-matched and section whitespace handling is inconsistent**
+
+Checked 2026-11-05; borg-rs group(s) 38.
+
+Pinned source references:
+
+- [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:729–731](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L729-L731) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:729–731](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L729-L731)
+
+> `borg_proc_setting()`: names are prefix-matched, so `borg_verbosex = TRUE`
+>   sets `borg_verbose`; leading spaces are skipped for settings but not for
+>   the `REQ`/`FORMULA`/`CND`/`POWER`/`[BEGIN FORMULA SECTION]` tests.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0128
+
+**Missing or unreopenable borg.txt can leave configuration or file pointers NULL**
+
+Checked 2026-11-05; borg-rs group(s) 38.
+
+Pinned source references:
+
+- [C src/borg/borg-init.c:168–335](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L168-L335) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:732–735](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L732-L735) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:732–735](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L732-L735)
+
+> `borg_init_txt_file()`: if borg.txt is missing and cannot be written, it
+>   returns before `borg_cfg` is allocated; `borg_init()` then reads the NULL
+>   `borg_cfg` and crashes. If the written file cannot be reopened,
+>   `file_getl()` reads through a NULL file.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0129
+
+**Ignore-reset assumes the saved ego-ignore array has already been allocated**
+
+Checked 2026-11-05; borg-rs group(s) 38.
+
+Pinned source references:
+
+- [C src/borg/borg-init.c:337–369](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L337-L369) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:736–738](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L736-L738) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:736–738](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L736-L738)
+
+> `borg_reset_ignore()` frees `borg.init_save.ego_ignore_types[i]` for every
+>   ego without checking the array for NULL (only reached without an earlier
+>   `borg_reinit_options()`, which no command path does).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0130
+
+**Spastic reverse flow stops at its origin and never produces a move**
+
+Checked 2026-11-05; borg-rs group(s) 39.
+
+Pinned source references:
+
+- [C src/borg/borg-flow-misc.c:467–765](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L467-L765) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:745–752](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L745-L752) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:745–752](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L745-L752)
+
+> `borg_flow_spastic()`: the reverse flow is spread with `optimize` set,
+>   and the origin is the Borg's own grid (cost 0), so `borg_flow_spread()`
+>   stops at its first dequeue: every other grid keeps cost 255 and is
+>   skipped as unreachable. Only the Borg's own grid can be picked; the
+>   commit succeeds (cost 0) but `borg_flow_old()` finds no step, cancels
+>   the goal and returns false. The next call takes the "We have arrived"
+>   branch (note, `xtra += 5` on the 9 grids) and returns false as well. The
+>   function never moves the Borg and never returns true.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0131
+
+**Spastic scoring reads the last neighbour extra value rather than the candidate value**
+
+Checked 2026-11-05; borg-rs group(s) 39.
+
+Pinned source references:
+
+- [C src/borg/borg-flow-misc.c:467–765](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L467-L765) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:753–755](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L753-L755) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:753–755](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L753-L755)
+
+> `borg_flow_spastic()`: the value `v` subtracts `ag->xtra * 40`, but
+>   `ag` was reused by the neighbour loops and points at the last one
+>   (`ag_ptr[7]`, the north-west grid), not at the candidate grid.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0132
+
+**Vault flow reuses uncleared queue/cost state and lists duplicate excavation grids**
+
+Checked 2026-11-05; borg-rs group(s) 39.
+
+Pinned source references:
+
+- [C src/borg/borg-flow-misc.c:879–970](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L879-L970) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:756–760](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L756-L760) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:756–760](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L756-L760)
+
+> `borg_flow_vault()`: the flow is not cleared before the grids are
+>   enqueued, so the queue and costs left by the previous flow are spread
+>   further; each excavatable grid is listed once per adjacent permanent
+>   wall (duplicate entries; up to 8 per grid, so `borg_temp_*` could in
+>   theory overflow).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0133
+
+**Rest safety checks the wrong vault neighbourhood and mutates shared scan state**
+
+Checked 2026-11-05; borg-rs group(s) 39.
+
+Pinned source references:
+
+- [C src/borg/borg-flow-misc.c:1213–1363](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L1213-L1363) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:761–767](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L761-L767) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:761–767](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L761-L767)
+
+> `borg_check_rest(y, x)`: the vault test loops `-1 <= i, ii < 1`, so it
+>   looks at the 2x2 grids up and left of the Borg (not the 3x3 around
+>   him), and always around the Borg's position, not around (y, x). The
+>   function clears `borg.time.last_kill_mult` once the early tests pass, so
+>   `borg_flow_recover()`'s scan resets it on its first candidate. The
+>   monster danger is `borg_danger_one_kill()` at the monster's own grid,
+>   not at (y, x).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0134
+
+**Twentieth twitchy random choice enters the surrounded scan even when valid**
+
+Checked 2026-11-05; borg-rs group(s) 39.
+
+Pinned source references:
+
+- [C src/borg/borg-flow-misc.c:975–1084](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L975-L1084) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:768–771](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L768-L771) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:768–771](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L768-L771)
+
+> `borg_twitchy()`: the 20th random pick decrements `count` to 0 before
+>   its tests, so even a good 20th pick runs the "surrounded by walls"
+>   scan, which may choose another direction; `borg.goal.g` is left at the
+>   last random pick.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0135
+
+**Vein scan redundantly clears the flow for every candidate**
+
+Checked 2026-11-05; borg-rs group(s) 39.
+
+Pinned source references:
+
+- [C src/borg/borg-flow-misc.c:348–455](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L348-L455) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:772–773](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L772-L773) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:772–773](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L772-L773)
+
+> `borg_flow_vein()`: `borg_flow_clear()` runs once per listed vein inside
+>   the scan loop (no effect beyond the first, except the work).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0136
+
+**Tracked-stair flags remain false in caution danger checks**
+
+Checked 2026-11-05; borg-rs group(s) 40.
+
+Pinned source references:
+
+- [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:782–787](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L782-L787) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:782–787](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L782-L787)
+
+> `borg_caution()`: when the Borg stands on a tracked up or down staircase
+>   it notes "# Standing on up-stairs" / "dn-stairs" and sets `on_upstair` /
+>   `on_dnstair` to `false` (they start `false`), so both are always false.
+>   The "danger and standing on stair" clause of the take-the-stairs test is
+>   dead, and the stair keys only follow the grid's own feature
+>   (`FEAT_LESS` / `FEAT_MORE`).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0137
+
+**Desperation stair search retains the farthest free staircase**
+
+Checked 2026-11-05; borg-rs group(s) 40.
+
+Pinned source references:
+
+- [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:788–791](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L788-L791) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:788–791](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L788-L791)
+
+> "Desperation Head for stairs": the scans say "How far is the nearest up
+>   stairs" but `if (b_j >= j) continue;` keeps the *farthest* stair without a
+>   monster on it, so `b_j < 3` / `b_j <= 2` / `b_j < 20` (and `b_m <= 2`)
+>   only hold when every free staircase of that kind is that close.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0138
+
+**Strategic retreat monster-adjacency rejection only exits its inner scan**
+
+Checked 2026-11-05; borg-rs group(s) 40.
+
+Pinned source references:
+
+- [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:792–793](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L792-L793) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:792–793](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L792-L793)
+
+> Strategic retreat: "Skip this grid if it is adjacent to a monster" only
+>   `break`s out of the monster scan, so the test has no effect.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0139
+
+**Back-away monster state leaks between candidate grids and a trap ends the whole scan**
+
+Checked 2026-11-05; borg-rs group(s) 40.
+
+Pinned source references:
+
+- [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:794–798](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L794-L798) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:794–798](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L794-L798)
+
+> Back away: `adjacent_monster` is set inside the grid loop and never reset,
+>   so after the first grid next to a (fast) monster every later grid is
+>   skipped too; the `!adjacent_monster` term of the `MAXCLEVEL < 35` test is
+>   then always true. "Mega-Hack -- skip traps" is a `break`: a known trap
+>   without a glyph on one neighbour ends the whole scan.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0140
+
+**Excessive-danger fleeing guard is enabled only when ready for Morgoth**
+
+Checked 2026-11-05; borg-rs group(s) 40.
+
+Pinned source references:
+
+- [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:799–801](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L799-L801) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:799–801](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L799-L801)
+
+> "Excessive danger": the Borg only starts fleeing when
+>   `borg.ready_morgoth == 1` (the comment says "do not flee level if going
+>   after Morgoth"); with `ready_morgoth` 0 or -1 it never flees here.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0141
+
+**Recall-in-danger mana threshold compares current mana with itself**
+
+Checked 2026-11-05; borg-rs group(s) 40.
+
+Pinned source references:
+
+- [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:802–804](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L802-L804) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:802–804](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L802-L804)
+
+> Waiting for recall in danger, step (1): `borg.trait[BI_CURSP] <
+>   (borg.trait[BI_CURSP] / 4)` compares the mana with itself (true only for
+>   negative mana); `BI_MAXSP` was meant.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0142
+
+**Critical poison and bleeding healing can return with pretend full mana**
+
+Checked 2026-11-05; borg-rs group(s) 40.
+
+Pinned source references:
+
+- [C src/borg/borg-caution.c:60–667](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L60-L667) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:805–810](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L805-L810) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:805–810](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L805-L810)
+
+> `borg_heal()`: the two critical blocks (poisoned, bleeding) set
+>   `BI_CURSP = BI_MAXSP` and put the real value back only after their spells
+>   fail. When a spell is cast, or (bleeding block, where the fake mana is set
+>   before the potions) a cure or restore-mana potion is quaffed first, the
+>   function returns with `BI_CURSP` still at `BI_MAXSP` until the traits are
+>   next recomputed (as C bug 35).
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage. Related pretend-mana state mechanism: CBUG-0015 (escape); this report concerns distinct heal branches.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
+### CBUG-0143
+
+**Second healing-rod attempt bypasses the earlier escape-reserve guard**
+
+Checked 2026-11-05; borg-rs group(s) 40.
+
+Pinned source references:
+
+- [C src/borg/borg-caution.c:60–667](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L60-L667) — C function context; reported fault site not yet independently checked
+- [borg-rs docs/c-bugs.md:811–813](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L811-L813) — reported C observation; not an independent validation
+
+Reported by borg-rs (lead text, not independent validation):
+
+[borg-rs docs/c-bugs.md:811–813](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L811-L813)
+
+> `borg_heal()`, "Heal step two": the chain zaps the healing rod twice, the
+>   second time without the "keep the rod if I can escape" test, so that test
+>   has no effect there. `cmw_heal` is computed and never used.
+
+
+Retained source report; practical reachability, actual outcome and port applicability require independent review.
+
+Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.
+
+Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
+
+Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+
+Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
+
 ## Complete source-group inventory
 
 All substantive source reports are mapped below. A source report can contain related sub-symptoms; the exact report text and line reference remain available in the linked findings. A reported lead is not silently promoted to a checked defect.
 
 | Group | Source reference | Area | Intake / latest note | Detailed IDs |
 | --- | --- | --- | --- | --- |
-| 1 | [borg-rs docs/c-bugs.md:8–22](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L8-L22) | banishment | Activation reads object counts as HP. source comparison: C uses has[BI_CURHP]; Mandos already uses the HP trait | CBUG-0021 |
-| 2 | [borg-rs docs/c-bugs.md:23–31](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L23-L31) | item-ids | Subtype lookup names copied incorrectly. lookup/registration audit pending | CBUG-0022 |
-| 3 | [borg-rs docs/c-bugs.md:32–40](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L32-L40) | formulas | Malformed formula block ordering. configuration-only lead; valid-input impact unproven | CBUG-0023 |
-| 4 | [borg-rs docs/c-bugs.md:41–54](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L41-L54) | light | West shoulders omitted and light-list duplicates. west-light existing #87/#89; flags reproduced, practical impact pending | CBUG-0003, CBUG-0024 |
-| 5 | [borg-rs docs/c-bugs.md:55–69](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L55-L69) | magic | Initial spell status and book iteration. catalogue notes effective guards; no independent play defect established | CBUG-0025, CBUG-0026, CBUG-0027 |
-| 6 | [borg-rs docs/c-bugs.md:70–88](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L70-L88) | formulas | Formula errors overwritten by static formatting buffer. diagnostic lead; large-input memory behavior needs reachability proof | CBUG-0028 |
-| 7 | [borg-rs docs/c-bugs.md:89–95](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L89-L95) | formulas | range() errors misleading or silent. configuration-diagnostic lead | CBUG-0029 |
-| 8 | [borg-rs docs/c-bugs.md:96–108](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L96-L108) | home | Spell-stat score discontinuity and dead neck branch. needs an actual keep/retrieve/equip consequence | CBUG-0030, CBUG-0031 |
-| 9 | [borg-rs docs/c-bugs.md:109–119](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L109-L119) | magic | Dark flag tested by equality. still present in magic-play.ts; interaction with no-light guards needs scenario | CBUG-0032 |
-| 10 | [borg-rs docs/c-bugs.md:120–140](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L120-L140) | preparedness | Dead or mislabelled readiness checks. separate diagnostic text from reachable policy behavior | CBUG-0033, CBUG-0034, CBUG-0035 |
-| 11 | [borg-rs docs/c-bugs.md:141–153](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L141-L153) | birth-ui | Respawn menu letters. C UI lead; Neo uses direct birth commands | CBUG-0036 |
-| 12 | [borg-rs docs/c-bugs.md:154–166](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L154-L166) | home | All item sustains counted as STR; banishment counts missing. sustain bug still visible in Mandos home.ts; transaction consequence pending | CBUG-0037, CBUG-0038 |
-| 13 | [borg-rs docs/c-bugs.md:167–181](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L167-L181) | diagnostics | Map-dump NULL-file crash plus display slips. map cancellation C-game reproduced; other slips separate | CBUG-0001, CBUG-0039, CBUG-0040 |
-| 14 | [borg-rs docs/c-bugs.md:182–198](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L182-L198) | messages | Reaction suppression reset uses wrong variable. current C mismatch; old imported C resets global correctly | CBUG-0002, CBUG-0041 |
-| 15 | [borg-rs docs/c-bugs.md:199–211](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L199-L211) | item-ui | Debug quiver inscriptions use equipment keys. C debug-key path; no direct Neo counterpart assumed | CBUG-0042 |
-| 16 | [borg-rs docs/c-bugs.md:212–225](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L212-L225) | inventory | Unreachable pval tie-break and empty-pack lookup. pval condition preserved; empty-pack symptom must be classified separately | CBUG-0043, CBUG-0044 |
-| 17 | [borg-rs docs/c-bugs.md:226–264](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L226-L264) | danger | Resistance/stat/bolt-state/index errors. cold-vs-acid source checked; other compound symptoms remain leads | CBUG-0004, CBUG-0045, CBUG-0046, CBUG-0047, CBUG-0048, CBUG-0049, CBUG-0050, CBUG-0051, CBUG-0052, CBUG-0053 |
-| 18 | [borg-rs docs/c-bugs.md:265–277](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L265-L277) | valuation | Stat bonuses tested as flags. current Neo perItemValue explicitly preserves C's sustain-flag mixup | CBUG-0054 |
-| 19 | [borg-rs docs/c-bugs.md:278–304](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L278-L304) | flow | Farthest stairs and item tracking slips. normal flow and optional-mode symptoms must be separated | CBUG-0055, CBUG-0056, CBUG-0057, CBUG-0058, CBUG-0059 |
-| 20 | [borg-rs docs/c-bugs.md:305–328](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L305-L328) | items | Device fail math, staff/ring/food use. TS division guard and both-ring scan differ; staff gates still suspect | CBUG-0060, CBUG-0061, CBUG-0062, CBUG-0063, CBUG-0064, CBUG-0065 |
-| 21 | [borg-rs docs/c-bugs.md:329–358](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L329-L358) | equipment | Swap chooses higher danger; best-search bookkeeping. C/port comparison needed after B99 ring/home adoption; #4 remains partly absent | CBUG-0066, CBUG-0067, CBUG-0068, CBUG-0069, CBUG-0070, CBUG-0071 |
-| 22 | [borg-rs docs/c-bugs.md:359–378](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L359-L378) | light | Panel-relative beams and last-lantern refuel. panel UI differs; current TS refuel still starts at borgSlot's selected lantern | CBUG-0072, CBUG-0073, CBUG-0074 |
-| 23 | [borg-rs docs/c-bugs.md:379–394](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L379-L394) | item-ui | Curse-removal item letters. C menu path; direct-command port applicability unproven | CBUG-0075, CBUG-0076, CBUG-0077 |
-| 24 | [borg-rs docs/c-bugs.md:395–428](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L395-L428) | tracking | Wrong monster indices, sticky state and pursuit checks. multiple candidates; compare with B99 deletion/history fixes | CBUG-0078, CBUG-0079, CBUG-0080, CBUG-0081, CBUG-0082, CBUG-0083, CBUG-0084, CBUG-0085, CBUG-0086 |
-| 25 | [borg-rs docs/c-bugs.md:429–444](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L429-L444) | item-ui | Enchant prompt inventory context. C menu-selection lead; no direct-command bug inferred | CBUG-0087, CBUG-0088 |
-| 26 | [borg-rs docs/c-bugs.md:445–458](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L445-L458) | recovery | Recovery note, duplicate cure and unchecked rod slot. split harmless note/duplicate from reachable missing-rod access | CBUG-0089, CBUG-0090, CBUG-0091 |
-| 27 | [borg-rs docs/c-bugs.md:459–473](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L459-L473) | timers | No-rest int16 overflow from level 33. C narrow-integer effect is absent from the JS number assignment | CBUG-0092, CBUG-0093 |
-| 28 | [borg-rs docs/c-bugs.md:474–494](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L474-L494) | buffs | Regeneration simulation side effect and wrong Venom cost. TS guards regen simulation already; Venom cost still references Smite Evil | CBUG-0094, CBUG-0095, CBUG-0096, CBUG-0097, CBUG-0092 |
-| 29 | [borg-rs docs/c-bugs.md:495–516](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L495-L516) | glyphs | Terrain, counters and array bounds in glyph flow. legal message/state sequence needed before claiming reachable memory failure | CBUG-0098, CBUG-0099, CBUG-0100, CBUG-0101, CBUG-0102 |
-| 30 | [borg-rs docs/c-bugs.md:517–533](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L517-L533) | optional-mode | Munchkin attack/simulation flags leak. optional-mode lead; not ordinary-mode proof | CBUG-0103, CBUG-0104, CBUG-0105 |
-| 31 | [borg-rs docs/c-bugs.md:534–554](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L534-L554) | exploration | Farthest stairs, trap interest and forgotten danger marks. stair cause overlaps group19; split remaining symptoms | CBUG-0055, CBUG-0106, CBUG-0107, CBUG-0108 |
-| 32 | [borg-rs docs/c-bugs.md:555–581](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L555-L581) | flow | Shop/door predicates, bounds and dead cleanup. legal border/door scenarios needed; dead no-op is not a crash proof | CBUG-0109, CBUG-0110, CBUG-0111, CBUG-0112, CBUG-0113, CBUG-0114 |
-| 33 | [borg-rs docs/c-bugs.md:582–610](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L582-L610) | selling | Trial charges, wrong ego and transaction history. history counter shared with34; other symptoms need separate verification | CBUG-0013, CBUG-0014, CBUG-0115, CBUG-0116, CBUG-0117, CBUG-0118 |
-| 34 | [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L611-L645) | shopping | Purchase filters, home trial state and history. ten symptoms classified below; no new native C scenario claimed | CBUG-0005, CBUG-0006, CBUG-0007, CBUG-0008, CBUG-0009, CBUG-0010, CBUG-0011, CBUG-0012, CBUG-0013, CBUG-0014 |
-| 35 | [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L646-L670) | escape | Emergency mana, queued stairs, timer and destination checks. four symptoms classified below; returned-command port has a distinct stair issue | CBUG-0015, CBUG-0016, CBUG-0017, CBUG-0018 |
-| 36 | [borg-rs docs/c-bugs.md:671–685](https://github.com/diegoami/borg-rs/blob/c4969c0c57590c0b0e6e72b8fd90429db243c8b6/docs/c-bugs.md#L671-L685) | shopping | Urgent shop goal/stale ware and redundant town guard. C and current port share the forced-goal flow; source checked, transaction scenario pending | CBUG-0019, CBUG-0020 |
+| 1 | [borg-rs docs/c-bugs.md:8–22](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L8-L22) | banishment | Activation reads object counts as HP. source comparison: C uses has[BI_CURHP]; Mandos already uses the HP trait | CBUG-0021 |
+| 2 | [borg-rs docs/c-bugs.md:23–31](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L23-L31) | item-ids | Subtype lookup names copied incorrectly. lookup/registration audit pending | CBUG-0022 |
+| 3 | [borg-rs docs/c-bugs.md:32–40](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L32-L40) | formulas | Malformed formula block ordering. configuration-only lead; valid-input impact unproven | CBUG-0023 |
+| 4 | [borg-rs docs/c-bugs.md:41–54](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L41-L54) | light | West shoulders omitted and light-list duplicates. west-light existing #87/#89; flags reproduced, practical impact pending | CBUG-0003, CBUG-0024 |
+| 5 | [borg-rs docs/c-bugs.md:55–69](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L55-L69) | magic | Initial spell status and book iteration. catalogue notes effective guards; no independent play defect established | CBUG-0025, CBUG-0026, CBUG-0027 |
+| 6 | [borg-rs docs/c-bugs.md:70–88](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L70-L88) | formulas | Formula errors overwritten by static formatting buffer. diagnostic lead; large-input memory behavior needs reachability proof | CBUG-0028 |
+| 7 | [borg-rs docs/c-bugs.md:89–95](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L89-L95) | formulas | range() errors misleading or silent. configuration-diagnostic lead | CBUG-0029 |
+| 8 | [borg-rs docs/c-bugs.md:96–108](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L96-L108) | home | Spell-stat score discontinuity and dead neck branch. needs an actual keep/retrieve/equip consequence | CBUG-0030, CBUG-0031 |
+| 9 | [borg-rs docs/c-bugs.md:109–119](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L109-L119) | magic | Dark flag tested by equality. still present in magic-play.ts; interaction with no-light guards needs scenario | CBUG-0032 |
+| 10 | [borg-rs docs/c-bugs.md:120–140](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L120-L140) | preparedness | Dead or mislabelled readiness checks. separate diagnostic text from reachable policy behavior | CBUG-0033, CBUG-0034, CBUG-0035 |
+| 11 | [borg-rs docs/c-bugs.md:141–153](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L141-L153) | birth-ui | Respawn menu letters. C UI lead; Neo uses direct birth commands | CBUG-0036 |
+| 12 | [borg-rs docs/c-bugs.md:154–166](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L154-L166) | home | All item sustains counted as STR; banishment counts missing. sustain bug still visible in Mandos home.ts; transaction consequence pending | CBUG-0037, CBUG-0038 |
+| 13 | [borg-rs docs/c-bugs.md:167–181](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L167-L181) | diagnostics | Map-dump NULL-file crash plus display slips. map cancellation C-game reproduced; other slips separate | CBUG-0001, CBUG-0039, CBUG-0040 |
+| 14 | [borg-rs docs/c-bugs.md:182–198](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L182-L198) | messages | Reaction suppression reset uses wrong variable. current C mismatch; old imported C resets global correctly | CBUG-0002, CBUG-0041 |
+| 15 | [borg-rs docs/c-bugs.md:199–211](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L199-L211) | item-ui | Debug quiver inscriptions use equipment keys. C debug-key path; no direct Neo counterpart assumed | CBUG-0042 |
+| 16 | [borg-rs docs/c-bugs.md:212–225](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L212-L225) | inventory | Unreachable pval tie-break and empty-pack lookup. pval condition preserved; empty-pack symptom must be classified separately | CBUG-0043, CBUG-0044 |
+| 17 | [borg-rs docs/c-bugs.md:226–264](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L226-L264) | danger | Resistance/stat/bolt-state/index errors. cold-vs-acid source checked; other compound symptoms remain leads | CBUG-0004, CBUG-0045, CBUG-0046, CBUG-0047, CBUG-0048, CBUG-0049, CBUG-0050, CBUG-0051, CBUG-0052, CBUG-0053 |
+| 18 | [borg-rs docs/c-bugs.md:265–277](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L265-L277) | valuation | Stat bonuses tested as flags. current Neo perItemValue explicitly preserves C's sustain-flag mixup | CBUG-0054 |
+| 19 | [borg-rs docs/c-bugs.md:278–304](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L278-L304) | flow | Farthest stairs and item tracking slips. normal flow and optional-mode symptoms must be separated | CBUG-0055, CBUG-0056, CBUG-0057, CBUG-0058, CBUG-0059 |
+| 20 | [borg-rs docs/c-bugs.md:305–328](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L305-L328) | items | Device fail math, staff/ring/food use. TS division guard and both-ring scan differ; staff gates still suspect | CBUG-0060, CBUG-0061, CBUG-0062, CBUG-0063, CBUG-0064, CBUG-0065 |
+| 21 | [borg-rs docs/c-bugs.md:329–358](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L329-L358) | equipment | Swap chooses higher danger; best-search bookkeeping. C/port comparison needed after B99 ring/home adoption; #4 remains partly absent | CBUG-0066, CBUG-0067, CBUG-0068, CBUG-0069, CBUG-0070, CBUG-0071 |
+| 22 | [borg-rs docs/c-bugs.md:359–378](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L359-L378) | light | Panel-relative beams and last-lantern refuel. panel UI differs; current TS refuel still starts at borgSlot's selected lantern | CBUG-0072, CBUG-0073, CBUG-0074 |
+| 23 | [borg-rs docs/c-bugs.md:379–394](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L379-L394) | item-ui | Curse-removal item letters. C menu path; direct-command port applicability unproven | CBUG-0075, CBUG-0076, CBUG-0077 |
+| 24 | [borg-rs docs/c-bugs.md:395–428](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L395-L428) | tracking | Wrong monster indices, sticky state and pursuit checks. multiple candidates; compare with B99 deletion/history fixes | CBUG-0078, CBUG-0079, CBUG-0080, CBUG-0081, CBUG-0082, CBUG-0083, CBUG-0084, CBUG-0085, CBUG-0086 |
+| 25 | [borg-rs docs/c-bugs.md:429–444](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L429-L444) | item-ui | Enchant prompt inventory context. C menu-selection lead; no direct-command bug inferred | CBUG-0087, CBUG-0088 |
+| 26 | [borg-rs docs/c-bugs.md:445–458](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L445-L458) | recovery | Recovery note, duplicate cure and unchecked rod slot. split harmless note/duplicate from reachable missing-rod access | CBUG-0089, CBUG-0090, CBUG-0091 |
+| 27 | [borg-rs docs/c-bugs.md:459–473](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L459-L473) | timers | No-rest int16 overflow from level 33. C narrow-integer effect is absent from the JS number assignment | CBUG-0092, CBUG-0093 |
+| 28 | [borg-rs docs/c-bugs.md:474–494](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L474-L494) | buffs | Regeneration simulation side effect and wrong Venom cost. TS guards regen simulation already; Venom cost still references Smite Evil | CBUG-0094, CBUG-0095, CBUG-0096, CBUG-0097, CBUG-0092 |
+| 29 | [borg-rs docs/c-bugs.md:495–516](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L495-L516) | glyphs | Terrain, counters and array bounds in glyph flow. legal message/state sequence needed before claiming reachable memory failure | CBUG-0098, CBUG-0099, CBUG-0100, CBUG-0101, CBUG-0102 |
+| 30 | [borg-rs docs/c-bugs.md:517–533](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L517-L533) | optional-mode | Munchkin attack/simulation flags leak. optional-mode lead; not ordinary-mode proof | CBUG-0103, CBUG-0104, CBUG-0105 |
+| 31 | [borg-rs docs/c-bugs.md:534–554](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L534-L554) | exploration | Farthest stairs, trap interest and forgotten danger marks. stair cause overlaps group19; split remaining symptoms | CBUG-0055, CBUG-0106, CBUG-0107, CBUG-0108 |
+| 32 | [borg-rs docs/c-bugs.md:555–581](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L555-L581) | flow | Shop/door predicates, bounds and dead cleanup. legal border/door scenarios needed; dead no-op is not a crash proof | CBUG-0109, CBUG-0110, CBUG-0111, CBUG-0112, CBUG-0113, CBUG-0114 |
+| 33 | [borg-rs docs/c-bugs.md:582–610](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L582-L610) | selling | Trial charges, wrong ego and transaction history. history counter shared with34; other symptoms need separate verification | CBUG-0013, CBUG-0014, CBUG-0115, CBUG-0116, CBUG-0117, CBUG-0118 |
+| 34 | [borg-rs docs/c-bugs.md:611–645](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L611-L645) | shopping | Purchase filters, home trial state and history. ten symptoms classified below; no new native C scenario claimed | CBUG-0005, CBUG-0006, CBUG-0007, CBUG-0008, CBUG-0009, CBUG-0010, CBUG-0011, CBUG-0012, CBUG-0013, CBUG-0014 |
+| 35 | [borg-rs docs/c-bugs.md:646–670](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L646-L670) | escape | Emergency mana, queued stairs, timer and destination checks. four symptoms classified below; returned-command port has a distinct stair issue | CBUG-0015, CBUG-0016, CBUG-0017, CBUG-0018 |
+| 36 | [borg-rs docs/c-bugs.md:671–685](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L671-L685) | shopping | Urgent shop goal/stale ware and redundant town guard. C and current port share the forced-goal flow; source checked, transaction scenario pending | CBUG-0019, CBUG-0020 |
+| 37 | [borg-rs docs/c-bugs.md:687–715](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L687-L715) | inventory | Junk and drop choices (junk). Reported by borg-rs; C contexts located only, no independent fault/outcome validation or port attribution yet. | CBUG-0119, CBUG-0120, CBUG-0121, CBUG-0122, CBUG-0123, CBUG-0124 |
+| 38 | [borg-rs docs/c-bugs.md:716–741](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L716-L741) | configuration | borg.txt parsing slips (init). Reported by borg-rs; C contexts located only, no independent fault/outcome validation or port attribution yet. | CBUG-0125, CBUG-0126, CBUG-0127, CBUG-0128, CBUG-0129 |
+| 39 | [borg-rs docs/c-bugs.md:742–777](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L742-L777) | flow | Misc flow slips (flow misc). Reported by borg-rs; C contexts located only, no independent fault/outcome validation or port attribution yet. | CBUG-0130, CBUG-0131, CBUG-0132, CBUG-0133, CBUG-0134, CBUG-0135 |
+| 40 | [borg-rs docs/c-bugs.md:778–816](https://github.com/diegoami/borg-rs/blob/3fed84b19506ea9cc9d5d07fc3de213856a39a7f/docs/c-bugs.md#L778-L816) | caution | Caution slips (caution). Reported by borg-rs; C contexts located only, no independent fault/outcome validation or port attribution yet. | CBUG-0136, CBUG-0137, CBUG-0138, CBUG-0139, CBUG-0140, CBUG-0141, CBUG-0142, CBUG-0143 |
 
 ## Maintenance
 
