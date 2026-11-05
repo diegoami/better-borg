@@ -1,0 +1,20 @@
+{
+  "schema": "mandos/b81-store-control@1",
+  "before": "../2026-11-05-b81-store-before/runs.json",
+  "after": "runs.json",
+  "ignored_fields": [
+    "meta.wallClockMs"
+  ],
+  "gameplay_identical": true,
+  "before_attained": 2,
+  "after_attained": 2,
+  "scenario_before": {
+    "failed": 8,
+    "passed": 1
+  },
+  "scenario_after": {
+    "failed": 0,
+    "passed": 9
+  },
+  "scope": "Fixed-seed early-play control only; sale/home effects proved by synthetic API2 item scenarios, not a native C game or natural death-prevention run."
+}
