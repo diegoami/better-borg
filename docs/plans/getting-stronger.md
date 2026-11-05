@@ -7,7 +7,7 @@ loadable saves. The later stage ladder, offline learning and accumulated
 knowledge below describe intended extensions, not capabilities already
 established by those saves.
 
-**Current authorization is bug hunting and fixing only** ([CLAUDE.md](../../CLAUDE.md),
+**Current authorization is bug hunting and fixing only** ([RULES.md](../../RULES.md),
 rule 15), until the owner changes scope. Hunt, reproduce, attribute and fix
 defects, including omitted C behavior. New strategies, parameter learning,
 fatal-state snapshots and new unattended stage-resume functionality remain

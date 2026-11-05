@@ -1,6 +1,6 @@
 # Process
 
-[CLAUDE.md](../CLAUDE.md) holds the rules; this file says how work runs. Same system as
+[RULES.md](../RULES.md) holds the rules; this file says how work runs. Same system as
 neowarrior-borg (which is malpaco's, which is Geoclick2027's).
 
 Rule 15 limits current work to bug hunting and fixing. Restoring omitted C
@@ -65,7 +65,7 @@ The desktop lab build is section 8.
 | `.upstream-watch.json` | this checkout, ignored | a cache: the first run on a new machine re-baselines it |
 | The lab data base (saves, graveyard and lineage in the browser profile's IndexedDB/Local Storage, settings, logs) | `~/projects/angband/mandos-lab-data` | backed up to the owner's private Drive folder: `node tools/backup.mjs push` (after a lab session; `backup.json` says what travels - never the caches or the mod clone, which is a git checkout). Each push keeps what it replaces under `archive/<stamp>` |
 | `core.hooksPath` | each clone's git config | set by the setup line above. It points at this repo's `.githooks/`, executable wrappers that run the engine checkout's own hooks with `sh` (upstream stores them non-executable, so pointing at them directly runs nothing on Linux) |
-| Claude Code's memory for this project | the user's Claude profile | a convenience only: every rule and decision it holds is also in CLAUDE.md or these docs |
+| Claude Code's memory for this project | the user's Claude profile | a convenience only: every rule and decision it holds is also in RULES.md or these docs |
 
 ### Day to day
 
@@ -192,7 +192,7 @@ a long run starts or ends, and when a blocker is found:
 stashes, the engine fingerprint, open PRs, the labelled queue), and
 `--post "<next action>" [--notes FILE]` posts it, refusing a body that names
 a home directory (the comment is public). A checkpoint records
-state, not decisions - decisions go into these documents and CLAUDE.md.
+state, not decisions - decisions go into these documents and RULES.md.
 
 **A bug always wins over a new feature** (rule 11). A defect found mid-task
 gets its own issue at once and is fixed before the feature resumes (or the
