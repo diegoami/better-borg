@@ -11,7 +11,7 @@ source work, not relabelled as fixed by this migration.
 | Scope | Head |
 | --- | --- |
 | Mandos | 875d38ea7891cc5187b6b00fbfba7a6abb21b6dc |
-| Engine/C tracker | 78378233a52f98a99ccad1438c0bb6264811ea06 |
+| Engine/C tracker | 681557603cf9ff6867c4cdbd928a0192fee63302 |
 | Port tracker | a661ee3c9e4f5980c746634a957b5e4a6ee11021 |
 | Native C workbench | ab224786116363d8f1bad1656417deb2fb0969b9 |
 
@@ -59,6 +59,18 @@ Later report-only commits do not change the functional surfaces below.
    Read-only dual-feed capability and failure-safe baseline tests were added;
    live use found41groups and the9 new claims were triaged as reported leads.
 
+6. Rewritten engine product docs omitted three existing contracts. Restored
+   pinned pnpm12.3.4/Node26 guidance and macOS Privacy & Security/Open Anyway/
+   arm64 facts without weakening tests. The original52 contract tests pass;
+   full original engine CI passes after this correction.
+7. Inherited automation was inappropriate for tracker forks. The initial
+   source-master sync triggered an automatic edge prerelease. Publishing/Nexus/
+   release and mod issue-redirection workflows are now disabled in our forks,
+   while CI stays enabled. Pages switched from legacy branch auto-build to
+   workflow-only without deleting site/branch data. The unintended edge build
+   is now draft with its tag, commit and four assets preserved. Operational
+   receipt: tracker-automation.json. No source/consumer fix status was changed.
+
 ## Validation and limits
 
 | Surface | Result |
@@ -66,6 +78,7 @@ Later report-only commits do not change the functional surfaces below.
 | Mandos full gate |1143passed,0skipped,202.53s; plugin unchanged/current730.6KiB |
 | Shared cross-repo watch regressions |8passed, includes namespace collisions and discovery failures |
 | Engine/C source snapshot + borg-rs intake guards |8passed under Node |
+| Original engine documentation contracts |52/52passed; full original CI10m52s and live-game job passed |
 | Native C configure/build/test |CMake3.31.10;965/965 unit and5/5 upstream frontend tests |
 | Published port baseline with content |862passed,4known repeated-open failures,0skips; issue25 |
 | Same10 port play/rest cases on existing patched engine |10/10passed,128.30s |
@@ -75,6 +88,12 @@ The paired port control changes engine version/patch bundle, while preserving
 port/content. It does not isolate which individual patch fixes each published
 failure. Source issue neo-angband-borg-mod-tracker25 owns follow-up; do not
 invent a new port bug, silence assertions or claim the unpatched gate green.
+Dependency installation changed only executable modes on two SDK bin wrappers;
+content was unchanged and tracked modes were restored before handover.
+C Borg→TS translations remain Mandos-only; a C game change requiring a Neo
+engine implementation still belongs to the engine tracker, never embedded
+inside the Mandos mod.
+
 C unit/frontend success does not prove each C candidate's practical impact;
 most source findings still require their own native scenarios/controls.
 

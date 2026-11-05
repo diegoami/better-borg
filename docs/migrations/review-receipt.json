@@ -11,8 +11,11 @@
   "reviewer": "coordinator read-only consistency pass; no independent model dispatched",
   "reviewed_heads": {
     "Mandos": "875d38ea7891cc5187b6b00fbfba7a6abb21b6dc",
-    "Engine/C tracker": "78378233a52f98a99ccad1438c0bb6264811ea06",
+    "Engine/C tracker": "681557603cf9ff6867c4cdbd928a0192fee63302",
     "Port tracker": "a661ee3c9e4f5980c746634a957b5e4a6ee11021",
     "Native C workbench": "ab224786116363d8f1bad1656417deb2fb0969b9"
-  }
+  },
+  "engine_doc_contracts": 52,
+  "engine_original_ci": "passed after doc contracts restored",
+  "tracker_publishers": "disabled; unintended edge build archived as draft with tag/assets intact"
 }
