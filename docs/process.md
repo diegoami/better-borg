@@ -316,7 +316,11 @@ it in an isolated worktree. Keep the pristine checkout itself at the
 refreshed master; retain the fix and verification evidence before removing
 the disposable PR worktree.
 
-**Posting** (rule 12): draft, show the owner, post on approval. Shape it like
+**Posting** (rule 12; owner, 2026-11-05): confirmed Neo port defects may be
+posted directly after source, reproduction and duplicate checks. C reports
+remain draft, show the owner, post only on explicit approval of that report.
+This authorization does not cover Mandos CHOICEs or unrelated proposals.
+Shape it like
 the posts already up - engine issue #428 and its PR #429 are the reference,
 then #430/#431/#432/#433 and mod-borg #21/#22. An issue: a summary citing the
 C as `file:line`, the port's code cited, the consequence, the measured repro

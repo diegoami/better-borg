@@ -1,0 +1,2 @@
+harness/run.sh: line 32: 60928 Segmentation fault         LANG=C.UTF-8 LC_ALL=C.UTF-8 "$BIN" -mborgh -n -uBorg -duser="$OUT/user" -dsave="$OUT/save" -darchive="$OUT/archive" -dpanic="$OUT/panic" -dscores="$OUT/scores" -- -seed "$SEED" -race "$RACE" -class "$CLASS" -turns "$TURNS" -keylog "$OUT/keys.log" -summary "$OUT/summary.json" -screen "$@" 2> "$OUT/stderr.log"
+run failed (rc=139): /tmp/b94-before-cancel

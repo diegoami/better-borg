@@ -70,6 +70,8 @@ reproducible scenario showing a meaningful gameplay consequence, duplicate
 review and explicit owner approval before external posting. Carry labels
 (`carried`, `not-carried`, `partially-carried`) describe verified coverage in
 Mandos `main` and its required consumers; a patch file alone is insufficient.
+Confirmed Neo port defects may be posted directly under the owner's
+2026-11-05 authorization, after attribution, reproduction and duplicate checks.
 See the [canonical upstream workflow](docs/UPSTREAM.md#carry-status-and-attribution)
 for evidence, patches, consumer tracking and regular status reviews.
 
