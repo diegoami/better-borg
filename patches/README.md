@@ -24,6 +24,15 @@ marked hunks. Keep package and lab receipts distinct. A carried consumer issue
 stays open while upstream delivery is missing; fixed/closed follows upstream
 correction plus verified downstream adoption. patch-active is independent.
 
+## noteSpot consumer reconciliation
+
+[2026-11-06 package receipt](../docs/runs/2026-11-06-notespot-consumer/README.md)
+compares the existing published-beta.2 carry with engine PR200's exact source
+`19ff25eac8997e8feb6b5e62eefa7ffe4d134631`. The hook is already equivalent;
+this is regression coverage and verification, not a new runtime adoption.
+The published package still needs the noteSpot hunk, and every other removal
+unit above remains independent. No package pin or live lab bundle changes.
+
 ## Historical native C copies
 
 Active C catalogue/evidence/proposals/patches are owned by
