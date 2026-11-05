@@ -32,7 +32,7 @@ const problems = [];
 let discoveryComplete = true;
 for (const repository of TRACKERS) {
   try {
-    const issues = ghJson(["issue", "list", "--repo", repository, "--state", "all", "--limit", "1000", "--json", "number,title,body,labels,state"]);
+    const issues = ghJson(["issue", "list", "--repo", repository, "--state", "all", "--limit", "1000", "--json", "number,title,body,labels,state,updatedAt"]);
     if (issues.length >= 1000) { problems.push(repository + ": issue window reached"); discoveryComplete = false; }
     tracking.push(...issues.filter((issue) => labelsOf(issue).some((label) => label === "upstream" || label === "upstream-c" || (repository === "diegoami/mandos" && label === "integration")))
       .filter((issue) => issue.state !== "CLOSED" || labelsOf(issue).includes("patch-active"))
@@ -54,13 +54,26 @@ for (const issue of tracking) {
   if (consumer && carry === "fixed" && issue.state === "OPEN") problems.push(`${issue.repository}#${issue.number}: fixed consumer tracker is still open; review closure`);
   const local = { number: issue.number, carry, repository: issue.repository, what: `${issue.repository}#${issue.number}: ${issue.title}` };
   const line = issue.body.split("\n").find((text) => text.startsWith("**Threads**:"));
-  if (line === undefined) problems.push(`${issue.repository}#${issue.number}: missing **Threads**: line (use 'none yet' for an internal candidate)`);
+  if (consumer && line === undefined) problems.push(`${issue.repository}#${issue.number}: missing **Threads**: line (use 'none yet' for an internal candidate)`);
   const refs = [...(line ?? "").matchAll(/([\w.-]+\/[\w.-]+)#(\d+)/g)];
-  if (refs.length === 0) candidates.push(local);
+  if (consumer && refs.length === 0) candidates.push(local);
   for (const match of refs) threads.push({ ...local, repo: canonicalRepo(match[1]), num: Number(match[2]) });
 }
 
 const rows = [];
+// Source-board activity is observed directly from the discovery response;
+// new file/issue/direct reports need not already have external thread links.
+for (const issue of tracking.filter((item) => item.repository !== "diegoami/mandos")) {
+  const key = issue.repository + "#" + issue.number;
+  const before = previous[key];
+  const updatedAt = issue.updatedAt ?? null;
+  const state = String(issue.state).toUpperCase();
+  rows.push({ repo: issue.repository, num: issue.number, kind: "source", carry: "source",
+    what: issue.repository + "#" + issue.number + ": " + issue.title, state,
+    comments: null, head: null, updatedAt,
+    moved: before !== undefined && (before.state !== state || before.updatedAt !== updatedAt) });
+}
+
 for (const thread of threads) {
   const key = `${thread.repo}#${thread.num}`;
   try {

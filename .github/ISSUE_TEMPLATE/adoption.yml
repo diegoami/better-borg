@@ -1,0 +1,32 @@
+name: Mandos adoption or C-to-TS translation
+description: Downstream integration/carry of a canonical source correction
+labels: [integration, "consumer:mandos", not-carried]
+body:
+  - type: input
+    id: source
+    attributes:
+      label: Canonical source issue and correction
+    validations:
+      required: true
+  - type: textarea
+    id: applicability
+    attributes:
+      label: Mandos applicability or required C-to-TS translation
+      description: "Prove the TS counterpart; no counterpart means not applicable. Proposed C translations stay in Mandos, not the fidelity-only mod tracker."
+    validations:
+      required: true
+  - type: textarea
+    id: consumers
+    attributes:
+      label: Source/package/plugin/harness/lab consumer pins and evidence
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "Only mark carried after correction is applied and verified on our side; keep open while upstream delivery is missing. Close fixed only after upstream correction AND verified downstream adoption. Partial scope remains open; patch-active records remaining consumer backports."
+  - type: textarea
+    id: threads
+    attributes:
+      label: Linked source or proposal threads
+      description: "Replace none yet with qualified owner/repo#number references; keep the Threads prefix."
+      value: "**Threads**: none yet"

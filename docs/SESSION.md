@@ -22,3 +22,12 @@ Upstream reports stay on angband/angband or the appropriate neostryder repo
 only under the standing posting rules. Our fork issues are our canonical
 trackers; transferred Mandos URLs remain historical redirects. See the
 migration ledger and each checkpoint for exact current issue numbers.
+
+## C correction flow and independent Rust peer
+
+The engine/C tracker proves/proposes C fixes and retrieves C leads from
+borg-rs (file, issues, or direct source-attributed reports). Mandos independently
+translates applicable C corrections into TS and carries/adopts them. The
+fidelity-only Neo Borg mod tracker does not perform that translation service.
+borg-rs independently translates/adopts C corrections in Rust, without a Neo
+responsibility; its read-only reference is not a fourth managed Neo session.

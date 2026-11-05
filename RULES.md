@@ -48,3 +48,12 @@
     monitors, patch ledger, affected docs and consumer state at merge/stop.
     A question alone is not an edit request; explicit owner tasks override
     local process defaults. Current source/issue evidence overrides old history.
+
+13. C correction translation is Mandos work: link the canonical C issue,
+    establish applicability, translate into TS under declared Neo APIs and
+    prove matching legal scenarios/controls on our runtime. No counterpart
+    means not applicable, not an invented patch. Keep the change marked as
+    a Mandos divergence from an unchanged C baseline until upstream alignment.
+    Do not send it to the fidelity-only port tracker as a port omission.
+    carried stays open until the C source correction is fixed upstream and
+    adopted/verified downstream; Rust translation is borg-rs's independent work.
