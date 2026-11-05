@@ -81,7 +81,7 @@ study and test spells, and eligible attack spells enter the combat chooser.
 The current manifest requires **our engine fork**, with range
 `>=1.23.0-beta.2-mandos.2 <1.23.0`, and mod API `>=2.0.0 <3.0.0`.
 Use the `neowarrior-lab` branch of
-[diegoami/neo-angband](https://github.com/diegoami/neo-angband) and follow the
+[diegoami/neo-angband-tracker](https://github.com/diegoami/neo-angband-tracker) and follow the
 [lab runbook](process.md#8-watched-runs-lab-builds). The mod folder must be
 named `mandos`, matching its manifest id.
 
@@ -111,41 +111,17 @@ engine/content and accepted-birth RNG/options/controller context. This
 proves that case; a seed alone does not prove another run's exactness. The graveyard stores run
 facts and journal data; it does not preserve a full fatal-state save.
 
-## Bug fixes and carry status
+## Bug fixes and integration
 
-Current work is bug hunting and fixing. Distinguish inherited TypeScript
-port defects from inherited C bugs. Neo must follow C: a faithful copy of
-a C bug needs correction in upstream Angband first, then Neo parity.
-Mandos may carry an earlier marked CHOICE. `upstream-c` tracks the C
-proposal route, not merely testing against C or confirmed attribution.
+Mandos adopts verified source fixes from the two owner forks. Port defects
+live in [our mod fork](https://github.com/diegoami/neo-angband-borg-mod-tracker/issues);
+C/game/Neo engine defects and the [C catalogue](https://github.com/diegoami/neo-angband-tracker/blob/master/docs/C-BUGS.md)
+live in our engine fork. Mandos issues track its own behavior and consumer
+integration. Old upstream tracker URLs redirect after the recorded migration.
 
-`carried` means merged into Mandos `main` and applied in all required
-consumers; `not-carried` means absent or proposal/branch only;
-`partially-carried` names incomplete coverage. A stored C patch does not
-fix TypeScript consumers. Labels and tracker evidence own status, not titles.
-The [C-bug catalogue](C-BUGS.md) separates source leads from reproduced C-game
-outcomes and links our own fix-proposal PRs. C submissions are paused:
-the list, evidence and proposals stay in diegoami repositories. Validated
-fixes need meaningful scenarios and controls; a draft is not an applied fix.
-The [upstream workflow](UPSTREAM.md#carry-status-and-attribution)
-is the detailed reference for evidence, patches, consumer scope and regular
-reviews. Confirmed Neo port defects have standing posting authorization
-(owner, 2026-11-05), after attribution, reproduction and duplicate checks;
-C work remains local-only under the owner's current instruction. [AGENTS.md](../AGENTS.md) is the shared agent entry point and
-[RULES.md](../RULES.md) holds the numbered rules. CLAUDE.md only loads them.
-
-Current-status reconciliation/board monitoring comes before new triage or
-fixes. Port fixes use issue -> PR -> verified carry. An upstream correction
-is fixed/closed after adoption with our changes, rebuild and verification;
-a published release is not a closure prerequisite. patch-active separately
-tracks still-needed backports. Internal issue labels and bodies own status.
-The C-only catalogue retains source/evidence/fix links, with no carry column.
-Its first option is the direct compare/open-PR link; copying and patch
-alternatives live in a separate guide. The single-file catalogue is temporary.
-[The pre-outreach evaluation](https://github.com/diegoami/neo-angband/issues/2)
-plans fork-owned upstream trackers and a separate C/game/Neo-engine session;
-Neo Borg development and Mandos-specific work stay here. Existing tracker
-homes remain current until a linked migration. Our C submissions remain paused.
+A source merge does not deploy the running lab. Named package/plugin/harness/
+lab receipts distinguish proposal, applied backport and verified adoption.
+See [the adoption workflow](UPSTREAM.md) and [three-session map](SESSION.md).
 
 ## Documentation map
 

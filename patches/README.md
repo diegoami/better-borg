@@ -1,37 +1,35 @@
-# Carried engine fixes and internal C proposals
+# Mandos consumer backports
 
-GitHub tracker carry labels describe applied main/consumer coverage. A stored
-patch can still be not-carried. Read each issue for the latest deployment and
-release adoption; this index identifies the source and the removal unit.
+This directory owns only Mandos package/lab backports and named consumer
+receipts. Canonical source defects/proposals live in the two tracker forks.
+Source issues have no carried/fixed/patch-active labels; their linked Mandos
+consumer issues own those states and closure after verified downstream adoption.
 
-The single pnpm patch for core1.23.0-beta.2 contains independent marked groups:
+## Published core patch removal units
 
-| Source | Tracker | Patched component | Remove only when |
+The combined @rpgm-tools__neo-angband-core@1.23.0-beta.2.patch has independent
+marked groups. A public source merge alone updates neither the patched package
+nor the separately running lab. Remove a hunk only after its consumer has the
+verified upstream replacement; retain patch-active while still needed.
+
+| Upstream correction | Source issue | Mandos consumer issue | Replacement proof |
 | --- | --- | --- | --- |
-| Neo PR429 / issue428 | #13 | live setFeat noteSpot | adopted published implementation passes the door scenario |
-| Neo PR432 / issue414 | #41 | disturb input-flush | adopted implementation passes input reset tests |
-| Neo PR433 / issue431 | #42 | original seed and accepted birth input, save/load | adopted implementation reproduces recorded births/replays |
-| Neo commit0cc75b4af | #100 | player/bind actual spell count | adopted package resolves every class-wide spell index correctly |
+| Neo PR429 / issue428 | [source](https://github.com/diegoami/neo-angband-tracker/issues/4) | [adoption](https://github.com/diegoami/mandos/issues/126) | door/setFeat scenario |
+| Neo PR432 / issue414 | [source](https://github.com/diegoami/neo-angband-tracker/issues/5) | [adoption](https://github.com/diegoami/mandos/issues/128) | input-flush reset regression |
+| Neo PR433 / issue431 | [source](https://github.com/diegoami/neo-angband-tracker/issues/6) | [adoption](https://github.com/diegoami/mandos/issues/129) | accepted birth/seed replay |
+| Neo commit0cc75b4af | [source](https://github.com/diegoami/neo-angband-tracker/issues/15) | [adoption](https://github.com/diegoami/mandos/issues/147) | all-class spell-index mapping |
 
-Authoritative PR branches remain in diegoami/neo-angband. The last row is
-already on Neo master and needs no duplicate PR. The pnpm package and our lab
-branch are separate consumers; a public merge alone updates neither.
-New records name PRs and accepted non-PR commits through tools/engine-pin.mjs.
+Run-record code in tools/engine-pin.mjs derives the patch names from actual
+marked hunks. Keep package and lab receipts distinct. A carried consumer issue
+stays open while upstream delivery is missing; fixed/closed follows upstream
+correction plus verified downstream adoption. patch-active is independent.
 
-C proposals under upstream-c/ affect the original C game only. The B94
-map-dump guard has a native C reproduction in docs/audit/c-reports/B94/ and
-is linked from [our catalogue](../docs/C-BUGS.md) to the local draft
-[diegoami/neo-angband#1](https://github.com/diegoami/neo-angband/pull/1), based
-on our `c-borg-reference` snapshot. It is not applied to a maintained C
-consumer or to the TypeScript engine/Borg. C submissions are paused; we
-maintain our catalogue and local proposals rather than upstream C. The B87 lighting proposal is
-still held on its draft branch because meaningful impact remains unproven.
+## Historical native C copies
 
-
-Bug status and applied backport maintenance are separate. A verified
-upstream correction may be fixed/closed while its internal tracker retains
-patch-active for the published-package consumer. The status/patch audits
-keep that closed tracker visible until the applied hunk is replaced and
-revalidated. C proposal records can be closed/unmerged and still reusable;
-see [the contributor handoff](../docs/c-fix-handoff.md). Internal issues are
-the authority for current application state.
+Active C catalogue/evidence/proposals/patches are owned by
+[neo-angband-tracker](https://github.com/diegoami/neo-angband-tracker/tree/master/patches).
+The upstream-c files here remain frozen for old report/PR links; do not edit
+them as a second ledger. Native C map-cancel proposal1 remains closed/unmerged
+and linkable in that fork. Mandos88 lighting wrapper is closed/unmerged and
+retained as historical report evidence; practical impact remains unproven.
+No official C submission is authorized by this index or migration.

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -14,6 +14,7 @@ beforeEach(() => {
   scratch = mkdtempSync(join(tmpdir(), "mandos-watch-"));
   cache = join(scratch, "cache.json");
   vi.stubEnv("MANDOS_UPSTREAM_WATCH_CACHE", cache);
+  vi.stubEnv("ANGBAND_TRACKER_REPOS", "diegoami/mandos");
   lines = [];
   vi.spyOn(console, "log").mockImplementation((...args: unknown[]) => { lines.push(args.map(String).join(" ")); });
   process.exitCode = 0;
@@ -93,4 +94,38 @@ describe("upstream/carry report", () => {
     expect(readFileSync(cache, "utf8")).toBe(before);
     expect(process.exitCode).toBe(1);
   });
+});
+
+
+it("keeps source namespaces distinct and audits consumer state only in Mandos", async () => {
+  vi.stubEnv("ANGBAND_TRACKER_REPOS", "diegoami/neo-angband-tracker,diegoami/neo-angband-borg-mod-tracker,diegoami/mandos");
+  gh.mockImplementation((_command: string, args: string[]) => {
+    if (args[0] === "issue") {
+      const repo = args[args.indexOf("--repo") + 1];
+      return JSON.stringify([issue(7, repo === "diegoami/mandos" ? ["integration", "carried"] : ["upstream"])]);
+    }
+    throw new Error("unexpected API read");
+  });
+  vi.resetModules();
+  await import(new URL("./upstream-watch.mjs", import.meta.url).href);
+  const output = lines.join("\n");
+  expect(output).toContain("diegoami/neo-angband-tracker#7");
+  expect(output).toContain("diegoami/neo-angband-borg-mod-tracker#7");
+  expect(output).toContain("diegoami/mandos#7");
+  expect(process.exitCode).toBe(0);
+});
+it("rejects consumer tags on source issues and retains cache after discovery failure", async () => {
+  vi.stubEnv("ANGBAND_TRACKER_REPOS", "diegoami/neo-angband-tracker,diegoami/mandos");
+  const baseline = JSON.stringify({ previous: "retained" });
+  writeFileSync(cache, baseline);
+  gh.mockImplementation((_command: string, args: string[]) => {
+    if (args.includes("diegoami/mandos")) throw new Error("offline");
+    return JSON.stringify([issue(7, ["upstream", "carried"])]);
+  });
+  vi.resetModules();
+  await import(new URL("./upstream-watch.mjs", import.meta.url).href);
+  expect(lines.join("\n")).toContain("source issue has consumer-state labels");
+  expect(lines.join("\n")).toContain("tracker discovery failed");
+  expect(readFileSync(cache, "utf8")).toBe(baseline);
+  expect(process.exitCode).toBe(1);
 });

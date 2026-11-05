@@ -1,74 +1,28 @@
-# Agents
+# Agent entry: Mandos development and integration
 
-This is the shared entry point for every coding agent. Read
-[RULES.md](RULES.md) for the canonical numbered working rules.
-`CLAUDE.md` imports this entry point for Claude Code; it adds no rules.
+This repository is diegoami/mandos (local better-borg). Read RULES.md,
+PLAN.md, session.json, docs/SESSION.md and the latest checkpoint36 comment.
 
-For any agent or tool working in this repository (OpenCode, Codex, Claude
-Code, others):
+```sh
+git status --short
+gh issue view 36 -R diegoami/mandos --comments
+node tools/check-session.mjs
+node tools/upstream-watch.mjs
+```
 
-**Start at the open issue labelled `checkpoint`**: its latest comment says
-where work stands and what comes next (process.md section 3). The queue is
-the issues' labels: `status:ready` and `priority:*`.
+This session owns Mandos-only defects, its product/strategy packs, harness,
+records, lab tooling and verified adoption of delivered upstream fixes.
+Current gameplay feature work stays parked unless explicitly requested.
+It does not implement upstream Neo Borg, Neo engine or native C repairs.
 
-- **What this is**: Mandos (formerly better-borg) — the class-agnostic Borg
-  fork: defect fixes and strength
-  improvements for every borg, staged for upstream, with per-class STRATEGY
-  PACKS under `src/class/` (pack #1 is the warrior; every other class plays
-  through the generic pack; a new class starts as a pack, never a fork - the
-  no-N-forks doctrine, docs/process.md section 2). Which class and race each
-  birth plays is the player's: one toggle per class and per race (#16).
-- **Rules**: [`RULES.md`](RULES.md), numbered and cited as "rule n".
-- **Current priority**: current bug-status reconciliation and board monitoring,
-  then triage/list maintenance, then Neo port fixes (issue -> PR -> carry).
-  C local proposals follow only without actionable port bugs; C carry is a
-  second pass after its intake/proposal backlog. Rules 16-20 and #111 apply.
-- **Current scope**: rule 15 authorizes bug hunting and fixing only. The
-  roadmap's strategies, learning, snapshots and new unattended stage-resume
-  functionality remain parked until the owner changes scope.
-- **Process**: [`docs/process.md`](docs/process.md): the loop, records,
-  milestones, and the pack doctrine. Before upstream work: run
-  `node tools/upstream-watch.mjs` - inspect movement on our threads
-  before deciding the next action; also run
-  `node tools/c-upstream-watch.mjs` for official C source/thread discovery;
-  carry verified fixes in the fork (what lives in the core vs in a strategy
-  pack under `src/class/`, and the upstream cherry-pick protocol). Run the
-  read-only carry audit at session start/end, after merge/revert or consumer
-  changes, and after upstream movement or release. Resolve missing/conflicting
-  carry labels before reporting status; titles are not the status ledger.
-- **Tasks**: [`docs/tasks/README.md`](docs/tasks/README.md); the issue's
-  `status:*` label is the status.
-- **Plan**: [`docs/plans/getting-stronger.md`](docs/plans/getting-stronger.md)
-  - the strength roadmap (ceiling fixes, formula engine, parameter evolution,
-  knowledge). **Backlog**: GitHub issues labelled `backlog`, ranked by their
-  `priority:*` labels.
-- **Run records**: [`docs/runs/README.md`](docs/runs/README.md) - reach-rate
-  at the chosen stage is the number (#25); a change without a record is an
-  unmeasured change.
-- **Related Rust port**: [`diegoami/borg-rs`](https://github.com/diegoami/borg-rs),
-  especially its documentation and C bug catalogue; reference tracker
-  [#86](https://github.com/diegoami/mandos/issues/86). Verify each lead
-  against our sources. Maintain [our C-bug catalogue](docs/C-BUGS.md) and
-  local fix proposals; C submissions are paused (rule 12, process §6).
+Port defects and their fix branches live in our neo-angband-mod-borg fork
+session. C Borg, Angband game and Neo engine defects live in our neo-angband
+fork's combined session. Link the canonical owner issue and keep Mandos
+integration tasks distinct, with named package/plugin/lab consumer receipts.
+Transferred historical issue URLs redirect; use qualified canonical refs for
+new text. docs/migrations/repository-split.json is the transfer map.
 
-**Who is who** (owner rule, 2026-11-03): WE are **diegoami**. **neostryder**
-is ANOTHER DEVELOPER (upstream) - never "us", never conflated with our
-forks. Four repos, two each: `neostryder/neo-angband` (upstream ENGINE) and
-`neostryder/neo-angband-mod-borg` (upstream MOD - the 4.2.6 borg PORT our
-fork imported; "the port" means THEIRS unless qualified) versus
-`diegoami/neo-angband` and `diegoami/neo-angband-mod-borg` (OUR forks, hosting isolated proposal branches and the target upstream
-issue trackers). [Fork/session evaluation #2](https://github.com/diegoami/neo-angband/issues/2)
-plans the transition: port trackers in our mod fork, C/game/engine trackers
-in our engine fork, Mandos-specific work in Mandos. Neo Borg development
-stays here; implementation uses task worktrees, preserving pristine upstream
-reference checkouts. Keep fork default branches current by fast-forward only,
-without changing proposal heads. A defect found in our tree that
-also exists at the import boundary `70145c5` is inherited from their
-TypeScript port, not introduced by Mandos. It may also originate in C;
-verify both sources before attributing (the
-B32 `track_step` finding is the case study: first reported as "ours",
-actually theirs - mod-borg#21).
-
-Upstream is `neostryder/neo-angband-mod-borg`; the import commit `70145c5` is
-the boundary, and it is the SAME boundary commit neowarrior-borg imported at,
-so cherry-picks between the forks are trivial.
+The two fork workspaces have their own AGENTS/RULES/PLAN/checkpoint. The
+umbrella directory only routes sessions. Preserve the existing live lab and
+pristine reference checkouts; never silently switch their branches/data.
+See docs/process.md for the Mandos gate and adoption loop.

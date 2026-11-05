@@ -1,0 +1,48 @@
+{
+  "schema": "angband/tracker-automation@1",
+  "actions": [
+    {
+      "repository": "diegoami/neo-angband-tracker",
+      "pages": "workflow-only",
+      "previous_observed_source": {
+        "build_type": "legacy",
+        "branch": "gh-pages",
+        "path": "/"
+      },
+      "site_and_branch_preserved": true
+    },
+    {
+      "repository": "diegoami/neo-angband-tracker",
+      "workflow": "edge",
+      "state": "disabled_manually"
+    },
+    {
+      "repository": "diegoami/neo-angband-tracker",
+      "workflow": "create-github-release",
+      "state": "disabled_manually"
+    },
+    {
+      "repository": "diegoami/neo-angband-borg-mod-tracker",
+      "workflow": "GitHub release",
+      "state": "disabled_manually"
+    },
+    {
+      "repository": "diegoami/neo-angband-borg-mod-tracker",
+      "workflow": "nexus-publish",
+      "state": "disabled_manually"
+    },
+    {
+      "repository": "diegoami/neo-angband-borg-mod-tracker",
+      "workflow": "Redirect issue to main repo",
+      "state": "disabled_manually"
+    },
+    {
+      "repository": "diegoami/neo-angband-tracker",
+      "release": 435510823,
+      "tag": "v1.23.0-edge.1",
+      "draft": true,
+      "assets_preserved": 4,
+      "target": "0cc75b4afcbe6f5128730e4b910408c7be4ac5c5"
+    }
+  ]
+}

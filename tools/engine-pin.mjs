@@ -1,8 +1,7 @@
 /**
  * The engine a measurement ran on, as a run record names it (#40): the
  * published package version plus the engine fixes this repository carries
- * as a pnpm patch (process.md section 6, "Where the carried engine fixes
- * live"). One helper, both runners (tools/runs.mjs, tools/sweep.mjs), so a
+ * as a pnpm patch (patches/README.md and docs/process.md adoption steps). One helper, both runners (tools/runs.mjs, tools/sweep.mjs), so a
  * record can never name the bare published pin while playing a patched one.
  *
  * The patch list is read from the patch file itself: every hunk carries a
