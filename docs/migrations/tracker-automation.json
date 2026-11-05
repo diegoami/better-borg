@@ -44,5 +44,77 @@
       "assets_preserved": 4,
       "target": "0cc75b4afcbe6f5128730e4b910408c7be4ac5c5"
     }
-  ]
+  ],
+  "review_corrections": {
+    "review": "reorganization-review/REPOSITORY-REORGANIZATION-REVIEW.md",
+    "response": "reorganization-review/REVIEW-RESPONSE.md",
+    "engine_guard_pr": "https://github.com/diegoami/neo-angband-tracker/pull/172",
+    "guarded_jobs": 11,
+    "guarded_workflows": [
+      "release.yml",
+      "publish-npm.yml",
+      "pages.yml",
+      "mod-canary.yml",
+      "edge.yml"
+    ],
+    "engine_tag_ruleset": {
+      "id": 26648434,
+      "name": "Tracker: prevent product version tags",
+      "target": "tag",
+      "source_type": "Repository",
+      "source": "diegoami/neo-angband-tracker",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "refs/tags/v*"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "creation"
+        },
+        {
+          "type": "update",
+          "parameters": {
+            "update_allows_fetch_and_merge": false
+          }
+        },
+        {
+          "type": "deletion"
+        }
+      ],
+      "node_id": "RRS_lACqUmVwb3NpdG9yec5WCLryzgGWn3I",
+      "created_at": "2026-11-05T21:40:21.764+01:00",
+      "updated_at": "2026-11-05T21:40:21.800+01:00",
+      "bypass_actors": [],
+      "current_user_can_bypass": "never",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/diegoami/neo-angband-tracker/rulesets/26648434"
+        },
+        "html": {
+          "href": "https://github.com/diegoami/neo-angband-tracker/rules/26648434"
+        }
+      }
+    },
+    "pages_deployment": {
+      "at": "2026-11-05T17:59Z",
+      "head_prefix": "fa84e1f",
+      "content_changed": false,
+      "previous_no_deployment_claim": "incorrect"
+    },
+    "retained_tag": {
+      "name": "v1.23.0-edge.209",
+      "target": "836b8da2a553d9a5e567d5c56476623d501a7bec",
+      "origin": "unknown; retained"
+    },
+    "mandos_workflows": {
+      "github-release.yml": "active; intentional product tag release",
+      "nexus-publish.yml": "active registration; existing upstream-repository job guard skips Mandos"
+    },
+    "ci_failure": "https://github.com/diegoami/neo-angband-tracker/issues/171"
+  }
 }

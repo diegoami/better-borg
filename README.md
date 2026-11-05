@@ -31,3 +31,6 @@ fixed in their owning fork, then integrated here with actual consumer receipts.
 No official C submissions. Upstream credits, GPL/Angband licence and
 AI_USAGE_POLICY remain intact. Historical pre-split docs are preserved under
 [docs/history/repository-split](docs/history/repository-split).
+
+The [repository reorganization review records](docs/migrations/reorganization-review/README.md)
+include the independent verdict, coordinator response and durable source/consumer workflow evidence.

@@ -15,10 +15,10 @@ records, lab tooling and verified adoption of delivered upstream fixes.
 Current gameplay feature work stays parked unless explicitly requested.
 It does not implement upstream Neo Borg, Neo engine or native C repairs.
 
-Port defects and their fix branches live in our neo-angband-mod-borg fork
-session. C Borg, Angband game and Neo engine defects live in our neo-angband
-fork's combined session. Link the canonical owner issue and keep Mandos
-integration tasks distinct, with named package/plugin/lab consumer receipts.
+Port defects and their fix branches live in diegoami/neo-angband-borg-mod-tracker
+(`../neo-angband-borg-mod-tracker`). C Borg, Angband game and Neo engine defects
+live in diegoami/neo-angband-tracker (`../neo-angband-tracker`). Link the canonical
+owner issue and keep Mandos integration tasks distinct, with named package/plugin/lab consumer receipts.
 Transferred historical issue URLs redirect; use qualified canonical refs for
 new text. docs/migrations/repository-split.json is the transfer map.
 
