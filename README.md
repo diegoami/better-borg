@@ -90,6 +90,15 @@ for evidence, patches, consumer tracking and regular status reviews.
 Learning and parameter searches
 happen offline; a live character follows a fixed deterministic policy.
 
+Current-status reconciliation/board monitoring comes before new triage or
+fixes. Port fixes use issue -> PR -> verified carry. An upstream correction
+is fixed/closed after adoption with our changes, rebuild and verification;
+a published release is not a closure prerequisite. patch-active separately
+tracks still-needed backports. Internal issue labels and bodies own status.
+The C-only catalogue retains source/evidence/fix links, with no carry column.
+Its contributor section explains copying a local correction into an
+Angband contributor's own PR. Our C submissions remain paused.
+
 ## Run Mandos in the desktop lab
 
 The current checkout requires **our engine fork**,

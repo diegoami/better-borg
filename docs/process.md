@@ -180,6 +180,14 @@ the task asks, fail-before/pass-after for every new test, report out-of-scope
 defects, update wronged documents, no status written into documents (the
 issue's label and status comment carry it).
 
+**Status/board review always comes first** (owner, 2026-11-05):
+reconcile current internal issues against both upstream boards before new
+classification or implementation. Run the read-only upstream-watch and
+c-upstream-watch tools at start/end, before task selection and after
+upstream/consumer movement. Then maintain triage and the C-only list. Fix
+Neo port bugs first; C local proposals follow without actionable port bugs,
+and validated C carry follows its completed triage/proposal pass.
+
 **The queue and where work stands live on GitHub**, the way the owner's
 other projects run them. The queue is labels: `status:ready` for what can
 start, `priority:{high,med,low}` for the order, `triage:needed` for a bug
@@ -241,7 +249,10 @@ append-only.
 
 ## 6. Neo PRs and local C proposals
 
-A defect fix merges here first (rule 3), then is offered upstream. The PR
+For a Neo port defect, open the issue, prepare the isolated PR, then carry
+our verified correction. Keep both links on the internal tracker. When the
+upstream correction lands, pull/adopt it with our changes, rebuild and verify,
+then mark fixed and close the bug. The PR
 body: the reproduced defect with its run record, the C reference, the fix,
 and the test that fails without it. If upstream prefers a different fix, this
 repo adopts theirs and the diverging local commit is reverted in favour of
@@ -299,8 +310,10 @@ A proposed C fix lives in a PR **in our own repository**. In the existing
 `diegoami/neo-angband` fork, `c-borg-reference` is a pinned C-source base;
 `pr/c-borg-<slug>` carries one correction. The default branch remains the Neo
 engine vehicle. Use ordinary commits/pushes; keep the reference/parent pin
-visible and re-evaluate proposals when it changes. A draft may remain a
-local proposal indefinitely and does not create an upstream maintenance job.
+visible and re-evaluate proposals when it changes. A proposal may be parked closed/unmerged with c-proposal/postponed labels;
+retain its commit, branch and patch links. It does not create an upstream
+maintenance job. Contributor reuse/submission instructions are included
+in the C catalogue and docs/c-fix-handoff.md.
 
 For a validated C-game consequence, build/test the C game with the C Borg
 and retain a reproducible natural or synthetic legal/reachable state,
@@ -365,9 +378,9 @@ harness and lab consumers separately in the tracking issue.
    feature detection does not override its declared engine range.
 3. **Monitor and decide case by case.** The upstream watch shows movement.
    When they review, address the feedback in the same pass; if they prefer
-   a different fix, adopt theirs and drop ours. When a release carries it,
-   do the tracking issue's **On release** (drop the carried patch or lab
-   commit, raise the floor - section 7, step 3 - re-baseline) and close it.
+   a different fix, adopt theirs and drop ours. After verified source adoption, mark fixed/close the bug. When a package
+   release later carries the remaining backport, do its patch-active **On release** (drop the carried patch or lab
+   commit, raise the floor - section 7, step 3 - re-baseline), then remove patch-active.
    If they decline, the tracking issue records the decision and the carried
    fix becomes a marked choice of ours.
 
