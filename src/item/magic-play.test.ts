@@ -5,7 +5,7 @@
 import { describe, expect, it } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { packRoot } from "../play-session.js";
 import type { AgentCommand, AgentView, ItemView, SpellbookView, SpellView } from "@rpgm-tools/neo-angband-core";
 import * as Core from "@rpgm-tools/neo-angband-core";
 import type { JsonRecord, KnownWorldData } from "@rpgm-tools/neo-angband-mod-sdk";
@@ -98,15 +98,13 @@ describe("borg_play_magic: test", () => {
   });
 });
 
-/** The game's checkout holding the content pack (the play tests' convention); null skips the data check. */
+/** Use the installed pack in CI/worktrees as well as an explicit checkout. */
 function classJson(): string | null {
-  const roots = [process.env["NEO_ANGBAND_REPO"], fileURLToPath(new URL("../../../neo-angband/", import.meta.url))].filter(
-    (r): r is string => typeof r === "string" && r.length > 0,
-  );
-  for (const root of roots) {
-    const file = join(root, "packages", "content", "pack", "class.json");
-    if (existsSync(file)) return file;
-  }
+  const root = packRoot();
+  const file = root === null ? null : join(root, "class.json");
+  if (file !== null && existsSync(file)) return file;
+  if (process.env["CI"]) throw new Error("Spell progression tests require class.json from the content pack");
+  console.warn("[magic-play] content pack missing; class-data/progression tests are skipped");
   return null;
 }
 const CLASS_JSON = classJson();
