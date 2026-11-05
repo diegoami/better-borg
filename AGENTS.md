@@ -22,7 +22,10 @@ the issues' labels: `status:ready` and `priority:*`.
   milestones, and the pack doctrine. Before upstream work: run
   `node tools/upstream-watch.mjs` - movement on our threads means engage;
   silence means carry in the fork (what lives in the core vs in a strategy
-  pack under `src/class/`, and the upstream cherry-pick protocol).
+  pack under `src/class/`, and the upstream cherry-pick protocol). Run the
+  read-only carry audit at session start/end, after merge/revert or consumer
+  changes, and after upstream movement or release. Resolve missing/conflicting
+  carry labels before reporting status; titles are not the status ledger.
 - **Tasks**: [`docs/tasks/README.md`](docs/tasks/README.md); the issue's
   `status:*` label is the status.
 - **Plan**: [`docs/plans/getting-stronger.md`](docs/plans/getting-stronger.md)

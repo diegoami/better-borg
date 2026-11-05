@@ -285,7 +285,12 @@ CHOICE that departs from 4.2.6 (rule 3), FORK-marked, unless angband/angband
 fixes it, in which case it is a defect fix toward the C's newer code.
 
 **C report gate** (owner, 2026-11-04): label these Mandos investigations
-`upstream-c`. A code discrepancy or bookkeeping error alone is not enough
+`upstream-c`. This is the C defect/proposal route, not just a reference-test
+label. Qualify inheritance: an omitted correct C behavior is a port defect;
+a faithful copy of a C bug must be corrected upstream in C before Neo can
+take the behavior change. Mandos may carry its own marked CHOICE meanwhile.
+Candidate origin must remain explicitly unproven until scenario attribution.
+A code discrepancy or bookkeeping error alone is not enough
 for upstream submission. Demonstrate a meaningful gameplay consequence
 that the owner can explain in plain language, with reproduction and
 controls. Do not claim a bad decision, death, lost progress or strength
@@ -298,7 +303,12 @@ duplicate. An extracted-function fixture alone is not validation in the
 running C game. Post the evidence internally on the Mandos issue first;
 post to `angband/angband` only after the owner's explicit OK on that report.
 Keep instrumentation and limitations visible; do not imply an observed
-live death when the evidence is an instrumented scenario.
+live death when the evidence is an instrumented scenario. Every proposed
+upstream-C PR needs a repeatable natural or synthetic scenario, legal game
+state, normal rules, explicit RNG/controller/perception setup, before/after
+commands and practical outcomes, and negative controls. The full tracking
+record, exclusive carry labels and session/merge/release review cadence are
+in [the upstream workflow](UPSTREAM.md#carry-status-and-attribution).
 
 **Before posting**, run `node tools/upstream-sync.mjs` (exit 0): an issue
 cites the pristine checkout at upstream's head, and a PR branch is cut from
@@ -399,11 +409,13 @@ upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
    are PR vehicles only: `gh repo sync` them on demand when cutting a §6 PR.
    No permanent product working trees; the isolated PR worktrees from §6
    are disposable. Fork branches are ahead only for their offered change.
-5. The local game checkout: `master` follows upstream, ff-only. The
-   `neowarrior-lab` branch (pushed to `fork`) rebases onto it and shrinks as
-   upstream ships our fixes - the noteSpot line dies the day a release
-   carries #428, and the branch is deleted once empty. After a rebase,
-   `git push --force-with-lease fork neowarrior-lab` (owner-run).
+5. The local game checkout: `master` follows upstream, ff-only. Published
+   fix and lab branches use new commits and normal pushes: no amend and
+   never force-push. Refresh the lab through ordinary merges/cherry-picks,
+   or prepare a clean replacement branch while preserving unadopted fixes
+   and evidence. Remove a carried delta only after its upstream replacement
+   is adopted and verified; update the tracker, carry label and scenario
+   receipt in the same pass. Do not rewrite published history to shrink it.
 
 ## 8. Watched runs (lab builds)
 

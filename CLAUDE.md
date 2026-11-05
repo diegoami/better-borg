@@ -14,7 +14,11 @@
    actually did is a DEFECT fix: it is staged here AND offered upstream as a
    pull request from this repo. A change that improves on 4.2.6 is a CHOICE:
    it lives here, marked, and never pretends to be a defect. Every task and
-   record says which kind it is.
+   record says which kind it is. Always qualify "inherited": inherited from
+   the imported TypeScript port, or inherited from the C Borg. A faithful
+   port of a C bug is not a Neo Angband port defect. Neo Angband must follow
+   C; a correction to C behavior must land in upstream Angband before a Neo
+   parity fix is proposed. Mandos may carry its own marked CHOICE earlier.
 4. **Class-agnostic core, class-specific packs.** A change that only helps
    one class or build goes into that class's strategy pack under
    `src/class/` (process section 2) - never into the core, and never into a
