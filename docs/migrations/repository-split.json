@@ -21,7 +21,7 @@
         "number": 2,
         "url": "https://github.com/diegoami/mandos/issues/2"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "B01: the door-closing defect",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -30,11 +30,16 @@
       "comments_before": 1,
       "created_at_before": "2026-11-02T18:19:39Z",
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 1,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/1"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABczwJ3Q",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 1,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/1"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABczwJ3Q"
+      }
     },
     {
       "source": {
@@ -54,7 +59,7 @@
         "number": 4,
         "url": "https://github.com/diegoami/mandos/issues/4"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "OPEN",
       "title": "B03: the swap subsystem",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -66,11 +71,16 @@
       "milestone_before": null,
       "assignees_before": [],
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 2,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/2"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABczyYgg",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 2,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/2"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABczyYgg"
+      }
     },
     {
       "source": {
@@ -102,7 +112,7 @@
         "number": 11,
         "url": "https://github.com/diegoami/mandos/issues/11"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Backlog: PF_COMBAT_REGEN engine seam",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -122,11 +132,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 3,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/3"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz0H2w",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 3,
         "url": "https://github.com/diegoami/neo-angband/issues/3"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz0H2w"
+      }
     },
     {
       "source": {
@@ -146,7 +161,7 @@
         "number": 13,
         "url": "https://github.com/diegoami/mandos/issues/13"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Upstream: engine setFeat drops square_note_spot (#428 / PR #429)",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -166,11 +181,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 4,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/4"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz22gQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 4,
         "url": "https://github.com/diegoami/neo-angband/issues/4"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz22gQ"
+      }
     },
     {
       "source": {
@@ -178,7 +198,7 @@
         "number": 14,
         "url": "https://github.com/diegoami/mandos/issues/14"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Verify upstream #415 against our pin: remembered-terrain reads in the mod",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -198,11 +218,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 3,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/3"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz3AAQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 3,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/3"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz3AAQ"
+      }
     },
     {
       "source": {
@@ -438,7 +463,7 @@
         "number": 34,
         "url": "https://github.com/diegoami/mandos/issues/34"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "OPEN",
       "title": "The borg audit: cover all classes, strategies and configuration options - find every issue and derive its provenance (the pivot)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -495,11 +520,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 4,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/4"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz3JvQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 4,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/4"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz3JvQ"
+      }
     },
     {
       "source": {
@@ -579,7 +609,7 @@
         "number": 41,
         "url": "https://github.com/diegoami/mandos/issues/41"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Upstream: disturb() input-flush (#414 / PR #432)",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -599,11 +629,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 5,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/5"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz3UWQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 5,
         "url": "https://github.com/diegoami/neo-angband/issues/5"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz3UWQ"
+      }
     },
     {
       "source": {
@@ -611,7 +646,7 @@
         "number": 42,
         "url": "https://github.com/diegoami/mandos/issues/42"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Upstream: the master seed for mods (#431 / PR #433) - a seam; replay of watched lineages waits",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -631,11 +666,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 6,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/6"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz3d4w",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 6,
         "url": "https://github.com/diegoami/neo-angband/issues/6"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz3d4w"
+      }
     },
     {
       "source": {
@@ -643,7 +683,7 @@
         "number": 43,
         "url": "https://github.com/diegoami/mandos/issues/43"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Upstream: ModSaves.load cannot resume a mod's controller (#430 / PR #442)",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -663,11 +703,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 7,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/7"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz3pAw",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 7,
         "url": "https://github.com/diegoami/neo-angband/issues/7"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz3pAw"
+      }
     },
     {
       "source": {
@@ -675,7 +720,7 @@
         "number": 44,
         "url": "https://github.com/diegoami/mandos/issues/44"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: track_step never ported (neo-angband#434 / mod-borg PR #22)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -695,11 +740,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 5,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/5"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz3zMQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 5,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/5"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz3zMQ"
+      }
     },
     {
       "source": {
@@ -707,7 +757,7 @@
         "number": 45,
         "url": "https://github.com/diegoami/mandos/issues/45"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Upstream: seams we depend on (#418 headless first-party, #385 run-end storage) - watch",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -727,11 +777,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 8,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/8"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz362w",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 8,
         "url": "https://github.com/diegoami/neo-angband/issues/8"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz362w"
+      }
     },
     {
       "source": {
@@ -763,7 +818,7 @@
         "number": 48,
         "url": "https://github.com/diegoami/mandos/issues/48"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "borgPlayStep crashes on a goal's stale kill index after the monster list is wiped (inherited port defect)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -820,11 +875,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 6,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/6"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz4CqQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 6,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/6"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz4CqQ"
+      }
     },
     {
       "source": {
@@ -832,7 +892,7 @@
         "number": 49,
         "url": "https://github.com/diegoami/mandos/issues/49"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: BorgKills.at() on a wiped slot (neo-angband#435)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -852,11 +912,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 7,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/7"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz4L2g",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 7,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/7"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz4L2g"
+      }
     },
     {
       "source": {
@@ -864,7 +929,7 @@
         "number": 50,
         "url": "https://github.com/diegoami/mandos/issues/50"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: inventory and worn-recharge rungs restored (#446)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -884,11 +949,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 8,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/8"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz4VrA",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 8,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/8"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz4VrA"
+      }
     },
     {
       "source": {
@@ -944,7 +1014,7 @@
         "number": 55,
         "url": "https://github.com/diegoami/mandos/issues/55"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: Blackguards rest forever for SP - PF_COMBAT_REGEN gates not ported (neo-angband#436)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1001,11 +1071,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 9,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/9"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz4hDA",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 9,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/9"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz4hDA"
+      }
     },
     {
       "source": {
@@ -1025,7 +1100,7 @@
         "number": 57,
         "url": "https://github.com/diegoami/mandos/issues/57"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: borg_flow_recover treats every class with SP as a primary caster (neo-angband#437)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1082,11 +1157,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 10,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/10"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz4q6g",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 10,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/10"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz4q6g"
+      }
     },
     {
       "source": {
@@ -1094,7 +1174,7 @@
         "number": 58,
         "url": "https://github.com/diegoami/mandos/issues/58"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: stale 'not yet ported' notes over ported code (neo-angband#439)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1151,11 +1231,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 11,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/11"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz4yTA",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 11,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/11"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz4yTA"
+      }
     },
     {
       "source": {
@@ -1163,7 +1248,7 @@
         "number": 59,
         "url": "https://github.com/diegoami/mandos/issues/59"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: borg_play_step skips its trap and door magic (neo-angband#440)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1220,11 +1305,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 12,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/12"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz45qw",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 12,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/12"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz45qw"
+      }
     },
     {
       "source": {
@@ -1232,7 +1322,7 @@
         "number": 61,
         "url": "https://github.com/diegoami/mandos/issues/61"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Classify the 145 C borg functions the port never names (tools/c-coverage.mjs)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1289,11 +1379,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 13,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/13"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz5BRw",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 13,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/13"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz5BRw"
+      }
     },
     {
       "source": {
@@ -1301,7 +1396,7 @@
         "number": 64,
         "url": "https://github.com/diegoami/mandos/issues/64"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: borg_play_magic not ported - no caster learns a spell (neo-angband#441)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1358,11 +1453,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 14,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/14"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz5KRg",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 14,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/14"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz5KRg"
+      }
     },
     {
       "source": {
@@ -1370,7 +1470,7 @@
         "number": 65,
         "url": "https://github.com/diegoami/mandos/issues/65"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "OPEN",
       "title": "The stall guard releases a character waiting out confusion",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1427,11 +1527,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 15,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/15"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz5SRA",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 15,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/15"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz5SRA"
+      }
     },
     {
       "source": {
@@ -1451,7 +1556,7 @@
         "number": 68,
         "url": "https://github.com/diegoami/mandos/issues/68"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: torchless Necromancer light and spell-failure predicates (#445)",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1508,11 +1613,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 16,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/16"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz5dvQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 16,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/16"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz5dvQ"
+      }
     },
     {
       "source": {
@@ -1520,7 +1630,7 @@
         "number": 69,
         "url": "https://github.com/diegoami/mandos/issues/69"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Upstream: borg_attack never has a target - BORG_OKAY never set (neo-angband#444) - grid 37/71 to 57/72",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1577,11 +1687,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 17,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/17"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz5nHg",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 17,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/17"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz5nHg"
+      }
     },
     {
       "source": {
@@ -1589,7 +1704,7 @@
         "number": 72,
         "url": "https://github.com/diegoami/mandos/issues/72"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Quiver investigation: ammo visibility is intact; membership accessor belongs to #50",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1609,11 +1724,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 18,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/18"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz5vmg",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 18,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/18"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz5vmg"
+      }
     },
     {
       "source": {
@@ -1633,7 +1753,7 @@
         "number": 75,
         "url": "https://github.com/diegoami/mandos/issues/75"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Inherited gap: borg_defend never chooses Mass Banishment, despite having its inputs",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1653,11 +1773,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 19,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/19"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz54bg",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 19,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/19"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz54bg"
+      }
     },
     {
       "source": {
@@ -1677,7 +1802,7 @@
         "number": 79,
         "url": "https://github.com/diegoami/mandos/issues/79"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Inherited gap: home equipment search is replaced by a greedy single-item step",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1697,11 +1822,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 20,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/20"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz6AlQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 20,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/20"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz6AlQ"
+      }
     },
     {
       "source": {
@@ -1709,7 +1839,7 @@
         "number": 80,
         "url": "https://github.com/diegoami/mandos/issues/80"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "CLOSED",
       "title": "Inherited gaps: three Morgoth defenses are stubbed under a panel-data excuse",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1729,11 +1859,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 21,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/21"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz6JHQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 21,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/21"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz6JHQ"
+      }
     },
     {
       "source": {
@@ -1741,7 +1876,7 @@
         "number": 81,
         "url": "https://github.com/diegoami/mandos/issues/81"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "OPEN",
       "title": "Inherited item-analysis gaps: knowledge, cursed flags and per-item valuation",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -1761,11 +1896,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 22,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/22"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz6QTg",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 22,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/22"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz6QTg"
+      }
     },
     {
       "source": {
@@ -1785,7 +1925,7 @@
         "number": 86,
         "url": "https://github.com/diegoami/mandos/issues/86"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Watch borg-rs documentation and C bug findings during Mandos defect work",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -1805,11 +1945,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 9,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/9"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz6XVA",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 9,
         "url": "https://github.com/diegoami/neo-angband/issues/9"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz6XVA"
+      }
     },
     {
       "source": {
@@ -1817,7 +1962,7 @@
         "number": 87,
         "url": "https://github.com/diegoami/mandos/issues/87"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Lantern light misses the two west-side shoulder grids (inherited C bug)",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -1837,11 +1982,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 10,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/10"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz6fsA",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 10,
         "url": "https://github.com/diegoami/neo-angband/issues/10"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz6fsA"
+      }
     },
     {
       "source": {
@@ -1849,7 +1999,7 @@
         "number": 89,
         "url": "https://github.com/diegoami/mandos/issues/89"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Upstream C proposal: west-side Borg lighting \u2014 validation, duplicate audit and PR plan",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -1869,11 +2019,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 11,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/11"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz6pyg",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 11,
         "url": "https://github.com/diegoami/neo-angband/issues/11"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz6pyg"
+      }
     },
     {
       "source": {
@@ -1893,7 +2048,7 @@
         "number": 93,
         "url": "https://github.com/diegoami/mandos/issues/93"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Triage borg-rs C findings and our own bug reproductions",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -1913,11 +2068,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 12,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/12"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz6yyg",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 12,
         "url": "https://github.com/diegoami/neo-angband/issues/12"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz6yyg"
+      }
     },
     {
       "source": {
@@ -1925,7 +2085,7 @@
         "number": 94,
         "url": "https://github.com/diegoami/mandos/issues/94"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "C Borg: cancelling the map-file prompt can crash the running game",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -1945,11 +2105,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 13,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/13"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz67Vw",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 13,
         "url": "https://github.com/diegoami/neo-angband/issues/13"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz67Vw"
+      }
     },
     {
       "source": {
@@ -1957,7 +2122,7 @@
         "number": 95,
         "url": "https://github.com/diegoami/mandos/issues/95"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "C Borg: paralysis can leave message reactions disabled for the rest of the process",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -1977,11 +2142,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 14,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/14"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz7FfQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 14,
         "url": "https://github.com/diegoami/neo-angband/issues/14"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz7FfQ"
+      }
     },
     {
       "source": {
@@ -2013,7 +2183,7 @@
         "number": 100,
         "url": "https://github.com/diegoami/mandos/issues/100"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "CLOSED",
       "title": "Track Neo's class-book spell-count correction in package and lab consumers",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2033,11 +2203,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 15,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/15"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz7OfQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 15,
         "url": "https://github.com/diegoami/neo-angband/issues/15"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz7OfQ"
+      }
     },
     {
       "source": {
@@ -2045,7 +2220,7 @@
         "number": 102,
         "url": "https://github.com/diegoami/mandos/issues/102"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "CLOSED",
       "title": "Maintain a local C Borg bug catalogue and classify new borg-rs findings",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2065,11 +2240,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 16,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/16"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz7Wnw",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 16,
         "url": "https://github.com/diegoami/neo-angband/issues/16"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz7Wnw"
+      }
     },
     {
       "source": {
@@ -2077,7 +2257,7 @@
         "number": 103,
         "url": "https://github.com/diegoami/mandos/issues/103"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Black Market Teleport Other rod gate uses the wrong class comparison",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2097,11 +2277,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 17,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/17"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz7gUQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 17,
         "url": "https://github.com/diegoami/neo-angband/issues/17"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz7gUQ"
+      }
     },
     {
       "source": {
@@ -2109,7 +2294,7 @@
         "number": 104,
         "url": "https://github.com/diegoami/mandos/issues/104"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Starving Borg shopping gate admits unrelated scrolls and subtype collisions",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2129,11 +2314,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 18,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/18"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz7m5w",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 18,
         "url": "https://github.com/diegoami/neo-angband/issues/18"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz7m5w"
+      }
     },
     {
       "source": {
@@ -2141,7 +2331,7 @@
         "number": 105,
         "url": "https://github.com/diegoami/mandos/issues/105"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "C home purchase trials can leave reduced quantities after an early continue",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2161,11 +2351,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 19,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/19"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz7vLQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 19,
         "url": "https://github.com/diegoami/neo-angband/issues/19"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz7vLQ"
+      }
     },
     {
       "source": {
@@ -2173,7 +2368,7 @@
         "number": 106,
         "url": "https://github.com/diegoami/mandos/issues/106"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Recent purchase/sale history skips its latest entry",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2193,11 +2388,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 20,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/20"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz717A",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 20,
         "url": "https://github.com/diegoami/neo-angband/issues/20"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz717A"
+      }
     },
     {
       "source": {
@@ -2205,7 +2405,7 @@
         "number": 107,
         "url": "https://github.com/diegoami/mandos/issues/107"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Dimension Door selects targets without checking normal destination legality",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2225,11 +2425,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 21,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/21"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz79SA",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 21,
         "url": "https://github.com/diegoami/neo-angband/issues/21"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz79SA"
+      }
     },
     {
       "source": {
@@ -2237,7 +2442,7 @@
         "number": 108,
         "url": "https://github.com/diegoami/mandos/issues/108"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "OPEN",
       "title": "Escape stair command is discarded inside phase guards",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -2257,11 +2462,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 23,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/23"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz8EWA",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 23,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/23"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz8EWA"
+      }
     },
     {
       "source": {
@@ -2269,7 +2479,7 @@
         "number": 110,
         "url": "https://github.com/diegoami/mandos/issues/110"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "CLOSED",
       "title": "Add precise source lines, unify catalogue columns, and refresh borg-rs intake",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2289,11 +2499,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 22,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/22"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz8Nhw",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 22,
         "url": "https://github.com/diegoami/neo-angband/issues/22"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz8Nhw"
+      }
     },
     {
       "source": {
@@ -2313,7 +2528,7 @@
         "number": 112,
         "url": "https://github.com/diegoami/mandos/issues/112"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "OPEN",
       "title": "Urgent temple/food shop choice is overwritten or uses a stale ware target",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2333,11 +2548,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 23,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/23"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz8U7A",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 23,
         "url": "https://github.com/diegoami/neo-angband/issues/23"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz8U7A"
+      }
     },
     {
       "source": {
@@ -2345,7 +2565,7 @@
         "number": 114,
         "url": "https://github.com/diegoami/mandos/issues/114"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "OPEN",
       "title": "Spell progression tests skip 26 cases in CI without a sibling engine checkout",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -2365,11 +2585,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 24,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/24"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz8b-w",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 24,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/24"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz8b-w"
+      }
     },
     {
       "source": {
@@ -2389,7 +2614,7 @@
         "number": 120,
         "url": "https://github.com/diegoami/mandos/issues/120"
       },
-      "destination_repository": "diegoami/neo-angband",
+      "destination_repository": "diegoami/neo-angband-tracker",
       "state_before": "CLOSED",
       "title": "Refresh C catalogue through Rust groups 37\u201340 and validate snapshot coverage",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
@@ -2409,11 +2634,16 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-tracker",
+        "number": 24,
+        "url": "https://github.com/diegoami/neo-angband-tracker/issues/24"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz8lSw",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband",
         "number": 24,
         "url": "https://github.com/diegoami/neo-angband/issues/24"
-      },
-      "node_id": "I_kwDOVgi68s8AAAABcz8lSw"
+      }
     },
     {
       "source": {
@@ -2421,7 +2651,7 @@
         "number": 123,
         "url": "https://github.com/diegoami/mandos/issues/123"
       },
-      "destination_repository": "diegoami/neo-angband-mod-borg",
+      "destination_repository": "diegoami/neo-angband-borg-mod-tracker",
       "state_before": "OPEN",
       "title": "Upstream play/rest suites skip 10 installed-content cases and hide door-stall failures",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
@@ -2441,11 +2671,17 @@
         }
       },
       "destination": {
+        "repository": "diegoami/neo-angband-borg-mod-tracker",
+        "number": 25,
+        "url": "https://github.com/diegoami/neo-angband-borg-mod-tracker/issues/25"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz8riQ",
+      "destination_at_transfer": {
         "repository": "diegoami/neo-angband-mod-borg",
         "number": 25,
         "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/25"
-      },
-      "node_id": "I_kwDOVgi7J88AAAABcz8riQ"
+      }
     }
-  ]
+  ],
+  "repository_renames": "repository-renames.json"
 }

@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 /** Read-only official-C source/thread watch. Never posts, applies patches or edits issue state. */
 import { execFileSync } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const cacheFile = process.env.MANDOS_C_WATCH_CACHE ?? join(root, "artifacts/c-upstream-watch.json");
-const catalogue = JSON.parse(readFileSync(join(root, "docs/c-bugs.json"), "utf8"));
 const gh = (args) => JSON.parse(execFileSync("gh", args, {
   encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 20000,
 }));
@@ -19,21 +18,32 @@ const api = (path) => {
   try { return gh(["api", path]); }
   catch { problems.push("API read failed: " + path); return null; }
 };
+let catalogue = null;
+const localIndex = join(root, "docs/c-bugs/watch-index.json");
+try {
+  if (existsSync(localIndex)) catalogue = JSON.parse(readFileSync(localIndex, "utf8"));
+  else {
+    const response = api("repos/diegoami/neo-angband-tracker/contents/docs/c-bugs/watch-index.json");
+    if (response?.encoding === "base64") catalogue = JSON.parse(Buffer.from(response.content, "base64").toString("utf8"));
+  }
+  if (!catalogue?.sources?.c?.commit || !Array.isArray(catalogue.findings)) throw new Error("invalid C watch index");
+} catch { problems.push("Cannot read canonical engine/C watch index."); }
+const trackerRef = (ref) => ref && typeof ref === "object" ? ref.repository + "#" + ref.number : "engine/C intake";
 const head = api("repos/angband/angband/commits/master");
-const reference = catalogue.sources.c.commit;
+const reference = catalogue?.sources?.c?.commit;
 if (head) {
   next.head = head.sha;
   console.log("Official C master: " + head.sha);
   console.log("Catalogue affected/reference pin: " + reference);
   if (head.sha === reference) console.log("Official source still equals the recorded reference.");
-  else {
+  else if (reference) {
     const diff = api("repos/angband/angband/compare/" + reference + "..." + head.sha + "?per_page=100");
     if (diff) {
       const paths = new Set((diff.files ?? []).map((file) => file.filename));
       if ((diff.files?.length ?? 0) >= 300) problems.push("Compare reached GitHub's file window; source review is incomplete.");
       console.log("Changed C files versus reference: " + paths.size + "; this is a review signal, not proof of a fix.");
-      const matched = catalogue.findings.filter((finding) => finding.references.some((ref) => ref.role === "c" && paths.has(ref.path)));
-      for (const finding of matched) console.log(finding.id + ": referenced C context changed; review internal issue " + (finding.tracker ?? "93"));
+      const matched = (catalogue?.findings ?? []).filter((finding) => finding.references.some((ref) => ref.role === "c" && paths.has(ref.path)));
+      for (const finding of matched) console.log(finding.id + ": referenced C context changed; review internal issue " + trackerRef(finding.tracker));
       const borg = [...paths].filter((path) => path.startsWith("src/borg/"));
       console.log("Changed Borg paths: " + (borg.join(", ") || "none; other engine changes can still affect Borg behavior"));
     }
@@ -42,7 +52,7 @@ if (head) {
 }
 let issues = [];
 try {
-  issues = gh(["issue", "list", "--repo", "diegoami/mandos", "--state", "all",
+  issues = gh(["issue", "list", "--repo", "diegoami/neo-angband-tracker", "--state", "all",
     "--label", "upstream-c", "--limit", "1000", "--json", "number,body,labels,state"]);
   if (issues.length === 1000) problems.push("Internal issue window reached; board review is incomplete.");
 } catch { problems.push("Cannot read internal C trackers."); }
@@ -52,7 +62,7 @@ for (const issue of issues) {
   for (const match of line.matchAll(/angband\/angband#(\d+)/g)) {
     const number = Number(match[1]);
     if (!refs.has(number)) refs.set(number, []);
-    refs.get(number).push(issue.number);
+    refs.get(number).push("diegoami/neo-angband-tracker#" + issue.number);
   }
 }
 for (const [number, trackers] of refs) {

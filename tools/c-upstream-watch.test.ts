@@ -28,6 +28,7 @@ async function run(incomplete = false, offline = false) {
   gh.mockImplementation((_command: string, args: string[]) => {
     if (offline) throw new Error("offline");
     if (args[0] === "issue") return "[]";
+    if (args[1]?.includes("watch-index.json")) return JSON.stringify({ encoding: "base64", content: Buffer.from(JSON.stringify({ sources: { c: { commit: "e473720ed88a0f0c7ca66815cef3000eb4a38bc3" } }, findings: [] })).toString("base64") });
     if (args[1]?.includes("commits/master")) return JSON.stringify({ sha: "e473720ed88a0f0c7ca66815cef3000eb4a38bc3" });
     if (args[1]?.startsWith("search/issues")) return JSON.stringify({ items: [], total_count: 230, incomplete_results: incomplete });
     throw new Error("Unexpected API read");

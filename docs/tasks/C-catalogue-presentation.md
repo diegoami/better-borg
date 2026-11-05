@@ -1,7 +1,7 @@
 # C catalogue presentation and ownership evaluation
 
 Owner request,2026-11-05; evaluation tracker:
-https://github.com/diegoami/neo-angband/issues/2 (high priority,ready).
+https://github.com/diegoami/neo-angband-tracker/issues/2 (high priority,ready).
 Documentation/workflow maintenance only; no game behavior or issue migration.
 
 - Lead C-BUGS with the concrete map-dump compare link and easy direct-PR method.
