@@ -164,7 +164,8 @@
         "url": "https://github.com/diegoami/mandos/issues/135"
       },
       "consumer_label_at_split": "fixed",
-      "consumer_state_at_split": "CLOSED"
+      "consumer_state_at_split": "CLOSED",
+      "original_milestone_retained": 2
     },
     {
       "original_number": 57,
@@ -179,7 +180,8 @@
         "url": "https://github.com/diegoami/mandos/issues/136"
       },
       "consumer_label_at_split": "fixed",
-      "consumer_state_at_split": "CLOSED"
+      "consumer_state_at_split": "CLOSED",
+      "original_milestone_retained": 2
     },
     {
       "original_number": 58,
@@ -194,7 +196,8 @@
         "url": "https://github.com/diegoami/mandos/issues/137"
       },
       "consumer_label_at_split": "fixed",
-      "consumer_state_at_split": "CLOSED"
+      "consumer_state_at_split": "CLOSED",
+      "original_milestone_retained": 2
     },
     {
       "original_number": 59,
@@ -209,7 +212,8 @@
         "url": "https://github.com/diegoami/mandos/issues/138"
       },
       "consumer_label_at_split": "fixed",
-      "consumer_state_at_split": "CLOSED"
+      "consumer_state_at_split": "CLOSED",
+      "original_milestone_retained": 2
     },
     {
       "original_number": 64,
@@ -224,7 +228,8 @@
         "url": "https://github.com/diegoami/mandos/issues/139"
       },
       "consumer_label_at_split": "fixed",
-      "consumer_state_at_split": "CLOSED"
+      "consumer_state_at_split": "CLOSED",
+      "original_milestone_retained": 2
     },
     {
       "original_number": 65,
@@ -239,7 +244,8 @@
         "url": "https://github.com/diegoami/mandos/issues/140"
       },
       "consumer_label_at_split": "partially-carried",
-      "consumer_state_at_split": "OPEN"
+      "consumer_state_at_split": "OPEN",
+      "original_milestone_retained": 2
     },
     {
       "original_number": 68,
@@ -254,7 +260,8 @@
         "url": "https://github.com/diegoami/mandos/issues/141"
       },
       "consumer_label_at_split": "fixed",
-      "consumer_state_at_split": "CLOSED"
+      "consumer_state_at_split": "CLOSED",
+      "original_milestone_retained": 2
     },
     {
       "original_number": 69,
@@ -269,7 +276,8 @@
         "url": "https://github.com/diegoami/mandos/issues/142"
       },
       "consumer_label_at_split": "fixed",
-      "consumer_state_at_split": "CLOSED"
+      "consumer_state_at_split": "CLOSED",
+      "original_milestone_retained": 2
     },
     {
       "original_number": 75,
