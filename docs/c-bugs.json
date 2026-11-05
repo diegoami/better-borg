@@ -1,5 +1,5 @@
 {
-  "schema": "mandos/c-bugs@1",
+  "schema": "mandos/c-bugs@2",
   "updated": "2026-11-05",
   "owner": "diegoami",
   "policy": {
@@ -11,17 +11,18 @@
       "branch": "c-borg-reference",
       "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3"
     },
-    "note": "Local proposal ownership, evidence and application are independent. A local C PR never implies a Neo parity fix or an applied Mandos correction."
+    "note": "Local proposal ownership, evidence and application are independent. A local C PR never implies a Neo parity fix or an applied Mandos correction.",
+    "carry_priority": "validated-bugs-from-both-C-and-Neo"
   },
   "sources": {
     "borg_rs": {
       "repository": "diegoami/borg-rs",
-      "commit": "6fb471179e28224ac3259434c768afaff0a367ae",
+      "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
       "path": "docs/c-bugs.md",
-      "previous_commit": "66dced95ba5c61b95fb011b01c3d214b7ab2c4a6",
-      "groups": 35,
-      "previous_groups": 33,
-      "unchanged_groups": "1-33"
+      "previous_commit": "6fb471179e28224ac3259434c768afaff0a367ae",
+      "groups": 36,
+      "previous_groups": 35,
+      "unchanged_groups": "1-35"
     },
     "c": {
       "repository": "angband/angband",
@@ -45,7 +46,16 @@
       "review": "source comparison: C uses has[BI_CURHP]; Mandos already uses the HP trait",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 8,
+        "end": 22,
+        "description": "discovery group 1"
+      }
     },
     {
       "number": 2,
@@ -55,7 +65,16 @@
       "review": "lookup/registration audit pending",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 23,
+        "end": 31,
+        "description": "discovery group 2"
+      }
     },
     {
       "number": 3,
@@ -65,7 +84,16 @@
       "review": "configuration-only lead; valid-input impact unproven",
       "priority": "low",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 32,
+        "end": 40,
+        "description": "discovery group 3"
+      }
     },
     {
       "number": 4,
@@ -77,7 +105,16 @@
       "coverage": "historical-intake-with-current-notes",
       "findings": [
         "CBUG-0003"
-      ]
+      ],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 41,
+        "end": 54,
+        "description": "discovery group 4"
+      }
     },
     {
       "number": 5,
@@ -87,7 +124,16 @@
       "review": "catalogue notes effective guards; no independent play defect established",
       "priority": "low",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 55,
+        "end": 69,
+        "description": "discovery group 5"
+      }
     },
     {
       "number": 6,
@@ -97,7 +143,16 @@
       "review": "diagnostic lead; large-input memory behavior needs reachability proof",
       "priority": "low",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 70,
+        "end": 88,
+        "description": "discovery group 6"
+      }
     },
     {
       "number": 7,
@@ -107,7 +162,16 @@
       "review": "configuration-diagnostic lead",
       "priority": "low",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 89,
+        "end": 95,
+        "description": "discovery group 7"
+      }
     },
     {
       "number": 8,
@@ -117,7 +181,16 @@
       "review": "needs an actual keep/retrieve/equip consequence",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 96,
+        "end": 108,
+        "description": "discovery group 8"
+      }
     },
     {
       "number": 9,
@@ -127,7 +200,16 @@
       "review": "still present in magic-play.ts; interaction with no-light guards needs scenario",
       "priority": "low",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 109,
+        "end": 119,
+        "description": "discovery group 9"
+      }
     },
     {
       "number": 10,
@@ -137,7 +219,16 @@
       "review": "separate diagnostic text from reachable policy behavior",
       "priority": "low",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 120,
+        "end": 140,
+        "description": "discovery group 10"
+      }
     },
     {
       "number": 11,
@@ -147,7 +238,16 @@
       "review": "C UI lead; Neo uses direct birth commands",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 141,
+        "end": 153,
+        "description": "discovery group 11"
+      }
     },
     {
       "number": 12,
@@ -157,7 +257,16 @@
       "review": "sustain bug still visible in Mandos home.ts; transaction consequence pending",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 154,
+        "end": 166,
+        "description": "discovery group 12"
+      }
     },
     {
       "number": 13,
@@ -169,7 +278,16 @@
       "coverage": "historical-intake-with-current-notes",
       "findings": [
         "CBUG-0001"
-      ]
+      ],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 167,
+        "end": 181,
+        "description": "discovery group 13"
+      }
     },
     {
       "number": 14,
@@ -181,7 +299,16 @@
       "coverage": "historical-intake-with-current-notes",
       "findings": [
         "CBUG-0002"
-      ]
+      ],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 182,
+        "end": 198,
+        "description": "discovery group 14"
+      }
     },
     {
       "number": 15,
@@ -191,7 +318,16 @@
       "review": "C debug-key path; no direct Neo counterpart assumed",
       "priority": "low",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 199,
+        "end": 211,
+        "description": "discovery group 15"
+      }
     },
     {
       "number": 16,
@@ -201,7 +337,16 @@
       "review": "pval condition preserved; empty-pack symptom must be classified separately",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 212,
+        "end": 225,
+        "description": "discovery group 16"
+      }
     },
     {
       "number": 17,
@@ -213,7 +358,16 @@
       "coverage": "historical-intake-with-current-notes",
       "findings": [
         "CBUG-0004"
-      ]
+      ],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 226,
+        "end": 260,
+        "description": "discovery group 17"
+      }
     },
     {
       "number": 18,
@@ -223,7 +377,16 @@
       "review": "current Neo perItemValue explicitly preserves C's sustain-flag mixup",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 261,
+        "end": 273,
+        "description": "discovery group 18"
+      }
     },
     {
       "number": 19,
@@ -233,7 +396,16 @@
       "review": "normal flow and optional-mode symptoms must be separated",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 274,
+        "end": 300,
+        "description": "discovery group 19"
+      }
     },
     {
       "number": 20,
@@ -243,7 +415,16 @@
       "review": "TS division guard and both-ring scan differ; staff gates still suspect",
       "priority": "high",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 301,
+        "end": 324,
+        "description": "discovery group 20"
+      }
     },
     {
       "number": 21,
@@ -253,7 +434,16 @@
       "review": "C/port comparison needed after B99 ring/home adoption; #4 remains partly absent",
       "priority": "high",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 325,
+        "end": 354,
+        "description": "discovery group 21"
+      }
     },
     {
       "number": 22,
@@ -263,7 +453,16 @@
       "review": "panel UI differs; current TS refuel still starts at borgSlot's selected lantern",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 355,
+        "end": 374,
+        "description": "discovery group 22"
+      }
     },
     {
       "number": 23,
@@ -273,7 +472,16 @@
       "review": "C menu path; direct-command port applicability unproven",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 375,
+        "end": 390,
+        "description": "discovery group 23"
+      }
     },
     {
       "number": 24,
@@ -283,7 +491,16 @@
       "review": "multiple candidates; compare with B99 deletion/history fixes",
       "priority": "high",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 391,
+        "end": 424,
+        "description": "discovery group 24"
+      }
     },
     {
       "number": 25,
@@ -293,7 +510,16 @@
       "review": "C menu-selection lead; no direct-command bug inferred",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 425,
+        "end": 440,
+        "description": "discovery group 25"
+      }
     },
     {
       "number": 26,
@@ -303,7 +529,16 @@
       "review": "split harmless note/duplicate from reachable missing-rod access",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 441,
+        "end": 454,
+        "description": "discovery group 26"
+      }
     },
     {
       "number": 27,
@@ -313,7 +548,16 @@
       "review": "C narrow-integer effect is absent from the JS number assignment",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 455,
+        "end": 469,
+        "description": "discovery group 27"
+      }
     },
     {
       "number": 28,
@@ -323,7 +567,16 @@
       "review": "TS guards regen simulation already; Venom cost still references Smite Evil",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 470,
+        "end": 490,
+        "description": "discovery group 28"
+      }
     },
     {
       "number": 29,
@@ -333,7 +586,16 @@
       "review": "legal message/state sequence needed before claiming reachable memory failure",
       "priority": "high",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 491,
+        "end": 512,
+        "description": "discovery group 29"
+      }
     },
     {
       "number": 30,
@@ -343,7 +605,16 @@
       "review": "optional-mode lead; not ordinary-mode proof",
       "priority": "low",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 513,
+        "end": 529,
+        "description": "discovery group 30"
+      }
     },
     {
       "number": 31,
@@ -353,7 +624,16 @@
       "review": "stair cause overlaps group19; split remaining symptoms",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 530,
+        "end": 550,
+        "description": "discovery group 31"
+      }
     },
     {
       "number": 32,
@@ -363,7 +643,16 @@
       "review": "legal border/door scenarios needed; dead no-op is not a crash proof",
       "priority": "med",
       "coverage": "historical-intake-with-current-notes",
-      "findings": []
+      "findings": [],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 551,
+        "end": 577,
+        "description": "discovery group 32"
+      }
     },
     {
       "number": 33,
@@ -376,7 +665,16 @@
       "findings": [
         "CBUG-0013",
         "CBUG-0014"
-      ]
+      ],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 578,
+        "end": 606,
+        "description": "discovery group 33"
+      }
     },
     {
       "number": 34,
@@ -397,7 +695,16 @@
         "CBUG-0012",
         "CBUG-0013",
         "CBUG-0014"
-      ]
+      ],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 607,
+        "end": 641,
+        "description": "discovery group 34"
+      }
     },
     {
       "number": 35,
@@ -412,7 +719,38 @@
         "CBUG-0016",
         "CBUG-0017",
         "CBUG-0018"
-      ]
+      ],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 642,
+        "end": 666,
+        "description": "discovery group 35"
+      }
+    },
+    {
+      "number": 36,
+      "title": "Shop choice slips (think store)",
+      "area": "shopping",
+      "summary": "Urgent shop goal/stale ware and redundant town guard",
+      "review": "C and current port share the forced-goal flow; source checked, transaction scenario pending",
+      "priority": "high",
+      "coverage": "symptom-triaged",
+      "findings": [
+        "CBUG-0019",
+        "CBUG-0020"
+      ],
+      "discovery_reference": {
+        "role": "borg_rs",
+        "repository": "diegoami/borg-rs",
+        "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+        "path": "docs/c-bugs.md",
+        "start": 667,
+        "end": 681,
+        "description": "discovery group 36"
+      }
     }
   ],
   "findings": [
@@ -451,7 +789,36 @@
       ],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "evidence_path": "docs/audit/c-reports/B94/README.md",
-      "patch": "patches/upstream-c/B94-map-dump-cancel.patch"
+      "patch": "patches/upstream-c/B94-map-dump-cancel.patch",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-log.c",
+          "start": 190,
+          "end": 204,
+          "description": "if (ask && get_string"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-log.c",
+          "start": 666,
+          "end": 668,
+          "description": "file_close(borg_map_file);"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 167,
+          "end": 181,
+          "description": "discovery group 13"
+        }
+      ]
     },
     {
       "id": "CBUG-0002",
@@ -475,7 +842,45 @@
       "tracker": 95,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg.c",
+          "start": 310,
+          "end": 314,
+          "description": "borg.dont_react = false;"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-messages-react.c",
+          "start": 45,
+          "end": 49,
+          "description": "if (borg_dont_react"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-messages.c",
+          "start": 439,
+          "end": 448,
+          "description": "borg_dont_react = true;"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 182,
+          "end": 198,
+          "description": "discovery group 14"
+        }
+      ]
     },
     {
       "id": "CBUG-0003",
@@ -510,7 +915,45 @@
         }
       ],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
-      "evidence_url": "https://github.com/diegoami/mandos/issues/89"
+      "evidence_url": "https://github.com/diegoami/mandos/issues/89",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-cave-light.c",
+          "start": 135,
+          "end": 143,
+          "description": "/* West of the player */"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/perceive.ts",
+          "start": 285,
+          "end": 290,
+          "description": "if (floorAt(cy, cx - 2))"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/perceive.ts",
+          "start": 288,
+          "end": 293,
+          "description": "if (floorAt(cy, cx - 2))"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 41,
+          "end": 54,
+          "description": "discovery group 4"
+        }
+      ]
     },
     {
       "id": "CBUG-0004",
@@ -534,7 +977,45 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-danger.c",
+          "start": 262,
+          "end": 276,
+          "description": "case MONBLOW_COLD:"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/danger/danger.ts",
+          "start": 206,
+          "end": 219,
+          "description": "case MONBLOW.COLD:"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/danger/danger.ts",
+          "start": 209,
+          "end": 222,
+          "description": "case MONBLOW.COLD:"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 226,
+          "end": 260,
+          "description": "discovery group 17"
+        }
+      ]
     },
     {
       "id": "CBUG-0005",
@@ -558,7 +1039,45 @@
       "tracker": 103,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 127,
+          "end": 133,
+          "description": "&& borg.trait[BI_CLASS] == CLASS_ROGUE)"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 189,
+          "end": 193,
+          "description": "item.sval === Ro.teleport_other"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 189,
+          "end": 193,
+          "description": "item.sval === Ro.teleport_other"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0006",
@@ -582,7 +1101,45 @@
       "tracker": 104,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 281,
+          "end": 288,
+          "description": "/* Special check for 'immediate shopping' */"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 294,
+          "end": 303,
+          "description": "/* immediate-shopping food gate"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 294,
+          "end": 303,
+          "description": "/* immediate-shopping food gate"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0007",
@@ -606,7 +1163,45 @@
       "tracker": 105,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 501,
+          "end": 523,
+          "description": "borg_shops[BORG_HOME].ware[n].iqty -= qty;"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 348,
+          "end": 387,
+          "description": "borgThinkHomeBuyUseful"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 348,
+          "end": 387,
+          "description": "borgThinkHomeBuyUseful"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0008",
@@ -630,7 +1225,54 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 455,
+          "end": 475,
+          "description": "int32_t p_left"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 542,
+          "end": 548,
+          "description": "p_left = borg_power();"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 348,
+          "end": 387,
+          "description": "borgThinkHomeBuyUseful"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 348,
+          "end": 387,
+          "description": "borgThinkHomeBuyUseful"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0009",
@@ -654,7 +1296,54 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 535,
+          "end": 539,
+          "description": "borg_items[slot].iqty = 1;"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 567,
+          "end": 571,
+          "description": "borg_items[INVEN_RIGHT].iqty = qty;"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 371,
+          "end": 376,
+          "description": "const sim: BuySim"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 371,
+          "end": 376,
+          "description": "const sim: BuySim"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0010",
@@ -678,7 +1367,45 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 859,
+          "end": 896,
+          "description": "skip_it = false;"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 494,
+          "end": 510,
+          "description": "let skip = false;"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 494,
+          "end": 510,
+          "description": "let skip = false;"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0011",
@@ -702,7 +1429,54 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 972,
+          "end": 983,
+          "description": "= -1L;"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 1088,
+          "end": 1099,
+          "description": "= -1L;"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 548,
+          "end": 551,
+          "description": "const evalFn"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 548,
+          "end": 551,
+          "description": "const evalFn"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0012",
@@ -726,7 +1500,54 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 1002,
+          "end": 1026,
+          "description": "memcpy(&borg_items[hole]"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 1112,
+          "end": 1136,
+          "description": "memcpy(&borg_items[hole]"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 543,
+          "end": 571,
+          "description": "borgThinkHomeBuySwap"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 543,
+          "end": 571,
+          "description": "borgThinkHomeBuySwap"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0013",
@@ -751,7 +1572,135 @@
       "tracker": 106,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 1226,
+          "end": 1233,
+          "description": "bought_item_nxt++;"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-sell.c",
+          "start": 1128,
+          "end": 1135,
+          "description": "sold_item_nxt++;"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 171,
+          "end": 176,
+          "description": "p < sold_item_num"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-sell.c",
+          "start": 349,
+          "end": 354,
+          "description": "p < bought_item_num"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/store.ts",
+          "start": 151,
+          "end": 154,
+          "description": "mem.boughtNum ="
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/store.ts",
+          "start": 154,
+          "end": 157,
+          "description": "mem.boughtNum ="
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/store.ts",
+          "start": 136,
+          "end": 139,
+          "description": "mem.soldNum ="
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/store.ts",
+          "start": 139,
+          "end": 142,
+          "description": "mem.soldNum ="
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/sell.ts",
+          "start": 410,
+          "end": 414,
+          "description": "i < mem.boughtNum"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/sell.ts",
+          "start": 410,
+          "end": 414,
+          "description": "i < mem.boughtNum"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/buy.ts",
+          "start": 362,
+          "end": 366,
+          "description": "i < mem.soldNum"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/buy.ts",
+          "start": 362,
+          "end": 366,
+          "description": "i < mem.soldNum"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 578,
+          "end": 606,
+          "description": "discovery group 33"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0014",
@@ -776,7 +1725,81 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-buy.c",
+          "start": 1226,
+          "end": 1228,
+          "description": "if (bought_item_nxt >= 9)"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-store-sell.c",
+          "start": 1128,
+          "end": 1130,
+          "description": "if (sold_item_nxt >= 9)"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/store.ts",
+          "start": 147,
+          "end": 155,
+          "description": "if (mem.boughtNxt >= 9)"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/store.ts",
+          "start": 150,
+          "end": 158,
+          "description": "if (mem.boughtNxt >= 9)"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/store.ts",
+          "start": 132,
+          "end": 140,
+          "description": "if (mem.soldNxt >= 9)"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/store.ts",
+          "start": 135,
+          "end": 143,
+          "description": "if (mem.soldNxt >= 9)"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 578,
+          "end": 606,
+          "description": "discovery group 33"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 607,
+          "end": 641,
+          "description": "discovery group 34"
+        }
+      ]
     },
     {
       "id": "CBUG-0015",
@@ -800,7 +1823,45 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-escape.c",
+          "start": 780,
+          "end": 835,
+          "description": "borg.trait[BI_CURSP] = borg.trait[BI_MAXSP];"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/fight/escape.ts",
+          "start": 533,
+          "end": 563,
+          "description": "/* critical emergency attempts"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/fight/escape.ts",
+          "start": 536,
+          "end": 566,
+          "description": "/* critical emergency attempts"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 642,
+          "end": 666,
+          "description": "discovery group 35"
+        }
+      ]
     },
     {
       "id": "CBUG-0016",
@@ -824,7 +1885,54 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-escape.c",
+          "start": 521,
+          "end": 537,
+          "description": "borg_escape_stair"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-escape.c",
+          "start": 905,
+          "end": 920,
+          "description": "(borg_escape_stair() || borg_caution_phase(25"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/fight/escape.ts",
+          "start": 618,
+          "end": 632,
+          "description": "(borgEscapeStair(ctx) || borgCautionPhase(ctx, 25"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/fight/escape.ts",
+          "start": 621,
+          "end": 635,
+          "description": "(borgEscapeStair(ctx) || borgCautionPhase(ctx, 25"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 642,
+          "end": 666,
+          "description": "discovery group 35"
+        }
+      ]
     },
     {
       "id": "CBUG-0017",
@@ -848,7 +1956,63 @@
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-escape.c",
+          "start": 879,
+          "end": 889,
+          "description": "borg_caution_phase(50, 2)"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/fight/escape.ts",
+          "start": 435,
+          "end": 437,
+          "description": "resetAntisummon"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/fight/escape.ts",
+          "start": 438,
+          "end": 440,
+          "description": "resetAntisummon"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/fight/escape.ts",
+          "start": 597,
+          "end": 612,
+          "description": "borgCautionPhase(ctx, 50, 2)"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/fight/escape.ts",
+          "start": 600,
+          "end": 615,
+          "description": "borgCautionPhase(ctx, 50, 2)"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 642,
+          "end": 666,
+          "description": "discovery group 35"
+        }
+      ]
     },
     {
       "id": "CBUG-0018",
@@ -872,7 +2036,196 @@
       "tracker": 107,
       "carry": "not-carried",
       "local_fix_proposals": [],
-      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-escape.c",
+          "start": 569,
+          "end": 621,
+          "description": "borg_dimension_door"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/fight/escape.ts",
+          "start": 317,
+          "end": 342,
+          "description": "borgDimensionDoor"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/fight/escape.ts",
+          "start": 320,
+          "end": 345,
+          "description": "borgDimensionDoor"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 642,
+          "end": 666,
+          "description": "discovery group 35"
+        }
+      ]
+    },
+    {
+      "id": "CBUG-0019",
+      "source_groups": [
+        36
+      ],
+      "title": "Urgent shop goal is overwritten or paired with stale ware",
+      "site": "src/borg/borg-think-store.c:borg_choose_shop",
+      "priority": "high",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared",
+      "mandos": "shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "A poisoned, bleeding or hungry character can select another shop or a ware from an earlier goal; actual game transaction outcome pending."
+      },
+      "notes": "Forced shop assignment is followed by helpers that ignore that forced shop and by unconditional goal reset. A stale ware can instead make the second already-flowing test accept the forced shop.",
+      "tracker": 112,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Validate a legal normal-rule scene and negative controls before calling a gameplay correction carried.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-think-store.c",
+          "start": 105,
+          "end": 157,
+          "description": "/* If poisoned or bleeding"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/think-store.ts",
+          "start": 70,
+          "end": 118,
+          "description": "/* If poisoned or bleeding"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/think-store.ts",
+          "start": 73,
+          "end": 121,
+          "description": "/* If poisoned or bleeding"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 667,
+          "end": 681,
+          "description": "discovery group 36"
+        }
+      ]
+    },
+    {
+      "id": "CBUG-0020",
+      "source_groups": [
+        36
+      ],
+      "title": "Money-scumming repeats an already-satisfied town predicate",
+      "site": "src/borg/borg-think-store.c:borg_choose_shop",
+      "priority": "low",
+      "evidence": "source-checked",
+      "status": "review-only",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared",
+      "mandos": "shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "No independent behavior effect established; the duplicate depth test is redundant."
+      },
+      "notes": "The function has already returned when CDEPTH is nonzero. Removing the duplicate test alone is cleanup, not a demonstrated gameplay correction.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Validate a legal normal-rule scene and negative controls before calling a gameplay correction carried.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-think-store.c",
+          "start": 90,
+          "end": 94,
+          "description": "/* Must be in town */"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-think-store.c",
+          "start": 164,
+          "end": 168,
+          "description": "!borg.trait[BI_CDEPTH]"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/think-store.ts",
+          "start": 60,
+          "end": 63,
+          "description": "/* Must be in town"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/think-store.ts",
+          "start": 63,
+          "end": 66,
+          "description": "/* Must be in town"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/store/think-store.ts",
+          "start": 113,
+          "end": 117,
+          "description": "!st(ctx, BI.CDEPTH)"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/store/think-store.ts",
+          "start": 116,
+          "end": 120,
+          "description": "!st(ctx, BI.CDEPTH)"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 667,
+          "end": 681,
+          "description": "discovery group 36"
+        }
+      ]
     }
   ],
   "related_port_leads": [
@@ -882,7 +2235,61 @@
       "tracker": 108,
       "evidence": "source-checked",
       "title": "Returned stair command discarded inside phase predicates",
-      "note": "Classify and reproduce independently before any Neo port report; no C submission."
+      "note": "Classify and reproduce independently before any Neo port report; no C submission.",
+      "references": [
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-escape.c",
+          "start": 521,
+          "end": 537,
+          "description": "borg_escape_stair"
+        },
+        {
+          "role": "c",
+          "repository": "angband/angband",
+          "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3",
+          "path": "src/borg/borg-escape.c",
+          "start": 905,
+          "end": 920,
+          "description": "(borg_escape_stair() || borg_caution_phase(25"
+        },
+        {
+          "role": "neo",
+          "repository": "neostryder/neo-angband-mod-borg",
+          "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568",
+          "path": "src/fight/escape.ts",
+          "start": 618,
+          "end": 632,
+          "description": "(borgEscapeStair(ctx) || borgCautionPhase(ctx, 25"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f",
+          "path": "src/fight/escape.ts",
+          "start": 621,
+          "end": 635,
+          "description": "(borgEscapeStair(ctx) || borgCautionPhase(ctx, 25"
+        },
+        {
+          "role": "borg_rs",
+          "repository": "diegoami/borg-rs",
+          "commit": "ecc23aad8970eac4d1932f892a0c17c207d89710",
+          "path": "docs/c-bugs.md",
+          "start": 642,
+          "end": 666,
+          "description": "discovery group 35"
+        }
+      ]
     }
-  ]
+  ],
+  "source_changes": {
+    "added_groups": [
+      36
+    ],
+    "changed_groups": [],
+    "summary": "Groups 1–35 are unchanged from the prior pin. Group36 adds two shop-choice symptoms; urgent-goal loss is a source-checked shared candidate, while the repeated town predicate is redundant code with no independent gameplay effect."
+  }
 }

@@ -19,6 +19,9 @@ the issues' labels: `status:ready` and `priority:*`.
   no-N-forks doctrine, docs/process.md section 2). Which class and race each
   birth plays is the player's: one toggle per class and per race (#16).
 - **Rules**: [`RULES.md`](RULES.md), numbered and cited as "rule n".
+- **Current priority**: finish catalogue accuracy, then carry validated bugs
+  from both C and Neo wherever they affect Mandos (#111). Submissions
+  to angband/angband remain paused. Never equate a proposal with application.
 - **Current scope**: rule 15 authorizes bug hunting and fixing only. The
   roadmap's strategies, learning, snapshots and new unattended stage-resume
   functionality remain parked until the owner changes scope.
