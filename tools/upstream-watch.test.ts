@@ -27,7 +27,7 @@ afterEach(() => {
 });
 
 const issue = (number: number, labels: string[], refs = "none yet") => ({
-  number, title: "A stable defect title", labels: labels.map((name) => ({ name })), body: `**Threads**: ${refs}`,
+  number, state: "OPEN", title: "A stable defect title", labels: labels.map((name) => ({ name })), body: `**Threads**: ${refs}`,
 });
 async function run(issues: unknown[], endpoints: Record<string, unknown>) {
   gh.mockImplementation((_command: string, args: string[]) => {
@@ -61,6 +61,20 @@ describe("upstream/carry report", () => {
     expect(text).toContain("#43: carry status CONFLICT");
     expect(process.exitCode).toBe(1);
     expect(gh.mock.calls.every(([command]) => command === "gh")).toBe(true);
+  });
+
+  it("keeps closed fixed patch maintenance visible and excludes resolved inline fixes", async () => {
+    const text = await run([
+      { ...issue(100, ["upstream", "fixed", "patch-active"]), state: "CLOSED" },
+      { ...issue(79, ["upstream", "fixed"], "unused/mod#59"), state: "CLOSED" },
+      issue(81, ["upstream", "partially-carried"]),
+    ], {});
+    expect(text).toMatch(/#100\s+fixed/);
+    expect(text).toMatch(/#81\s+partially-carried/);
+    expect(text).not.toContain("unused/mod#59");
+    expect(process.exitCode).toBe(0);
+    const list = gh.mock.calls.find(([, args]) => args[0] === "issue")![1];
+    expect(list).toContain("all");
   });
 
   it("detects PR-head movement without comments and retains the baseline after an API failure", async () => {

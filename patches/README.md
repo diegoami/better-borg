@@ -26,3 +26,12 @@ on our `c-borg-reference` snapshot. It is not applied to a maintained C
 consumer or to the TypeScript engine/Borg. C submissions are paused; we
 maintain our catalogue and local proposals rather than upstream C. The B87 lighting proposal is
 still held on its draft branch because meaningful impact remains unproven.
+
+
+Bug status and applied backport maintenance are separate. A verified
+upstream correction may be fixed/closed while its internal tracker retains
+patch-active for the published-package consumer. The status/patch audits
+keep that closed tracker visible until the applied hunk is replaced and
+revalidated. C proposal records can be closed/unmerged and still reusable;
+see [the contributor handoff](../docs/c-fix-handoff.md). Internal issues are
+the authority for current application state.

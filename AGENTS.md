@@ -19,17 +19,19 @@ the issues' labels: `status:ready` and `priority:*`.
   no-N-forks doctrine, docs/process.md section 2). Which class and race each
   birth plays is the player's: one toggle per class and per race (#16).
 - **Rules**: [`RULES.md`](RULES.md), numbered and cited as "rule n".
-- **Current priority**: finish catalogue accuracy, then carry validated bugs
-  from both C and Neo wherever they affect Mandos (#111). Submissions
-  to angband/angband remain paused. Never equate a proposal with application.
+- **Current priority**: current bug-status reconciliation and board monitoring,
+  then triage/list maintenance, then Neo port fixes (issue -> PR -> carry).
+  C local proposals follow only without actionable port bugs; C carry is a
+  second pass after its intake/proposal backlog. Rules 16-19 and #111 apply.
 - **Current scope**: rule 15 authorizes bug hunting and fixing only. The
   roadmap's strategies, learning, snapshots and new unattended stage-resume
   functionality remain parked until the owner changes scope.
 - **Process**: [`docs/process.md`](docs/process.md): the loop, records,
   milestones, and the pack doctrine. Before upstream work: run
   `node tools/upstream-watch.mjs` - inspect movement on our threads
-  before deciding the next action;
-  carry approved fixes in the fork (what lives in the core vs in a strategy
+  before deciding the next action; also run
+  `node tools/c-upstream-watch.mjs` for official C source/thread discovery;
+  carry verified fixes in the fork (what lives in the core vs in a strategy
   pack under `src/class/`, and the upstream cherry-pick protocol). Run the
   read-only carry audit at session start/end, after merge/revert or consumer
   changes, and after upstream movement or release. Resolve missing/conflicting
