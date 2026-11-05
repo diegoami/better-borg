@@ -2273,7 +2273,27 @@
       "state_before": "CLOSED",
       "title": "Add precise source lines, unify catalogue columns, and refresh borg-rs intake",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABctpY1w",
+      "comments_before": 1,
+      "created_at_before": "2026-11-05T11:02:14Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz8Nhw",
+        "number": 22,
+        "url": "https://github.com/diegoami/neo-angband/issues/22",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 22,
+        "url": "https://github.com/diegoami/neo-angband/issues/22"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz8Nhw"
     },
     {
       "source": {
@@ -2297,7 +2317,27 @@
       "state_before": "OPEN",
       "title": "Urgent temple/food shop choice is overwritten or uses a stale ware target",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABctrM6w",
+      "comments_before": 0,
+      "created_at_before": "2026-11-05T11:04:15Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz8U7A",
+        "number": 23,
+        "url": "https://github.com/diegoami/neo-angband/issues/23",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 23,
+        "url": "https://github.com/diegoami/neo-angband/issues/23"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz8U7A"
     },
     {
       "source": {
@@ -2309,7 +2349,27 @@
       "state_before": "OPEN",
       "title": "Spell progression tests skip 26 cases in CI without a sibling engine checkout",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcuFJLg",
+      "comments_before": 1,
+      "created_at_before": "2026-11-05T11:32:51Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi7J88AAAABcz8b-w",
+        "number": 24,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/24",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband-mod-borg"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband-mod-borg",
+        "number": 24,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/24"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz8b-w"
     },
     {
       "source": {
@@ -2333,7 +2393,27 @@
       "state_before": "CLOSED",
       "title": "Refresh C catalogue through Rust groups 37\u201340 and validate snapshot coverage",
       "reason": "C Borg / C game / Neo engine defect, reference intake or catalogue work",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcx0Mmw",
+      "comments_before": 0,
+      "created_at_before": "2026-11-05T15:29:38Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi68s8AAAABcz8lSw",
+        "number": 24,
+        "url": "https://github.com/diegoami/neo-angband/issues/24",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband",
+        "number": 24,
+        "url": "https://github.com/diegoami/neo-angband/issues/24"
+      },
+      "node_id": "I_kwDOVgi68s8AAAABcz8lSw"
     },
     {
       "source": {
@@ -2345,7 +2425,27 @@
       "state_before": "OPEN",
       "title": "Upstream play/rest suites skip 10 installed-content cases and hide door-stall failures",
       "reason": "Upstream Neo Borg port defect, port audit or its historical evidence",
-      "status": "pending"
+      "status": "transferred",
+      "node_id_before": "I_kwDOVgdVFM8AAAABcy1czg",
+      "comments_before": 0,
+      "created_at_before": "2026-11-05T16:31:46Z",
+      "author_before": "diegoami",
+      "milestone_before": null,
+      "assignees_before": [],
+      "transfer_result": {
+        "id": "I_kwDOVgi7J88AAAABcz8riQ",
+        "number": 25,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/25",
+        "repository": {
+          "nameWithOwner": "diegoami/neo-angband-mod-borg"
+        }
+      },
+      "destination": {
+        "repository": "diegoami/neo-angband-mod-borg",
+        "number": 25,
+        "url": "https://github.com/diegoami/neo-angband-mod-borg/issues/25"
+      },
+      "node_id": "I_kwDOVgi7J88AAAABcz8riQ"
     }
   ]
 }
