@@ -123,13 +123,15 @@ proposal route, not merely testing against C or confirmed attribution.
 consumers; `not-carried` means absent or proposal/branch only;
 `partially-carried` names incomplete coverage. A stored C patch does not
 fix TypeScript consumers. Labels and tracker evidence own status, not titles.
-C proposals need reproducible scenarios with meaningful consequences,
-negative controls, duplicate review and explicit owner approval before
-external posting. The [upstream workflow](UPSTREAM.md#carry-status-and-attribution)
+The [C-bug catalogue](C-BUGS.md) separates source leads from reproduced C-game
+outcomes and links our own fix-proposal PRs. C submissions are paused:
+the list, evidence and proposals stay in diegoami repositories. Validated
+fixes need meaningful scenarios and controls; a draft is not an applied fix.
+The [upstream workflow](UPSTREAM.md#carry-status-and-attribution)
 is the detailed reference for evidence, patches, consumer scope and regular
 reviews. Confirmed Neo port defects have standing posting authorization
 (owner, 2026-11-05), after attribution, reproduction and duplicate checks;
-the specific-report approval gate above applies to C proposals. [AGENTS.md](../AGENTS.md) is the shared agent entry point and
+C work remains local-only under the owner's current instruction. [AGENTS.md](../AGENTS.md) is the shared agent entry point and
 [RULES.md](../RULES.md) holds the numbered rules. CLAUDE.md only loads them.
 
 ## Documentation map

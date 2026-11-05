@@ -39,7 +39,9 @@ the same independent verification.
 
 The owner authorized confirmed port-defect reports and PRs directly to Neo
 Angband (2026-11-05), after attribution, reproduction and duplicate checks.
-C submissions still require approval of the specific internal report.
+C submissions are paused. Maintain [our catalogue](docs/C-BUGS.md), evidence
+and fix-proposal PRs in diegoami repositories; do not queue routine requests
+to submit to angband/angband.
 Deliberate policy changes
 are named CHOICEs and remain marked in Mandos. Defects take priority over
 new features; tuning a broken policy would measure the defect instead of
@@ -78,9 +80,9 @@ Targeted natural or synthetic scenarios complement survival cohorts. Each
 upstream-C proposal must show a meaningful, human-explainable consequence
 under normal rules in a legal/reachable state, with initialization, pins,
 before/after outcomes and negative controls. Changed flags alone do not
-prove a life was saved. Keep evidence and duplicate checks internal until
-the owner approves external posting. `upstream-c` identifies the C proposal
-route; it does not certify that C is defective. The
+prove a life was saved. Keep the list, evidence and proposed-fix PRs in our
+repositories; C submissions are paused by the owner. `upstream-c` identifies
+C-origin investigations; it does not certify that C is defective. The
 [upstream workflow](docs/UPSTREAM.md#carry-status-and-attribution) defines
 carry labels, patch/consumer records and regular reviews. `carried` requires
 a merge into Mandos `main` and application in all required consumers.

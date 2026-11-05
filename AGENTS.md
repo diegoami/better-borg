@@ -43,7 +43,8 @@ the issues' labels: `status:ready` and `priority:*`.
 - **Related Rust port**: [`diegoami/borg-rs`](https://github.com/diegoami/borg-rs),
   especially its documentation and C bug catalogue; reference tracker
   [#86](https://github.com/diegoami/mandos/issues/86). Verify each lead
-  against our sources. C reports follow the `upstream-c` gate in process §6.
+  against our sources. Maintain [our C-bug catalogue](docs/C-BUGS.md) and
+  local fix proposals; C submissions are paused (rule 12, process §6).
 
 **Who is who** (owner rule, 2026-11-03): WE are **diegoami**. **neostryder**
 is ANOTHER DEVELOPER (upstream) - never "us", never conflated with our

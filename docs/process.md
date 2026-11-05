@@ -239,7 +239,7 @@ Same format as neowarrior-borg's (`docs/runs/README.md`): per session, a
 harness-written `runs.json` and a curated table, committed. Baselines are
 append-only.
 
-## 6. Upstream PRs
+## 6. Neo PRs and local C proposals
 
 A defect fix merges here first (rule 3), then is offered upstream. The PR
 body: the reproduced defect with its run record, the C reference, the fix,
@@ -273,42 +273,48 @@ first; the attribution decides whether anything is posted at all. Engine
 gaps go to the engine tracker the same way (#428). The mod-borg stance is
 survey-only: a PR there needs an acknowledged defect and zero debate.
 
-**A bug in the C borg itself** (owner, 2026-11-04): when the 4.2.6 C borg is
-wrong too, so a port that follows it faithfully is equally wrong, its
-approved report belongs in the C's own repository, **angband/angband**.
-The C report gate below applies before any post. Check its
-current master first, because our C reference (`../neo-angband/reference/src/borg/`)
-is the 4.2.6 snapshot and the bug may already be fixed there. Track it like
-any thread: an `angband/angband#n` on the tracking issue's **Threads** line,
-which `tools/upstream-watch.mjs` follows like the others. Our fix is then a
-CHOICE that departs from 4.2.6 (rule 3), FORK-marked, unless angband/angband
-fixes it, in which case it is a defect fix toward the C's newer code.
+**C bugs: our catalogue and local proposals** (owner, 2026-11-05):
+maintain [docs/C-BUGS.md](C-BUGS.md) from its canonical
+[JSON data](c-bugs.json), with links to our issues, evidence and fix PRs.
+**No angband/angband submissions now**: no issues, PRs or comments there.
+We are not assuming the upstream C maintainer role and do not routinely
+seek submission approval. Only a later explicit owner instruction changes
+this pause. Confirmed Neo port defects retain their separate posting route.
 
-**C report gate** (owner, 2026-11-04): label these Mandos investigations
-`upstream-c`. This is the C defect/proposal route, not just a reference-test
-label. Qualify inheritance: an omitted correct C behavior is a port defect;
-a faithful copy of a C bug must be corrected upstream in C before Neo can
-take the behavior change. Mandos may carry its own marked CHOICE meanwhile.
-Candidate origin must remain explicitly unproven until scenario attribution.
-A code discrepancy or bookkeeping error alone is not enough
-for upstream submission. Demonstrate a meaningful gameplay consequence
-that the owner can explain in plain language, with reproduction and
-controls. Do not claim a bad decision, death, lost progress or strength
-improvement that has not been observed. If impact remains unproven, keep
-the candidate internal; a technically valid patch is not posting approval.
-Before proposing an external report, build and test the C
-game with the C Borg, record the exact source/configuration and observed
-reproduction, and search both open and closed C issues and PRs for a
-duplicate. An extracted-function fixture alone is not validation in the
-running C game. Post the evidence internally on the Mandos issue first;
-post to `angband/angband` only after the owner's explicit OK on that report.
-Keep instrumentation and limitations visible; do not imply an observed
-live death when the evidence is an instrumented scenario. Every proposed
-upstream-C PR needs a repeatable natural or synthetic scenario, legal game
-state, normal rules, explicit RNG/controller/perception setup, before/after
-commands and practical outcomes, and negative controls. The full tracking
-record, exclusive carry labels and session/merge/release review cadence are
-in [the upstream workflow](UPSTREAM.md#carry-status-and-attribution).
+Check current C master as well as the imported 4.2.6 reference: the latter
+is not evidence of today's C behavior. Credit borg-rs leads, split unrelated
+symptoms, deduplicate shared causes, and state C/Neo/Mandos applicability
+separately. A faithful port of a C bug is not a Neo omission; our own C PR
+does not count as an accepted upstream C correction. Mandos may fix an
+inherited C defect earlier with an explicit FORK/CHOICE mark.
+
+Use stable local finding IDs, source/last-check pins, plain-language impact,
+priority and evidence level. A source check is not a game reproduction;
+dead code, possible capacity waste and unreachable states stay explicit
+candidates. The full source-group inventory must not imply all its symptoms
+were validated. Revisit on source/intake/proposal/consumer changes, with the
+session/merge cadence in [UPSTREAM.md](UPSTREAM.md).
+
+A proposed C fix lives in a PR **in our own repository**. In the existing
+`diegoami/neo-angband` fork, `c-borg-reference` is a pinned C-source base;
+`pr/c-borg-<slug>` carries one correction. The default branch remains the Neo
+engine vehicle. Use ordinary commits/pushes; keep the reference/parent pin
+visible and re-evaluate proposals when it changes. A draft may remain a
+local proposal indefinitely and does not create an upstream maintenance job.
+
+For a validated C-game consequence, build/test the C game with the C Borg
+and retain a reproducible natural or synthetic legal/reachable state,
+normal rules, source/content pins, RNG/controller/perception setup,
+actual before/after commands/outcomes and negative controls. An extracted
+fixture alone is not native-game validation. Keep instrumentation and limits
+visible, including missing gameplay impact; changed flags/scores do not
+prove a life saved. Unvalidated drafts must say what is missing.
+
+Keep canonical C patches under `patches/upstream-c/`, linked to the proposal
+and evidence. A patch stored on Mandos main or a draft PR is not an applied
+C consumer and does not automatically fix TypeScript. Carry labels retain
+their existing main/required-consumer meaning; record proposal status,
+application and any upstream-reference movement independently.
 
 **Before posting**, run `node tools/upstream-sync.mjs` (exit 0): an issue
 cites the pristine checkout at upstream's head, and a PR branch is cut from
@@ -317,8 +323,8 @@ refreshed master; retain the fix and verification evidence before removing
 the disposable PR worktree.
 
 **Posting** (rule 12; owner, 2026-11-05): confirmed Neo port defects may be
-posted directly after source, reproduction and duplicate checks. C reports
-remain draft, show the owner, post only on explicit approval of that report.
+posted directly after source, reproduction and duplicate checks. C work
+remains in our catalogue and our own proposal PRs; C submissions are paused.
 This authorization does not cover Mandos CHOICEs or unrelated proposals.
 Shape it like
 the posts already up - engine issue #428 and its PR #429 are the reference,

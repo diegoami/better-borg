@@ -46,8 +46,9 @@ the imported TypeScript port** and **inherited from C** are different:
   Mandos may carry an earlier marked CHOICE; that is not permission to
   change Neo's behavior before C changes.
 
-`upstream-c` identifies the C-source defect/proposal route, not merely a
-C-reference test. Candidate attribution may be unproven; say so explicitly.
+`upstream-c` identifies C-origin investigations in our local catalogue and
+proposed fixes, not a submission queue or merely a C-reference test.
+Candidate attribution may be unproven; say so explicitly.
 Both labels can track related work, but they do not prove a C defect or
 authorize either submission. Split independent C and port defects when
 their evidence/routes differ.
@@ -73,12 +74,26 @@ the correction as applicable. C and Neo saves need equivalent states, not
 a shared binary save. Prove a meaningful consequence in plain language;
 do not infer death prevention from changed flags or scores alone.
 
-For C proposals, keep evidence internal, check current source and open/closed
-duplicates, then obtain explicit owner OK before external posting. The owner
-separately authorized confirmed Neo port-defect reports/PRs directly
-(2026-11-05), after the same attribution, reproduction and duplicate checks. C patches belong
-in `patches/upstream-c/`; the combined pnpm engine patch keeps one hunk
-group/PR marker per fix. Do not send a Mandos CHOICE to Neo as a port fix.
+C work is **local-only** under the owner's 2026-11-05 direction: maintain
+[our catalogue](C-BUGS.md), evidence and fix-proposal PRs in diegoami
+repositories. No issues, PRs or comments go to angband/angband now. We are
+not taking on upstream C maintenance and do not routinely ask to submit.
+A future explicit owner instruction must change that pause. Current source
+and duplicate checks still matter for attribution and avoiding duplicate work.
+
+C-source proposals use our fork's `c-borg-reference` base (the C snapshot),
+with one fix on each `pr/c-borg-*` branch. Keep them separate from the fork's
+Neo engine branch. A draft proposal can remain unmerged with missing
+validation clearly stated; a validated C-game outcome requires native C
+scenario/control evidence. No branch or stored patch alone is `carried`.
+
+The owner separately authorized confirmed Neo port-defect reports/PRs
+directly after attribution, reproduction and duplicate checks. Our local C
+proposal does not satisfy Neo's requirement to follow corrected upstream C.
+Mandos may carry an earlier explicitly marked divergence as defect work.
+C patches remain in `patches/upstream-c/`; the combined pnpm engine patch
+keeps one hunk group/PR marker per fix. Do not send a Mandos CHOICE to Neo
+as a port fix.
 
 ### Review cadence
 

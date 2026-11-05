@@ -20,6 +20,9 @@ New records name PRs and accepted non-PR commits through tools/engine-pin.mjs.
 
 C proposals under upstream-c/ affect the original C game only. The B94
 map-dump guard has a native C reproduction in docs/audit/c-reports/B94/ and
-is internal pending owner approval. It is not applied to a maintained C
-consumer or to the TypeScript engine/Borg. The B87 lighting proposal is
+is linked from [our catalogue](../docs/C-BUGS.md) to the local draft
+[diegoami/neo-angband#1](https://github.com/diegoami/neo-angband/pull/1), based
+on our `c-borg-reference` snapshot. It is not applied to a maintained C
+consumer or to the TypeScript engine/Borg. C submissions are paused; we
+maintain our catalogue and local proposals rather than upstream C. The B87 lighting proposal is
 still held on its draft branch because meaningful impact remains unproven.

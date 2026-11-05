@@ -1,0 +1,888 @@
+{
+  "schema": "mandos/c-bugs@1",
+  "updated": "2026-11-05",
+  "owner": "diegoami",
+  "policy": {
+    "scope": "local-catalogue-and-proposals",
+    "upstream_c_submissions": "paused",
+    "automatic_upstream_posts": false,
+    "local_pr_base": {
+      "repository": "diegoami/neo-angband",
+      "branch": "c-borg-reference",
+      "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3"
+    },
+    "note": "Local proposal ownership, evidence and application are independent. A local C PR never implies a Neo parity fix or an applied Mandos correction."
+  },
+  "sources": {
+    "borg_rs": {
+      "repository": "diegoami/borg-rs",
+      "commit": "6fb471179e28224ac3259434c768afaff0a367ae",
+      "path": "docs/c-bugs.md",
+      "previous_commit": "66dced95ba5c61b95fb011b01c3d214b7ab2c4a6",
+      "groups": 35,
+      "previous_groups": 33,
+      "unchanged_groups": "1-33"
+    },
+    "c": {
+      "repository": "angband/angband",
+      "commit": "e473720ed88a0f0c7ca66815cef3000eb4a38bc3"
+    },
+    "neo_borg": {
+      "repository": "neostryder/neo-angband-mod-borg",
+      "commit": "74a017d2f695939eb2f046b7c9ff286ef1e82568"
+    },
+    "mandos": {
+      "repository": "diegoami/mandos",
+      "commit": "48405e9621ffc400f7af43e7fd1ed2385225ca1f"
+    }
+  },
+  "groups": [
+    {
+      "number": 1,
+      "title": "`borg.has[BI_CURHP]` instead of `borg.trait[BI_CURHP]`",
+      "area": "banishment",
+      "summary": "Activation reads object counts as HP",
+      "review": "source comparison: C uses has[BI_CURHP]; Mandos already uses the HP trait",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 2,
+      "title": "Copy-and-paste slips in sval lookups",
+      "area": "item-ids",
+      "summary": "Subtype lookup names copied incorrectly",
+      "review": "lookup/registration audit pending",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 3,
+      "title": "Last token of each block not ordered (formulas)",
+      "area": "formulas",
+      "summary": "Malformed formula block ordering",
+      "review": "configuration-only lead; valid-input impact unproven",
+      "priority": "low",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 4,
+      "title": "\"West of the player\" lights the wrong grids",
+      "area": "light",
+      "summary": "West shoulders omitted and light-list duplicates",
+      "review": "west-light existing #87/#89; flags reproduced, practical impact pending",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": [
+        "CBUG-0003"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Spell status set from a bool; books 0-7 only (magic)",
+      "area": "magic",
+      "summary": "Initial spell status and book iteration",
+      "review": "catalogue notes effective guards; no independent play defect established",
+      "priority": "low",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 6,
+      "title": "Formula error text lost to `format()`'s static buffer",
+      "area": "formulas",
+      "summary": "Formula errors overwritten by static formatting buffer",
+      "review": "diagnostic lead; large-input memory behavior needs reachability proof",
+      "priority": "low",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 7,
+      "title": "`range()` errors (formulas)",
+      "area": "formulas",
+      "summary": "range() errors misleading or silent",
+      "review": "configuration-diagnostic lead",
+      "priority": "low",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 8,
+      "title": "Home power: spell-stat drop at +26 and a dead neck branch",
+      "area": "home",
+      "summary": "Spell-stat score discontinuity and dead neck branch",
+      "review": "needs an actual keep/retrieve/equip consequence",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 9,
+      "title": "Dark-grid test uses `==` instead of `&` (magic play)",
+      "area": "magic",
+      "summary": "Dark flag tested by equality",
+      "review": "still present in magic-play.ts; interaction with no-light guards needs scenario",
+      "priority": "low",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 10,
+      "title": "Unreachable and mislabelled preparedness checks (prepared)",
+      "area": "preparedness",
+      "summary": "Dead or mislabelled readiness checks",
+      "review": "separate diagnostic text from reachable policy behavior",
+      "priority": "low",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 11,
+      "title": "Respawn picks the race/class with the wrong menu letters",
+      "area": "birth-ui",
+      "summary": "Respawn menu letters",
+      "review": "C UI lead; Neo uses direct birth commands",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 12,
+      "title": "Home notice: item sustains all count as STR; banishment never counted",
+      "area": "home",
+      "summary": "All item sustains counted as STR; banishment counts missing",
+      "review": "sustain bug still visible in Mandos home.ts; transaction consequence pending",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 13,
+      "title": "Log and status slips (log)",
+      "area": "diagnostics",
+      "summary": "Map-dump NULL-file crash plus display slips",
+      "review": "map cancellation C-game reproduced; other slips separate",
+      "priority": "high",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": [
+        "CBUG-0001"
+      ]
+    },
+    {
+      "number": 14,
+      "title": "`borg_dont_react` is never cleared",
+      "area": "messages",
+      "summary": "Reaction suppression reset uses wrong variable",
+      "review": "current C mismatch; old imported C resets global correctly",
+      "priority": "high",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": [
+        "CBUG-0002"
+      ]
+    },
+    {
+      "number": 15,
+      "title": "Inscribing a quiver item types an equipment letter",
+      "area": "item-ui",
+      "summary": "Debug quiver inscriptions use equipment keys",
+      "review": "C debug-key path; no direct Neo counterpart assumed",
+      "priority": "low",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 16,
+      "title": "Slot lookups: dead \"largest pval\" test; empty pack has no hole (inventory)",
+      "area": "inventory",
+      "summary": "Unreachable pval tie-break and empty-pack lookup",
+      "review": "pval condition preserved; empty-pack symptom must be classified separately",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 17,
+      "title": "Danger slips (danger)",
+      "area": "danger",
+      "summary": "Resistance/stat/bolt-state/index errors",
+      "review": "cold-vs-acid source checked; other compound symptoms remain leads",
+      "priority": "high",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": [
+        "CBUG-0004"
+      ]
+    },
+    {
+      "number": 18,
+      "title": "Item value: stat bonuses tested as object flags (item analyze)",
+      "area": "valuation",
+      "summary": "Stat bonuses tested as flags",
+      "review": "current Neo perItemValue explicitly preserves C's sustain-flag mixup",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 19,
+      "title": "Object tracking and item flows (flow take)",
+      "area": "flow",
+      "summary": "Farthest stairs and item tracking slips",
+      "review": "normal flow and optional-mode symptoms must be separated",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 20,
+      "title": "Device use slips (item use)",
+      "area": "items",
+      "summary": "Device fail math, staff/ring/food use",
+      "review": "TS division guard and both-ring scan differ; staff gates still suspect",
+      "priority": "high",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 21,
+      "title": "Equipment swaps and the \"best\" list (item wear)",
+      "area": "equipment",
+      "summary": "Swap chooses higher danger; best-search bookkeeping",
+      "review": "C/port comparison needed after B99 ring/home adoption; #4 remains partly absent",
+      "priority": "high",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 22,
+      "title": "Light beam edge test and lantern refuel scan (light)",
+      "area": "light",
+      "summary": "Panel-relative beams and last-lantern refuel",
+      "review": "panel UI differs; current TS refuel still starts at borgSlot's selected lantern",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 23,
+      "title": "Curse removal item letters (item decurse)",
+      "area": "item-ui",
+      "summary": "Curse-removal item letters",
+      "review": "C menu path; direct-command port applicability unproven",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 24,
+      "title": "Monster tracking slips (flow-kill)",
+      "area": "tracking",
+      "summary": "Wrong monster indices, sticky state and pursuit checks",
+      "review": "multiple candidates; compare with B99 deletion/history fixes",
+      "priority": "high",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 25,
+      "title": "Enchant item prompt keys (item enchant)",
+      "area": "item-ui",
+      "summary": "Enchant prompt inventory context",
+      "review": "C menu-selection lead; no direct-command bug inferred",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 26,
+      "title": "Recovery notes and checks (recover)",
+      "area": "recovery",
+      "summary": "Recovery note, duplicate cure and unchecked rod slot",
+      "review": "split harmless note/duplicate from reachable missing-rod access",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 27,
+      "title": "Protection from Evil rest timer overflows (flow stairs)",
+      "area": "timers",
+      "summary": "No-rest int16 overflow from level 33",
+      "review": "C narrow-integer effect is absent from the JS number assignment",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 28,
+      "title": "Perma-spell simulation and costs (fight perm)",
+      "area": "buffs",
+      "summary": "Regeneration simulation side effect and wrong Venom cost",
+      "review": "TS guards regen simulation already; Venom cost still references Smite Evil",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 29,
+      "title": "Sea of Runes scan slips (flow glyph)",
+      "area": "glyphs",
+      "summary": "Terrain, counters and array bounds in glyph flow",
+      "review": "legal message/state sequence needed before claiming reachable memory failure",
+      "priority": "high",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 30,
+      "title": "Munchkin attacks leave the attack flags set (attack munchkin)",
+      "area": "optional-mode",
+      "summary": "Munchkin attack/simulation flags leak",
+      "review": "optional-mode lead; not ordinary-mode proof",
+      "priority": "low",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 31,
+      "title": "Exploration flow quirks (flow dark)",
+      "area": "exploration",
+      "summary": "Farthest stairs, trap interest and forgotten danger marks",
+      "review": "stair cause overlaps group19; split remaining symptoms",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 32,
+      "title": "Flow core slips (flow)",
+      "area": "flow",
+      "summary": "Shop/door predicates, bounds and dead cleanup",
+      "review": "legal border/door scenarios needed; dead no-op is not a crash proof",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": []
+    },
+    {
+      "number": 33,
+      "title": "Selling and stashing slips (store sell)",
+      "area": "selling",
+      "summary": "Trial charges, wrong ego and transaction history",
+      "review": "history counter shared with34; other symptoms need separate verification",
+      "priority": "med",
+      "coverage": "historical-intake-with-current-notes",
+      "findings": [
+        "CBUG-0013",
+        "CBUG-0014"
+      ]
+    },
+    {
+      "number": 34,
+      "title": "Shopping slips (store buy)",
+      "area": "shopping",
+      "summary": "Purchase filters, home trial state and history",
+      "review": "ten symptoms classified below; no new native C scenario claimed",
+      "priority": "high",
+      "coverage": "symptom-triaged",
+      "findings": [
+        "CBUG-0005",
+        "CBUG-0006",
+        "CBUG-0007",
+        "CBUG-0008",
+        "CBUG-0009",
+        "CBUG-0010",
+        "CBUG-0011",
+        "CBUG-0012",
+        "CBUG-0013",
+        "CBUG-0014"
+      ]
+    },
+    {
+      "number": 35,
+      "title": "Escape slips (escape)",
+      "area": "escape",
+      "summary": "Emergency mana, queued stairs, timer and destination checks",
+      "review": "four symptoms classified below; returned-command port has a distinct stair issue",
+      "priority": "high",
+      "coverage": "symptom-triaged",
+      "findings": [
+        "CBUG-0015",
+        "CBUG-0016",
+        "CBUG-0017",
+        "CBUG-0018"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "CBUG-0001",
+      "source_groups": [
+        13
+      ],
+      "title": "Cancelling a map dump dereferences a NULL file",
+      "site": "src/borg/borg-log.c:borg_write_map",
+      "priority": "high",
+      "evidence": "c-game-reproduced",
+      "status": "local-proposal",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "no-counterpart",
+      "mandos": "no-counterpart",
+      "impact": {
+        "level": "observed",
+        "description": "Escape at the map filename prompt crashes the C game (SIGSEGV); the guard returns safely. No lost-progress claim."
+      },
+      "notes": "59 C Borg units, no Rust Borg linked; direct function diagnostic in a normally born C game. Top-level Ctrl-Z dispatch and failed-open branch were not separately runtime-tested.",
+      "tracker": 94,
+      "carry": "not-carried",
+      "local_fix_proposals": [
+        {
+          "repository": "diegoami/neo-angband",
+          "number": 1,
+          "url": "https://github.com/diegoami/neo-angband/pull/1",
+          "base": "c-borg-reference",
+          "head": "540f621960e674d9fde227a175eeb1d27cc02132",
+          "state": "draft",
+          "validation": "c-game-reproduced",
+          "applied": false
+        }
+      ],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "evidence_path": "docs/audit/c-reports/B94/README.md",
+      "patch": "patches/upstream-c/B94-map-dump-cancel.patch"
+    },
+    {
+      "id": "CBUG-0002",
+      "source_groups": [
+        14
+      ],
+      "title": "Paralysis/knockout message suppression resets a different variable",
+      "site": "src/borg/borg.c / borg-messages-react.c",
+      "priority": "high",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "absent-different-pipeline",
+      "mandos": "absent-different-pipeline",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "C reactions can remain suppressed after recovery; no actual later death/decision change observed."
+      },
+      "notes": "Older imported C resets the global correctly. This is a newer C regression, not a Neo omission.",
+      "tracker": 95,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0003",
+      "source_groups": [
+        4
+      ],
+      "title": "West radius-two shoulder grids are omitted",
+      "site": "src/borg/borg-cave-light.c:borg_update_light",
+      "priority": "med",
+      "evidence": "c-game-flags-only",
+      "status": "held-impact",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared",
+      "mandos": "shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "Native C marks 19 distinct grids versus 21 after correction; no meaningful gameplay outcome established."
+      },
+      "notes": "Duplicate light-list entries are a separate symptom; avoid claiming two missing flags saved a life.",
+      "tracker": 87,
+      "carry": "not-carried",
+      "local_fix_proposals": [
+        {
+          "repository": "diegoami/mandos",
+          "number": 88,
+          "url": "https://github.com/diegoami/mandos/pull/88",
+          "base": "main",
+          "state": "draft",
+          "validation": "impact-unproven",
+          "applied": false
+        }
+      ],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
+      "evidence_url": "https://github.com/diegoami/mandos/issues/89"
+    },
+    {
+      "id": "CBUG-0004",
+      "source_groups": [
+        17
+      ],
+      "title": "Cold melee uses temporary acid resistance",
+      "site": "src/borg/borg-danger.c:borg_danger_physical",
+      "priority": "high",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared",
+      "mandos": "shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "Can misestimate a cold blow when only one temporary resistance is active; real changed combat choice pending."
+      },
+      "notes": "Independent of the other danger slips in the same Rust group.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0005",
+      "source_groups": [
+        34
+      ],
+      "title": "Black Market Teleport Other rod class exception is reversed",
+      "site": "src/borg/borg-store-buy.c:borg_good_buy",
+      "priority": "high",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared",
+      "mandos": "shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "A useful escape device can be rejected for the wrong class; real purchase/survival effect pending."
+      },
+      "notes": "Both current C and src/store/buy.ts use !=MAGE && ==ROGUE.",
+      "tracker": 103,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0006",
+      "source_groups": [
+        34
+      ],
+      "title": "Starvation shopping exception admits unrelated scrolls/subtypes",
+      "site": "src/borg/borg-store-buy.c:borg_think_shop_buy_useful",
+      "priority": "high",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared",
+      "mandos": "shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "A starving character can consider unrelated supplies; no observed starvation or loss of gold proved."
+      },
+      "notes": "Both C and src/store/buy.ts use the conjunction that exempts every scroll and any matching numeric sval.",
+      "tracker": 104,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0007",
+      "source_groups": [
+        34
+      ],
+      "title": "Home trial early exits leave reduced quantities/charges",
+      "site": "src/borg/borg-store-buy.c:borg_think_home_buy_useful",
+      "priority": "med",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "absent-value-simulation",
+      "mandos": "absent-value-simulation",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "Later C trials can see a modified home snapshot; real item loss is not claimed."
+      },
+      "notes": "C decrements before the two-empty-slot continue. TS BuySim path does not mutate those wares.",
+      "tracker": 105,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0008",
+      "source_groups": [
+        34
+      ],
+      "title": "Ring-side scores persist across home wares",
+      "site": "src/borg/borg-store-buy.c:borg_think_home_buy_useful",
+      "priority": "med",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "absent-different-ring-simulation",
+      "mandos": "absent-different-ring-simulation",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "C can compare a ring using an earlier ware's score when the other slot holds the One Ring."
+      },
+      "notes": "p_left/p_right declared outside the loop; current TS helper has no corresponding accumulators. Broader ring parity is independent.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0009",
+      "source_groups": [
+        34
+      ],
+      "title": "Home ring trials use asymmetric quantities",
+      "site": "src/borg/borg-store-buy.c:borg_think_home_buy_useful",
+      "priority": "low",
+      "evidence": "source-checked",
+      "status": "review-only",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "absent-different-ring-simulation",
+      "mandos": "absent-different-ring-simulation",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "Potential unequal left/right power trial; legal qty>1 ring reachability remains unproven."
+      },
+      "notes": "Do not fabricate stacked-ring gameplay or call this a proven bad equip decision.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0010",
+      "source_groups": [
+        34
+      ],
+      "title": "Home grab skip flag leaks to later wares",
+      "site": "src/borg/borg-store-buy.c:borg_think_home_grab_useless",
+      "priority": "med",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "absent-per-ware-reset",
+      "mandos": "absent-per-ware-reset",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "Once one recently sold ware is skipped, later C wares may be skipped too."
+      },
+      "notes": "TS src/store/buy.ts declares let skip=false inside each ware loop.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0011",
+      "source_groups": [
+        34
+      ],
+      "title": "No-hole swap exit leaves valuation changed",
+      "site": "src/borg/borg-store-buy.c:borg_think_home_buy_swap_weapon/armour",
+      "priority": "med",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "no-equivalent-swap-subsystem",
+      "mandos": "no-equivalent-swap-subsystem",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "C returns with swap value -1 instead of restoring it; next real decision impact unproven."
+      },
+      "notes": "TS returns through an optional evaluation seam and has no corresponding global mutation. #4 missing swap functionality is a separate port gap.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0012",
+      "source_groups": [
+        34
+      ],
+      "title": "Swap trials overwrite the tracked swap inventory slot",
+      "site": "src/borg/borg-store-buy.c:borg_think_home_buy_swap_weapon/armour",
+      "priority": "med",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "no-equivalent-swap-subsystem",
+      "mandos": "no-equivalent-swap-subsystem",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "C's model can lose its old swap item until inventory refresh; no actual game item destruction claimed."
+      },
+      "notes": "The TS evaluator does not copy candidates over a mutable C inventory array.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0013",
+      "source_groups": [
+        33,
+        34
+      ],
+      "title": "Latest purchase/sale is outside the history reader range",
+      "site": "src/borg/borg-store-buy.c / borg-store-sell.c transaction counters",
+      "priority": "med",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared",
+      "mandos": "shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "Immediate buy-back/resale suppression can miss the newest record; full transaction scenario pending."
+      },
+      "notes": "Writers store a last index, readers scan p<num. Group34's purchase half shares the cause already reported in33; one catalogue entry.",
+      "tracker": 106,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0014",
+      "source_groups": [
+        33,
+        34
+      ],
+      "title": "Ten-entry transaction arrays never use the tenth slot",
+      "site": "src/borg/borg-store-buy.c / borg-store-sell.c transaction wrap",
+      "priority": "low",
+      "evidence": "source-checked",
+      "status": "review-only",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared",
+      "mandos": "shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "History capacity is nine rather than ten; whether this is intentional or harmful remains unproven."
+      },
+      "notes": "Keep this separate from the latest-entry omission; do not inflate it into a gameplay failure.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0015",
+      "source_groups": [
+        35
+      ],
+      "title": "Critical escape returns with pretend full mana",
+      "site": "src/borg/borg-escape.c:borg_escape danger level1",
+      "priority": "med",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "absent-no-full-mana-assignment",
+      "mandos": "absent-no-full-mana-assignment",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "C trait state retains MAXSP until notice refresh after a successful critical attempt; later bad choice unproven."
+      },
+      "notes": "TS never assigns pretend full mana here. Its over-exertion parity is a separate question, not this leak.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0016",
+      "source_groups": [
+        35
+      ],
+      "title": "Stair predicate queues a climb before phase guards finish",
+      "site": "src/borg/borg-escape.c:borg_escape levels3/4/5/6/8",
+      "priority": "high",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "different-port-defect",
+      "mandos": "different-port-defect",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "C may leave climb keys queued or queue both climb and phase while applying phase bookkeeping."
+      },
+      "notes": "TS returns commands rather than queuing keys: a stair AgentCommand used as a boolean is discarded. See PORT-0001; this is not the same faithful C queue symptom.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0017",
+      "source_groups": [
+        35
+      ],
+      "title": "Guarded anti-summon timer reset is unreachable",
+      "site": "src/borg/borg-escape.c:borg_escape",
+      "priority": "low",
+      "evidence": "source-checked",
+      "status": "review-only",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "shared-helper-semantics",
+      "mandos": "shared-helper-semantics",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "A >50 guarded branch cannot execute its nested <50 reset; practical need for that reset unproven."
+      },
+      "notes": "TS resetAntisummon applies the same <50 test in those branches. Other call sites can still reset it.",
+      "tracker": null,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    },
+    {
+      "id": "CBUG-0018",
+      "source_groups": [
+        35
+      ],
+      "title": "Dimension Door destination lacks legality/range filters",
+      "site": "src/borg/borg-escape.c:borg_dimension_door",
+      "priority": "high",
+      "evidence": "source-checked",
+      "status": "investigate",
+      "checked": "2026-11-05",
+      "c": "present-at-pin",
+      "neo": "partially-shared",
+      "mandos": "partially-shared",
+      "impact": {
+        "level": "predicted-or-unproven",
+        "description": "An emergency target can be a rejected destination; actual engine outcome still needs a legal scenario."
+      },
+      "notes": "C also ignores borg_spell's result; TS returns it. Missing floor/occupancy/range selection guards are shared.",
+      "tracker": 107,
+      "carry": "not-carried",
+      "local_fix_proposals": [],
+      "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated."
+    }
+  ],
+  "related_port_leads": [
+    {
+      "id": "PORT-0001",
+      "related_c_finding": "CBUG-0016",
+      "tracker": 108,
+      "evidence": "source-checked",
+      "title": "Returned stair command discarded inside phase predicates",
+      "note": "Classify and reproduce independently before any Neo port report; no C submission."
+    }
+  ]
+}
