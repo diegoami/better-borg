@@ -618,7 +618,10 @@ export function borgEscape(ctx: BorgContext, bQ: number): AgentCommand | null {
     (bQ > idiv(av * (10 + risky), 10) && !uniq) ||
     (bQ > idiv(av * (10 + risky), 10) && trait(ctx, BI.ISAFRAID) && trait(ctx, BI.AMISSILES) <= 0 && trait(ctx, BI.CLASS) === CLASS_WARRIOR)
   ) {
-    if ((borgEscapeStair(ctx) || borgCautionPhase(ctx, 25, 2)) && ctx.world.clock - fs.tAntisummon > 50) {
+    /* FORK: Mandos #108. The C queues < here; preserve the returned command. */
+    const stair = borgEscapeStair(ctx);
+    if (stair) return stair;
+    if (borgCautionPhase(ctx, 25, 2) && ctx.world.clock - fs.tAntisummon > 50) {
       const c = firstCmd(
         borgSpellFail(ctx, Spell.PHASE_DOOR, allowFail),
         borgSpellFail(ctx, Spell.PORTAL, allowFail),
@@ -679,7 +682,10 @@ export function borgEscape(ctx: BorgContext, bQ: number): AgentCommand | null {
     (bQ > idiv(av * (6 + risky), 10) && clevel <= 20 && !uniq) ||
     (bQ > idiv(av * (6 + risky), 10) && clevel <= 35)
   ) {
-    if ((borgEscapeStair(ctx) || borgCautionPhase(ctx, 20, 2)) && ctx.world.clock - fs.tAntisummon > 50) {
+    /* FORK: Mandos #108. The C queues < here; preserve the returned command. */
+    const stair = borgEscapeStair(ctx);
+    if (stair) return stair;
+    if (borgCautionPhase(ctx, 20, 2) && ctx.world.clock - fs.tAntisummon > 50) {
       const c = firstCmd(
         borgSpellFail(ctx, Spell.PHASE_DOOR, allowFail),
         borgSpellFail(ctx, Spell.PORTAL, allowFail),
@@ -737,7 +743,10 @@ export function borgEscape(ctx: BorgContext, bQ: number): AgentCommand | null {
     clevel < 10 &&
     (bQ > idiv(av * (5 + risky), 10) || (bQ > idiv(av * (7 + risky), 10) && uniq >= 1 && uniq <= 8))
   ) {
-    if (borgEscapeStair(ctx) || borgCautionPhase(ctx, 20, 2)) {
+    /* FORK: Mandos #108. Ascending does not require a phase resource. */
+    const stair = borgEscapeStair(ctx);
+    if (stair) return stair;
+    if (borgCautionPhase(ctx, 20, 2)) {
       const c = firstCmd(
         borgSpellFail(ctx, Spell.PHASE_DOOR, allowFail),
         borgSpellFail(ctx, Spell.PORTAL, allowFail),
@@ -793,7 +802,10 @@ export function borgEscape(ctx: BorgContext, bQ: number): AgentCommand | null {
     trait(ctx, BI.CURSP) <= idiv(trait(ctx, BI.MAXSP) * 1, 10) &&
     trait(ctx, BI.MAXSP) >= 100
   ) {
-    if ((borgEscapeStair(ctx) || borgCautionPhase(ctx, 20, 2)) && ctx.world.clock - fs.tAntisummon > 50) {
+    /* FORK: Mandos #108. The C queues < here; preserve the returned command. */
+    const stair = borgEscapeStair(ctx);
+    if (stair) return stair;
+    if (borgCautionPhase(ctx, 20, 2) && ctx.world.clock - fs.tAntisummon > 50) {
       const c = firstCmd(
         borgSpellFail(ctx, Spell.PHASE_DOOR, allowFail),
         borgSpellFail(ctx, Spell.PORTAL, allowFail),
@@ -836,7 +848,10 @@ export function borgEscape(ctx: BorgContext, bQ: number): AgentCommand | null {
 
   /* --- Danger Level 8: twitching (escape.c:1236). --- */
   if (ctx.world.self.timesTwitch > 50) {
-    if ((borgEscapeStair(ctx) || borgCautionPhase(ctx, 20, 2)) && ctx.world.clock - fs.tAntisummon > 50) {
+    /* FORK: Mandos #108. The C queues < here; preserve the returned command. */
+    const stair = borgEscapeStair(ctx);
+    if (stair) return stair;
+    if (borgCautionPhase(ctx, 20, 2) && ctx.world.clock - fs.tAntisummon > 50) {
       const c = firstCmd(
         borgSpellFail(ctx, Spell.PHASE_DOOR, allowFail),
         borgSpellFail(ctx, Spell.PORTAL, allowFail),
