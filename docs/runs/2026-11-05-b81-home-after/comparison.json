@@ -1,0 +1,20 @@
+{
+  "schema": "mandos/b81-home-control@1",
+  "before": "../2026-11-05-b81-home-before/runs.json",
+  "after": "runs.json",
+  "gameplay_identical": true,
+  "ignored_fields": [
+    "meta.wallClockMs"
+  ],
+  "before_attained": 2,
+  "after_attained": 2,
+  "scenario_before": {
+    "failed": 3,
+    "passed": 2
+  },
+  "scenario_after": {
+    "failed": 0,
+    "passed": 5
+  },
+  "scope": "Shallow fixed-seed control only. Home effects proved by synthetic item-analysis/count/goal-selector scenes, not a native C save or natural lost-item/death prevention."
+}
