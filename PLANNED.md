@@ -53,8 +53,12 @@ is fixed/closed after adoption with our changes, rebuild and verification;
 a published release is not a closure prerequisite. patch-active separately
 tracks still-needed backports. Internal issue labels and bodies own status.
 The C-only catalogue retains source/evidence/fix links, with no carry column.
-Its contributor section explains copying a local correction into an
-Angband contributor's own PR. Our C submissions remain paused.
+Its first option is the direct compare/open-PR link; copying and patch
+alternatives live in a separate guide. The single-file catalogue is temporary.
+[The pre-outreach evaluation](https://github.com/diegoami/neo-angband/issues/2)
+plans fork-owned upstream trackers and a separate C/game/Neo-engine session;
+Neo Borg development and Mandos-specific work stay here. Existing tracker
+homes remain current until a linked migration. Our C submissions remain paused.
 
 ## Raise the target one measured stage at a time
 
