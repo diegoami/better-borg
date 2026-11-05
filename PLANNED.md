@@ -47,6 +47,15 @@ are named CHOICEs and remain marked in Mandos. Defects take priority over
 new features; tuning a broken policy would measure the defect instead of
 the proposed improvement.
 
+Current-status reconciliation/board monitoring comes before new triage or
+fixes. Port fixes use issue -> PR -> verified carry. An upstream correction
+is fixed/closed after adoption with our changes, rebuild and verification;
+a published release is not a closure prerequisite. patch-active separately
+tracks still-needed backports. Internal issue labels and bodies own status.
+The C-only catalogue retains source/evidence/fix links, with no carry column.
+Its contributor section explains copying a local correction into an
+Angband contributor's own PR. Our C submissions remain paused.
+
 ## Raise the target one measured stage at a time
 
 The number is **reach-rate**: the fraction of a fixed seed cohort that

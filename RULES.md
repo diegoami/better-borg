@@ -76,11 +76,29 @@ point; [docs/process.md](docs/process.md) and
     audit does not automatically authorize roadmap features; expanding
     beyond defect work requires the owner's explicit scope change.
 
-16. **Carry bugs from both upstreams** (owner, 2026-11-05). After the
-    catalogue correction, implementing and carrying validated C-origin and
-    Neo port fixes in Mandos is the priority (#111). C-only cases retain
-    local C proposals/build evidence without claiming a Mandos fix. Track each applicable consumer
-    separately, retain before/after evidence, and update the catalogue and
-    carry labels at each merge/application. Unverified or unreachable leads
-    need validation first; absent port counterparts are not bugs to import.
-    Rule 12's pause on angband/angband submissions remains in force.
+16. **Priority order** (owner, 2026-11-05). First reconcile current bug
+    status and monitor both upstream boards. Then classify/triage leads
+    and keep internal issues and the C-community catalogue current.
+    Implementation follows: Neo/port fixes first, with issue then PR then
+    verified local carry. With no actionable port bugs, finish the local
+    C proposal/triage pass; carry validated C corrections in a second pass
+    once that C backlog is processed. No new feature work is authorized.
+17. **Issues own current status.** The catalogue has source/evidence and
+    fix links, with no duplicated current carry column or live status in
+    details. Internal issue labels/bodies are authoritative. A proposal,
+    a stored patch and an applied fix are different states.
+18. **Adopt, rebuild, verify, then close.** When an upstream correction
+    lands, pull/adopt it with our changes, rebuild and verify the result.
+    Then mark the tracker fixed and close it. A published package release
+    is not required for closure. carried means an applied local correction
+    awaiting upstream delivery/adoption; partial fixes remain open.
+    patch-active independently marks required backports, even on closed
+    fixed trackers; remove only superseded hunks after consumer adoption.
+19. **C catalogue scope and ownership.** Include concrete C symptoms from
+    all lead sources, with discovery and independent validation attributed
+    separately. Port omissions belong on upstream/Neo issues, not in the
+    C list or under upstream-c merely because a C routine exists.
+    C fix proposals stay in our repositories, labelled c-proposal and
+    postponed when parked; closed/unmerged records retain usable branches,
+    commits and patch links. Others may reuse or submit them themselves.
+    Rule 12's pause on our angband/angband submissions remains in force.

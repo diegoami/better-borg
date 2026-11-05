@@ -134,6 +134,15 @@ reviews. Confirmed Neo port defects have standing posting authorization
 C work remains local-only under the owner's current instruction. [AGENTS.md](../AGENTS.md) is the shared agent entry point and
 [RULES.md](../RULES.md) holds the numbered rules. CLAUDE.md only loads them.
 
+Current-status reconciliation/board monitoring comes before new triage or
+fixes. Port fixes use issue -> PR -> verified carry. An upstream correction
+is fixed/closed after adoption with our changes, rebuild and verification;
+a published release is not a closure prerequisite. patch-active separately
+tracks still-needed backports. Internal issue labels and bodies own status.
+The C-only catalogue retains source/evidence/fix links, with no carry column.
+Its contributor section explains copying a local correction into an
+Angband contributor's own PR. Our C submissions remain paused.
+
 ## Documentation map
 
 | Read | For |

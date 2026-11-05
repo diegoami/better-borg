@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const TRACKER = "diegoami/mandos";
-const CARRY_LABELS = ["carried", "not-carried", "partially-carried"];
+const CARRY_LABELS = ["fixed", "carried", "not-carried", "partially-carried"];
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const cachePath = process.env.MANDOS_UPSTREAM_WATCH_CACHE ?? join(root, ".upstream-watch.json");
 const ghJson = (args) => JSON.parse(execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }));
@@ -20,8 +20,9 @@ try { previous = JSON.parse(readFileSync(cachePath, "utf8")); } catch { /* first
 
 let tracking;
 try {
-  tracking = ghJson(["issue", "list", "--repo", TRACKER, "--state", "open", "--limit", "1000", "--json", "number,title,body,labels"])
-    .filter((issue) => labelsOf(issue).some((label) => label === "upstream" || label === "upstream-c"));
+  tracking = ghJson(["issue", "list", "--repo", TRACKER, "--state", "all", "--limit", "1000", "--json", "number,title,body,labels,state"])
+    .filter((issue) => labelsOf(issue).some((label) => label === "upstream" || label === "upstream-c"))
+    .filter((issue) => issue.state !== "CLOSED" || labelsOf(issue).includes("patch-active"));
 } catch {
   console.error("upstream-watch: cannot read Mandos tracking issues; check gh access");
   process.exitCode = 1;
@@ -35,6 +36,8 @@ for (const issue of tracking) {
   const selected = CARRY_LABELS.filter((label) => labelsOf(issue).includes(label));
   const carry = selected.length === 1 ? selected[0] : selected.length === 0 ? "MISSING" : "CONFLICT";
   if (selected.length !== 1) problems.push(`#${issue.number}: carry status ${carry}${selected.length ? ` (${selected.join(", ")})` : ""}`);
+  if (carry === "fixed" && issue.state === "OPEN")
+    problems.push("#" + issue.number + ": fixed tracker is still open; review closure");
   const local = { number: issue.number, carry, what: `our #${issue.number}: ${issue.title}` };
   const line = issue.body.split("\n").find((text) => text.startsWith("**Threads**:"));
   if (line === undefined) problems.push(`#${issue.number}: missing **Threads**: line (use 'none yet' for an internal candidate)`);
@@ -73,16 +76,16 @@ if (tracking.length > 0) {
 }
 
 const pad = (value, width) => String(value).padEnd(width);
-console.log(pad("thread", 42) + pad("upstream", 10) + pad("Mandos carry", 20) + pad("moved", 7) + "tracker");
+console.log(pad("thread", 42) + pad("upstream", 10) + pad("Mandos state", 20) + pad("moved", 7) + "tracker");
 for (const row of rows) {
   console.log(pad(`${row.repo}#${row.num} ${row.kind}`, 42) + pad(row.state, 10)
     + pad(row.carry, 20) + pad(row.moved ? "YES" : "", 7) + row.what);
 }
 if (candidates.length) {
-  console.log("\nInternal candidates (no external thread; not permission to post):");
+  console.log("\nTrackers without external issue/PR links (may include accepted-commit patches):");
   for (const candidate of candidates) console.log(`${pad(`#${candidate.number}`, 8)}${pad(candidate.carry, 20)}${candidate.what}`);
 }
-console.log(`\nAudited ${tracking.length} open trackers; ${threads.length} upstream references; ${candidates.length} internal candidates.`);
+console.log(`\nAudited ${tracking.length} trackers (open or patch-active); ${threads.length} upstream references; ${candidates.length} internal candidates.`);
 const moved = rows.filter((row) => row.moved);
 console.log(moved.length
   ? `MOVED: ${moved.map((row) => `${row.repo}#${row.num}`).join(", ")} — inspect the changes and update our tracker in this pass; activity may be ours, a maintainer's or a bot's.`

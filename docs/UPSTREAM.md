@@ -23,19 +23,37 @@ observations, not live status. Use `node tools/upstream-watch.mjs`,
 
 ### Carry status and attribution
 
+Current issue state takes priority over new triage or implementation. Inspect
+both boards at session start/end, before choosing a task, after upstream
+movement and after a merge/consumer change. Read-only commands:
+node tools/upstream-watch.mjs and node tools/c-upstream-watch.mjs.
+They report review signals and never infer a fix or change issue state.
+
 Every issue labelled `upstream` or `upstream-c` must have exactly one of:
 
 | Label | Meaning |
 | --- | --- |
-| `carried` | The fix is in Mandos `main` and applied in every required consumer. It may be inline Borg code, an applied engine patch, or fixed code in the adopted upstream base. |
-| `not-carried` | The fix is absent from `main` or only exists as a proposal/work-branch patch. |
-| `partially-carried` | Only some components or required consumers are covered; the issue must list which. |
+| fixed | Correction adopted with our changes, rebuilt and verified; upstream-derived bugs include the upstream correction. Close the bug. |
+| carried | Local correction applied in main/required consumers, awaiting upstream delivery/adoption. |
+| partially-carried | Some correction/components are present; unresolved scope remains open. |
+| not-carried | No applied correction in the required consumers. A proposal or stored file alone does not count. |
+
+patch-active is an independent maintenance label for required package/build
+backports. A fixed bug can be closed while patch-active remains. The board
+audit includes closed patch-active trackers so source adoption never hides
+remaining patch maintenance. Archived fixed inline corrections need not
+stay in the open bug queue.
+
+Closure follows verified source adoption, not waiting for a published
+release. Preserve affected and correction pins, consumer/build receipts and
+the issue links. Keep partial/unreproduced cases open; upstream closure by
+itself is not proof that our actual original case is solved.
 
 Use labels and the issue body for status, never title suffixes or guesses
 from an upstream issue being open/closed. A running desktop can still use
 an older build; record source/build coverage separately from deployment.
-Keep `carried` on a closed, adopted fix when it remains in `main`, noting
-that it is upstream-provided code rather than a local patch.
+Use fixed on adopted and verified upstream fixes, retaining the original
+carry history and any independent patch-active follow-up.
 
 Always state the origin and exact C reference revision. **Inherited from
 the imported TypeScript port** and **inherited from C** are different:
@@ -118,7 +136,8 @@ naming the upstream refs (`owner/repo#number`, or `none yet`), then **What**, **
 (engine gap / port defect / seam request / watch), **Carried** (where our fix
 lives meanwhile: the core, the harness patch, the lab branch - or why
 nothing), and **On release** (what we do when a release carries it). It
-closes when a release carries the fix and we have adopted it. List them:
+closes when the actual upstream correction is adopted, rebuilt and verified;
+patch-active separately retains any still-required backport follow-up. List them:
 
     gh issue list --repo diegoami/mandos --label upstream
 
@@ -126,9 +145,10 @@ closes when a release carries the fix and we have adopted it. List them:
 filing a tracking issue IS adding the thread to the watch. Process §6 says
 what we do while we wait.
 
-**Tracker convention (learned 2026-11-03)**: open != unfixed here - issues stay
-open until a stable release carries the fix (#371/#372/#415/#377). Check the
-maintainer's dedup/release comments before treating an open issue as work.
+**Historical upstream convention**: some Neo issues stay open for release
+tracking. Our own current rule closes a bug after verified source adoption;
+release/backport maintenance uses patch-active independently. Read the actual
+implementation and receipts rather than copying upstream issue state.
 **Historical build note**: the earlier fresh core worktree produced 53
 missing-declaration errors because core referenced mod-sdk/dist before it
 was built. Build the project references from the engine repo root before
