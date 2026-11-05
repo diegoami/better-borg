@@ -107,9 +107,12 @@ At the release turn, Mandos hands back the keyboard and shows the death
 banner; subsequent human commands are logged, and Ctrl-Z can hand control
 back.
 
-**A seed is not yet sufficient proof of a matching lab replay.** The lab
-records seeds and human-intervention marks, but a desktop death has still
-diverged from the harness ([#54](https://github.com/diegoami/mandos/issues/54)).
+**A seed alone is insufficient proof of a matching lab replay.**
+[#54](https://github.com/diegoami/mandos/issues/54) now reproduces one actual
+desktop death, including all 113 commands and observed death facts; see the
+[case evidence](docs/runs/2026-11-04-b54-desktop-death-replay/README.md).
+It requires matching code/content and accepted-birth RNG/options/controller
+context, not just a seed. This does not prove every desktop replay.
 The harness and lab use the beta.2 engine base with carried fixes; their
 birth and seed paths must also agree. Verify the replay before treating a
 dossier boundary as the same game state. The graveyard retains selected

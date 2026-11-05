@@ -6,7 +6,7 @@ dossier and write a diagnosis. The tools support that work; they do not
 automatically launch an analysis session for every death. Human play of the
 last turns is optional.
 
-The authorized scope is bug hunting and fixing ([rule 15](../CLAUDE.md)).
+The authorized scope is bug hunting and fixing ([rule 15](../RULES.md)).
 A diagnosis can identify a policy idea, but new strategies, parameter
 learning and fatal-state snapshot features remain parked. The longer-term
 trainer design in the roadmap does not authorize those features.
@@ -129,8 +129,8 @@ and shows the death banner (`src/loop/replay.ts`); subsequent human commands
 are logged, and Ctrl-Z can hand control back.
 
 Treat that boundary as the recorded game state only after proving the case
-matches. The desktop and headless birth/replay paths have diverged despite
-a recorded seed ([#54](https://github.com/diegoami/mandos/issues/54)). Matching
+matches. #54 repaired desktop/headless birth and replay differences, with
+[one verified desktop case](runs/2026-11-04-b54-desktop-death-replay/README.md). Matching
 release labels or a seed field is not sufficient evidence. Verify an
 untouched replay against the recorded death line first; otherwise label
 what you observe as a different run. See the
@@ -138,10 +138,12 @@ what you observe as a different run. See the
 
 ## Limits, named
 
-- **Desktop parity is unresolved.** The lab's carried master-seed seam
-  can record a seed, and touched runs are marked, but exact reproduction in
-  the harness still needs proof in #54. The older statement that mods could
-  not read a seed described the engine before that seam was carried.
+- **Desktop parity needs case-specific proof.** #54 reproduces one actual
+  desktop Human Mage death: all 113 commands and arguments, pre-command
+  observations and final death facts. Reproduction requires matching
+  code/engine/content and accepted-birth RNG/options/controller context.
+  A seed alone cannot recover missing context from older records; touched
+  runs also need their human input. This is not universal replay coverage.
 - **The graveyard is not a full death save.** It preserves selected run
   facts and journal data after the engine removes the character's normal
   save. A diagnostic snapshot of the fatal dungeon state is a parked

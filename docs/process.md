@@ -1,6 +1,6 @@
 # Process
 
-[CLAUDE.md](../CLAUDE.md) holds the rules; this file says how work runs. Same system as
+[RULES.md](../RULES.md) holds the rules; this file says how work runs. Same system as
 neowarrior-borg (which is malpaco's, which is Geoclick2027's).
 
 Rule 15 limits current work to bug hunting and fixing. Restoring omitted C
@@ -65,7 +65,7 @@ The desktop lab build is section 8.
 | `.upstream-watch.json` | this checkout, ignored | a cache: the first run on a new machine re-baselines it |
 | The lab data base (saves, graveyard and lineage in the browser profile's IndexedDB/Local Storage, settings, logs) | `~/projects/angband/mandos-lab-data` | backed up to the owner's private Drive folder: `node tools/backup.mjs push` (after a lab session; `backup.json` says what travels - never the caches or the mod clone, which is a git checkout). Each push keeps what it replaces under `archive/<stamp>` |
 | `core.hooksPath` | each clone's git config | set by the setup line above. It points at this repo's `.githooks/`, executable wrappers that run the engine checkout's own hooks with `sh` (upstream stores them non-executable, so pointing at them directly runs nothing on Linux) |
-| Claude Code's memory for this project | the user's Claude profile | a convenience only: every rule and decision it holds is also in CLAUDE.md or these docs |
+| Claude Code's memory for this project | the user's Claude profile | a convenience only: every rule and decision it holds is also in RULES.md or these docs |
 
 ### Day to day
 
@@ -192,7 +192,7 @@ a long run starts or ends, and when a blocker is found:
 stashes, the engine fingerprint, open PRs, the labelled queue), and
 `--post "<next action>" [--notes FILE]` posts it, refusing a body that names
 a home directory (the comment is public). A checkpoint records
-state, not decisions - decisions go into these documents and CLAUDE.md.
+state, not decisions - decisions go into these documents and RULES.md.
 
 **A bug always wins over a new feature** (rule 11). A defect found mid-task
 gets its own issue at once and is fixed before the feature resumes (or the
@@ -285,7 +285,12 @@ CHOICE that departs from 4.2.6 (rule 3), FORK-marked, unless angband/angband
 fixes it, in which case it is a defect fix toward the C's newer code.
 
 **C report gate** (owner, 2026-11-04): label these Mandos investigations
-`upstream-c`. A code discrepancy or bookkeeping error alone is not enough
+`upstream-c`. This is the C defect/proposal route, not just a reference-test
+label. Qualify inheritance: an omitted correct C behavior is a port defect;
+a faithful copy of a C bug must be corrected upstream in C before Neo can
+take the behavior change. Mandos may carry its own marked CHOICE meanwhile.
+Candidate origin must remain explicitly unproven until scenario attribution.
+A code discrepancy or bookkeeping error alone is not enough
 for upstream submission. Demonstrate a meaningful gameplay consequence
 that the owner can explain in plain language, with reproduction and
 controls. Do not claim a bad decision, death, lost progress or strength
@@ -298,7 +303,12 @@ duplicate. An extracted-function fixture alone is not validation in the
 running C game. Post the evidence internally on the Mandos issue first;
 post to `angband/angband` only after the owner's explicit OK on that report.
 Keep instrumentation and limitations visible; do not imply an observed
-live death when the evidence is an instrumented scenario.
+live death when the evidence is an instrumented scenario. Every proposed
+upstream-C PR needs a repeatable natural or synthetic scenario, legal game
+state, normal rules, explicit RNG/controller/perception setup, before/after
+commands and practical outcomes, and negative controls. The full tracking
+record, exclusive carry labels and session/merge/release review cadence are
+in [the upstream workflow](UPSTREAM.md#carry-status-and-attribution).
 
 **Before posting**, run `node tools/upstream-sync.mjs` (exit 0): an issue
 cites the pristine checkout at upstream's head, and a PR branch is cut from
@@ -399,11 +409,13 @@ upstream release lands. The pass, dated in `docs/UPSTREAM.md`:
    are PR vehicles only: `gh repo sync` them on demand when cutting a §6 PR.
    No permanent product working trees; the isolated PR worktrees from §6
    are disposable. Fork branches are ahead only for their offered change.
-5. The local game checkout: `master` follows upstream, ff-only. The
-   `neowarrior-lab` branch (pushed to `fork`) rebases onto it and shrinks as
-   upstream ships our fixes - the noteSpot line dies the day a release
-   carries #428, and the branch is deleted once empty. After a rebase,
-   `git push --force-with-lease fork neowarrior-lab` (owner-run).
+5. The local game checkout: `master` follows upstream, ff-only. Published
+   fix and lab branches use new commits and normal pushes: no amend and
+   never force-push. Refresh the lab through ordinary merges/cherry-picks,
+   or prepare a clean replacement branch while preserving unadopted fixes
+   and evidence. Remove a carried delta only after its upstream replacement
+   is adopted and verified; update the tracker, carry label and scenario
+   receipt in the same pass. Do not rewrite published history to shrink it.
 
 ## 8. Watched runs (lab builds)
 

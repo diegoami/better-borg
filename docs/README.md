@@ -105,9 +105,30 @@ calibration milestone, not a late-game benchmark. Committed records retain
 older builds and results so improvements can be checked.
 
 Harness replays verify the recorded death line and label divergences.
-Desktop-to-harness exact replay remains under investigation in
-[#54](https://github.com/diegoami/mandos/issues/54). The graveyard stores run
+The [#54 desktop death case](runs/2026-11-04-b54-desktop-death-replay/README.md)
+reproduces all 113 commands and observed death facts with matching code,
+engine/content and accepted-birth RNG/options/controller context. This
+proves that case; a seed alone does not prove another run's exactness. The graveyard stores run
 facts and journal data; it does not preserve a full fatal-state save.
+
+## Bug fixes and carry status
+
+Current work is bug hunting and fixing. Distinguish inherited TypeScript
+port defects from inherited C bugs. Neo must follow C: a faithful copy of
+a C bug needs correction in upstream Angband first, then Neo parity.
+Mandos may carry an earlier marked CHOICE. `upstream-c` tracks the C
+proposal route, not merely testing against C or confirmed attribution.
+
+`carried` means merged into Mandos `main` and applied in all required
+consumers; `not-carried` means absent or proposal/branch only;
+`partially-carried` names incomplete coverage. A stored C patch does not
+fix TypeScript consumers. Labels and tracker evidence own status, not titles.
+C proposals need reproducible scenarios with meaningful consequences,
+negative controls, duplicate review and explicit owner approval before
+external posting. The [upstream workflow](UPSTREAM.md#carry-status-and-attribution)
+is the detailed reference for evidence, patches, consumer scope and regular
+reviews. [AGENTS.md](../AGENTS.md) is the shared agent entry point and
+[RULES.md](../RULES.md) holds the numbered rules. CLAUDE.md only loads them.
 
 ## Documentation map
 

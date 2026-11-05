@@ -21,10 +21,83 @@ observations, not live status. Use `node tools/upstream-watch.mjs`,
 
 ## Our threads: one tracking issue each
 
+### Carry status and attribution
+
+Every issue labelled `upstream` or `upstream-c` must have exactly one of:
+
+| Label | Meaning |
+| --- | --- |
+| `carried` | The fix is in Mandos `main` and applied in every required consumer. It may be inline Borg code, an applied engine patch, or fixed code in the adopted upstream base. |
+| `not-carried` | The fix is absent from `main` or only exists as a proposal/work-branch patch. |
+| `partially-carried` | Only some components or required consumers are covered; the issue must list which. |
+
+Use labels and the issue body for status, never title suffixes or guesses
+from an upstream issue being open/closed. A running desktop can still use
+an older build; record source/build coverage separately from deployment.
+Keep `carried` on a closed, adopted fix when it remains in `main`, noting
+that it is upstream-provided code rather than a local patch.
+
+Always state the origin and exact C reference revision. **Inherited from
+the imported TypeScript port** and **inherited from C** are different:
+
+- Correct C behavior missing or changed in the port is a Neo port defect.
+- Wrong C behavior faithfully reproduced by Neo is a C defect. Correct C
+  upstream first, then propose Neo parity with that recorded C revision.
+  Mandos may carry an earlier marked CHOICE; that is not permission to
+  change Neo's behavior before C changes.
+
+`upstream-c` identifies the C-source defect/proposal route, not merely a
+C-reference test. Candidate attribution may be unproven; say so explicitly.
+Both labels can track related work, but they do not prove a C defect or
+authorize either submission. Split independent C and port defects when
+their evidence/routes differ.
+
+### Required tracking record
+
+Each tracker records **Threads** (exact repository/number, or `none yet`),
+**Origin/reference**, **Target/sequence**, **Carried** (main/source commits,
+affected components and consumers, patch path/PR-marked hunks or inline
+source paths), **Scenario/evidence**, and **On release** (adoption, removal
+and revalidation conditions). A patch file's existence alone is not proof
+that a consumer applies it.
+For Borg fixes, identify the source merge and rebuilt plugin. For engine
+fixes, identify the authoritative PR source, applied package hunks and each
+required lab/build consumer. A C patch affects the C build; it does not
+automatically fix the TypeScript engine or Borg.
+
+For every upstream-C proposal, retain a reproducible natural or synthetic
+scenario with legal/reachable state, normal rules, source/content pins,
+RNG/controller/perception initialization, before/after commands and actual
+outcomes, and negative controls. Compare C, the unfixed implementation and
+the correction as applicable. C and Neo saves need equivalent states, not
+a shared binary save. Prove a meaningful consequence in plain language;
+do not infer death prevention from changed flags or scores alone.
+
+Keep evidence internal, check current source and open/closed duplicates,
+then obtain explicit owner OK before external posting. C patches belong
+in `patches/upstream-c/`; the combined pnpm engine patch keeps one hunk
+group/PR marker per fix. Do not send a Mandos CHOICE to Neo as a port fix.
+
+### Review cadence
+
+Run `node tools/upstream-watch.mjs` at bug-work session start/end, after
+merge/revert or consumer changes, after upstream movement/release, and
+before a status report/checkpoint. Update the affected tracker and replace
+its carry label in the same pass; resolve missing/conflicting labels.
+This is a workflow cadence, not an unattended scheduled job.
+
+The read-only report shows upstream state beside Mandos carry status,
+includes internal candidates and flags metadata/API failures with a nonzero
+exit. It observes PR heads as well as issue activity. Movement can be ours,
+a maintainer's or a bot's: inspect it before attributing it. Upstream merge
+or closure never automatically applies a fix, changes our labels or removes
+a patch. On delivery, verify the adopted implementation, update the floor
+if needed, remove only matching patch hunks and rerun the scenario/gates.
+
 Per-thread state does not live in this file. Every thread we hold upstream
 (an issue or PR we filed, or a seam we depend on) has a TRACKING ISSUE on our
 tracker, labelled `upstream`, whose body opens with a `**Threads**:` line
-naming the upstream refs (`neostryder/<repo>#<n>`), then **What**, **Kind**
+naming the upstream refs (`owner/repo#number`, or `none yet`), then **What**, **Kind**
 (engine gap / port defect / seam request / watch), **Carried** (where our fix
 lives meanwhile: the core, the harness patch, the lab branch - or why
 nothing), and **On release** (what we do when a release carries it). It

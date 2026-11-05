@@ -15,9 +15,10 @@ the checkout named better-borg (the folder name is stale; pass
 review: verify against the code and the records, not against any
 description of them.
 
-Read first: CLAUDE.md (the numbered rules, cited as "rule n"), AGENTS.md
-(who is who: we are diegoami; neostryder is another developer; "the port"
-is theirs), docs/process.md.
+Read first: RULES.md (the shared numbered rules, cited as "rule n"),
+AGENTS.md (who is who: we are diegoami; neostryder is another developer; "the port"
+is theirs), docs/process.md and docs/UPSTREAM.md. CLAUDE.md imports
+both entry files and adds no separate policy.
 
 Strict rules:
 - Read-only. Do not edit, commit, push, merge, label, open or close
@@ -48,7 +49,11 @@ Check, in this order:
    (restores what the C does - cite ../neo-angband/reference/src/borg/
    file:line) or a CHOICE (FORK:-marked in the source, rule 2). An
    attribution of "inherited" must hold at the import boundary 70145c5 and
-   in the pristine ../neo-angband-mod-borg checkout.
+   in the pristine ../neo-angband-mod-borg checkout. Distinguish inheritance
+   from that port versus C. For a faithful C bug, C must be corrected
+   upstream before proposing Neo parity; do not present Mandos CHOICEs as
+   port defects. Check carry labels against main and every required consumer,
+   not patch existence or upstream issue state.
 3. Determinism (rule 5): no wall clock, unseeded randomness or network in
    the controller; observation-only instruments change no decision.
 4. Records (rule 8): committed records untouched; new fields additive.
@@ -73,7 +78,7 @@ Verdict: APPROVE | APPROVE AFTER <named fixes> | REWORK | OWNER DECISION.
 <the common head>
 
 Your task is issue #<n>: gh issue view <n> --repo diegoami/mandos. Answer
-every question it lists. Read in full: CLAUDE.md, AGENTS.md,
+every question it lists. Read in full: RULES.md, AGENTS.md,
 docs/process.md, docs/plans/getting-stronger.md, docs/UPSTREAM.md,
 docs/tasks/README.md, docs/runs/README.md, .gitignore, .github/, and the
 open checkpoint issue with its latest comment. Compare with the owner's
@@ -93,10 +98,14 @@ only) or CHANGES (list the blocking findings by number).
 ```
 <the common head>
 
-Review the draft at <path> for neostryder/<repo> (issue or PR). Check it
+Review the draft at <path> for <owner>/<repo> (issue or PR). Check it
 against process.md section 6: is it a PORT DEFECT (the port diverges from
 the C - cite both sides) or an engine gap, and not a strategy improvement?
-Does every code citation match the pristine checkout at the stated
+For a C-source proposal, verify the C-first route and a normal-rules,
+legal/reachable scenario with meaningful gameplay consequences, pins,
+initialization, before/after outcomes and negative controls. Check open and
+closed duplicates. A review verdict never substitutes for explicit owner
+approval to post. Does every code citation match the pristine checkout at the stated
 revision? Is the repro reproducible from our run record? Is the fix the
 minimal one matched to the C? Compare its shape with neostryder/neo-angband
 #428 and PR #429.

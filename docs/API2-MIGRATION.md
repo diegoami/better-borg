@@ -74,8 +74,9 @@ requesting the next birth. Recorded fields include the seed when the
 engine supplies it and whether the human issued commands.
 
 A replay handoff, when explicitly armed, precedes the stage watch. It can
-release the keyboard at a dossier boundary, but a seed alone has not yet
-proved desktop and harness runs identical. See
+release the keyboard at a dossier boundary. A seed alone is insufficient:
+#54 verifies one actual desktop death with matching code/content and
+accepted-birth RNG/options/controller context, not every desktop run. See
 [#54](https://github.com/diegoami/mandos/issues/54) and the
 [settings reference](../SETTINGS.md#the-death-replay-trainer-playing-a-dead-runs-last-turns).
 The graveyard contains selected facts and journal data, not a full save

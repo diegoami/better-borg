@@ -1,5 +1,9 @@
 # Agents
 
+This is the shared entry point for every coding agent. Read
+[RULES.md](RULES.md) for the canonical numbered working rules.
+`CLAUDE.md` imports this entry point for Claude Code; it adds no rules.
+
 For any agent or tool working in this repository (OpenCode, Codex, Claude
 Code, others):
 
@@ -14,15 +18,19 @@ the issues' labels: `status:ready` and `priority:*`.
   through the generic pack; a new class starts as a pack, never a fork - the
   no-N-forks doctrine, docs/process.md section 2). Which class and race each
   birth plays is the player's: one toggle per class and per race (#16).
-- **Rules**: [`CLAUDE.md`](CLAUDE.md), numbered and cited as "rule n".
+- **Rules**: [`RULES.md`](RULES.md), numbered and cited as "rule n".
 - **Current scope**: rule 15 authorizes bug hunting and fixing only. The
   roadmap's strategies, learning, snapshots and new unattended stage-resume
   functionality remain parked until the owner changes scope.
 - **Process**: [`docs/process.md`](docs/process.md): the loop, records,
   milestones, and the pack doctrine. Before upstream work: run
-  `node tools/upstream-watch.mjs` - movement on our threads means engage;
-  silence means carry in the fork (what lives in the core vs in a strategy
-  pack under `src/class/`, and the upstream cherry-pick protocol).
+  `node tools/upstream-watch.mjs` - inspect movement on our threads
+  before deciding the next action;
+  carry approved fixes in the fork (what lives in the core vs in a strategy
+  pack under `src/class/`, and the upstream cherry-pick protocol). Run the
+  read-only carry audit at session start/end, after merge/revert or consumer
+  changes, and after upstream movement or release. Resolve missing/conflicting
+  carry labels before reporting status; titles are not the status ledger.
 - **Tasks**: [`docs/tasks/README.md`](docs/tasks/README.md); the issue's
   `status:*` label is the status.
 - **Plan**: [`docs/plans/getting-stronger.md`](docs/plans/getting-stronger.md)
@@ -44,8 +52,9 @@ forks. Four repos, two each: `neostryder/neo-angband` (upstream ENGINE) and
 fork imported; "the port" means THEIRS unless qualified) versus
 `diegoami/neo-angband` and `diegoami/neo-angband-mod-borg` (OUR forks -
 PR vehicles only, never working trees). A defect found in our tree that
-also exists at the import boundary `70145c5` is INHERITED FROM THEIR port,
-not ours; verify against the pristine checkouts before attributing (the
+also exists at the import boundary `70145c5` is inherited from their
+TypeScript port, not introduced by Mandos. It may also originate in C;
+verify both sources before attributing (the
 B32 `track_step` finding is the case study: first reported as "ours",
 actually theirs - mod-borg#21).
 

@@ -48,12 +48,32 @@ restorations on fixed seeds. Examples:
 | Inventory and recharge rungs (#50) | Restore pack-space, weight shedding, whole-stack bad-ammo drops and worn-item recharging from the C Borg. | The [Ranger cohort](docs/runs/2026-11-04-b50-ranger-c2d1/README.md) improved from 6/8 to 7/8; the Warrior control stayed 4/4. |
 
 These measurements describe their named builds, races, seeds and stage.
-They are evidence of early-game improvement, not a late-game success rate.
+They are historical early-game comparisons, not a late-game success rate.
+They predate #54's complete-content loader correction and do not establish
+current desktop reliability.
 [Run records](docs/runs/README.md) retain the raw facts and older baselines.
+
+Bug leads come from our runs, tests and source audits, and from the related
+[borg-rs port](https://github.com/diegoami/borg-rs) (tracked in #86). Each lead
+needs verification against the relevant source revision.
 
 Changes are named by provenance: a **DEFECT** restores the C Borg or fixes an
 engine/port error and is offered upstream; a **CHOICE** deliberately changes
-policy and remains a marked Mandos decision. Learning and parameter searches
+policy and remains a marked Mandos decision. Qualify whether a defect is
+inherited from the imported TypeScript port or from C. Neo's Borg must
+follow C: a faithful copy of a C bug needs an upstream Angband correction
+first, then Neo parity. Mandos may carry an earlier marked CHOICE.
+
+The current scope is bug hunting and fixing only. `upstream-c` tracks the
+C defect/proposal route, not just C testing. Every such proposal needs a
+reproducible scenario showing a meaningful gameplay consequence, duplicate
+review and explicit owner approval before external posting. Carry labels
+(`carried`, `not-carried`, `partially-carried`) describe verified coverage in
+Mandos `main` and its required consumers; a patch file alone is insufficient.
+See the [canonical upstream workflow](docs/UPSTREAM.md#carry-status-and-attribution)
+for evidence, patches, consumer tracking and regular status reviews.
+
+Learning and parameter searches
 happen offline; a live character follows a fixed deterministic policy.
 
 ## Run Mandos in the desktop lab
@@ -99,9 +119,13 @@ headless harness because the lab profile lacked the required consents.
 
 Harness death replay checks the cause, turn, decision count and command
 census against the record. It needs the matching Borg code, engine, content
-and birth plan. Desktop lab deaths are **not yet proven to replay exactly**
-in the harness; [#54](https://github.com/diegoami/mandos/issues/54) tracks the
-mismatch even when a seed is recorded.
+and accepted-birth RNG/options and controller context. In
+[#54](https://github.com/diegoami/mandos/issues/54), one actual desktop
+Human Mage death reproduced all 113 commands and arguments, pre-command
+observations and final death facts in the harness; see the
+[committed evidence](docs/runs/2026-11-04-b54-desktop-death-replay/README.md).
+That proves the named matching-code case, not every desktop run. A seed
+alone cannot reconstruct missing birth context from older records.
 
 The graveyard is a journal, not a full save of the fatal game state. Death
 snapshots with negative HP are a proposed diagnostic extension. The engine's
