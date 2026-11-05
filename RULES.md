@@ -84,3 +84,9 @@ point; [docs/process.md](docs/process.md) and
     carry labels at each merge/application. Unverified or unreachable leads
     need validation first; absent port counterparts are not bugs to import.
     Rule 12's pause on angband/angband submissions remains in force.
+
+17. **Issues own current carry status** (owner, 2026-11-05). Keep fix links
+    in the catalogue findings table, but do not duplicate current carry
+    labels/status there or in finding details. Internal issue labels and
+    bodies are the source of truth; catalogue data retains versioned
+    references and evidence. Update those links/evidence when sources change.

@@ -774,7 +774,6 @@
       },
       "notes": "59 C Borg units, no Rust Borg linked; direct function diagnostic in a normally born C game. Top-level Ctrl-Z dispatch and failed-open branch were not separately runtime-tested.",
       "tracker": 94,
-      "carry": "not-carried",
       "local_fix_proposals": [
         {
           "repository": "diegoami/neo-angband",
@@ -782,9 +781,7 @@
           "url": "https://github.com/diegoami/neo-angband/pull/1",
           "base": "c-borg-reference",
           "head": "540f621960e674d9fde227a175eeb1d27cc02132",
-          "state": "draft",
-          "validation": "c-game-reproduced",
-          "applied": false
+          "validation": "c-game-reproduced"
         }
       ],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
@@ -840,7 +837,6 @@
       },
       "notes": "Older imported C resets the global correctly. This is a newer C regression, not a Neo omission.",
       "tracker": 95,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -902,16 +898,13 @@
       },
       "notes": "Duplicate light-list entries are a separate symptom; avoid claiming two missing flags saved a life.",
       "tracker": 87,
-      "carry": "not-carried",
       "local_fix_proposals": [
         {
           "repository": "diegoami/mandos",
           "number": 88,
           "url": "https://github.com/diegoami/mandos/pull/88",
           "base": "main",
-          "state": "draft",
-          "validation": "impact-unproven",
-          "applied": false
+          "validation": "impact-unproven"
         }
       ],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
@@ -975,7 +968,6 @@
       },
       "notes": "Independent of the other danger slips in the same Rust group.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1037,7 +1029,6 @@
       },
       "notes": "Both current C and src/store/buy.ts use !=MAGE && ==ROGUE.",
       "tracker": 103,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1099,7 +1090,6 @@
       },
       "notes": "Both C and src/store/buy.ts use the conjunction that exempts every scroll and any matching numeric sval.",
       "tracker": 104,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1161,7 +1151,6 @@
       },
       "notes": "C decrements before the two-empty-slot continue. TS BuySim path does not mutate those wares.",
       "tracker": 105,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1223,7 +1212,6 @@
       },
       "notes": "p_left/p_right declared outside the loop; current TS helper has no corresponding accumulators. Broader ring parity is independent.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1294,7 +1282,6 @@
       },
       "notes": "Do not fabricate stacked-ring gameplay or call this a proven bad equip decision.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1365,7 +1352,6 @@
       },
       "notes": "TS src/store/buy.ts declares let skip=false inside each ware loop.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1427,7 +1413,6 @@
       },
       "notes": "TS returns through an optional evaluation seam and has no corresponding global mutation. #4 missing swap functionality is a separate port gap.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1498,7 +1483,6 @@
       },
       "notes": "The TS evaluator does not copy candidates over a mutable C inventory array.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1570,7 +1554,6 @@
       },
       "notes": "Writers store a last index, readers scan p<num. Group34's purchase half shares the cause already reported in33; one catalogue entry.",
       "tracker": 106,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1723,7 +1706,6 @@
       },
       "notes": "Keep this separate from the latest-entry omission; do not inflate it into a gameplay failure.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1821,7 +1803,6 @@
       },
       "notes": "TS never assigns pretend full mana here. Its over-exertion parity is a separate question, not this leak.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1876,14 +1857,13 @@
       "checked": "2026-11-05",
       "c": "present-at-pin",
       "neo": "different-port-defect",
-      "mandos": "distinct-port-omission-corrected",
+      "mandos": "different-port-defect",
       "impact": {
         "level": "predicted-or-unproven",
         "description": "C may leave climb keys queued or queue both climb and phase while applying phase bookkeeping."
       },
-      "notes": "TS returns commands rather than queuing keys: a stair AgentCommand used as a boolean is discarded. See PORT-0001; this is not the same faithful C queue symptom. Mandos PR116 corrects the distinct lost-returned-command omission; this does not fix C's queued-key symptom.",
+      "notes": "TS returns commands rather than queuing keys: a stair AgentCommand used as a boolean is discarded. See PORT-0001; this is not the same faithful C queue symptom. Related correction: Mandos PR116; internal issue108 owns its current application status.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -1954,7 +1934,6 @@
       },
       "notes": "TS resetAntisummon applies the same <50 test in those branches. Other call sites can still reset it.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -2034,7 +2013,6 @@
       },
       "notes": "C also ignores borg_spell's result; TS returns it. Missing floor/occupancy/range selection guards are shared.",
       "tracker": 107,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.",
       "references": [
@@ -2096,7 +2074,6 @@
       },
       "notes": "Forced shop assignment is followed by helpers that ignore that forced shop and by unconditional goal reset. A stale ware can instead make the second already-flowing test accept the forced shop.",
       "tracker": 112,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Validate a legal normal-rule scene and negative controls before calling a gameplay correction carried.",
       "references": [
@@ -2158,7 +2135,6 @@
       },
       "notes": "The function has already returned when CDEPTH is nonzero. Removing the duplicate test alone is cleanup, not a demonstrated gameplay correction.",
       "tracker": null,
-      "carry": "not-carried",
       "local_fix_proposals": [],
       "next": "Validate a legal normal-rule scene and negative controls before calling a gameplay correction carried.",
       "references": [
@@ -2235,7 +2211,7 @@
       "tracker": 108,
       "evidence": "command-selection-reproduced",
       "title": "Returned stair command discarded inside phase predicates",
-      "note": "Mandos delivers the returned-stair correction in PR116. C's queued-stair-plus-phase symptom remains separate and unchanged. Ten ascent tests fail before; all16 cases/control tests pass after; full1123-test no-skip gate and replay5/5 pass. Carry is delivered atomically with the source/plugin merge.",
+      "note": "The local correction in PR116 preserves the returned stair command. C's queued-stair-plus-phase symptom remains separate. Ten ascent cases fail before; all16 cases/controls pass after, with a full1123-test no-skip gate and replay5/5. Internal issue108 is the source of truth for current carry/application status.",
       "references": [
         {
           "role": "c",
@@ -2284,7 +2260,6 @@
         }
       ],
       "priority": "high",
-      "carry": "carried",
       "local_fix_proposals": [
         {
           "repository": "diegoami/mandos",
@@ -2292,9 +2267,7 @@
           "url": "https://github.com/diegoami/mandos/pull/116",
           "base": "main",
           "head": "2e968e513dff840db447edc5abe44fcd1c417757",
-          "state": "delivered by this change",
-          "validation": "command-selection-and-controls",
-          "applied": true
+          "validation": "command-selection-and-controls"
         }
       ],
       "implementation_references": [

@@ -12,7 +12,7 @@ A source check establishes code/predicate/state flow, not legal reachability or 
 
 ## Reference pins
 
-These pins identify affected/reference code. Fix-proposal and carry entries identify delivered corrections separately.
+These pins identify affected/reference code. Fix links identify correction proposals. Our internal issue labels and bodies are the source of truth for current carry/application status; this catalogue does not duplicate that live status.
 
 - C: `e473720ed88a0f0c7ca66815cef3000eb4a38bc3`. The imported 4.2.6 snapshot is a different reference.
 - Neo Borg: `74a017d2f695939eb2f046b7c9ff286ef1e82568`.
@@ -29,33 +29,33 @@ A proposal branch, a patch stored on main and a fix applied to a maintained cons
 
 ## Classified findings
 
-| ID | Finding | Priority | Evidence | Pinned references | Neo/Mandos | Fix proposal | Carry | Tracker |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [CBUG-0001](#cbug-0001) | Cancelling a map dump dereferences a NULL file | high | c game reproduced | [C src/borg/borg-log.c:190–204](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-log.c#L190-L204) | no corresponding port path | [diegoami/neo-angband#1](https://github.com/diegoami/neo-angband/pull/1) — draft, c-game-reproduced | not carried | [#94](https://github.com/diegoami/mandos/issues/94) |
-| [CBUG-0002](#cbug-0002) | Paralysis/knockout message suppression resets a different variable | high | source checked | [C src/borg/borg.c:310–314](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg.c#L310-L314) | C only; different port pipeline | none | not carried | [#95](https://github.com/diegoami/mandos/issues/95) |
-| [CBUG-0003](#cbug-0003) | West radius-two shoulder grids are omitted | med | c game flags only | [C src/borg/borg-cave-light.c:135–143](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-cave-light.c#L135-L143)<br>[Neo src/perceive.ts:285–290](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/perceive.ts#L285-L290)<br>[Mandos src/perceive.ts:288–293](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/perceive.ts#L288-L293) | present in both | [diegoami/mandos#88](https://github.com/diegoami/mandos/pull/88) — draft, impact-unproven | not carried | [#87](https://github.com/diegoami/mandos/issues/87) |
-| [CBUG-0004](#cbug-0004) | Cold melee uses temporary acid resistance | high | source checked | [C src/borg/borg-danger.c:262–276](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L262-L276)<br>[Neo src/danger/danger.ts:206–219](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/danger/danger.ts#L206-L219)<br>[Mandos src/danger/danger.ts:209–222](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/danger/danger.ts#L209-L222) | present in both | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0005](#cbug-0005) | Black Market Teleport Other rod class exception is reversed | high | source checked | [C src/borg/borg-store-buy.c:127–133](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L127-L133)<br>[Neo src/store/buy.ts:189–193](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L189-L193)<br>[Mandos src/store/buy.ts:189–193](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L189-L193) | present in both | none | not carried | [#103](https://github.com/diegoami/mandos/issues/103) |
-| [CBUG-0006](#cbug-0006) | Starvation shopping exception admits unrelated scrolls/subtypes | high | source checked | [C src/borg/borg-store-buy.c:281–288](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L281-L288)<br>[Neo src/store/buy.ts:294–303](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L294-L303)<br>[Mandos src/store/buy.ts:294–303](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L294-L303) | present in both | none | not carried | [#104](https://github.com/diegoami/mandos/issues/104) |
-| [CBUG-0007](#cbug-0007) | Home trial early exits leave reduced quantities/charges | med | source checked | [C src/borg/borg-store-buy.c:501–523](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L501-L523)<br>[Neo src/store/buy.ts:348–387](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L348-L387)<br>[Mandos src/store/buy.ts:348–387](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L348-L387) | C only; port uses value simulation | none | not carried | [#105](https://github.com/diegoami/mandos/issues/105) |
-| [CBUG-0008](#cbug-0008) | Ring-side scores persist across home wares | med | source checked | [C src/borg/borg-store-buy.c:455–475](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L455-L475)<br>[Neo src/store/buy.ts:348–387](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L348-L387)<br>[Mandos src/store/buy.ts:348–387](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L348-L387) | C only; different ring trial | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0009](#cbug-0009) | Home ring trials use asymmetric quantities | low | source checked | [C src/borg/borg-store-buy.c:535–539](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L535-L539)<br>[Neo src/store/buy.ts:371–376](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L371-L376)<br>[Mandos src/store/buy.ts:371–376](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L371-L376) | C only; different ring trial | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0010](#cbug-0010) | Home grab skip flag leaks to later wares | med | source checked | [C src/borg/borg-store-buy.c:859–896](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L859-L896)<br>[Neo src/store/buy.ts:494–510](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L494-L510)<br>[Mandos src/store/buy.ts:494–510](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L494-L510) | C only; port resets per ware | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0011](#cbug-0011) | No-hole swap exit leaves valuation changed | med | source checked | [C src/borg/borg-store-buy.c:972–983](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L972-L983)<br>[Neo src/store/buy.ts:548–551](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L548-L551)<br>[Mandos src/store/buy.ts:548–551](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L548-L551) | port subsystem missing | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0012](#cbug-0012) | Swap trials overwrite the tracked swap inventory slot | med | source checked | [C src/borg/borg-store-buy.c:1002–1026](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L1002-L1026)<br>[Neo src/store/buy.ts:543–571](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L543-L571)<br>[Mandos src/store/buy.ts:543–571](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L543-L571) | port subsystem missing | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0013](#cbug-0013) | Latest purchase/sale is outside the history reader range | med | source checked | [C src/borg/borg-store-buy.c:1226–1233](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L1226-L1233)<br>[Neo src/store/store.ts:151–154](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/store.ts#L151-L154)<br>[Mandos src/store/store.ts:154–157](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/store.ts#L154-L157) | present in both | none | not carried | [#106](https://github.com/diegoami/mandos/issues/106) |
-| [CBUG-0014](#cbug-0014) | Ten-entry transaction arrays never use the tenth slot | low | source checked | [C src/borg/borg-store-buy.c:1226–1228](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L1226-L1228)<br>[Neo src/store/store.ts:147–155](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/store.ts#L147-L155)<br>[Mandos src/store/store.ts:150–158](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/store.ts#L150-L158) | present in both | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0015](#cbug-0015) | Critical escape returns with pretend full mana | med | source checked | [C src/borg/borg-escape.c:780–835](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L780-L835)<br>[Neo src/fight/escape.ts:533–563](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L533-L563)<br>[Mandos src/fight/escape.ts:536–566](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L536-L566) | C only; no pretend-mana mutation | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0016](#cbug-0016) | Stair predicate queues a climb before phase guards finish | high | source checked | [C src/borg/borg-escape.c:521–537](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L521-L537)<br>[Neo src/fight/escape.ts:618–632](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L618-L632)<br>[Mandos src/fight/escape.ts:621–635](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L621-L635) | Neo: different port defect; Mandos: distinct port omission corrected | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0017](#cbug-0017) | Guarded anti-summon timer reset is unreachable | low | source checked | [C src/borg/borg-escape.c:879–889](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L879-L889)<br>[Neo src/fight/escape.ts:435–437](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L435-L437)<br>[Mandos src/fight/escape.ts:438–440](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L438-L440) | same guarded condition | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [CBUG-0018](#cbug-0018) | Dimension Door destination lacks legality/range filters | high | source checked | [C src/borg/borg-escape.c:569–621](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L569-L621)<br>[Neo src/fight/escape.ts:317–342](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L317-L342)<br>[Mandos src/fight/escape.ts:320–345](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L320-L345) | partly shared | none | not carried | [#107](https://github.com/diegoami/mandos/issues/107) |
-| [CBUG-0019](#cbug-0019) | Urgent shop goal is overwritten or paired with stale ware | high | source checked | [C src/borg/borg-think-store.c:105–157](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-think-store.c#L105-L157)<br>[Neo src/store/think-store.ts:70–118](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/think-store.ts#L70-L118)<br>[Mandos src/store/think-store.ts:73–121](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/think-store.ts#L73-L121) | present in both | none | not carried | [#112](https://github.com/diegoami/mandos/issues/112) |
-| [CBUG-0020](#cbug-0020) | Money-scumming repeats an already-satisfied town predicate | low | source checked | [C src/borg/borg-think-store.c:90–94](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-think-store.c#L90-L94)<br>[Neo src/store/think-store.ts:60–63](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/think-store.ts#L60-L63)<br>[Mandos src/store/think-store.ts:63–66](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/think-store.ts#L63-L66) | present in both | none | not carried | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
-| [PORT-0001](#port-0001) | Returned stair command discarded inside phase predicates | high | command selection reproduced | [C src/borg/borg-escape.c:521–537](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L521-L537)<br>[Neo src/fight/escape.ts:618–632](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L618-L632)<br>[Mandos src/fight/escape.ts:621–635](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L621-L635) | Neo port defect; Mandos correction | [diegoami/mandos#116](https://github.com/diegoami/mandos/pull/116) — delivered by this change, command-selection-and-controls | carried | [#108](https://github.com/diegoami/mandos/issues/108) |
+| ID | Finding | Priority | Evidence | Pinned references | Neo/Mandos | Fix proposal | Internal issue (status) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| [CBUG-0001](#cbug-0001) | Cancelling a map dump dereferences a NULL file | high | c game reproduced | [C src/borg/borg-log.c:190–204](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-log.c#L190-L204) | no corresponding port path | [diegoami/neo-angband#1](https://github.com/diegoami/neo-angband/pull/1) — c-game-reproduced | [#94](https://github.com/diegoami/mandos/issues/94) |
+| [CBUG-0002](#cbug-0002) | Paralysis/knockout message suppression resets a different variable | high | source checked | [C src/borg/borg.c:310–314](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg.c#L310-L314) | C only; different port pipeline | none | [#95](https://github.com/diegoami/mandos/issues/95) |
+| [CBUG-0003](#cbug-0003) | West radius-two shoulder grids are omitted | med | c game flags only | [C src/borg/borg-cave-light.c:135–143](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-cave-light.c#L135-L143)<br>[Neo src/perceive.ts:285–290](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/perceive.ts#L285-L290)<br>[Mandos src/perceive.ts:288–293](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/perceive.ts#L288-L293) | present in both | [diegoami/mandos#88](https://github.com/diegoami/mandos/pull/88) — impact-unproven | [#87](https://github.com/diegoami/mandos/issues/87) |
+| [CBUG-0004](#cbug-0004) | Cold melee uses temporary acid resistance | high | source checked | [C src/borg/borg-danger.c:262–276](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-danger.c#L262-L276)<br>[Neo src/danger/danger.ts:206–219](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/danger/danger.ts#L206-L219)<br>[Mandos src/danger/danger.ts:209–222](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/danger/danger.ts#L209-L222) | present in both | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0005](#cbug-0005) | Black Market Teleport Other rod class exception is reversed | high | source checked | [C src/borg/borg-store-buy.c:127–133](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L127-L133)<br>[Neo src/store/buy.ts:189–193](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L189-L193)<br>[Mandos src/store/buy.ts:189–193](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L189-L193) | present in both | none | [#103](https://github.com/diegoami/mandos/issues/103) |
+| [CBUG-0006](#cbug-0006) | Starvation shopping exception admits unrelated scrolls/subtypes | high | source checked | [C src/borg/borg-store-buy.c:281–288](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L281-L288)<br>[Neo src/store/buy.ts:294–303](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L294-L303)<br>[Mandos src/store/buy.ts:294–303](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L294-L303) | present in both | none | [#104](https://github.com/diegoami/mandos/issues/104) |
+| [CBUG-0007](#cbug-0007) | Home trial early exits leave reduced quantities/charges | med | source checked | [C src/borg/borg-store-buy.c:501–523](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L501-L523)<br>[Neo src/store/buy.ts:348–387](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L348-L387)<br>[Mandos src/store/buy.ts:348–387](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L348-L387) | C only; port uses value simulation | none | [#105](https://github.com/diegoami/mandos/issues/105) |
+| [CBUG-0008](#cbug-0008) | Ring-side scores persist across home wares | med | source checked | [C src/borg/borg-store-buy.c:455–475](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L455-L475)<br>[Neo src/store/buy.ts:348–387](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L348-L387)<br>[Mandos src/store/buy.ts:348–387](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L348-L387) | C only; different ring trial | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0009](#cbug-0009) | Home ring trials use asymmetric quantities | low | source checked | [C src/borg/borg-store-buy.c:535–539](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L535-L539)<br>[Neo src/store/buy.ts:371–376](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L371-L376)<br>[Mandos src/store/buy.ts:371–376](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L371-L376) | C only; different ring trial | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0010](#cbug-0010) | Home grab skip flag leaks to later wares | med | source checked | [C src/borg/borg-store-buy.c:859–896](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L859-L896)<br>[Neo src/store/buy.ts:494–510](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L494-L510)<br>[Mandos src/store/buy.ts:494–510](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L494-L510) | C only; port resets per ware | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0011](#cbug-0011) | No-hole swap exit leaves valuation changed | med | source checked | [C src/borg/borg-store-buy.c:972–983](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L972-L983)<br>[Neo src/store/buy.ts:548–551](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L548-L551)<br>[Mandos src/store/buy.ts:548–551](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L548-L551) | port subsystem missing | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0012](#cbug-0012) | Swap trials overwrite the tracked swap inventory slot | med | source checked | [C src/borg/borg-store-buy.c:1002–1026](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L1002-L1026)<br>[Neo src/store/buy.ts:543–571](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/buy.ts#L543-L571)<br>[Mandos src/store/buy.ts:543–571](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/buy.ts#L543-L571) | port subsystem missing | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0013](#cbug-0013) | Latest purchase/sale is outside the history reader range | med | source checked | [C src/borg/borg-store-buy.c:1226–1233](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L1226-L1233)<br>[Neo src/store/store.ts:151–154](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/store.ts#L151-L154)<br>[Mandos src/store/store.ts:154–157](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/store.ts#L154-L157) | present in both | none | [#106](https://github.com/diegoami/mandos/issues/106) |
+| [CBUG-0014](#cbug-0014) | Ten-entry transaction arrays never use the tenth slot | low | source checked | [C src/borg/borg-store-buy.c:1226–1228](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-buy.c#L1226-L1228)<br>[Neo src/store/store.ts:147–155](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/store.ts#L147-L155)<br>[Mandos src/store/store.ts:150–158](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/store.ts#L150-L158) | present in both | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0015](#cbug-0015) | Critical escape returns with pretend full mana | med | source checked | [C src/borg/borg-escape.c:780–835](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L780-L835)<br>[Neo src/fight/escape.ts:533–563](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L533-L563)<br>[Mandos src/fight/escape.ts:536–566](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L536-L566) | C only; no pretend-mana mutation | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0016](#cbug-0016) | Stair predicate queues a climb before phase guards finish | high | source checked | [C src/borg/borg-escape.c:521–537](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L521-L537)<br>[Neo src/fight/escape.ts:618–632](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L618-L632)<br>[Mandos src/fight/escape.ts:621–635](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L621-L635) | different port defect | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0017](#cbug-0017) | Guarded anti-summon timer reset is unreachable | low | source checked | [C src/borg/borg-escape.c:879–889](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L879-L889)<br>[Neo src/fight/escape.ts:435–437](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L435-L437)<br>[Mandos src/fight/escape.ts:438–440](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L438-L440) | same guarded condition | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [CBUG-0018](#cbug-0018) | Dimension Door destination lacks legality/range filters | high | source checked | [C src/borg/borg-escape.c:569–621](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L569-L621)<br>[Neo src/fight/escape.ts:317–342](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L317-L342)<br>[Mandos src/fight/escape.ts:320–345](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L320-L345) | partly shared | none | [#107](https://github.com/diegoami/mandos/issues/107) |
+| [CBUG-0019](#cbug-0019) | Urgent shop goal is overwritten or paired with stale ware | high | source checked | [C src/borg/borg-think-store.c:105–157](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-think-store.c#L105-L157)<br>[Neo src/store/think-store.ts:70–118](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/think-store.ts#L70-L118)<br>[Mandos src/store/think-store.ts:73–121](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/think-store.ts#L73-L121) | present in both | none | [#112](https://github.com/diegoami/mandos/issues/112) |
+| [CBUG-0020](#cbug-0020) | Money-scumming repeats an already-satisfied town predicate | low | source checked | [C src/borg/borg-think-store.c:90–94](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-think-store.c#L90-L94)<br>[Neo src/store/think-store.ts:60–63](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/store/think-store.ts#L60-L63)<br>[Mandos src/store/think-store.ts:63–66](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/store/think-store.ts#L63-L66) | present in both | none | carry queue [#111](https://github.com/diegoami/mandos/issues/111) |
+| [PORT-0001](#port-0001) | Returned stair command discarded inside phase predicates | high | command selection reproduced | [C src/borg/borg-escape.c:521–537](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-escape.c#L521-L537)<br>[Neo src/fight/escape.ts:618–632](https://github.com/neostryder/neo-angband-mod-borg/blob/74a017d2f695939eb2f046b7c9ff286ef1e82568/src/fight/escape.ts#L618-L632)<br>[Mandos src/fight/escape.ts:621–635](https://github.com/diegoami/mandos/blob/48405e9621ffc400f7af43e7fd1ed2385225ca1f/src/fight/escape.ts#L621-L635) | Neo port defect; Mandos correction | [diegoami/mandos#116](https://github.com/diegoami/mandos/pull/116) — command-selection-and-controls | [#108](https://github.com/diegoami/mandos/issues/108) |
 
 ### CBUG-0001
 
-**Cancelling a map dump dereferences a NULL file** — local proposal; not carried.
+**Cancelling a map dump dereferences a NULL file**
 
 Checked 2026-11-05; borg-rs group(s) 13.
 
@@ -71,13 +71,13 @@ Escape at the map filename prompt crashes the C game (SIGSEGV); the guard return
 
 Evidence: **c game reproduced**. [Reproduction report](audit/c-reports/B94/README.md). Neo/Mandos: **no corresponding port path**.
 
-Fix proposal: [diegoami/neo-angband#1](https://github.com/diegoami/neo-angband/pull/1) — draft, c-game-reproduced. Tracker: [#94](https://github.com/diegoami/mandos/issues/94).
+Fix proposal: [diegoami/neo-angband#1](https://github.com/diegoami/neo-angband/pull/1) — c-game-reproduced. Tracker: [#94](https://github.com/diegoami/mandos/issues/94).
 
 Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.
 
 ### CBUG-0002
 
-**Paralysis/knockout message suppression resets a different variable** — investigate; not carried.
+**Paralysis/knockout message suppression resets a different variable**
 
 Checked 2026-11-05; borg-rs group(s) 14.
 
@@ -100,7 +100,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0003
 
-**West radius-two shoulder grids are omitted** — held impact; not carried.
+**West radius-two shoulder grids are omitted**
 
 Checked 2026-11-05; borg-rs group(s) 4.
 
@@ -117,13 +117,13 @@ Duplicate light-list entries are a separate symptom; avoid claiming two missing 
 
 Evidence: **c game flags only**. [Related evidence](https://github.com/diegoami/mandos/issues/89). Neo/Mandos: **present in both**.
 
-Fix proposal: [diegoami/mandos#88](https://github.com/diegoami/mandos/pull/88) — draft, impact-unproven. Tracker: [#87](https://github.com/diegoami/mandos/issues/87).
+Fix proposal: [diegoami/mandos#88](https://github.com/diegoami/mandos/pull/88) — impact-unproven. Tracker: [#87](https://github.com/diegoami/mandos/issues/87).
 
 Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual before/after commands/outcomes and negative controls before marking a fix validated.
 
 ### CBUG-0004
 
-**Cold melee uses temporary acid resistance** — investigate; not carried.
+**Cold melee uses temporary acid resistance**
 
 Checked 2026-11-05; borg-rs group(s) 17.
 
@@ -146,7 +146,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0005
 
-**Black Market Teleport Other rod class exception is reversed** — investigate; not carried.
+**Black Market Teleport Other rod class exception is reversed**
 
 Checked 2026-11-05; borg-rs group(s) 34.
 
@@ -169,7 +169,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0006
 
-**Starvation shopping exception admits unrelated scrolls/subtypes** — investigate; not carried.
+**Starvation shopping exception admits unrelated scrolls/subtypes**
 
 Checked 2026-11-05; borg-rs group(s) 34.
 
@@ -192,7 +192,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0007
 
-**Home trial early exits leave reduced quantities/charges** — investigate; not carried.
+**Home trial early exits leave reduced quantities/charges**
 
 Checked 2026-11-05; borg-rs group(s) 34.
 
@@ -215,7 +215,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0008
 
-**Ring-side scores persist across home wares** — investigate; not carried.
+**Ring-side scores persist across home wares**
 
 Checked 2026-11-05; borg-rs group(s) 34.
 
@@ -239,7 +239,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0009
 
-**Home ring trials use asymmetric quantities** — review only; not carried.
+**Home ring trials use asymmetric quantities**
 
 Checked 2026-11-05; borg-rs group(s) 34.
 
@@ -263,7 +263,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0010
 
-**Home grab skip flag leaks to later wares** — investigate; not carried.
+**Home grab skip flag leaks to later wares**
 
 Checked 2026-11-05; borg-rs group(s) 34.
 
@@ -286,7 +286,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0011
 
-**No-hole swap exit leaves valuation changed** — investigate; not carried.
+**No-hole swap exit leaves valuation changed**
 
 Checked 2026-11-05; borg-rs group(s) 34.
 
@@ -310,7 +310,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0012
 
-**Swap trials overwrite the tracked swap inventory slot** — investigate; not carried.
+**Swap trials overwrite the tracked swap inventory slot**
 
 Checked 2026-11-05; borg-rs group(s) 34.
 
@@ -334,7 +334,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0013
 
-**Latest purchase/sale is outside the history reader range** — investigate; not carried.
+**Latest purchase/sale is outside the history reader range**
 
 Checked 2026-11-05; borg-rs group(s) 33, 34.
 
@@ -367,7 +367,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0014
 
-**Ten-entry transaction arrays never use the tenth slot** — review only; not carried.
+**Ten-entry transaction arrays never use the tenth slot**
 
 Checked 2026-11-05; borg-rs group(s) 33, 34.
 
@@ -394,7 +394,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0015
 
-**Critical escape returns with pretend full mana** — investigate; not carried.
+**Critical escape returns with pretend full mana**
 
 Checked 2026-11-05; borg-rs group(s) 35.
 
@@ -417,7 +417,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0016
 
-**Stair predicate queues a climb before phase guards finish** — investigate; not carried.
+**Stair predicate queues a climb before phase guards finish**
 
 Checked 2026-11-05; borg-rs group(s) 35.
 
@@ -431,9 +431,9 @@ Pinned source references:
 
 C may leave climb keys queued or queue both climb and phase while applying phase bookkeeping.
 
-TS returns commands rather than queuing keys: a stair AgentCommand used as a boolean is discarded. See PORT-0001; this is not the same faithful C queue symptom. Mandos PR116 corrects the distinct lost-returned-command omission; this does not fix C's queued-key symptom.
+TS returns commands rather than queuing keys: a stair AgentCommand used as a boolean is discarded. See PORT-0001; this is not the same faithful C queue symptom. Related correction: Mandos PR116; internal issue108 owns its current application status.
 
-Evidence: **source checked**. Neo/Mandos: **Neo: different port defect; Mandos: distinct port omission corrected**.
+Evidence: **source checked**. Neo/Mandos: **different port defect**.
 
 Fix proposal: none. Tracker: carry queue [#111](https://github.com/diegoami/mandos/issues/111).
 
@@ -441,7 +441,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0017
 
-**Guarded anti-summon timer reset is unreachable** — review only; not carried.
+**Guarded anti-summon timer reset is unreachable**
 
 Checked 2026-11-05; borg-rs group(s) 35.
 
@@ -466,7 +466,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0018
 
-**Dimension Door destination lacks legality/range filters** — investigate; not carried.
+**Dimension Door destination lacks legality/range filters**
 
 Checked 2026-11-05; borg-rs group(s) 35.
 
@@ -489,7 +489,7 @@ Next: Retain a legal/reachable normal-rule scenario, initialization/pins, actual
 
 ### CBUG-0019
 
-**Urgent shop goal is overwritten or paired with stale ware** — investigate; not carried.
+**Urgent shop goal is overwritten or paired with stale ware**
 
 Checked 2026-11-05; borg-rs group(s) 36.
 
@@ -512,7 +512,7 @@ Next: Validate a legal normal-rule scene and negative controls before calling a 
 
 ### CBUG-0020
 
-**Money-scumming repeats an already-satisfied town predicate** — review only; not carried.
+**Money-scumming repeats an already-satisfied town predicate**
 
 Checked 2026-11-05; borg-rs group(s) 36.
 
@@ -542,9 +542,9 @@ Next: Validate a legal normal-rule scene and negative controls before calling a 
 
 **Returned stair command discarded inside phase predicates**; related CBUG-0016; [#108](https://github.com/diegoami/mandos/issues/108).
 
-Mandos delivers the returned-stair correction in PR116. C's queued-stair-plus-phase symptom remains separate and unchanged. Ten ascent tests fail before; all16 cases/control tests pass after; full1123-test no-skip gate and replay5/5 pass. Carry is delivered atomically with the source/plugin merge.
+The local correction in PR116 preserves the returned stair command. C's queued-stair-plus-phase symptom remains separate. Ten ascent cases fail before; all16 cases/controls pass after, with a full1123-test no-skip gate and replay5/5. Internal issue108 is the source of truth for current carry/application status.
 
-Fix proposal: [diegoami/mandos#116](https://github.com/diegoami/mandos/pull/116) — delivered by this change, command-selection-and-controls. Carry: carried.
+Fix proposal: [diegoami/mandos#116](https://github.com/diegoami/mandos/pull/116) — command-selection-and-controls. Current status: [#108](https://github.com/diegoami/mandos/issues/108).
 
 Affected references:
 

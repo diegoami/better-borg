@@ -39,7 +39,6 @@ for (const finding of data.findings) {
   for (const ref of finding.references) checkReference(ref, finding.id);
   if (!levels.has(finding.evidence) || !statuses.has(finding.status)) fail("unknown evidence/status " + finding.id);
   if (!["high", "med", "low"].includes(finding.priority)) fail("unknown priority " + finding.id);
-  if (!["carried", "not-carried", "partially-carried"].includes(finding.carry)) fail("missing carry " + finding.id);
   for (const number of finding.source_groups) if (!groups.has(number)) fail("unknown source group " + finding.id);
   if (finding.evidence_path && !existsSync(join(root, finding.evidence_path))) fail("missing evidence " + finding.id);
   if (finding.patch && !existsSync(join(root, finding.patch))) fail("missing patch " + finding.id);
@@ -47,7 +46,6 @@ for (const finding of data.findings) {
     if (!pr.repository.startsWith(data.owner + "/")) fail("C fix proposal is outside our repositories: " + finding.id);
     if (pr.url !== "https://github.com/" + pr.repository + "/pull/" + pr.number) fail("PR URL/repository mismatch " + finding.id);
     if (pr.repository === data.policy.local_pr_base.repository && pr.base !== data.policy.local_pr_base.branch) fail("C-source PR has wrong base " + finding.id);
-    if (pr.applied && finding.carry === "not-carried") fail("application/carry mismatch " + finding.id);
   }
 }
 for (const group of data.groups) for (const id of group.findings) {
@@ -75,7 +73,7 @@ const tick = String.fromCharCode(96);
 const code = (value) => tick + value + tick;
 const esc = (value) => String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
 const issue = (number) => number ? "[#" + number + "](https://github.com/diegoami/mandos/issues/" + number + ")" : "carry queue [#111](https://github.com/diegoami/mandos/issues/111)";
-const proposals = (finding) => (finding.local_fix_proposals ?? []).length ? finding.local_fix_proposals.map((pr) => "[" + pr.repository + "#" + pr.number + "](" + pr.url + ") — " + pr.state + ", " + pr.validation).join("; ") : "none";
+const proposals = (finding) => (finding.local_fix_proposals ?? []).length ? finding.local_fix_proposals.map((pr) => "[" + pr.repository + "#" + pr.number + "](" + pr.url + ") — " + pr.validation).join("; ") : "none";
 const refUrl = (ref) => "https://github.com/" + ref.repository + "/blob/" + ref.commit + "/" + ref.path + "#L" + ref.start + (ref.end === ref.start ? "" : "-L" + ref.end);
 const roleName = { c: "C", neo: "Neo", mandos: "Mandos", borg_rs: "borg-rs" };
 const refLink = (ref) => "[" + roleName[ref.role] + " " + ref.path + ":" + ref.start + (ref.end === ref.start ? "" : "–" + ref.end) + "](" + refUrl(ref) + ")";
@@ -115,7 +113,7 @@ const lines = [
   "",
   "## Reference pins",
   "",
-  "These pins identify affected/reference code. Fix-proposal and carry entries identify delivered corrections separately.",
+  "These pins identify affected/reference code. Fix links identify correction proposals. Our internal issue labels and bodies are the source of truth for current carry/application status; this catalogue does not duplicate that live status.",
   "",
   "- C: " + code(data.sources.c.commit) + ". The imported 4.2.6 snapshot is a different reference.",
   "- Neo Borg: " + code(data.sources.neo_borg.commit) + ".",
@@ -128,11 +126,11 @@ const lines = [
   "",
   "Current implementation priority: carry validated fixes from both C and Neo in each applicable consumer (tracking [#111](https://github.com/diegoami/mandos/issues/111)). A draft or an absent counterpart does not count as an applied fix."
 ];
-lines.push("", "A proposal branch, a patch stored on main and a fix applied to a maintained consumer are different states. The C proposal does not automatically correct Neo/Mandos. Neo's C-parity policy still applies; an unmerged proposal in our fork is not an upstream C correction.", "", "## Classified findings", "", "| ID | Finding | Priority | Evidence | Pinned references | Neo/Mandos | Fix proposal | Carry | Tracker |", "| --- | --- | --- | --- | --- | --- | --- | --- | --- |");
-for (const f of data.findings) lines.push("| [" + f.id + "](#" + f.id.toLowerCase() + ") | " + esc(f.title) + " | " + f.priority + " | " + readable(f.evidence) + " | " + compactRefs(f) + " | " + applicability(f) + " | " + proposals(f) + " | " + readable(f.carry) + " | " + issue(f.tracker) + " |");
-for (const lead of data.related_port_leads) lines.push("| [" + lead.id + "](#" + lead.id.toLowerCase() + ") | " + esc(lead.title) + " | " + (lead.priority ?? "high") + " | " + readable(lead.evidence) + " | " + compactRefs(lead) + " | Neo port defect; Mandos correction | " + proposals(lead) + " | " + readable(lead.carry ?? "not-carried") + " | " + issue(lead.tracker) + " |");
+lines.push("", "A proposal branch, a patch stored on main and a fix applied to a maintained consumer are different states. The C proposal does not automatically correct Neo/Mandos. Neo's C-parity policy still applies; an unmerged proposal in our fork is not an upstream C correction.", "", "## Classified findings", "", "| ID | Finding | Priority | Evidence | Pinned references | Neo/Mandos | Fix proposal | Internal issue (status) |", "| --- | --- | --- | --- | --- | --- | --- | --- |");
+for (const f of data.findings) lines.push("| [" + f.id + "](#" + f.id.toLowerCase() + ") | " + esc(f.title) + " | " + f.priority + " | " + readable(f.evidence) + " | " + compactRefs(f) + " | " + applicability(f) + " | " + proposals(f) + " | " + issue(f.tracker) + " |");
+for (const lead of data.related_port_leads) lines.push("| [" + lead.id + "](#" + lead.id.toLowerCase() + ") | " + esc(lead.title) + " | " + (lead.priority ?? "high") + " | " + readable(lead.evidence) + " | " + compactRefs(lead) + " | Neo port defect; Mandos correction | " + proposals(lead) + " | " + issue(lead.tracker) + " |");
 for (const f of data.findings) {
-  lines.push("", "### " + f.id, "", "**" + f.title + "** — " + readable(f.status) + "; " + readable(f.carry) + ".", "",
+  lines.push("", "### " + f.id, "", "**" + f.title + "**", "",
     "Checked " + f.checked + "; borg-rs group(s) " + f.source_groups.join(", ") + ".", "", "Pinned source references:", "");
   for (const ref of f.references) lines.push("- " + refLink(ref) + " — " + esc(ref.description));
   lines.push("", f.impact.description, "", f.notes, "",
@@ -141,7 +139,7 @@ for (const f of data.findings) {
 }
 lines.push("", "## Related port leads", "");
 for (const lead of data.related_port_leads) {
-  lines.push("### " + lead.id, "", "**" + lead.title + "**; related " + lead.related_c_finding + "; " + issue(lead.tracker) + ".", "", lead.note, "", "Fix proposal: " + proposals(lead) + ". Carry: " + readable(lead.carry ?? "not-carried") + ".", "", "Affected references:", "");
+  lines.push("### " + lead.id, "", "**" + lead.title + "**; related " + lead.related_c_finding + "; " + issue(lead.tracker) + ".", "", lead.note, "", "Fix proposal: " + proposals(lead) + ". Current status: " + issue(lead.tracker) + ".", "", "Affected references:", "");
   for (const ref of lead.references) lines.push("  - " + refLink(ref));
   if (lead.implementation_references?.length) {
     lines.push("", "Corrected implementation:", "");
