@@ -63,3 +63,11 @@ Set git config core.hooksPath .githooks in Mandos. The wrappers prefer the
 new neo-angband-tracker hook source (or explicit NEO_ANGBAND_REPO), with the
 old lab path only as compatibility fallback. No live lab checkout is needed
 to commit Mandos work on a fresh three-session setup.
+
+## Backup and workspace recovery
+
+[Current private-backup procedure](backup.md) covers lab state, restore points,
+selected unique evidence and verification. The supplementary owner workspace
+records the three Git submodules, directory inventory and exact recovery pins.
+This supplements the accepted session plan; it changes no source ownership or
+consumer lifecycle. OAuth migration remains tracked by Mandos #52.

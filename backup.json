@@ -1,5 +1,5 @@
 {
-  "//": "Where local-only state is backed up (process.md section 1). The folder is the owner's private Google Drive folder; rclone does the transfer. rcloneAccount is any rclone Drive remote authorised for the owner's account - the folder is forced by folderId, so the remote's own root does not matter. This repo's own remote is mandosdrive (rclone config create mandosdrive drive scope=drive root_folder_id=<folderId>; a browser login once - on WSL open the printed 127.0.0.1:53682 link in the Windows browser).",
+  "//": "Private lab/evidence backup transport. Live procedure: docs/backup.md; supplementary workspace recovery: diegoami/angband-workspace. OAuth credentials remain host-local; Mandos #52 tracks client migration.",
   "drive": {
     "folderUrl": "https://drive.google.com/drive/folders/1kfadlRMNeNvoESt8YikS7bTrqmPtQlso",
     "folderId": "1kfadlRMNeNvoESt8YikS7bTrqmPtQlso",
@@ -8,7 +8,7 @@
   "sets": {
     "mandos-lab-data": {
       "local": "../mandos-lab-data",
-      "what": "the desktop lab build's data base: saves, graveyard and lineage (install storage in the browser profile), settings, logs",
+      "what": "cold desktop lab state: saves/history, browser storage, settings, logs and restore points; mod clone/caches excluded",
       "include": [
         "user/**",
         "logs/**",
@@ -16,7 +16,27 @@
         "chromium/Local Storage/**",
         "chromium/WebStorage/**",
         "chromium/Preferences",
-        "chromium/Local State"
+        "chromium/Local State",
+        "restore-points/**",
+        "chromium/blob_storage/**",
+        "chromium/Session Storage/**"
+      ]
+    },
+    "mandos-evidence": {
+      "local": "artifacts",
+      "what": "selected unique reorganization/validation evidence, retained old-worktree receipts and lab build identity; reproducible scratch/dependencies excluded",
+      "include": [
+        "reorganization-review-*",
+        "migration-*",
+        "engine-bootstrap-ci-success.log",
+        "engine-doc-contracts-fixed.log",
+        "three-repo-review.*",
+        "transfer-redirect-audit.json",
+        "upstream-pr-final-audit.json",
+        "split-final-*.log",
+        "retained-worktree-evidence/**",
+        "lab-build.json",
+        "workspace-backup-*"
       ]
     }
   }

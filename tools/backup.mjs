@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
- * Back up the local-only state git cannot hold (process.md section 1, "What
- * lives outside this repository") to the owner's private Google Drive folder.
+ * Back up the local-only state git cannot hold (docs/backup.md) to the owner's private Google Drive folder.
  * The shape is goal2's tools/artifacts.py (the owner's design): the location
  * is a committed JSON file (backup.json), the transfer is rclone.
  *
@@ -17,7 +16,7 @@
  *
  * Only the files a set's `include` names travel: for the lab data base that
  * is the saves, graveyard and lineage (install storage, in the browser
- * profile's IndexedDB and Local Storage), settings and logs - never the
+ * profile's IndexedDB and Local Storage), restore points, settings and logs - never the
  * browser caches, and never the mod folder (a git clone of this repo).
  */
 
