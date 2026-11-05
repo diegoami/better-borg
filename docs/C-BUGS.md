@@ -223,31 +223,31 @@ A proposal branch, a patch stored on main and a fix applied to a maintained cons
 | [CBUG-0116](#cbug-0116) | borg_think_home_sell_best(): for a staff or wand, each trial takes charge_each charges off the pack item, but the restore after the trial only puts… | med | reported lead | [C src/borg/borg-store-sell.c:398–524](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L398-L524) | unreviewed | none | intake [#93](https://github.com/diegoami/mandos/issues/93) |
 | [CBUG-0117](#cbug-0117) | borg_good_sell(): the "ego item not fully identified" test asks borg_ego_has_random_power() about the ego of the cloak slot (borg_items[INVEN_OUTER… | med | reported lead | [C src/borg/borg-store-sell.c:816–941](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L816-L941) | unreviewed | none | intake [#93](https://github.com/diegoami/mandos/issues/93) |
 | [CBUG-0118](#cbug-0118) | borg_count_sell(): an unidentified item that is not part of a pile makes the function return false (0) at once | med | reported lead | [C src/borg/borg-store-sell.c:1162–1266](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-store-sell.c#L1162-L1266) | unreviewed | none | intake [#93](https://github.com/diegoami/mandos/issues/93) |
-| [CBUG-0119](#cbug-0119) | Junk-drop note prints the last scanned value rather than the selected item value | med | reported lead | [C src/borg/borg-junk.c:250–493](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L250-L493) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0120](#cbug-0120) | Drop-hole high-level device and consumable protection uses always-true subtype conditions | med | reported lead | [C src/borg/borg-junk.c:516–951](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L516-L951) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0121](#cbug-0121) | Drop-hole desperate value boost overwrites earlier category boosts | low | reported lead | [C src/borg/borg-junk.c:516–951](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L516-L951) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0122](#cbug-0122) | Slow-drop equipment command branches are unreachable after equipment is skipped | med | reported lead | [C src/borg/borg-junk.c:961–1147](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L961-L1147) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0123](#cbug-0123) | Equipment removal selects the last non-worsening slot and leaves stale scratch contents | med | reported lead | [C src/borg/borg-junk.c:1261–1369](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L1261-L1369) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0124](#cbug-0124) | Failed Brawn consumption falls through into later potion cases | low | reported lead | [C src/borg/borg-junk.c:76–245](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L76-L245) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0125](#cbug-0125) | Malformed integer settings can leave the configuration parser spinning | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0126](#cbug-0126) | Bare minus and overflowing integer settings are parsed as unintended values | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0127](#cbug-0127) | Setting names are prefix-matched and section whitespace handling is inconsistent | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0128](#cbug-0128) | Missing or unreopenable borg.txt can leave configuration or file pointers NULL | med | reported lead | [C src/borg/borg-init.c:168–335](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L168-L335) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0129](#cbug-0129) | Ignore-reset assumes the saved ego-ignore array has already been allocated | low | reported lead | [C src/borg/borg-init.c:337–369](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L337-L369) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0130](#cbug-0130) | Spastic reverse flow stops at its origin and never produces a move | med | reported lead | [C src/borg/borg-flow-misc.c:467–765](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L467-L765) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0131](#cbug-0131) | Spastic scoring reads the last neighbour extra value rather than the candidate value | med | reported lead | [C src/borg/borg-flow-misc.c:467–765](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L467-L765) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0132](#cbug-0132) | Vault flow reuses uncleared queue/cost state and lists duplicate excavation grids | med | reported lead | [C src/borg/borg-flow-misc.c:879–970](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L879-L970) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0133](#cbug-0133) | Rest safety checks the wrong vault neighbourhood and mutates shared scan state | med | reported lead | [C src/borg/borg-flow-misc.c:1213–1363](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L1213-L1363) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0134](#cbug-0134) | Twentieth twitchy random choice enters the surrounded scan even when valid | med | reported lead | [C src/borg/borg-flow-misc.c:975–1084](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L975-L1084) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0135](#cbug-0135) | Vein scan redundantly clears the flow for every candidate | low | reported lead | [C src/borg/borg-flow-misc.c:348–455](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L348-L455) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0136](#cbug-0136) | Tracked-stair flags remain false in caution danger checks | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0137](#cbug-0137) | Desperation stair search retains the farthest free staircase | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0138](#cbug-0138) | Strategic retreat monster-adjacency rejection only exits its inner scan | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0139](#cbug-0139) | Back-away monster state leaks between candidate grids and a trap ends the whole scan | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0140](#cbug-0140) | Excessive-danger fleeing guard is enabled only when ready for Morgoth | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0141](#cbug-0141) | Recall-in-danger mana threshold compares current mana with itself | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0142](#cbug-0142) | Critical poison and bleeding healing can return with pretend full mana | med | reported lead | [C src/borg/borg-caution.c:60–667](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L60-L667) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
-| [CBUG-0143](#cbug-0143) | Second healing-rod attempt bypasses the earlier escape-reserve guard | med | reported lead | [C src/borg/borg-caution.c:60–667](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L60-L667) | unreviewed | none | [#120](https://github.com/diegoami/mandos/issues/120) |
+| [CBUG-0119](#cbug-0119) | Junk-drop note prints the last scanned value rather than the selected item value | med | reported lead | [C src/borg/borg-junk.c:250–493](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L250-L493) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0120](#cbug-0120) | Drop-hole high-level device and consumable protection uses always-true subtype conditions | med | reported lead | [C src/borg/borg-junk.c:516–951](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L516-L951) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0121](#cbug-0121) | Drop-hole desperate value boost overwrites earlier category boosts | low | reported lead | [C src/borg/borg-junk.c:516–951](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L516-L951) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0122](#cbug-0122) | Slow-drop equipment command branches are unreachable after equipment is skipped | med | reported lead | [C src/borg/borg-junk.c:961–1147](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L961-L1147) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0123](#cbug-0123) | Equipment removal selects the last non-worsening slot and leaves stale scratch contents | med | reported lead | [C src/borg/borg-junk.c:1261–1369](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L1261-L1369) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0124](#cbug-0124) | Failed Brawn consumption falls through into later potion cases | low | reported lead | [C src/borg/borg-junk.c:76–245](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-junk.c#L76-L245) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0125](#cbug-0125) | Malformed integer settings can leave the configuration parser spinning | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0126](#cbug-0126) | Bare minus and overflowing integer settings are parsed as unintended values | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0127](#cbug-0127) | Setting names are prefix-matched and section whitespace handling is inconsistent | med | reported lead | [C src/borg/borg-init.c:100–150](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L100-L150) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0128](#cbug-0128) | Missing or unreopenable borg.txt can leave configuration or file pointers NULL | med | reported lead | [C src/borg/borg-init.c:168–335](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L168-L335) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0129](#cbug-0129) | Ignore-reset assumes the saved ego-ignore array has already been allocated | low | reported lead | [C src/borg/borg-init.c:337–369](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-init.c#L337-L369) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0130](#cbug-0130) | Spastic reverse flow stops at its origin and never produces a move | med | reported lead | [C src/borg/borg-flow-misc.c:467–765](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L467-L765) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0131](#cbug-0131) | Spastic scoring reads the last neighbour extra value rather than the candidate value | med | reported lead | [C src/borg/borg-flow-misc.c:467–765](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L467-L765) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0132](#cbug-0132) | Vault flow reuses uncleared queue/cost state and lists duplicate excavation grids | med | reported lead | [C src/borg/borg-flow-misc.c:879–970](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L879-L970) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0133](#cbug-0133) | Rest safety checks the wrong vault neighbourhood and mutates shared scan state | med | reported lead | [C src/borg/borg-flow-misc.c:1213–1363](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L1213-L1363) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0134](#cbug-0134) | Twentieth twitchy random choice enters the surrounded scan even when valid | med | reported lead | [C src/borg/borg-flow-misc.c:975–1084](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L975-L1084) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0135](#cbug-0135) | Vein scan redundantly clears the flow for every candidate | low | reported lead | [C src/borg/borg-flow-misc.c:348–455](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-flow-misc.c#L348-L455) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0136](#cbug-0136) | Tracked-stair flags remain false in caution danger checks | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0137](#cbug-0137) | Desperation stair search retains the farthest free staircase | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0138](#cbug-0138) | Strategic retreat monster-adjacency rejection only exits its inner scan | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0139](#cbug-0139) | Back-away monster state leaks between candidate grids and a trap ends the whole scan | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0140](#cbug-0140) | Excessive-danger fleeing guard is enabled only when ready for Morgoth | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0141](#cbug-0141) | Recall-in-danger mana threshold compares current mana with itself | med | reported lead | [C src/borg/borg-caution.c:799–2034](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L799-L2034) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0142](#cbug-0142) | Critical poison and bleeding healing can return with pretend full mana | med | reported lead | [C src/borg/borg-caution.c:60–667](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L60-L667) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
+| [CBUG-0143](#cbug-0143) | Second healing-rod attempt bypasses the earlier escape-reserve guard | med | reported lead | [C src/borg/borg-caution.c:60–667](https://github.com/angband/angband/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-caution.c#L60-L667) | unreviewed | none | [#93](https://github.com/diegoami/mandos/issues/93) |
 
 ### CBUG-0001
 
@@ -4096,7 +4096,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4130,7 +4130,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4161,7 +4161,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4191,7 +4191,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4223,7 +4223,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4252,7 +4252,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4284,7 +4284,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4315,7 +4315,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4345,7 +4345,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4376,7 +4376,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4406,7 +4406,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4441,7 +4441,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4471,7 +4471,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4503,7 +4503,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4537,7 +4537,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4568,7 +4568,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4597,7 +4597,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4630,7 +4630,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4661,7 +4661,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4690,7 +4690,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4722,7 +4722,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4752,7 +4752,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4782,7 +4782,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4815,7 +4815,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 
@@ -4845,7 +4845,7 @@ Lead supplied by borg-rs, not independently reproduced by Mandos. A function-con
 
 Evidence: **reported lead**. Neo/Mandos: **unreviewed**.
 
-Fix proposal: none. Tracker: [#120](https://github.com/diegoami/mandos/issues/120).
+Fix proposal: none. Tracker: [#93](https://github.com/diegoami/mandos/issues/93).
 
 Next: Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.
 

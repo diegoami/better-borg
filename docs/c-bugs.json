@@ -10028,7 +10028,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10097,7 +10097,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10166,7 +10166,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10235,7 +10235,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10304,7 +10304,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10373,7 +10373,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10442,7 +10442,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10511,7 +10511,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10580,7 +10580,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10649,7 +10649,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10718,7 +10718,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10787,7 +10787,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10856,7 +10856,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10925,7 +10925,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -10994,7 +10994,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11063,7 +11063,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11132,7 +11132,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11201,7 +11201,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11270,7 +11270,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11339,7 +11339,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11408,7 +11408,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11477,7 +11477,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11546,7 +11546,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11615,7 +11615,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage. Related pretend-mana state mechanism: CBUG-0015 (escape); this report concerns distinct heal branches.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
@@ -11684,7 +11684,7 @@
         "description": "Retained source report; practical reachability, actual outcome and port applicability require independent review."
       },
       "notes": "Lead supplied by borg-rs, not independently reproduced by Mandos. A function-context link is not proof of the reported defect. Related sub-symptoms remain grouped pending triage.",
-      "tracker": 120,
+      "tracker": 93,
       "local_fix_proposals": [],
       "next": "Check current C and both ports, duplicate-search the exact symptom, then reproduce a legal scenario with controls before a local proposal. No C submission.",
       "references": [
