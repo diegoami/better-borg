@@ -75,3 +75,12 @@ point; [docs/process.md](docs/process.md) and
     unattended stage-resume functionality remain parked. Finishing an
     audit does not automatically authorize roadmap features; expanding
     beyond defect work requires the owner's explicit scope change.
+
+16. **Carry bugs from both upstreams** (owner, 2026-11-05). After the
+    catalogue correction, implementing and carrying validated C-origin and
+    Neo port fixes in Mandos is the priority (#111). C-only cases retain
+    local C proposals/build evidence without claiming a Mandos fix. Track each applicable consumer
+    separately, retain before/after evidence, and update the catalogue and
+    carry labels at each merge/application. Unverified or unreachable leads
+    need validation first; absent port counterparts are not bugs to import.
+    Rule 12's pause on angband/angband submissions remains in force.
