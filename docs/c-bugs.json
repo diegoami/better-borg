@@ -1876,12 +1876,12 @@
       "checked": "2026-11-05",
       "c": "present-at-pin",
       "neo": "different-port-defect",
-      "mandos": "different-port-defect",
+      "mandos": "distinct-port-omission-corrected",
       "impact": {
         "level": "predicted-or-unproven",
         "description": "C may leave climb keys queued or queue both climb and phase while applying phase bookkeeping."
       },
-      "notes": "TS returns commands rather than queuing keys: a stair AgentCommand used as a boolean is discarded. See PORT-0001; this is not the same faithful C queue symptom.",
+      "notes": "TS returns commands rather than queuing keys: a stair AgentCommand used as a boolean is discarded. See PORT-0001; this is not the same faithful C queue symptom. Mandos PR116 corrects the distinct lost-returned-command omission; this does not fix C's queued-key symptom.",
       "tracker": null,
       "carry": "not-carried",
       "local_fix_proposals": [],
@@ -2233,9 +2233,9 @@
       "id": "PORT-0001",
       "related_c_finding": "CBUG-0016",
       "tracker": 108,
-      "evidence": "source-checked",
+      "evidence": "command-selection-reproduced",
       "title": "Returned stair command discarded inside phase predicates",
-      "note": "Classify and reproduce independently before any Neo port report; no C submission.",
+      "note": "Mandos delivers the returned-stair correction in PR116. C's queued-stair-plus-phase symptom remains separate and unchanged. Ten ascent tests fail before; all16 cases/control tests pass after; full1123-test no-skip gate and replay5/5 pass. Carry is delivered atomically with the source/plugin merge.",
       "references": [
         {
           "role": "c",
@@ -2281,6 +2281,67 @@
           "start": 642,
           "end": 666,
           "description": "discovery group 35"
+        }
+      ],
+      "priority": "high",
+      "carry": "carried",
+      "local_fix_proposals": [
+        {
+          "repository": "diegoami/mandos",
+          "number": 116,
+          "url": "https://github.com/diegoami/mandos/pull/116",
+          "base": "main",
+          "head": "2e968e513dff840db447edc5abe44fcd1c417757",
+          "state": "delivered by this change",
+          "validation": "command-selection-and-controls",
+          "applied": true
+        }
+      ],
+      "implementation_references": [
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "2e968e513dff840db447edc5abe44fcd1c417757",
+          "path": "src/fight/escape.ts",
+          "start": 622,
+          "end": 625,
+          "description": "retained ascent before the phase guard"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "2e968e513dff840db447edc5abe44fcd1c417757",
+          "path": "src/fight/escape.ts",
+          "start": 686,
+          "end": 689,
+          "description": "retained ascent before the phase guard"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "2e968e513dff840db447edc5abe44fcd1c417757",
+          "path": "src/fight/escape.ts",
+          "start": 747,
+          "end": 750,
+          "description": "retained ascent before the phase guard"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "2e968e513dff840db447edc5abe44fcd1c417757",
+          "path": "src/fight/escape.ts",
+          "start": 806,
+          "end": 809,
+          "description": "retained ascent before the phase guard"
+        },
+        {
+          "role": "mandos",
+          "repository": "diegoami/mandos",
+          "commit": "2e968e513dff840db447edc5abe44fcd1c417757",
+          "path": "src/fight/escape.ts",
+          "start": 852,
+          "end": 855,
+          "description": "retained ascent before the phase guard"
         }
       ]
     }

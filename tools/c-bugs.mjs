@@ -12,13 +12,13 @@ const fail = (message) => { throw new Error("c-bugs: " + message); };
 if (data.schema !== "mandos/c-bugs@2") fail("unsupported schema");
 if (data.policy.upstream_c_submissions !== "paused" || data.policy.automatic_upstream_posts !== false) fail("policy must preserve the owner's C submission pause");
 const referenceRoles = new Set(["c", "neo", "mandos", "borg_rs"]);
-function checkReference(ref, id) {
+function checkReference(ref, id, baseline = true) {
   if (!ref || !referenceRoles.has(ref.role) || !/^[0-9a-f]{40}$/.test(ref.commit)
     || !Number.isInteger(ref.start) || !Number.isInteger(ref.end)
     || ref.start < 1 || ref.end < ref.start || !ref.path || ref.path.includes(".."))
     fail("missing/invalid pinned line reference " + id);
   const source = ref.role === "neo" ? data.sources.neo_borg : data.sources[ref.role];
-  if (ref.repository !== source.repository || ref.commit !== source.commit)
+  if (baseline && (ref.repository !== source.repository || ref.commit !== source.commit))
     fail("reference disagrees with source pin " + id);
 }
 const groups = new Map();
@@ -60,13 +60,22 @@ for (const finding of data.findings) for (const n of finding.source_groups) {
 for (const lead of data.related_port_leads) {
   if (!ids.has(lead.related_c_finding)) fail("unknown related C finding " + lead.id);
   for (const ref of lead.references ?? []) checkReference(ref, lead.id);
+  for (const ref of lead.implementation_references ?? []) {
+    checkReference(ref, lead.id, false);
+    if (!ref.repository.startsWith(data.owner + "/")) fail("implementation is outside our repositories " + lead.id);
+  }
+  for (const pr of lead.local_fix_proposals ?? []) {
+    if (!pr.repository.startsWith(data.owner + "/")
+      || pr.url !== "https://github.com/" + pr.repository + "/pull/" + pr.number)
+      fail("invalid local port proposal " + lead.id);
+  }
 }
 
 const tick = String.fromCharCode(96);
 const code = (value) => tick + value + tick;
 const esc = (value) => String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
 const issue = (number) => number ? "[#" + number + "](https://github.com/diegoami/mandos/issues/" + number + ")" : "carry queue [#111](https://github.com/diegoami/mandos/issues/111)";
-const proposals = (finding) => finding.local_fix_proposals.length ? finding.local_fix_proposals.map((pr) => "[" + pr.repository + "#" + pr.number + "](" + pr.url + ") — " + pr.state + ", " + pr.validation).join("; ") : "none";
+const proposals = (finding) => (finding.local_fix_proposals ?? []).length ? finding.local_fix_proposals.map((pr) => "[" + pr.repository + "#" + pr.number + "](" + pr.url + ") — " + pr.state + ", " + pr.validation).join("; ") : "none";
 const refUrl = (ref) => "https://github.com/" + ref.repository + "/blob/" + ref.commit + "/" + ref.path + "#L" + ref.start + (ref.end === ref.start ? "" : "-L" + ref.end);
 const roleName = { c: "C", neo: "Neo", mandos: "Mandos", borg_rs: "borg-rs" };
 const refLink = (ref) => "[" + roleName[ref.role] + " " + ref.path + ":" + ref.start + (ref.end === ref.start ? "" : "–" + ref.end) + "](" + refUrl(ref) + ")";
@@ -106,9 +115,11 @@ const lines = [
   "",
   "## Reference pins",
   "",
+  "These pins identify affected/reference code. Fix-proposal and carry entries identify delivered corrections separately.",
+  "",
   "- C: " + code(data.sources.c.commit) + ". The imported 4.2.6 snapshot is a different reference.",
   "- Neo Borg: " + code(data.sources.neo_borg.commit) + ".",
-  "- Mandos runtime source checked: " + code(data.sources.mandos.commit) + ".",
+  "- Mandos affected baseline inspected: " + code(data.sources.mandos.commit) + ".",
   "- Rust source: " + code(data.sources.borg_rs.commit) + "; prior " + code(data.sources.borg_rs.previous_commit) + ".",
   "",
   "## Local fix workflow",
@@ -119,6 +130,7 @@ const lines = [
 ];
 lines.push("", "A proposal branch, a patch stored on main and a fix applied to a maintained consumer are different states. The C proposal does not automatically correct Neo/Mandos. Neo's C-parity policy still applies; an unmerged proposal in our fork is not an upstream C correction.", "", "## Classified findings", "", "| ID | Finding | Priority | Evidence | Pinned references | Neo/Mandos | Fix proposal | Carry | Tracker |", "| --- | --- | --- | --- | --- | --- | --- | --- | --- |");
 for (const f of data.findings) lines.push("| [" + f.id + "](#" + f.id.toLowerCase() + ") | " + esc(f.title) + " | " + f.priority + " | " + readable(f.evidence) + " | " + compactRefs(f) + " | " + applicability(f) + " | " + proposals(f) + " | " + readable(f.carry) + " | " + issue(f.tracker) + " |");
+for (const lead of data.related_port_leads) lines.push("| [" + lead.id + "](#" + lead.id.toLowerCase() + ") | " + esc(lead.title) + " | " + (lead.priority ?? "high") + " | " + readable(lead.evidence) + " | " + compactRefs(lead) + " | Neo port defect; Mandos correction | " + proposals(lead) + " | " + readable(lead.carry ?? "not-carried") + " | " + issue(lead.tracker) + " |");
 for (const f of data.findings) {
   lines.push("", "### " + f.id, "", "**" + f.title + "** — " + readable(f.status) + "; " + readable(f.carry) + ".", "",
     "Checked " + f.checked + "; borg-rs group(s) " + f.source_groups.join(", ") + ".", "", "Pinned source references:", "");
@@ -129,8 +141,12 @@ for (const f of data.findings) {
 }
 lines.push("", "## Related port leads", "");
 for (const lead of data.related_port_leads) {
-  lines.push("- **" + lead.id + "**: " + lead.title + "; related " + lead.related_c_finding + "; " + issue(lead.tracker) + ". " + lead.note);
+  lines.push("### " + lead.id, "", "**" + lead.title + "**; related " + lead.related_c_finding + "; " + issue(lead.tracker) + ".", "", lead.note, "", "Fix proposal: " + proposals(lead) + ". Carry: " + readable(lead.carry ?? "not-carried") + ".", "", "Affected references:", "");
   for (const ref of lead.references) lines.push("  - " + refLink(ref));
+  if (lead.implementation_references?.length) {
+    lines.push("", "Corrected implementation:", "");
+    for (const ref of lead.implementation_references) lines.push("- " + refLink(ref));
+  }
 }
 lines.push("", "## Complete source-group inventory", "", "This covers all " + data.groups.length + " source groups. A group can contain several unrelated causes; a linked finding does not validate its other symptoms.", "", "| Group | Source reference | Area | Intake / latest note | Detailed IDs |", "| --- | --- | --- | --- | --- |");
 for (const group of data.groups) lines.push("| " + group.number + " | " + refLink(group.discovery_reference) + " | " + group.area + " | " + esc(group.summary + ". " + group.review) + " | " + (group.findings.join(", ") || "intake only") + " |");
