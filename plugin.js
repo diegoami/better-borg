@@ -14708,11 +14708,12 @@ function buildFlowHooks(session) {
       return (ctx().view.player().shots ?? 0) > 0;
     },
     layGlyph: (c) => borgSpell(c, 78 /* GLYPH_OF_WARDING */) ?? borgReadScroll(c, SVAL.scroll.rune_of_protection),
-    /* FORK (Mandos #59): borg_play_step's trap and door magic
+    /* FORK (Mandos #59, follow-up #96): adopt Neo 887d433's item lookup.
+     * borg_play_step's trap and door magic
      * (borg-flow.c:901-924, 963-987), each aimed at the step grid the way the
      * C's borg_target(goal.g) / direction keypress aims it. */
     disableTrap: (c, y, x, spellOk) => {
-      const activation = borgActivateItem(c, "act_disable_traps");
+      const activation = borgActivateItem(c, "act_disable_traps", buildItemDeps(session));
       if (activation !== null) {
         borgTarget(c, y, x);
         return activation;
@@ -14720,9 +14721,9 @@ function buildFlowHooks(session) {
       return spellOk ? borgSpell(c, 13 /* DISABLE_TRAPS_DESTROY_DOORS */) : null;
     },
     forceDoor: (c, y, x) => {
-      const destroy = borgSpell(c, 13 /* DISABLE_TRAPS_DESTROY_DOORS */) ?? borgActivateItem(c, "act_destroy_doors");
+      const destroy = borgSpell(c, 13 /* DISABLE_TRAPS_DESTROY_DOORS */) ?? borgActivateItem(c, "act_destroy_doors", buildItemDeps(session));
       if (destroy !== null) return { cmd: destroy, via: "destroy" };
-      const melt = borgSpell(c, 38 /* TURN_STONE_TO_MUD */) ?? borgSpell(c, 121 /* SHATTER_STONE */) ?? borgActivateRing(c, SVAL.ring.digging) ?? borgActivateItem(c, "act_stone_to_mud");
+      const melt = borgSpell(c, 38 /* TURN_STONE_TO_MUD */) ?? borgSpell(c, 121 /* SHATTER_STONE */) ?? borgActivateRing(c, SVAL.ring.digging) ?? borgActivateItem(c, "act_stone_to_mud", buildItemDeps(session));
       if (melt === null) return null;
       borgTarget(c, y, x);
       return { cmd: melt, via: "melt" };
