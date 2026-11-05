@@ -1,0 +1,16 @@
+$ pnpm typecheck && node tools/check-session.mjs && pnpm test && pnpm check
+$ tsc --noEmit
+diegoami/mandos: mandos; bootstrap files and origin verified
+$ vitest run
+
+ RUN  v4.1.11 /tmp/mandos-notespot-consumer
+
+
+ Test Files  67 passed (67)
+      Tests  1148 passed (1148)
+   Start at  00:02:37
+   Duration  431.57s (transform 58.80s, setup 60.44s, import 97.29s, tests 566.24s, environment 24ms)
+
+$ node tools/build.mjs --check
+[mod-build] checking 1: mandos
+[mod-build] mandos: ok, and the committed plugin.js is current (730.6 KiB, api >=2.0.0 <3.0.0)

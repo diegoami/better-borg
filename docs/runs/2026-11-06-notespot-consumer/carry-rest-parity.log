@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-notespot-consumer
+
+
+ Test Files  3 passed (3)
+      Tests  14 passed (14)
+   Start at  00:01:16
+   Duration  46.81s (transform 4.35s, setup 1.32s, import 5.16s, tests 45.92s, environment 1ms)
+
