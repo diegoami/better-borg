@@ -51,12 +51,15 @@ point; [docs/process.md](docs/process.md) and
     and defects - upstream ones above all - preempt any feature in flight:
     park the feature, open an issue for the defect at once, fix it (or ask
     the owner) before the feature resumes.
-12. **Route upstream posts by provenance.** The owner authorized direct
-    Neo Angband issues/PRs for confirmed port defects (2026-11-05), after
-    source attribution, reproduction and duplicate checks. C proposals
-    still require internal evidence and explicit owner approval of the
-    specific report before posting to angband/angband. Our own tracker is
-    written freely. Process §6 defines the evidence and submission shape.
+12. **Keep C proposals local; route Neo posts by provenance.** The owner
+    authorized direct Neo Angband issues/PRs for confirmed port defects
+    (2026-11-05), after attribution, reproduction and duplicate checks.
+    C work maintains our known-bug catalogue, evidence and proposed fixes
+    in diegoami repositories. **No angband/angband submissions now**: no
+    issues, PRs or comments there, and no automatic submission or routine
+    approval prompt. A later explicit owner instruction must change this
+    pause. A local C proposal is not upstream acceptance or an applied fix.
+    Our own tracker is written freely. Process §6 defines the workflow.
 13. **A question is not a request to edit files.** Answer it; propose any
     fix and wait (the rule the owner's other projects carry).
 14. **No AI-attribution trailer, ever** (owner, 2026-11-04; upstream's own

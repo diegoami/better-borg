@@ -1,6 +1,8 @@
 # B94: cancelling a Borg map dump crashes the C game
 
-Internal proposal; **not approved for external posting**.
+Local proposal; **no upstream C submission**.
+[Our draft C fix PR](https://github.com/diegoami/neo-angband/pull/1) targets
+our own c-borg-reference branch; the owner has paused C submissions.
 Tracker: [#94](https://github.com/diegoami/mandos/issues/94).
 Lead credited to [borg-rs, catalogue group 13](https://github.com/diegoami/borg-rs/blob/66dced95ba5c61b95fb011b01c3d214b7ab2c4a6/docs/c-bugs.md).
 
@@ -97,10 +99,10 @@ quantities. Issue #6362 is a base-game charge-combination divide by zero,
 not this file path. PR #6504 moved debug commands; verify its patch before
 external submission if it changes how users reach the prompt.
 
-An approved PR would target **angband/angband:master** from a new branch in
-our C-network fork **diegoami/neo-angband**, cut directly from official C
-master. No C branch has been pushed or PR/issue posted. Recheck current C
-and duplicates immediately before any approved submission.
+The local proposal is **diegoami/neo-angband#1**, targeting our own
+**c-borg-reference** branch pinned at the C revision above. Its one-file
+four-line guard is the canonical patch linked here. It remains a draft,
+unapplied to a maintained C consumer. No angband/angband submission is made.
 
 Proposed concise PR text:
 
@@ -114,4 +116,4 @@ Proposed concise PR text:
 > catalogue.
 
 The quoted draft is our proposed text. Retain this detailed internal receipt
-rather than putting the whole investigation into the upstream PR.
+rather than putting the whole investigation into our local proposal PR.

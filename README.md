@@ -65,16 +65,21 @@ Bug leads come from our runs, tests and source audits, and from the related
 needs verification against the relevant source revision.
 
 Changes are named by provenance: a **DEFECT** restores the C Borg or fixes an
-engine/port error and is offered upstream; a **CHOICE** deliberately changes
+engine/port error; confirmed Neo port fixes are offered there. C findings
+and proposed fixes stay in our own catalogue/repositories. A **CHOICE** deliberately changes
 policy and remains a marked Mandos decision. Qualify whether a defect is
 inherited from the imported TypeScript port or from C. Neo's Borg must
 follow C: a faithful copy of a C bug needs an upstream Angband correction
 first, then Neo parity. Mandos may carry an earlier marked CHOICE.
 
-The current scope is bug hunting and fixing only. `upstream-c` tracks the
-C defect/proposal route, not just C testing. Every such proposal needs a
-reproducible scenario showing a meaningful gameplay consequence, duplicate
-review and explicit owner approval before external posting. Carry labels
+The current scope is bug hunting and fixing only. Our maintained
+[C-bug catalogue](docs/C-BUGS.md) separates leads, source checks and actual
+C-game reproductions, and links proposed fixes in our own repositories.
+**No submissions to angband/angband now**; we are maintaining our list and
+local proposals, not taking on upstream C maintenance. `upstream-c` tracks
+C-origin investigations, not proof of a defect or permission to submit.
+A validated fix needs a reproducible meaningful consequence and controls.
+Carry labels
 (`carried`, `not-carried`, `partially-carried`) describe verified coverage in
 Mandos `main` and its required consumers; a patch file alone is insufficient.
 Confirmed Neo port defects may be posted directly under the owner's
