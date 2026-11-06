@@ -29,6 +29,7 @@
  * included, because a clear that did not land is the stranded-flag hazard).
  */
 
+import { mutateInstall } from "../records/install-mutation.js";
 import type { Api2Slot, JsonValue } from "@rpgm-tools/neo-angband-mod-sdk";
 
 /**
@@ -69,13 +70,12 @@ function withoutFlag(value: JsonValue | null): JsonValue | null {
  * needs to know before it reloads into one.
  */
 export async function setBirthFlag(slot: Slot): Promise<boolean> {
-  const current = await slot.get().catch(() => null);
-  const base = current !== null && current.ok && current.value !== null &&
-      typeof current.value === "object" && !Array.isArray(current.value)
-    ? (current.value as Record<string, JsonValue>)
-    : {};
-  const written = await slot.set({ ...base, [BIRTH_FLAG_KEY]: true }).catch(() => undefined);
-  return written !== undefined && written.ok;
+  const changed = await mutateInstall(slot, value => {
+    const base = value !== null && typeof value === "object" && !Array.isArray(value)
+      ? value as Record<string, JsonValue> : {};
+    return { write: true, next: { ...base, [BIRTH_FLAG_KEY]: true }, result: true };
+  });
+  return changed.ok && changed.value;
 }
 
 /**
@@ -89,15 +89,9 @@ export async function setBirthFlag(slot: Slot): Promise<boolean> {
  * already gone counts as cleared - the read itself is the proof.
  */
 export async function clearBirthFlag(slot: Slot): Promise<boolean> {
-  try {
-    const current = await slot.get();
-    if (!current.ok) return false;
-    if (!flagIsSet(current.value)) return true;
-    const written = await slot.set(withoutFlag(current.value));
-    if (!written.ok) return false;
-    const check = await slot.get();
-    return check.ok && !flagIsSet(check.value);
-  } catch {
-    return false;
-  }
+  const changed = await mutateInstall(slot, value => flagIsSet(value)
+    ? { write: true, next: withoutFlag(value), result: true }
+    : { write: false, result: true },
+  { accepts: value => !flagIsSet(value), message: "birth flag remained set after clear" });
+  return changed.ok && changed.value;
 }

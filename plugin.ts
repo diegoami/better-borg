@@ -364,7 +364,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
       slot: mod.store.install,
       label: TITLE_ROW_LABEL,
     },
-    installMemory(mod.store.install),
+    installMemory(mod.store.install, message => mod.meta.log(message)),
   );
   mod.meta.log(
     made.hasTruth

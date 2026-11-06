@@ -68,6 +68,7 @@
  * so a pinned or dynastic name always stands.
  */
 
+import { mutateInstall } from "../../records/install-mutation.js";
 import type { Api2BirthPresenter, Api2BirthSession, Api2BirthResult, Api2Slot, JsonValue } from "@rpgm-tools/neo-angband-mod-sdk";
 import { BIRTH_FLAG_KEY } from "../../birth/flag.js";
 import { ladderFromCostTable, planWarriorBirth, WARRIOR_CLASS_NAME, type WarriorBuildPlan } from "./plan.js";
@@ -186,20 +187,12 @@ export function createWarriorBirthPresenter(deps: WarriorBirthDeps): Api2BirthPr
     const unconsumed = (message: string): void => {
       prepared = { state: "unconsumed", message };
     };
-    try {
-      const current = await deps.slot.get();
-      if (!current.ok) return unconsumed(current.message);
-      if (flagIsSet(current.value)) {
-        const written = await deps.slot.set(withoutFlag(current.value));
-        if (!written.ok) return unconsumed(written.message);
-        const check = await deps.slot.get();
-        if (!check.ok) return unconsumed(check.message);
-        if (flagIsSet(check.value)) return unconsumed("it was still set after being cleared");
-      }
-      prepared = { state: "armed" };
-    } catch (error: unknown) {
-      unconsumed(messageOf(error));
-    }
+    const consumed = await mutateInstall(deps.slot, value => flagIsSet(value)
+      ? { write: true, next: withoutFlag(value), result: true }
+      : { write: false, result: true },
+    { accepts: value => !flagIsSet(value), message: "it was still set after being cleared" });
+    if (!consumed.ok) return unconsumed(consumed.message);
+    prepared = { state: "armed" };
   })();
 
   /** Run one session call, or log its refusal and report failure. */
