@@ -1,0 +1,198 @@
+[
+  {
+    "name": "Rune on ordinary floor",
+    "setup": "prepared real-flow arrival, not autonomous doorway reachability",
+    "command": {
+      "code": "read",
+      "args": {
+        "handle": 7
+      }
+    },
+    "requested": {
+      "code": "read",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "before": {
+      "warded": false,
+      "track": 1,
+      "glyph": false,
+      "quantity": 12
+    },
+    "messages": [
+      "You have 11 Scrolls of Rune of Protection (d)."
+    ],
+    "publicKnownWorld": {
+      "terrain": 1,
+      "traps": [
+        {
+          "index": 1,
+          "name": "glyph of warding",
+          "disabled": false
+        }
+      ]
+    },
+    "after": {
+      "warded": true,
+      "track": 1,
+      "glyph": false,
+      "quantity": 11
+    },
+    "subsequentFlow": {
+      "command": null,
+      "target": {
+        "x": 0,
+        "y": 0
+      },
+      "track": 1
+    },
+    "contract": {
+      "acceptedRuneObservedAsGlyph": false,
+      "refusedRuneNotLeftInOptimisticTrack": true
+    }
+  },
+  {
+    "name": "Rune on open doorway",
+    "setup": "prepared real-flow arrival, not autonomous doorway reachability",
+    "command": {
+      "code": "read",
+      "args": {
+        "handle": 7
+      }
+    },
+    "requested": {
+      "code": "read",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "before": {
+      "warded": false,
+      "track": 1,
+      "glyph": false,
+      "quantity": 12
+    },
+    "messages": [
+      "There is no clear floor on which to cast the spell.",
+      "You have 12 Scrolls of Rune of Protection (d)."
+    ],
+    "publicKnownWorld": {
+      "terrain": 3,
+      "traps": []
+    },
+    "after": {
+      "warded": false,
+      "track": 1,
+      "glyph": false,
+      "quantity": 12
+    },
+    "subsequentFlow": {
+      "command": null,
+      "target": {
+        "x": 0,
+        "y": 0
+      },
+      "track": 1
+    },
+    "contract": {
+      "acceptedRuneObservedAsGlyph": true,
+      "refusedRuneNotLeftInOptimisticTrack": false
+    }
+  },
+  {
+    "name": "Rune on broken doorway",
+    "setup": "prepared real-flow arrival, not autonomous doorway reachability",
+    "command": {
+      "code": "read",
+      "args": {
+        "handle": 7
+      }
+    },
+    "requested": {
+      "code": "read",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "before": {
+      "warded": false,
+      "track": 1,
+      "glyph": false,
+      "quantity": 12
+    },
+    "messages": [
+      "There is no clear floor on which to cast the spell.",
+      "You have 12 Scrolls of Rune of Protection (d)."
+    ],
+    "publicKnownWorld": {
+      "terrain": 4,
+      "traps": []
+    },
+    "after": {
+      "warded": false,
+      "track": 1,
+      "glyph": false,
+      "quantity": 12
+    },
+    "subsequentFlow": {
+      "command": null,
+      "target": {
+        "x": 0,
+        "y": 0
+      },
+      "track": 1
+    },
+    "contract": {
+      "acceptedRuneObservedAsGlyph": true,
+      "refusedRuneNotLeftInOptimisticTrack": false
+    }
+  },
+  {
+    "name": "Unrelated Light scroll on floor",
+    "setup": "prepared real-flow arrival, not autonomous doorway reachability",
+    "command": null,
+    "requested": {
+      "code": "read",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "before": {
+      "warded": false,
+      "track": 0,
+      "glyph": false,
+      "quantity": 12
+    },
+    "messages": [
+      "You are surrounded by a white light.",
+      "You have 11 Scrolls of Light (d)."
+    ],
+    "publicKnownWorld": {
+      "terrain": 1,
+      "traps": []
+    },
+    "after": {
+      "warded": false,
+      "track": 0,
+      "glyph": false,
+      "quantity": 11
+    },
+    "subsequentFlow": {
+      "command": null,
+      "target": {
+        "x": 0,
+        "y": 0
+      },
+      "track": 0
+    },
+    "contract": {
+      "acceptedRuneObservedAsGlyph": true,
+      "refusedRuneNotLeftInOptimisticTrack": true
+    }
+  }
+]

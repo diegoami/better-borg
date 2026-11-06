@@ -1,0 +1,17 @@
+{
+  "schema": "mandos/glyph-qualification-receipt@1",
+  "exit": 1,
+  "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428), PR #433 (fixes #431), commit 0cc75b4af (actual book spell counts)",
+  "api2": "2.0.0 (installed SDK; fixture uses public world/content facade)",
+  "content": "1.23.0-beta.2",
+  "inputs": {
+    "tools/qualification/glyph-outcome.ts": "73815f79f1b8bd03290cfeae7f4db592e58ec0a30da89bb5a2d260901383f6d1",
+    "tools/qualify-glyph.mjs": "fd57e26eabf48eea3cda1152bdca28b5c229ae9008c1f57cd3234b72b2be9b36",
+    "src/flow/flow-glyph.ts": "bdeb895c2d97f31f8df582328ea9a2f991cc1050afb395c308409506f5e16b9c",
+    "src/perceive.ts": "688ffc1eb79651029d174b3f09c09a849f0b17056e6c82c68c070aecae278930",
+    "src/api2/world.ts": "f79a76e799c1b60f4be7d034de8b74c7d168bff0a47b3008041945845fde6997",
+    "pnpm-lock.yaml": "7e705515d6c04ca1cfdf61ceba89cb98f5602431754ae77b237a21fe3245a761"
+  },
+  "scope": "Actual registered read handler and Core known-world data through port adapter/perception. Prepared flow arrival, not full autonomous play, world timing or combat.",
+  "expectedCurrentExit": "1 when the observed accepted glyph is lost by the adapter/perception contract; setup/control errors also remain visible in run.log."
+}
