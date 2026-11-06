@@ -20,7 +20,9 @@
    hunks until each consumer has its verified replacement, rebuild plugin.js.
 6. Run focused regressions, required standalone replay checks and fixed-seed
    controls for behavior changes, then one logged CI=1 pnpm verify under the
-   shared validation lock. Record full counts/skips and engine fingerprint.
+   shared validation lock. Follow docs/CI.md for narrow prose-only gates and
+   owner-scoped CI maintenance validation. Record full counts/skips and engine
+   fingerprint for runtime verification.
 7. Verify any separately authorized lab deployment and preserve owner saves,
    profiles and append-only records. Do not call deployment from a source merge.
 8. Update integration issue/checkpoint36, links and patch consumer receipts at

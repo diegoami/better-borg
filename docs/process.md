@@ -29,6 +29,9 @@ flock /tmp/angband-validation.lock to avoid another local heavy gate across
 sessions. A worktree must have dependencies; install or use an owned symlink.
 Relevant skips/reds require diagnosis, not assertion/seed edits to pass.
 Full gate checks session bootstrap, types/tests and committed plugin currency.
+[CI routing](CI.md) documents the conservative prose-only metadata/docs/privacy
+gate, PR/main/manual triggers and workflow-maintenance validation. Unknown,
+workflow and runtime paths retain full verification.
 
 Behavior changes retain before/after fixed-seed stage records and legal
 scenario controls; source-only evidence is not a practical outcome claim.
