@@ -232,6 +232,20 @@ describe('offline death corpus', () => {
     expect(buildIndex(f.corpus).totals.deaths).toBe(0);
     ingest(f); expect(buildIndex(f.corpus).totals.deaths).toBe(1);
   });
+  it('rejects expanded UTF-8 receipts before publication and leaves a usable corpus', () => {
+    const f = fixture();
+    // Source is below 8 MiB. Its long Unicode label plus per-row identity/hash
+    // bookkeeping expands the managed receipt beyond 8 MiB (despite fewer JS characters).
+    const value = document([dead(), ...Array.from({ length: 12000 }, () => ({ dead: false }))], { label: '🪄'.repeat(1000000) });
+    writeFileSync(f.record, JSON.stringify(value));
+    expect(readFileSync(f.record).length).toBeLessThan(8 * 1024 * 1024);
+    let caseWrites = 0;
+    expect(() => ingest(f, { onCaseWritten: () => { caseWrites++; } })).toThrow(/Managed immutable payload exceeds/);
+    expect(caseWrites).toBe(0); expect(existsSync(join(f.corpus, 'cases'))).toBe(false);
+    expect(buildIndex(f.corpus).totals.sourceRecords).toBe(0);
+    put(f, document([dead()])); ingest(f);
+    expect(readIndex(f).totals.deaths).toBe(1);
+  });
   it('the real CLI reports errors nonzero and ingests existing files without a game process', () => {
     const f = put(fixture(), document([dead()])), tool = fileURLToPath(new URL('./deaths.mjs', import.meta.url));
     const env = { PATH: process.env.PATH ?? '', ...(process.env.SystemRoot ? { SystemRoot: process.env.SystemRoot } : {}) };

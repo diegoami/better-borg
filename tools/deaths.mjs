@@ -62,7 +62,9 @@ function noSymlinks(path) {
   }
 }
 function within(parent, child) { const r = relative(parent, child); return r === '' || (!r.startsWith('..' + sep) && r !== '..' && !isAbsolute(r)); }
+function managedSize(path, data) { assert(Buffer.byteLength(data, 'utf8') <= MAX_BYTES, `Managed immutable payload exceeds ${MAX_BYTES} bytes: ${path}`); }
 function immutable(path, data) {
+  managedSize(path, data);
   noSymlinks(path); safeParents(path);
   if (existsSync(path)) { regular(path); assert(readFileSync(path, 'utf8') === data, `Immutable content conflict: ${path}`); return false; }
   const temp = resolve(dirname(path), `.pending-${randomUUID()}`);
@@ -238,6 +240,8 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
     const identity = run.runKey == null ? { origin, record: source.sha256, row } : { origin, runKey: run.runKey };
     const id = 'case-' + hash(json(identity));
     const fingerprint = hash(json({ build: context.build, outcome, facts }));
+    const event = { id, identity, fingerprint, outcome, row, caseId: outcome === 'death' ? id : null };
+    if (outcome !== 'death') return { event, item: null };
     const missingContext = ['seed', 'life', 'race', 'class', 'baseStats', 'commands', 'decisions', 'turns', 'clvl', 'maxDepth'].filter(key => facts[key] === undefined || facts[key] === null || (key === 'baseStats' && facts[key].length === 0));
     for (const key of ['commit', 'engine', 'content', 'borg']) if (!string(context.build[key])) missingContext.push('build.' + key);
     const item = seal({ schema: CASE, id, identity, fingerprint, source, context, facts, outcome,
@@ -245,7 +249,7 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
       replay: { status: missingContext.length ? 'missing-input' : 'not-attempted' },
       artifacts: ['recording', 'decision-trace', 'pre-death-save'].map(kind => ({ kind, availability: 'not-captured', locator: null, knowledge: 'unspecified' })),
       initialAnalysis: 'pending-diagnosis' });
-    return { event: { id, identity, fingerprint, outcome, row, caseId: outcome === 'death' ? id : null }, item };
+    return { event, item };
   });
   const inBatch = new Map();
   for (const { event } of prepared) {
@@ -260,6 +264,8 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
     for (const { event } of prepared) assert(!known.has(event.id) || known.get(event.id) === event.fingerprint, `Conflicting trusted identity: ${event.id}`);
     const receiptId = hash(json({ origin, source: source.sha256 })), receiptPath = resolve(root, 'records', receiptId + '.json');
     if (existsSync(receiptPath)) { deriveIndex(root); return { receipt: receiptId, alreadyPresent: true, cases: prepared.filter(p => p.event.caseId).map(p => p.event.caseId) }; }
+    const receiptData = json(seal({ schema: INGEST, source, context, events: prepared.map(p => p.event) }));
+    managedSize(receiptPath, receiptData);
     for (const { event, item } of prepared) if (event.caseId) {
       const file = resolve(root, 'cases', event.id, 'case.json');
       if (existsSync(file)) {
@@ -270,7 +276,7 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
       immutable(resolve(dirname(file), 'report.md'), caseReport(existing));
       onCaseWritten(event.id);
     }
-    immutable(receiptPath, json(seal({ schema: INGEST, source, context, events: prepared.map(p => p.event) })));
+    immutable(receiptPath, receiptData);
     deriveIndex(root);
     return { receipt: receiptId, alreadyPresent: false, cases: [...new Set(prepared.filter(p => p.event.caseId).map(p => p.event.caseId))] };
   });

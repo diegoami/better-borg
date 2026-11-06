@@ -56,6 +56,10 @@ writer lock; after any required recovery, re-run the same command and then
 can always be regenerated. Corrupted content, wrong schemas, invalid analysis
 chains and unexpected persisted filenames fail rather than silently vanish.
 Hidden pending temporary files are ignored until a complete file is published.
+Explicit input files and each managed immutable JSON/report have an 8 MiB UTF-8
+byte limit; expanded output is checked before publication, so an oversized
+receipt cannot poison subsequent reads. The final receipt is preflighted before
+any case file is written, avoiding large orphan batches. Derived indexes are rebuildable views.
 Persisted digests detect accidental modification; they are not signatures or
 proof of an author's identity.
 
