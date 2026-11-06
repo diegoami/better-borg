@@ -1,0 +1,16 @@
+$ pnpm typecheck && node tools/check-session.mjs && pnpm test && pnpm check
+$ tsc --noEmit
+diegoami/mandos: mandos; bootstrap files and origin verified
+$ vitest run
+
+ RUN  v4.1.11 <task-tree>
+
+
+ Test Files  79 passed (79)
+      Tests  1284 passed (1284)
+   Start at  17:55:20
+   Duration  178.79s (transform 30.26s, setup 36.98s, import 55.41s, tests 311.94s, environment 14ms)
+
+$ node tools/build.mjs --check
+[mod-build] checking 1: mandos
+[mod-build] mandos: ok, and the committed plugin.js is current (737.6 KiB, api >=2.0.0 <3.0.0)
