@@ -5,7 +5,21 @@
 | C/game/engine fixes | [diegoami/neo-angband-tracker](https://github.com/diegoami/neo-angband-tracker) | neo-angband-tracker/ | C Borg, C Angband game, Neo engine; C branch/worktree in this same fork |
 | Port fixes | [diegoami/neo-angband-borg-mod-tracker](https://github.com/diegoami/neo-angband-borg-mod-tracker) | neo-angband-borg-mod-tracker/ | Upstream TypeScript Borg port defects and isolated Neo proposals |
 | Native C consumer | [diegoami/better-borg-c](https://github.com/diegoami/better-borg-c) | better-borg-c/ | Native product measurement, linked adoption/carry; source repairs stay on the engine/C tracker |
-| Mandos development | [diegoami/mandos](https://github.com/diegoami/mandos) | better-borg/ | Mandos-only behavior, harness/lab, integration and verified adoption |
+| Mandos bug-fix consumer | [diegoami/mandos](https://github.com/diegoami/mandos) | better-borg/ | Applicable bug adoption/C-to-TS translation, targeted regressions and basic records |
+
+Mandos's [current consumer scope](MANDOS-SCOPE.md) parks experimental cohorts,
+strategy/stage research and advanced death tooling. Existing code/evidence stays.
+Future experiments may be independently owner-directed in better-borg-c or
+borg-rs, without automatic task/code migration or Rust dispatch/polling.
+
+Mandos's selected default is the verified unpatched beta.3 **Core/harness**.
+Official stock desktop/web has a separate first-party controller gate and does
+not register Mandos under its own ID. There is no supported configuration or
+Ctrl-Z fallback; `engine:access` alone is insufficient. See
+[the exact host boundary](MANDOS-SCOPE.md#interactive-host-boundary) and
+[runtime180](https://github.com/diegoami/mandos/issues/180). The retained authorized
+host/lab code is unchanged and undeployed by this integration. Do not infer a
+stock interactive launch or lab refresh from passing npm/harness checks.
 
 Each session reads its own AGENTS/RULES/PLAN/checkpoint. It does not inherit
 another repository's queue or start fixing a different component silently.
@@ -40,6 +54,8 @@ The umbrella parent coordinates scoped dispatch, dependencies and verified
 recovery metadata; it does not take component code ownership. Read the owning
 repository instructions/checkpoint before acting. Broad reconciliation is a
 weekly manual batch; targeted active blockers and closure checks remain timely.
-For death discussions, follow [the active-session start/stop read contract](deaths/DISCUSSIONS.md).
-No unattended reader exists. [Window profiles](deaths/WINDOWS.md) use actual Neo
-turns and preserve legacy evidence, independently of native C gameplay/saves.
+Read the current bug and relevant source/action comments. The retained
+[advanced death-session contract](deaths/DISCUSSIONS.md) is parked optional
+reference, not routine startup or an upgrade prerequisite. No unattended reader
+exists. [Optional window profiles](deaths/WINDOWS.md) preserve actual Neo units
+and legacy evidence, independently of native C gameplay/save semantics.

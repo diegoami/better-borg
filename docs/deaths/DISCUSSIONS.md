@@ -1,5 +1,12 @@
 # Active-session death discussion reads
 
+**PARKED / OPTIONAL — advanced feedback workflow.**
+The [current consumer scope](../MANDOS-SCOPE.md) supersedes this as routine
+startup work. Read current bug/source/action comments for active fixes, but do
+not launch a per-death feedback pilot, expand166, or make this protocol a default
+upgrade gate. The contract/code/receipts below are preserved reference for a
+separately authorized optional investigation. No daemon or task migration exists.
+
 This is the manual session contract for Mandos166. It does not install a
 watcher, create per-case investigations or implement the later feedback pilot.
 Existing corpus facts and reports remain immutable. The parent comparison is

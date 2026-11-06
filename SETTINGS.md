@@ -1,5 +1,19 @@
 # Mandos settings
 
+**Current scope:** [Mandos is a bug-fix consumer](docs/MANDOS-SCOPE.md).
+Existing controls remain for compatibility. Strategy/cohort/stage research and
+advanced replay are PARKED optional work, not ordinary-play or engine-upgrade
+gates. Runtime180 defines the delivered profile; prefer stock published beta.3,
+with an engine carry only if a real required gameplay defect proves it necessary.
+PR433 is not a default dependency or a promise of live seed/birth metadata.
+Official stock beta.3 desktop/web currently does not register the Mandos
+controller under its own ID; the title/Ctrl-Z controls in this reference apply
+only to a retained authorized first-party host. Unpatched-Core/harness checks
+do not supply a stock interactive fallback or deploy the existing lab.
+See [the host boundary](docs/MANDOS-SCOPE.md#interactive-host-boundary).
+The retained optional suite is `pnpm test:optional-replay`; historical replay
+needs its original executable/content/configuration and accepted start inputs.
+
 The `borg.*` identifiers are stable saved setting names, including Mandos's
 own birth-pool, stage and replay settings.
 Mandos reads the behavior toggles when its controller is created; changing
@@ -50,13 +64,16 @@ from the C Borg (#50 / PR #63); eligible spells also participate in the
 combat chooser (#69). A generic birth plan does not prevent a caster from
 learning or fighting with its spells.
 
-## The stage: what the grind keeps a save at
+## Optional retained stage retirement (off by default)
 
-Since the purpose redirect (#25), the mod's main job is the grind: it plays
-unattended, and when a run reaches its target stage it KEEPS A SAVE of that
-run (renamed into the library - the picker's `M ...` names, beside the
-ordinary ones) and starts the next character. Two numeric settings define
-the stage, both read once per page so a change applies to the NEXT birth:
+`mandos.stageRetirement` is **false by default** and requires a reload when
+changed. Only an explicit opt-in enables the existing stage save/rename/restart
+mechanism. The two retained threshold settings below do not end a default life
+merely because c2d1 is reached. They apply on the next birth when retirement is
+enabled; the owner scope change does not erase the old code or kept saves.
+
+The optional mechanism keeps a save and starts another character after both
+thresholds are reached:
 
 1. `borg.stageClvl` = 2 (the character level a run must reach),
 2. `borg.stageDepth` = 1 (the depth a run must have arrived on; 0 is town).
@@ -65,8 +82,8 @@ The default was selected using the [c2d1 calibration baseline](docs/runs/2026-11
 It is an early measurement target, not a claim about the strongest stage
 Mandos can reach. Later fixes change the reach-rate; the
 [run records](docs/runs/README.md) name the build, cohort and result.
-The longer-term goal is reliable progress toward a character around level
-20 at moderate depth. Raise the settings as stronger stages are measured.
+The former level20/moderate-depth research goal and stronger-stage campaign
+are parked. This historical calibration is not a current Mandos task or upgrade gate.
 
 A successful save and rename keep a library entry before the next birth.
 If either is refused, Mandos logs the reason and keeps playing; it does
@@ -77,12 +94,11 @@ using those kept characters as the inputs to later stages.
 A retired save's name is short because the host caps save names at 15
 characters: `M s20 c2d1` from the harness (the seed is the name's identity
 - the ladder maps its per-seed cohorts by it) or `M n17 c2d1` in the mod
-(the lineage counter used by the mod's naming scheme). The lab's carried
-master-seed seam can also record the game seed in the graveyard; the name
-format remains based on the lineage counter. The date a slot was kept is
+(the lineage counter used by the mod's naming scheme). Historical enhanced builds could also record a seed through PR433. The
+default does not promise that metadata; naming stays based on the lineage counter. The date a slot was kept is
 the roster's own last-played column.
 
-## The death-replay trainer: playing a dead run's last turns
+## Optional preserved replay handoff (advanced work parked)
 
 The [post-mortem workflow](docs/postmortem.md) can generate a dossier ladder
 for a dead harness run with `tools/replay.mjs`. It needs the record's Borg

@@ -1,5 +1,11 @@
 # Tasks
 
+**Current scope:** [Mandos is a bug-fix consumer](../MANDOS-SCOPE.md).
+This historical index is not an active strategy/cohort/trainer queue. Advanced
+analysis and experiment plans remain parked, with code/evidence preserved.
+[Scope181's audit](mandos-scope-181.md) proposes issue dispositions for parent
+review; it does not itself close bugs or move tasks elsewhere.
+
 One file per task, `B<nn>.md`. The issue's `status:*` label is the status.
 The queue and where work stands: the open `checkpoint` issue (process.md section 3).
 A task file is written on its branch and lands with the merge. Each file

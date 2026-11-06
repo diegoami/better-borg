@@ -1,5 +1,15 @@
 # Death reports: offline intake and attributed analysis
 
+**PARKED / OPTIONAL — advanced death-analysis tooling.**
+The current [Mandos consumer scope](../MANDOS-SCOPE.md) keeps basic run/death/stall
+and archive correctness active, but parks corpus expansion, per-death export,
+feedback, diagnosis/aggregation research and166's unfinished exporter. Code,
+examples and110d682/ca627bf branches are preserved; they are not default runtime
+or upgrade prerequisites and do not promise capture of every desktop death.
+PR433 is not required by default. Historical replay needs original code/data/
+configuration and accepted start inputs; missing provenance is not manufactured.
+The reference below remains for explicitly requested optional use, not a task queue.
+
 [Task #166](https://github.com/diegoami/mandos/issues/166) tracks the complete
 capture -> report -> diagnosis -> action loop. The [plan](../tasks/death-corpus-plan.md)
 separates existing replay tools from missing operational capture.

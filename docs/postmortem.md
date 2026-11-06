@@ -1,5 +1,14 @@
 # The AI post-mortem
 
+**PARKED / OPTIONAL — retained advanced analysis workflow.**
+[Mandos now consumes verified bug fixes](MANDOS-SCOPE.md). Basic run/death/stall
+records remain useful; broad diagnosis/feedback/cohort/advanced-export work is
+parked. A concrete bug may use a bounded existing trace when needed. This page
+does not authorize routine ladder replay or make it an upgrade gate. No default
+PR433 dependency, fatal save or exact replay without original executable/data/
+configuration/accepted start inputs is promised. Preserve the historical methods
+below; do not automatically move code/tasks to another product.
+
 This is the offline workflow for turning a recorded failure into a
 reproduced defect: invoke the replay tool, verify its result, inspect the
 dossier and write a diagnosis. The tools support that work; they do not
