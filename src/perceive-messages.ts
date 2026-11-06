@@ -267,10 +267,13 @@ function raceNameOf(who: string): string {
   return who;
 }
 
-/** my_strnicmp(who, "Something", 9) / (who, "It", 2): an invisible attacker. */
+/** C's Something prefix and complete case-insensitive unseen pronoun. */
 function isInvisibleAttacker(who: string): boolean {
   const lower = who.toLowerCase();
-  return lower.startsWith("something") || lower.startsWith("it");
+  /* FORK: CBUG-0086, neo-angband-tracker#102 / C proposal cad765806.
+   * The baseline's two-character prefix also matches visible Itangast.
+   * Require the whole pronoun, preserving the separate Something branch. */
+  return lower.startsWith("something") || lower === "it";
 }
 
 /**
