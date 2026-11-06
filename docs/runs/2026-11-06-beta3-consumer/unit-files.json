@@ -1,0 +1,22 @@
+{
+  "dist/game/trap.js": {
+    "rawSha256": "398a959b75ee76256885056f2445e9b03bb1de06799e8e4d06fa862db27675af",
+    "installedSha256": "398a959b75ee76256885056f2445e9b03bb1de06799e8e4d06fa862db27675af"
+  },
+  "dist/player/bind.js": {
+    "rawSha256": "8b89cba37ce41f6cef61ef21ddb1145f5b6a102ad8468e179dd459dfb255c3a2",
+    "installedSha256": "8b89cba37ce41f6cef61ef21ddb1145f5b6a102ad8468e179dd459dfb255c3a2"
+  },
+  "dist/game/player-path.js": {
+    "rawSha256": "0f5fbcf0385216e0cf915473e08a35b0906f0b2c0d02d53d04deab9f10f8d00f",
+    "installedSha256": "6ac9382df13ee01cd39056cc6384b6e8d2d704878ecd352fa6fa8fd1b11b10fd"
+  },
+  "dist/session/game.js": {
+    "rawSha256": "2d8f9baedf352110305a0dc29207abfd44c4ae22aeda7d2029d1bcc74f2b2844",
+    "installedSha256": "3cd0be50f42896bb89861148a6ef8447825dadf6728ebc173b10acf355a780cf"
+  },
+  "dist/session/save.js": {
+    "rawSha256": "7f48b38457295b73f94aeff3a7691c307d9b673fb6101089ace05dcc8968c769",
+    "installedSha256": "018da9c0adcac9992f32b27a97cbe69a2f20c3dac3750a5af019b95fb5f6b895"
+  }
+}

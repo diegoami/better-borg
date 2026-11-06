@@ -1,0 +1,10 @@
+$ vitest run src/engine-package-backports.test.ts src/engine-carry.test.ts src/item/magic-play.test.ts src/danger/cold-melee-carry.test.ts src/perceive-unseen-name.test.ts src/item/enlightenment-carry.test.ts src/danger/shot-origin-carry.test.ts src/item/ccw-timing.test.ts src/fight/c-spell-carry.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+
+ Test Files  9 passed (9)
+      Tests  105 passed (105)
+   Start at  19:03:17
+   Duration  3.57s (transform 3.52s, setup 1.71s, import 4.60s, tests 9.33s, environment 1ms)
+

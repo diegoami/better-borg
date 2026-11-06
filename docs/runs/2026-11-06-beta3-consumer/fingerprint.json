@@ -1,0 +1,17 @@
+{
+  "baseline": "6c7916ac27201da502c855caae39f1ff059be002",
+  "profile": "published beta.3 plus PR432 and PR433 only",
+  "trapMd5": "ce8b43e933803487d70973d5a9e0905c",
+  "pluginSha256": "d3ea31f0bfdf83581d0a0ccf2117c1e8cd8f9486698ecaac465bc93b87f33f6b",
+  "corePatchSha256": "27f7a31b6b1cd16f47dc29fb6d408af3e1f8b0603c7bf39dd0cc10cdd5e5a322",
+  "lockSha256": "99d4f27ece0a8642ecdf3820594e0d7e13ac007e8b09b5ac7b901cf4ac1600ab",
+  "newRegressionCount": 6,
+  "focused": {
+    "files": 9,
+    "tests": 105,
+    "skipped": 0,
+    "durationSeconds": 3.57
+  },
+  "replay": "HELD pending producer verification and parent GO",
+  "fullGate": "HELD pending producer verification and parent GO"
+}

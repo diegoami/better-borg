@@ -21,7 +21,10 @@ Use Node22+, source ~/.nvm/nvm.sh locally, and pnpm from package.json.
 pnpm install --frozen-lockfile installs the matching published content/engine
 and applies the named patch. Run-record tools use tools/engine-pin.mjs; md5sum of
 node_modules/@rpgm-tools/neo-angband-core/dist/game/trap.js identify the runtime;
-current carried trap fingerprint is34c27241f96aceff581bcb186a9d898f.
+current published beta.3 trap fingerprint is ce8b43e933803487d70973d5a9e0905c.
+The active package backports are PR432/input-flush and PR433/accepted-birth
+provenance; neither changes trap.js. Historical beta.2 records retain their
+original34c27241f96aceff581bcb186a9d898f fingerprint and four-unit patch.
 
 Run relevant focused tests first, replay.test.ts alone when its boundary is
 affected, then CI=1 pnpm verify logged under artifacts/. Use

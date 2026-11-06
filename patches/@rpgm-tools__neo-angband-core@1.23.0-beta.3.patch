@@ -1,0 +1,178 @@
+diff --git a/dist/game/context.d.ts b/dist/game/context.d.ts
+index 979d1e883b5ef04247cb9783e13e8024b7ecfaa8..a04539500303b7fe1d3e93a9327ae2c3b02cad5b 100644
+--- a/dist/game/context.d.ts
++++ b/dist/game/context.d.ts
+@@ -18,7 +18,7 @@ import type { GameEvents, GameEventType } from "../events.js";
+ import type { MessageLog, MessageType } from "../msg.js";
+ import type { Loc } from "../loc.js";
+ import type { Connector } from "../gen/util.js";
+-import type { Rng } from "../rng.js";
++import type { Rng, RngState } from "../rng.js";
+ import type { Chunk } from "../world/chunk.js";
+ import type { WorldTopology } from "../world/topology.js";
+ import type { ChestTrapEntry } from "../obj/chest.js";
+@@ -173,6 +173,10 @@ export interface StoredLevel {
+  */
+ export interface GameState {
+     rng: Rng;
++    /** Original master seed, when known; distinct from the current RNG position. */
++    masterSeed?: number;
++    /** RNG position accepted by birth, before player/world generation; absent in legacy saves. */
++    birthRngState?: RngState;
+     chunk: Chunk;
+     actor: PlayerActor;
+     /**
+diff --git a/dist/game/player-path.js b/dist/game/player-path.js
+index 025c970ac255c2f5c2203a2f0e8c491ceb68352f..7d5280e28f0a866e79496544d534bf88a1c44a62 100644
+--- a/dist/game/player-path.js
++++ b/dist/game/player-path.js
+@@ -89,6 +89,17 @@ export function disturb(state) {
+         delete state.resting;
+     if (state.cmdQueue)
+         state.cmdQueue.length = 0;
++    /* Mandos carries neostryder/neo-angband PR #432 (fixes #414; tracked in
++     * diegoami/mandos#41): disturb() signals EVENT_INPUT_FLUSH
++     * (player-util.c:1674). Drop when a release carries it. */
++    if (state.events) {
++        try {
++            state.events.signal("input-flush");
++        }
++        catch (error) {
++            state.onEventFault?.("input-flush", error);
++        }
++    }
+ }
+ /**
+  * see_wall: a "known wall" in the given direction from grid. Webs count as
+diff --git a/dist/mod/host-abi.d.ts b/dist/mod/host-abi.d.ts
+index 9a1b87145b6738d2d83ac82114938932789ed63d..f0ee0b012b7c6510c55ac8c0157af1e3fbe0e5fa 100644
+--- a/dist/mod/host-abi.d.ts
++++ b/dist/mod/host-abi.d.ts
+@@ -1,6 +1,7 @@
+ import type { AgentCommand, AgentController, AgentEventSubscription, BlastAreaResult, BookItemResult, CoreSnapshot, GridInspectResult, InputToken, InspectResult, ItemRulesResult, ItemTesterResult, LoadoutItemRef, LoadoutSlotsResult, SpellInspectResult, TerrainCatalogueResult, TileActionsResult, TravelPathResult } from "../agent/index.js";
+ import type { KnownLevelView } from "../agent/known-level.js";
+ import type { GameState } from "../game/context.js";
++import type { RngState } from "../rng.js";
+ import type { CoreRegistries } from "../session/boot.js";
+ import type { ModRegistryHost } from "./registry-host.js";
+ import type { ComposedRecords, NetProblemCode, NetRequest, PackCompat, ScreenRegions, ScreenView, WorldFrame } from "@rpgm-tools/neo-angband-mod-sdk";
+@@ -2568,6 +2569,16 @@ export interface RunReport {
+     readonly gold: number;
+     /** The game turn the run ended on. */
+     readonly turn: number;
++    /** Original master seed when retained. Omitted for legacy saves or unknown
++     * continuations; a page's fresh random draw is not the restored game's seed.
++     * Replay also requires the same birth path, code and controller policy. */
++    readonly seed?: number;
++    /** Accepted-birth RNG input for exact reproduction; absent for legacy saves. */
++    readonly birthRngState?: Readonly<Omit<RngState, "state">> & {
++        readonly state: readonly number[];
++    };
++    /** Immutable birth options selected for this character, when available. */
++    readonly birthOptions?: Readonly<Record<string, boolean>>;
+     /** total_points: maximum experience plus 100 per level of maximum depth. */
+     readonly score: number;
+     /** Whether the score table accepted the entry. */
+diff --git a/dist/session/game.js b/dist/session/game.js
+index 3cf4bde9e416f417bb4b2d45d64a13dc7df5310a..ebbce61c43c240055ace7cc5d603c12c86ded632 100644
+--- a/dist/session/game.js
++++ b/dist/session/game.js
+@@ -2501,6 +2501,9 @@ function arrivalAnnouncer(state, cause) {
+ function makeReincarnate(state, reg, players, flavor, everseen, changeLevel) {
+     return (opts = {}) => {
+         const rng = state.rng;
++        // This path retains the session's flavor/world state. It is not a fresh
++        // startGame birth, so the previous character's input cannot describe it.
++        delete state.birthRngState;
+         /* "save the existing dungeon. It is cleared later but needs to be blank when
+          * creating the new player" (borg-reincarnate.c:414-418). Nothing below clears
+          * it here - the wipe is confined to the player and their gear - so the restore
+@@ -2814,6 +2817,15 @@ export function startGame(pack, opts = {}) {
+     const mainRng = opts.rng ?? new Rng(opts.seed ?? 1);
+     if (!opts.rng && opts.rngState)
+         mainRng.setState(opts.rngState);
++    // A supplied continuation need not reveal its original seed. Never label it
++    // with the default used only to construct the temporary RNG instance.
++    /* Mandos carries neostryder/neo-angband PR #433 (fixes #431; original seed and accepted birth input; tracked in #42/#54). */
++    const masterSeed = opts.seed !== undefined
++        ? opts.seed >>> 0
++        : opts.rng || opts.rngState ? undefined : 1;
++    // Retain the actual accepted birth position, including the host's history
++    // and name draws. A master seed alone cannot reconstruct those choices.
++    const birthRngState = mainRng.getState();
+     const race = (opts.raceName ? players.raceByName(opts.raceName) : null) ??
+         players.raceByName("Human") ??
+         players.races[0];
+@@ -2961,6 +2973,8 @@ export function startGame(pack, opts = {}) {
+     };
+     const state = {
+         rng: booted.rng,
++        ...(masterSeed === undefined ? {} : { masterSeed }),
++        birthRngState,
+         chunk: booted.chunk,
+         levelTopology: reg.topology,
+         chestTraps: reg.chestTraps,
+@@ -3467,6 +3481,19 @@ export function saveGame(game) {
+         save.orphansAcknowledged = true;
+     return save;
+ }
++function readBirthRngState(value) {
++    if (value === null || typeof value !== "object" || Array.isArray(value))
++        return undefined;
++    const s = value;
++    const uint32 = (n) => typeof n === "number"
++        && Number.isInteger(n) && n >= 0 && n <= 0xffffffff;
++    if (typeof s.quick !== "boolean" || typeof s.fixed !== "boolean"
++        || !uint32(s.value) || !uint32(s.stateI) || s.stateI >= 32 || !uint32(s.fixval)
++        || !Array.isArray(s.state) || s.state.length !== 32 || !s.state.every(uint32))
++        return undefined;
++    return { quick: s.quick, fixed: s.fixed, value: s.value, stateI: s.stateI,
++        fixval: s.fixval, state: [...s.state] };
++}
+ export function loadGame(pack, saveDocument, present = new Set(["core"]), opts = {}) {
+     const reg = bindCore(pack);
+     const players = bindPlayer(pack.player);
+@@ -3619,8 +3646,13 @@ export function loadGame(pack, saveDocument, present = new Set(["core"]), opts =
+     const loadedFloor = !save.isDead && save.floor
+         ? deserializeFloor(save.floor, reg.objects, chunk.width, ids)
+         : new Map();
++    const birthRngState = readBirthRngState(save.birthRngState);
+     const state = {
+         rng,
++        ...(typeof save.masterSeed === "number" && Number.isInteger(save.masterSeed)
++            && save.masterSeed >= 0 && save.masterSeed <= 0xffffffff
++            ? { masterSeed: save.masterSeed } : {}),
++        ...(birthRngState === undefined ? {} : { birthRngState }),
+         chunk,
+         levelTopology: reg.topology,
+         chestTraps: reg.chestTraps,
+diff --git a/dist/session/save.d.ts b/dist/session/save.d.ts
+index 4a064a92da584d9dd884ce8ac827d510ac2bfa88..9dc13ed55f8ed997d7056846cbd55bbee727f469 100644
+--- a/dist/session/save.d.ts
++++ b/dist/session/save.d.ts
+@@ -764,6 +764,10 @@ export interface SavedGame {
+     /** The dungeon header retained by C even when the player is dead. */
+     dungeonDepth?: number;
+     rng: RngState;
++    /** Optional provenance; legacy saves retain their RNG state without an original seed. */
++    masterSeed?: number;
++    /** Original accepted-birth input, not the current gameplay RNG position. */
++    birthRngState?: RngState;
+     turn: number;
+     playing: boolean;
+     isDead: boolean;
+diff --git a/dist/session/save.js b/dist/session/save.js
+index 851a0f6bc64d6be240d3c4dd3c4f0043c04bff03..9936d9fa42c4ce52688d8045b3d08583c2c18ead 100644
+--- a/dist/session/save.js
++++ b/dist/session/save.js
+@@ -1474,6 +1474,10 @@ export function serializeGame(state, flavor, seedFlavor, ids, randartSeed = 0, e
+                 traps,
+             }),
+         rng: state.rng.getState(),
++        ...(state.masterSeed === undefined ? {} : { masterSeed: state.masterSeed }),
++        ...(state.birthRngState === undefined ? {} : {
++            birthRngState: { ...state.birthRngState, state: [...state.birthRngState.state] },
++        }),
+         turn: state.turn,
+         playing: state.playing,
+         isDead: state.isDead,

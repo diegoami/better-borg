@@ -1,0 +1,156 @@
+$ vitest run src/engine-package-backports.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/engine-package-backports.test.ts (6 tests | 5 failed) 402ms
+   × disturb clears actual run/rest/command continuations and signals the host reset 107ms
+   × disturb reports a failing input-flush subscriber without undoing queue cancellation 41ms
+   × fresh births retain the real master seed and pre-generation accepted RNG input 62ms
+   × accepted host RNG input survives save/load without inventing an unknown master seed 62ms
+   × reincarnation does not mislabel the old character's accepted input as a fresh birth 40ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/engine-package-backports.test.ts > disturb clears actual run/rest/command continuations and signals the host reset
+AssertionError: expected { flushes: +0, running: +0, …(3) } to deeply equal { flushes: 1, running: +0, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "flushes": 1,
++   "flushes": 0,
+    "queue": [],
+    "resting": null,
+    "running": 0,
+    "stepCount": 0,
+  }
+
+ ❯ src/engine-package-backports.test.ts:38:18
+     36|     resting: state.resting ?? null, queue: state.cmdQueue };
+     37|   observations.push({ name: "input-flush", ...result });
+     38|   expect(result).toEqual({ flushes: 1, running: 0, stepCount: 0, resti…
+       |                  ^
+     39| });
+     40|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/engine-package-backports.test.ts > disturb reports a failing input-flush subscriber without undoing queue cancellation
+AssertionError: expected [] to deeply equal [ 'input-flush' ]
+
+- Expected
++ Received
+
+- [
+-   "input-flush",
+- ]
++ []
+
+ ❯ src/engine-package-backports.test.ts:52:20
+     50|   expect(() => Core.disturb(state)).not.toThrow();
+     51|   observations.push({ name: "input-flush-fault", reported, queue: stat…
+     52|   expect(reported).toEqual(["input-flush"]);
+       |                    ^
+     53|   expect(state.cmdQueue).toEqual([]);
+     54| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/engine-package-backports.test.ts > fresh births retain the real master seed and pre-generation accepted RNG input
+AssertionError: expected undefined to be 433 // Object.is equality
+
+- Expected:
+433
+
++ Received:
+undefined
+
+ ❯ src/engine-package-backports.test.ts:63:33
+     61|   observations.push({ name: "fresh-birth", masterSeed: game.state.mast…
+     62|     acceptedInput: game.state.birthRngState ?? null, savedSeed: saved.…
+     63|   expect(game.state.masterSeed).toBe(seed);
+       |                                 ^
+     64|   expect(game.state.birthRngState).toEqual(accepted);
+     65|   expect(saved.masterSeed).toBe(seed);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/engine-package-backports.test.ts > accepted host RNG input survives save/load without inventing an unknown master seed
+AssertionError: expected undefined to deeply equal { quick: false, value: 433, …(4) }
+
+- Expected:
+{
+  "fixed": false,
+  "fixval": 0,
+  "quick": false,
+  "state": [
+    949116801,
+    2381520520,
+    3887243730,
+    685916300,
+    3501752445,
+    673726616,
+    730316280,
+    2609591020,
+    3549541026,
+    2052757352,
+    1834956764,
+    3178889820,
+    1031462202,
+    3070670112,
+    868955352,
+    3523327452,
+    748243147,
+    1615548776,
+    2971367974,
+    363462572,
+    1991265163,
+    3506143848,
+    73626048,
+    1389420492,
+    3504214080,
+    2884272408,
+    1218148688,
+    4184036527,
+    2517537055,
+    2679165108,
+    4223837790,
+    76255850,
+  ],
+  "stateI": 25,
+  "value": 433,
+}
+
++ Received:
+undefined
+
+ ❯ src/engine-package-backports.test.ts:83:36
+     81|   expect(saved.masterSeed).toBeUndefined();
+     82|   expect(loaded.state.masterSeed).toBeUndefined();
+     83|   expect(game.state.birthRngState).toEqual(accepted);
+       |                                    ^
+     84|   expect(loaded.state.birthRngState).toEqual(accepted);
+     85|   expect(loaded.state.birthRngState).not.toBe(saved.birthRngState);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/engine-package-backports.test.ts > reincarnation does not mislabel the old character's accepted input as a fresh birth
+AssertionError: expected undefined to be defined
+ ❯ src/engine-package-backports.test.ts:107:36
+    105| it("reincarnation does not mislabel the old character's accepted input…
+    106|   const game = Core.startGame(pack, { seed: 433, raceName: "Human", cl…
+    107|   expect(game.state.birthRngState).toBeDefined();
+       |                                    ^
+    108|   game.reincarnate();
+    109|   observations.push({ name: "reincarnation", birthInput: game.state.bi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)
+   Start at  19:03:14
+   Duration  2.37s (transform 1.48s, setup 140ms, import 1.76s, tests 402ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

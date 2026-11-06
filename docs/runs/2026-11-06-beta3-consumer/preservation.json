@@ -1,0 +1,97 @@
+[
+  {
+    "path": "patches/c-translations/CBUG-0004-cold-melee.patch",
+    "sha256": "16d1a7d416850d6cee024b11ce38ee47f54155cf5c1395fce113faa964278b18",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "patches/c-translations/CBUG-0061-ccw-timing.patch",
+    "sha256": "53c711c3ed981b5dce80fe23d97c88ec9792abcbc8b4b1b79b7ef78a5cc45156",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "patches/c-translations/CBUG-0065-enlightenment.patch",
+    "sha256": "41e5b2ad41adc7a4481a5c0671123c4b219cb1a4839f892cdbb691639e83e271",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "patches/c-translations/CBUG-0086-exact-unseen-name.patch",
+    "sha256": "8a618e4d32dcd9a6c900f60942d5a25abf074b9b0de2aaec3b417e21803be873",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "patches/c-translations/shot-path-279-caster-origin.patch",
+    "sha256": "84eb3a73178596d6aa7c9ea0e8fbbd19ccde4c8814beb13e5c175ba5520b2ca4",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "patches/c-translations/source248-dispel-living.patch",
+    "sha256": "0bc84b002b2ecbddbe659bd632a56c52738a2964789ef9cc1a28d3a934892317",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "patches/c-translations/source257-vampire-selected-distance.patch",
+    "sha256": "2a68d549bf521ae1a0f880e3b4e209ef974aa09ed481babacdd97147d7b5ac05",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "patches/@rpgm-tools__neo-angband-core@1.23.0-beta.2.patch",
+    "sha256": "32af5c48c56b71889dfa70551c053a17430ad174da59634f96b1170fb1ea8513",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/danger/danger.ts",
+    "sha256": "9153176cd1696d33794d113991ec5a6438b038f87ea1b3a722d7381410c52053",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/perceive-messages.ts",
+    "sha256": "418279b592e891f6db517dd494a76a64604bc774947402e2c6d93eb7927c94e0",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/item/item-use.ts",
+    "sha256": "3d4c66b2d62a0045b71b4fcbf03e1777fd7cbe773a6d8ec000e63839105c81cd",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/danger/geometry.ts",
+    "sha256": "de2ab3105d0c4ce7a0a6e281b02fd4545d46496634048942d511cd6be24674ef",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/fight/attack.ts",
+    "sha256": "37618a119f0a6d2518bc3c1ada1e52a30138e3463129b0669b0ce73e2adef125",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/danger/cold-melee-carry.test.ts",
+    "sha256": "96ee28b9154250245ea5e0666d0264b9529074db583f925ce006afd7f3109685",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/perceive-unseen-name.test.ts",
+    "sha256": "3e3665158d6748cced1ce094d8e9288d03bc84b19446fc9fe4586b20a4a9bc92",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/item/enlightenment-carry.test.ts",
+    "sha256": "934cab0c16f65dce5d09a8a20d6ba221d64ac4bf275938d91ba87257dd0e8653",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/danger/shot-origin-carry.test.ts",
+    "sha256": "ecec6053f0c9dbe3d04f30be699c1dcc5a3d164d17d388cfec61606ce7554041",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/item/ccw-timing.test.ts",
+    "sha256": "83e69d425e4b761bbd501287d0e5e439f3c9050724094b501b0e977ed19373e9",
+    "equalToBaseline6c7916a": true
+  },
+  {
+    "path": "src/fight/c-spell-carry.test.ts",
+    "sha256": "5181a3513eede45268ba5c60c7d979707ab869a74a53d52e2792476fa9d4d1a0",
+    "equalToBaseline6c7916a": true
+  }
+]

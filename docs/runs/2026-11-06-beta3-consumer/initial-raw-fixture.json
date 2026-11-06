@@ -1,0 +1,22 @@
+[
+  {
+    "name": "fresh-birth",
+    "masterSeed": null,
+    "acceptedInput": null,
+    "savedSeed": null
+  },
+  {
+    "name": "accepted-host-input",
+    "originalSeed": null,
+    "savedSeed": null,
+    "loadedSeed": null,
+    "acceptedInput": null,
+    "loadedInput": null
+  },
+  {
+    "name": "legacy-invalid",
+    "legacySeed": null,
+    "legacyInput": null,
+    "invalidInput": null
+  }
+]

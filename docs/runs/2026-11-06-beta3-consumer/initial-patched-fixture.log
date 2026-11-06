@@ -1,0 +1,41 @@
+$ vitest run src/engine-package-backports.test.ts src/engine-carry.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/engine-package-backports.test.ts (6 tests | 2 failed) 358ms
+   × disturb clears actual run/rest/command continuations and signals the host reset 87ms
+   × disturb reports a failing input-flush subscriber without undoing queue cancellation 38ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/engine-package-backports.test.ts > disturb clears actual run/rest/command continuations and signals the host reset
+TypeError: Cannot read properties of undefined (reading 'on')
+ ❯ src/engine-package-backports.test.ts:31:17
+     29|   let flushes = 0;
+     30|   // The subscriber is a host reset observer, not a replacement distur…
+     31|   state.events!.on("input-flush", () => { flushes++; });
+       |                 ^
+     32|   Core.disturb(state);
+     33|   const result = { flushes, running: state.run.running, stepCount: sta…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/engine-package-backports.test.ts > disturb reports a failing input-flush subscriber without undoing queue cancellation
+TypeError: Cannot read properties of undefined (reading 'on')
+ ❯ src/engine-package-backports.test.ts:44:17
+     42|   const fault = new Error("intentional host reset observer failure");
+     43|   const reported: string[] = [];
+     44|   state.events!.on("input-flush", () => { throw fault; });
+       |                 ^
+     45|   state.onEventFault = (event, error) => { expect(error).toBe(fault); …
+     46|   expect(() => Core.disturb(state)).not.toThrow();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 10 passed (12)
+   Start at  19:01:35
+   Duration  1.01s (transform 758ms, setup 286ms, import 872ms, tests 625ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

@@ -1,0 +1,134 @@
+$ vitest run src/engine-package-backports.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/engine-package-backports.test.ts (6 tests | 5 failed) 377ms
+   × disturb clears actual run/rest/command continuations and signals the host reset 98ms
+   × disturb reports a failing input-flush subscriber without undoing queue cancellation 37ms
+   × fresh births retain the real master seed and pre-generation accepted RNG input 58ms
+   × accepted host RNG input survives save/load without inventing an unknown master seed 59ms
+   × reincarnation does not mislabel the old character's accepted input as a fresh birth 41ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/engine-package-backports.test.ts > disturb clears actual run/rest/command continuations and signals the host reset
+TypeError: Cannot read properties of undefined (reading 'on')
+ ❯ src/engine-package-backports.test.ts:31:17
+     29|   let flushes = 0;
+     30|   // The subscriber is a host reset observer, not a replacement distur…
+     31|   state.events!.on("input-flush", () => { flushes++; });
+       |                 ^
+     32|   Core.disturb(state);
+     33|   const result = { flushes, running: state.run.running, stepCount: sta…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/engine-package-backports.test.ts > disturb reports a failing input-flush subscriber without undoing queue cancellation
+TypeError: Cannot read properties of undefined (reading 'on')
+ ❯ src/engine-package-backports.test.ts:44:17
+     42|   const fault = new Error("intentional host reset observer failure");
+     43|   const reported: string[] = [];
+     44|   state.events!.on("input-flush", () => { throw fault; });
+       |                 ^
+     45|   state.onEventFault = (event, error) => { expect(error).toBe(fault); …
+     46|   expect(() => Core.disturb(state)).not.toThrow();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/engine-package-backports.test.ts > fresh births retain the real master seed and pre-generation accepted RNG input
+AssertionError: expected undefined to be 433 // Object.is equality
+
+- Expected:
+433
+
++ Received:
+undefined
+
+ ❯ src/engine-package-backports.test.ts:59:33
+     57|   observations.push({ name: "fresh-birth", masterSeed: game.state.mast…
+     58|     acceptedInput: game.state.birthRngState ?? null, savedSeed: saved.…
+     59|   expect(game.state.masterSeed).toBe(seed);
+       |                                 ^
+     60|   expect(game.state.birthRngState).toEqual(accepted);
+     61|   expect(saved.masterSeed).toBe(seed);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/engine-package-backports.test.ts > accepted host RNG input survives save/load without inventing an unknown master seed
+AssertionError: expected undefined to deeply equal { quick: false, value: 433, …(4) }
+
+- Expected:
+{
+  "fixed": false,
+  "fixval": 0,
+  "quick": false,
+  "state": [
+    949116801,
+    2381520520,
+    3887243730,
+    685916300,
+    3501752445,
+    673726616,
+    730316280,
+    2609591020,
+    3549541026,
+    2052757352,
+    1834956764,
+    3178889820,
+    1031462202,
+    3070670112,
+    868955352,
+    3523327452,
+    748243147,
+    1615548776,
+    2971367974,
+    363462572,
+    1991265163,
+    3506143848,
+    73626048,
+    1389420492,
+    3504214080,
+    2884272408,
+    1218148688,
+    4184036527,
+    2517537055,
+    2679165108,
+    4223837790,
+    76255850,
+  ],
+  "stateI": 25,
+  "value": 433,
+}
+
++ Received:
+undefined
+
+ ❯ src/engine-package-backports.test.ts:79:36
+     77|   expect(saved.masterSeed).toBeUndefined();
+     78|   expect(loaded.state.masterSeed).toBeUndefined();
+     79|   expect(game.state.birthRngState).toEqual(accepted);
+       |                                    ^
+     80|   expect(loaded.state.birthRngState).toEqual(accepted);
+     81|   expect(loaded.state.birthRngState).not.toBe(saved.birthRngState);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/engine-package-backports.test.ts > reincarnation does not mislabel the old character's accepted input as a fresh birth
+AssertionError: expected undefined to be defined
+ ❯ src/engine-package-backports.test.ts:103:36
+    101| it("reincarnation does not mislabel the old character's accepted input…
+    102|   const game = Core.startGame(pack, { seed: 433, raceName: "Human", cl…
+    103|   expect(game.state.birthRngState).toBeDefined();
+       |                                    ^
+    104|   game.reincarnate();
+    105|   observations.push({ name: "reincarnation", birthInput: game.state.bi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)
+   Start at  19:01:33
+   Duration  2.38s (transform 1.51s, setup 145ms, import 1.79s, tests 377ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.
