@@ -1,9 +1,11 @@
-# Glyph observation qualification — attribution unresolved
+# Glyph observation qualification — C predicate identified
 
 This is evidence-only work from Mandos d36c867. No gameplay fix, port issue,
 C correction or consumer carry is established by this branch. The real Neo
-observation below is reproduced; original-C versus port-only ownership is
-**on hold** while the source lane qualifies the C trap/glyph condition.
+observation is reproduced. Read-only comparison identifies the same exclusion
+predicate in both original C baselines, so this is **C-origin source work**,
+not a faithful-port-only repair. Native C game validation remains pending on
+source checkpoint207; this branch executed only Neo fixtures.
 
 ## Reproduce
 
@@ -57,7 +59,7 @@ fixture prepares the arrival rather than proving normal flow selected a doorway.
 Its normal reachability and decision impact remain unqualified. Do not bundle
 that observation as an established everyday gameplay bug.
 
-## Source identity and classification hold
+## Source identity and C-origin classification
 
 Current upstream Neo Borg pin a4437882b4f0674dd0e25878e1b93d0fdac65e47:
 
@@ -74,15 +76,27 @@ The message parser differs elsewhere but neither side has a glyph failure handle
 Fresh targeted own/upstream glyph searches found no matching investigation;
 upstream29 is the historical stale-notes report, not proof this behavior is fixed.
 
-**Do not infer that C recognizes runes correctly because a glyph assignment
-exists.** The port reader found pristine C's ag->glyph assignment inside a
-square_isdisarmabletrap condition. That predicate may require TRAP while rune
-kinds have GLYPH|VISIBLE|FLOOR. The source/native owner must qualify this before
-assigning a faithful-port omission or inherited-C defect. No C execution or
-repair was performed here. Parent coordination owns the classification/dispatch.
+Source inspection found the Rune excluded from the C writer too:
 
-[Source118](https://github.com/diegoami/neo-angband-tracker/issues/118), source
-proposal283 ec172531 and evidence284 f1f531 are **discovery context only**.
+- Current [e473720 borg-update.c guard](https://github.com/diegoami/neo-angband-tracker/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/borg/borg-update.c#L330)
+  encloses the glyph assignment at338. Imported [4.2.6 f308221 guard](https://github.com/diegoami/neo-angband-tracker/blob/f3082213b73f3e463e3d0d60bff4b00462beae6e/src/borg/borg-update.c#L324)
+  encloses its assignment at332.
+- [square_isplayertrap requires TRAP](https://github.com/diegoami/neo-angband-tracker/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/cave-square.c#L798);
+  [square_isdisarmabletrap requires that and visibility](https://github.com/diegoami/neo-angband-tracker/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/cave-square.c#L831).
+- The [Rune kind flags](https://github.com/diegoami/neo-angband-tracker/blob/f3082213b73f3e463e3d0d60bff4b00462beae6e/lib/gamedata/trap.txt#L61)
+  are GLYPH|VISIBLE|FLOOR, without TRAP. The [placer copies kind flags](https://github.com/diegoami/neo-angband-tracker/blob/e473720ed88a0f0c7ca66815cef3000eb4a38bc3/src/trap.c#L386)
+  without adding TRAP.
+
+The port reader checked both pins and reported the same condition. An assignment
+existing in C does not prove it executes for a Rune. The correct owner is the
+engine/C tracker; request a bounded native observed-map validation before a C
+proposal and any Mandos translation. Evidence level is **source-checked plus an
+actual Neo downstream outcome**, not c-game-reproduced. No native C execution,
+source repair or faithful-port issue was performed here. The provisional earlier
+port-only classification was withdrawn before any issue was filed.
+
+[Source #118](https://github.com/diegoami/neo-angband-tracker/issues/118), source
+proposal #283 ec172531 and evidence #284 f1f531 are **discovery context only**.
 Their count-underflow/heap-write failure has no mechanical TS rollback counterpart;
 this branch does not reproduce a negative counter or carry that C guard.
 
