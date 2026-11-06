@@ -1,0 +1,10 @@
+$ vitest run src/item/ccw-timing.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  17:33:05
+   Duration  1.08s (transform 433ms, setup 152ms, import 490ms, tests 370ms, environment 0ms)
+

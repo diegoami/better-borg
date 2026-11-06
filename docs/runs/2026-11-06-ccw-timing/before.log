@@ -1,0 +1,79 @@
+$ vitest run src/item/ccw-timing.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/item/ccw-timing.test.ts (17 tests | 5 failed) 688ms
+   × recovery with real prior drink at elapsed 0 63ms
+   × recovery with real prior drink at elapsed 4 35ms
+   × contract: never-drunk helper at supplied clock 0 31ms
+   × contract: never-drunk helper at supplied clock 1 30ms
+   × contract: never-drunk helper at supplied clock 3 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/item/ccw-timing.test.ts > recovery with real prior drink at elapsed 0
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/item/ccw-timing.test.ts:70:16
+     68|  f.world.clock+=elapsed;f.injure();f.confuse();const ctx=await f.conte…
+     69|  observations.push({case:"recover-boundary",elapsed,clock:f.world.cloc…
+     70|  expect(!!cmd).toBe(elapsed===0||elapsed===5);
+       |                ^
+     71|  expect(f.frame()).toMatchObject(cmd?{hp:180,quantity:6,confused:0}:{h…
+     72| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/item/ccw-timing.test.ts > recovery with real prior drink at elapsed 4
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/item/ccw-timing.test.ts:70:16
+     68|  f.world.clock+=elapsed;f.injure();f.confuse();const ctx=await f.conte…
+     69|  observations.push({case:"recover-boundary",elapsed,clock:f.world.cloc…
+     70|  expect(!!cmd).toBe(elapsed===0||elapsed===5);
+       |                ^
+     71|  expect(f.frame()).toMatchObject(cmd?{hp:180,quantity:6,confused:0}:{h…
+     72| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/item/ccw-timing.test.ts > contract: never-drunk helper at supplied clock 0
+ FAIL  src/item/ccw-timing.test.ts > contract: never-drunk helper at supplied clock 1
+ FAIL  src/item/ccw-timing.test.ts > contract: never-drunk helper at supplied clock 3
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/item/ccw-timing.test.ts:78:16
+     76|  const ctx=await f.context(),before=f.frame(),cmd=borgQuaffCrit(ctx,fa…
+     77|  observations.push({case:"never-drunk-contract",clock,command:cmd,ener…
+     78|  expect(!!cmd).toBe(true);expect(f.frame()).toMatchObject({hp:180,quan…
+       |                ^
+     79| });
+     80| it.each(["bypass","reserve","empty","confusion-fallback","heal-no-dang…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 12 passed (17)
+   Start at  17:34:17
+   Duration  1.40s (transform 438ms, setup 146ms, import 496ms, tests 688ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

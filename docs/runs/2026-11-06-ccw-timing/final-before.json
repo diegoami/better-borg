@@ -1,0 +1,504 @@
+[
+  {
+    "case": "controller",
+    "step": 0,
+    "clock": 1000,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 0
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 8
+  },
+  {
+    "case": "controller",
+    "step": 1,
+    "clock": 1001,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    },
+    "energy": 0,
+    "before": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 2,
+    "clock": 1002,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    },
+    "energy": 0,
+    "before": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 3,
+    "clock": 1003,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    },
+    "energy": 0,
+    "before": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 4,
+    "clock": 1004,
+    "command": {
+      "code": "rest"
+    },
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 5,
+    "clock": 1005,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    },
+    "energy": 0,
+    "before": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "recover-boundary",
+    "elapsed": 0,
+    "clock": 1000,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "rng": 662824084
+  },
+  {
+    "case": "recover-boundary",
+    "elapsed": 1,
+    "clock": 1001,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "rng": 662824084
+  },
+  {
+    "case": "recover-boundary",
+    "elapsed": 3,
+    "clock": 1003,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "rng": 662824084
+  },
+  {
+    "case": "recover-boundary",
+    "elapsed": 4,
+    "clock": 1004,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "rng": 1103527590
+  },
+  {
+    "case": "recover-boundary",
+    "elapsed": 5,
+    "clock": 1005,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "rng": 1103527590
+  },
+  {
+    "case": "never-drunk-contract",
+    "clock": 0,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "rng": 1103527590
+  },
+  {
+    "case": "never-drunk-contract",
+    "clock": 1,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "rng": 1103527590
+  },
+  {
+    "case": "never-drunk-contract",
+    "clock": 3,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "rng": 1103527590
+  },
+  {
+    "case": "never-drunk-contract",
+    "clock": 4,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "never-drunk-contract",
+    "clock": 5,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "never-drunk-contract",
+    "clock": 1000,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 10
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "bypass",
+    "clock": 1004,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "reserve",
+    "clock": 1004,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 1,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 1,
+      "confused": 10
+    },
+    "rng": 1
+  },
+  {
+    "case": "empty",
+    "clock": 1004,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 0,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 0,
+      "confused": 10
+    },
+    "rng": 1
+  },
+  {
+    "case": "confusion-fallback",
+    "clock": 1004,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "heal-no-danger",
+    "clock": 1004,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "real-zero-then-one-contract",
+    "clock": 1,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 10
+    },
+    "rng": 1103527590
+  }
+]
