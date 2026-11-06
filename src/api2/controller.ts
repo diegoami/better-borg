@@ -22,7 +22,7 @@
  */
 
 import type { AgentCommand, AgentController } from "@rpgm-tools/neo-angband-core";
-import type { Api2InputState, Api2Prompt, Api2PromptAnswer, ModApi2 } from "@rpgm-tools/neo-angband-mod-sdk";
+import type { Api2InputState, Api2Intent, Api2Prompt, Api2PromptAnswer, ModApi2 } from "@rpgm-tools/neo-angband-mod-sdk";
 import type { Bridge } from "./host.js";
 import type { World } from "./world.js";
 import { createActFacade, intentOf } from "./act.js";
@@ -66,7 +66,7 @@ export interface Decider {
   readonly controller: AgentController;
   rewind(): void;
   /** Mandos166: same settled cached view/command, before submission; no policy feedback. */
-  observe?(world: World, command: AgentCommand, deliveredMessages: readonly string[]): void;
+  observe?(world: World, command: AgentCommand, deliveredMessages: readonly string[], targets: readonly Api2Intent[]): void;
   /** Drop what the Borg's own map believes about one grid, so the next decision treats it as unknown. */
   forget?(x: number, y: number): void;
   /**
@@ -207,7 +207,7 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
       mod.meta.log("the Borg is playing");
     }
 
-    try { borg.observe?.(world, command, deliveredMessages); } catch (error) { mod.meta.log(`Mandos decision recording failed: ${String(error)}`); }
+    try { borg.observe?.(world, command, deliveredMessages, targets); } catch (error) { mod.meta.log(`Mandos decision recording failed: ${String(error)}`); }
     let token = input.token;
     for (const target of targets) {
       const result = await mod.act.submit(token, target);

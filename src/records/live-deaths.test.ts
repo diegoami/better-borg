@@ -54,6 +54,29 @@ describe("Mandos live terminal outbox", () => {
     expect(await r.capture(report())).toBe(false); expect(r.failure).not.toBeNull(); expect(await r.entries()).toHaveLength(1); expect(s.data.size).toBe(0);
     s.quota(false); s.swallow(false); expect(await r.retry()).toBe(true); expect(s.data.size).toBe(1);
   });
+  it.each(["refused", "malformed"])("ACK cannot delete a stored conflict after a %s read", async mode => {
+    const s = storage(), r = recorder(s); s.data.set("legacy-control", { untouched: true });
+    await r.capture(report()); expect(await r.capture({ ...report(), turn: 341 })).toBe(false);
+    const pending = (await r.entries())[0]!;
+    if (mode === "refused") s.api.get = async () => ({ ok: false, reason: "unavailable", message: "transient read failure" });
+    else s.data.set(LIVE_PREFIX + pending.id, { invalidUnimported: true });
+    const before = structuredClone([...s.data]);
+    await expect(r.acknowledge(packetText({ schema: ACK_FORMAT, entries: [{ id: pending.id, packetSha256: pending.sha256, corpusReceiptSha256: "1".repeat(64) }] }))).rejects.toThrow(mode === "refused" ? /read failed/ : /invalid stored/);
+    expect([...s.data]).toEqual(before); expect(s.data.get("legacy-control")).toEqual({ untouched: true });
+  });
+  it("preserves a valid large Unicode death within its byte budget with honest original/kept totals", async () => {
+    const s = storage(), r = recorder(s), unicode = "😀".repeat(10000);
+    const terminal = { ...report(), cause: "foe " + unicode, messages: Array.from({ length: 40 }, () => ({ text: unicode, count: 1 })),
+      belongings: Array.from({ length: 100 }, () => ({ name: unicode, color: "white", location: "pack" as const, quantity: 1, recall: null })) };
+    expect(await r.capture(terminal)).toBe(true);
+    const e = (await recorder(s).entries())[0]!;
+    expect(new TextEncoder().encode(packetText(e.packet)).length).toBeLessThanOrEqual(49152);
+    expect(e.packet.terminal.outcome).toBe("death"); expect(String(e.packet.terminal.cause)).toMatch(/^foe /);
+    expect(e.packet.terminal.textTruncated).toBe(true); expect(Number(e.packet.terminal.textBytesKept)).toBeLessThan(Number(e.packet.terminal.textBytesOriginal));
+    expect(e.packet.terminal.messagesTotal).toBe(40); expect(e.packet.terminal.belongingsTotal).toBe(100);
+    expect(e.packet.terminal.messagesKept).toBe((e.packet.terminal.messages as unknown[]).length);
+    expect(await packetHash(e.packet.terminal)).toBe(e.packet.terminalHash);
+  });
   it("rejects ACK mismatch before deletion, then removes only verified new packets; ACK retry is harmless", async () => {
     const s = storage(), r = recorder(s); s.data.set("legacy-graveyard", { untouched: true });
     await r.capture(report()); await r.capture(report("second")); const [e] = await r.entries();

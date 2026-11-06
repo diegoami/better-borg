@@ -10,6 +10,9 @@ type KV = Pick<Api2KeyValueStore, "get" | "set" | "keys">;
 const copy = (x: unknown): JsonValue => JSON.parse(JSON.stringify(x)) as JsonValue;
 export interface DecisionFrame {
   readonly turn: number;
+  readonly targets: JsonValue;
+  readonly targetsTotal: number;
+  readonly targetsState: "not-yet-submitted" | "attempted-in-headless-controller" | "not-captured";
   readonly command: JsonValue;
   readonly player: JsonValue;
   readonly monsters: JsonValue;
@@ -19,7 +22,7 @@ export interface DecisionFrame {
   readonly precision: "character-known/health-band-derived" | "character-known+granted-monster-truth";
 }
 /** Read the same cached view, before submit. No host call, RNG, timer or model access. */
-export function decisionFrame(view: AgentView, command: AgentCommand | null, hasTruth: boolean, deliveredMessages: readonly string[] = []): DecisionFrame {
+export function decisionFrame(view: AgentView, command: AgentCommand | null, hasTruth: boolean, deliveredMessages: readonly string[] = [], targets: readonly unknown[] = [], targetsState: DecisionFrame["targetsState"] = "not-captured"): DecisionFrame {
   const p = view.player(), bounds = view.mapBounds(), cells: JsonValue[] = [];
   for (let y = p.grid.y - 3; y <= p.grid.y + 3; y++) for (let x = p.grid.x - 3; x <= p.grid.x + 3; x++) {
     const c = x >= 0 && y >= 0 && x < bounds.width && y < bounds.height ? view.cell(x, y) : null;
@@ -28,7 +31,7 @@ export function decisionFrame(view: AgentView, command: AgentCommand | null, has
   const item = (i: ReturnType<AgentView["inventory"]>[number]) => ({ handle: i.handle, label: i.label.slice(0, 512), quantity: i.number, aware: i.aware, unknownRunes: (i as { unknownRunes?: boolean }).unknownRunes ?? null });
   const raw = command as { code: string; dir?: number; args?: unknown } | null;
   return {
-    turn: view.turn(), command: copy(raw ? { code: raw.code, ...(raw.dir === undefined ? {} : { dir: raw.dir }), ...(raw.args === undefined ? {} : { args: raw.args }), submission: "not-yet-submitted" } : null),
+    turn: view.turn(), targets: copy(targets.slice(0, 16)), targetsTotal: targets.length, targetsState, command: copy(raw ? { code: raw.code, ...(raw.dir === undefined ? {} : { dir: raw.dir }), ...(raw.args === undefined ? {} : { args: raw.args }), submission: "not-yet-submitted" } : null),
     player: copy({ grid: p.grid, hp: p.hp, maxHp: p.maxHp, sp: p.sp, maxSp: p.maxSp, depth: p.depth, level: p.level, status: p.status }),
     monsters: copy(view.monsters().filter(m => m.visible).slice(0, 12).map(m => ({ id: m.id, name: m.race, grid: m.grid, hp: m.hp, maxHp: m.maxHp, visible: m.visible }))),
     map: cells,
@@ -69,15 +72,33 @@ function terminalOf(report: RunReport): Json {
   const fields = ["cause", "race", "cls", "level", "maxLevel", "depth", "maxDepth", "gold", "turn", "endedAt", "birth", "messages", "belongings"] as const;
   const missing = fields.filter(key => report[key] === undefined || report[key] === null);
   const messages = report.messages ?? [], belongings = report.belongings ?? [];
-  const clipped = (value: string, limit: number): string => value.slice(0, limit);
+  const utf8 = (value: string): number => new TextEncoder().encode(value).length;
+  const clipped = (value: string, limit: number): string => {
+    let result = "", used = 0;
+    for (const point of value) { const size = utf8(point); if (used + size > limit) break; result += point; used += size; }
+    return result;
+  };
   const known = (value: unknown): JsonValue => value === undefined ? null : copy(value);
-  return copy({ outcome: report.outcome, cause: typeof report.cause === "string" ? clipped(report.cause, 256) : null,
+  const terminal = copy({ outcome: report.outcome, cause: typeof report.cause === "string" ? clipped(report.cause, 256) : null,
     key: typeof report.key === "string" ? report.key : null, race: known(report.race), class: known(report.cls), birthStats: report.birth?.stats ?? [],
     level: known(report.level), maxLevel: known(report.maxLevel), depth: known(report.depth), maxDepth: known(report.maxDepth), gold: known(report.gold), turn: known(report.turn), endedAt: known(report.endedAt), missing,
     ...(typeof (report as unknown as { seed?: unknown }).seed === "number" ? { seed: (report as unknown as { seed: number }).seed } : {}),
     ...birthReplayDataOf(report), knowledge: "terminal-revealed", messages: messages.slice(-20).map(m => ({ text: clipped(m.text, 512), count: m.count })), messagesTotal: messages.length,
     belongings: belongings.slice(0, 48).map(i => ({ name: clipped(i.name, 160), location: i.location, quantity: i.quantity })), belongingsTotal: belongings.length,
-    textTruncated: messages.length > 20 || belongings.length > 48 || messages.some(m => m.text.length > 512) || belongings.some(i => i.name.length > 160) || (report.cause?.length ?? 0) > 256 }) as Json;
+    textBytesOriginal: utf8(report.cause ?? "") + messages.reduce((n,m) => n + utf8(m.text), 0) + belongings.reduce((n,i) => n + utf8(i.name), 0),
+    textBytesKept: 0, textTruncated: false }) as Json;
+  const kept = (): number => utf8(String(terminal.cause ?? "")) + (terminal.messages as {text:string}[]).reduce((n,m) => n + utf8(m.text), 0) + (terminal.belongings as {name:string}[]).reduce((n,i) => n + utf8(i.name), 0);
+  terminal.textBytesKept = kept();
+  while (utf8(packetText(terminal)) > 16384) {
+    if ((terminal.messages as JsonValue[]).length) (terminal.messages as JsonValue[]).shift();
+    else if ((terminal.belongings as JsonValue[]).length) (terminal.belongings as JsonValue[]).pop();
+    else break;
+    terminal.textBytesKept = kept();
+  }
+  terminal.messagesKept = (terminal.messages as JsonValue[]).length;
+  terminal.belongingsKept = (terminal.belongings as JsonValue[]).length;
+  terminal.textTruncated = terminal.textBytesKept !== terminal.textBytesOriginal || terminal.messagesKept !== messages.length || terminal.belongingsKept !== belongings.length;
+  return terminal;
 }
 export interface LiveRecorder {
   observe(frame: DecisionFrame): void;
@@ -126,7 +147,7 @@ export function createLiveRecorder(deps: { store: KV; source: () => LiveSource; 
           const terminalHash = await packetHash(terminal), hostKey = typeof report.key === "string" && report.key ? report.key : null;
           const id = await packetHash({ mod: source.mod, identity: hostKey ?? `${session}:${terminalHash}` });
           if (acknowledged.get(id) === terminalHash) return true;
-          const gaps = ["no-full-fatal-save", "submission-results-not-recorded", "messages-only-as-delivered-to-controller", "controller-command-tail-only", "separate-target-intents-not-recorded", "frame-limits-map7x7-monsters12-pack24-home24-messages8-text512", ...((terminal.missing as string[]).map(key => "terminal-" + key + "-unavailable")), ...(source.codeDigest === null ? ["exact-code-digest-unavailable"] : []), ...(tail.length ? [] : ["pre-decision-tail-unavailable"])];
+          const gaps = ["no-full-fatal-save", "submission-results-not-recorded", "messages-only-as-delivered-to-controller", "controller-command-tail-only", ...(tail.some(f => f.targetsState === "not-captured") ? ["target-intents-not-captured-for-some-frames"] : []), "frame-limits-map7x7-monsters12-pack24-home24-messages8-text512", ...((terminal.missing as string[]).map(key => "terminal-" + key + "-unavailable")), ...(source.codeDigest === null ? ["exact-code-digest-unavailable"] : []), ...(tail.length ? [] : ["pre-decision-tail-unavailable"])];
           const packet: LivePacket = { schema: LIVE_FORMAT, id, terminalHash, source, identity: { hostKey, quality: hostKey ? "host-key" : "derived-session" }, terminal,
             capture: { frames: tail, decisions, droppedFrames: Math.max(0, decisions - tail.length), truncated: decisions > tail.length, gaps }, pending: { export: true, analysis: true } };
           while (new TextEncoder().encode(packetText(packet)).length > MAX_LIVE_BYTES && tail.length) {
@@ -161,7 +182,10 @@ export function createLiveRecorder(deps: { store: KV; source: () => LiveSource; 
       const remove: { id: string; terminalHash: string }[] = [];
       for (const item of ack.entries) {
         if (!object(item) || !isHash(item.id) || !isHash(item.packetSha256) || !isHash(item.corpusReceiptSha256)) throw new Error("Invalid import acknowledgement identity/hash");
-        const read = await deps.store.get(LIVE_PREFIX + item.id), entry = read.ok ? storedPacket(read.value) : null;
+        const read = await deps.store.get(LIVE_PREFIX + item.id);
+        if (!read.ok) throw new Error("Acknowledgement storage read failed; no report may be removed");
+        const entry = storedPacket(read.value);
+        if (read.value !== null && entry === null) throw new Error("Acknowledgement found invalid stored data; preserve it for inspection");
         if (read.ok && read.value === null && !volatile.has(item.id)) continue; // ACK retry is idempotent.
         const pending = volatile.get(item.id);
         if (pending && pending.sha256 !== item.packetSha256) throw new Error("A conflicting unrecorded terminal report remains; acknowledgement cannot discard it");

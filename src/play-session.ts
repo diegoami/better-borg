@@ -284,6 +284,8 @@ export interface LifeStall {
 interface LifeObservation {
   /** Diagnostic snapshot; never fed back into a decision. */
   borgRng(): number;
+  readonly captureErrors: readonly string[];
+  readonly captureErrorsTotal: number;
   /** The command census: how many times each code was issued. */
   readonly commands: Record<string, number>;
   /** One entry per decision: where the character stood, and whether anything was in sight. */
@@ -331,6 +333,8 @@ export function observingLife(
   observe?: (frame: DecisionFrame) => void,
 ): LifeObservation {
   const state: GameState = game.state;
+  const captureErrors: string[] = [];
+  let captureErrorsTotal = 0;
   /* FORK: Mandos #99 keeps the measurement on the shipped API2 item analysis. */
   const records = (value: unknown) => (value as { records: JsonRecord[] }).records;
   const analyze = itemAnalyzerFromRecords(records(pack.obj.object), records(pack.obj.egoItem),
@@ -396,14 +400,19 @@ export function observingLife(
       if (!armed) return null;
       armed = false;
       const view = playView(core, game, legacyView, viewDeps, floors, analyze);
-      const act = { ...legacyAct, setTargetMonster: (id: number) => {
+      const targetIntents: { kind: "target"; midx?: number; x?: number; y?: number }[] = [];
+      const act = { ...legacyAct, setTargetLocation: (x: number, y: number) => { targetIntents.push({ kind: "target", x, y }); return legacyAct.setTargetLocation(x, y); }, setTargetMonster: (id: number) => {
+        targetIntents.push({ kind: "target", midx: id });
         const actual = core.knownMonsterMidx(state, id);
         return actual === null ? false : legacyAct.setTargetMonster(actual);
       } };
       const deliveredMessages: string[] = [];
       const decisionView = observe ? { ...view, messages: () => { const batch = view.messages(); deliveredMessages.push(...batch); return batch; } } : view;
       const cmd = borg.controller(decisionView, act);
-      if (observe && cmd) observe(decisionFrame(view, cmd, true, deliveredMessages));
+      if (observe && cmd) {
+        try { observe(decisionFrame(view, cmd, true, deliveredMessages, targetIntents, "attempted-in-headless-controller")); }
+        catch (error) { captureErrorsTotal++; captureErrors.push(String(error).slice(0, 256)); if (captureErrors.length > 8) captureErrors.shift(); }
+      }
       if (cmd) commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
       decision += 1;
       const step = watch.observe(cmd === null ? "" : sceneKey(view), cmd);
@@ -446,6 +455,8 @@ export function observingLife(
 
   return {
     borgRng: () => borg.rng.snapshot(),
+    captureErrors,
+    get captureErrorsTotal() { return captureErrorsTotal; },
     commands,
     trail,
     places,
@@ -915,6 +926,7 @@ function killsOf(state: GameState): number {
 /** One pack character's life, with its records read back from the journal's slots. */
 export interface SessionLife extends BirthReplayData {
   readonly decisionTail?: readonly DecisionFrame[];
+  readonly decisionCaptureErrors?: { readonly total: number; readonly tail: readonly string[] };
   readonly seed: number;
   /** 1-based life number within the session (one character per life). */
   readonly life: number;
@@ -1227,7 +1239,7 @@ export async function playPackSession(
 
     lives.push({
       seed,
-      ...(options.captureDecisionTail ? { decisionTail } : {}),
+      ...(options.captureDecisionTail ? { decisionTail, decisionCaptureErrors: { total: observed.captureErrorsTotal, tail: [...observed.captureErrors] } } : {}),
       ...birthReplayDataOf(state),
       ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
       life: lives.length + 1,

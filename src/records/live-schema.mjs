@@ -25,7 +25,9 @@ const birthRng = s => keys(s, ['quick','fixed','value','stateI','fixval','state'
 const scalarMap = v => isObject(v) && Object.values(v).every(x => typeof x === 'boolean' || Number.isFinite(x));
 const item = v => keys(v, ['handle','label','quantity','aware','unknownRunes']) && Number.isFinite(v.handle) && text(v.label, 512) && integer(v.quantity) && typeof v.aware === 'boolean' && (v.unknownRunes === null || typeof v.unknownRunes === 'boolean');
 function frame(f) {
-  return keys(f, ['turn','command','player','monsters','map','items','messages','precision']) && integer(f.turn)
+  return keys(f, ['turn','command','player','monsters','map','items','messages','precision','targets','targetsTotal','targetsState']) && integer(f.turn)
+    && Array.isArray(f.targets) && f.targets.length <= 16 && integer(f.targetsTotal) && f.targetsTotal >= f.targets.length && ['not-yet-submitted','attempted-in-headless-controller','not-captured'].includes(f.targetsState)
+    && f.targets.every(t => keys(t, ['kind','midx','x','y']) && t.kind === 'target' && Object.values(t).every(v => v === 'target' || Number.isFinite(v)))
     && ['character-known/health-band-derived','character-known+granted-monster-truth'].includes(f.precision)
     && keys(f.command, ['code','dir','args','submission']) && text(f.command.code, 64) && f.command.submission === 'not-yet-submitted'
     && keys(f.player, ['grid','hp','maxHp','sp','maxSp','depth','level','status']) && grid(f.player.grid)
@@ -44,9 +46,9 @@ export function packetShape(value) {
     && (p.source.codeDigest === null || isHash(p.source.codeDigest)) && isObject(p.source.flags) && Object.values(p.source.flags).every(v => typeof v === 'boolean')
     && isObject(p.source.settings) && Object.values(p.source.settings).every(Number.isFinite)
     && keys(p.identity, ['hostKey','quality']) && (p.identity.hostKey === null || typeof p.identity.hostKey === 'string') && ['host-key','derived-session'].includes(p.identity.quality)
-    && keys(p.terminal, ['outcome','cause','key','race','class','birthStats','level','maxLevel','depth','maxDepth','gold','turn','endedAt','seed','birthRngState','birthOptions','knowledge','messages','messagesTotal','belongings','belongingsTotal','textTruncated','missing'])
+    && keys(p.terminal, ['outcome','cause','key','race','class','birthStats','level','maxLevel','depth','maxDepth','gold','turn','endedAt','seed','birthRngState','birthOptions','knowledge','messages','messagesTotal','belongings','belongingsTotal','textTruncated','missing','textBytesOriginal','textBytesKept','messagesKept','belongingsKept'])
     && ['death','winner','retired'].includes(p.terminal.outcome) && (p.terminal.cause === null || text(p.terminal.cause, 256)) && p.terminal.knowledge === 'terminal-revealed'
-    && ['race','class'].every(k => p.terminal[k] === null || text(p.terminal[k], 128)) && ['level','maxLevel','depth','maxDepth','gold','turn','endedAt'].every(k => p.terminal[k] === null || integer(p.terminal[k])) && ['messagesTotal','belongingsTotal'].every(k => integer(p.terminal[k]))
+    && ['race','class'].every(k => p.terminal[k] === null || text(p.terminal[k], 128)) && ['level','maxLevel','depth','maxDepth','gold','turn','endedAt'].every(k => p.terminal[k] === null || integer(p.terminal[k])) && ['messagesTotal','belongingsTotal','textBytesOriginal','textBytesKept','messagesKept','belongingsKept'].every(k => integer(p.terminal[k]))
     && Array.isArray(p.terminal.missing) && p.terminal.missing.length <= 13 && p.terminal.missing.every(k => text(k, 32))
     && (p.terminal.seed === undefined || uint(p.terminal.seed)) && (p.terminal.birthRngState === undefined || birthRng(p.terminal.birthRngState))
     && (p.terminal.birthOptions === undefined || (isObject(p.terminal.birthOptions) && Object.entries(p.terminal.birthOptions).every(([k,v]) => k.startsWith('birth_') && typeof v === 'boolean')))

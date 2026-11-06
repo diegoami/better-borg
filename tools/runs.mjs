@@ -172,7 +172,7 @@ const session = await playPackSession(Core, loadPack(packDir), strategy, {
     // Atomic immutable terminal receipt before another life can boot. A later batch failure leaves this intact.
     const tail = { schema: "mandos/headless-decision-tail@1", life: life.life, seed: life.seed,
       knowledge: "pre-decision-known+granted-monster-truth", decisions: life.decisions,
-      truncated: life.decisions > (life.decisionTail?.length ?? 0), frames: life.decisionTail ?? [] };
+      truncated: life.decisions > (life.decisionTail?.length ?? 0), captureErrors: life.decisionCaptureErrors ?? { total: 0, tail: [] }, frames: life.decisionTail ?? [] };
     const tailBytes = JSON.stringify(tail, null, 2) + "\n";
     const tailPath = join(terminalOutbox, key, "decision-tail.json");
     writeImmutableObservation(tailPath, tailBytes);

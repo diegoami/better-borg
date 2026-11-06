@@ -573,7 +573,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, observe: (world, command, messages) => deathRecorder.observe(decisionFrame(world.view, command, made.hasTruth, messages)), forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, observe: (world, command, messages, targets) => deathRecorder.observe(decisionFrame(world.view, command, made.hasTruth, messages, targets, "not-yet-submitted")), forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
 }
 
 const definition: Api2ModDefinition = {
