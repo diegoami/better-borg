@@ -6,10 +6,17 @@ dossier and write a diagnosis. The tools support that work; they do not
 automatically launch an analysis session for every death. Human play of the
 last turns is optional.
 
-The authorized scope is bug hunting and fixing ([rule 15](../RULES.md)).
+The authorized scope is bug hunting and fixing ([RULES.md, rule 3](../RULES.md)).
 A diagnosis can identify a policy idea, but new strategies, parameter
 learning and fatal-state snapshot features remain parked. The longer-term
 trainer design in the roadmap does not authorize those features.
+
+The owner has now requested a durable report for every death and aggregation
+into actionable issues. [Issue #166](https://github.com/diegoami/mandos/issues/166)
+and [the audited implementation plan](tasks/death-corpus-plan.md) cover the
+missing intake/index/diagnosis-queue layer. Those are planned follow-ups; the
+manual replay and diagnosis tools below are already implemented. Repository
+reports do not imply a full fatal-state save or an automatic analysis service.
 
 ## The loop
 
