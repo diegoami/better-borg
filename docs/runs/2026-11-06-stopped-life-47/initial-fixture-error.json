@@ -1,0 +1,359 @@
+[
+  {
+    "mode": "clock",
+    "cap": 1,
+    "before": {
+      "turn": 0,
+      "hp": 19
+    },
+    "after": {
+      "turn": 0,
+      "hp": 19
+    },
+    "calls": [
+      {
+        "enteredClock": 1000,
+        "preparedClock": 30000,
+        "afterClock": 30000,
+        "reset": false,
+        "command": null
+      }
+    ],
+    "commands": {},
+    "trailLength": 1,
+    "stall": null,
+    "error": "seed 47: the census counts 0 commands over 1 decisions - the record would disagree with the game"
+  },
+  {
+    "mode": "wrap",
+    "cap": 2,
+    "before": {
+      "turn": 0,
+      "hp": 19
+    },
+    "after": {
+      "turn": 30,
+      "hp": 19
+    },
+    "calls": [
+      {
+        "enteredClock": 1000,
+        "preparedClock": 12000,
+        "afterClock": 12000,
+        "reset": true,
+        "command": "hold"
+      },
+      {
+        "enteredClock": 1000,
+        "preparedClock": 1000,
+        "afterClock": 1000,
+        "reset": false,
+        "command": "walk"
+      }
+    ],
+    "commands": {
+      "hold": 1,
+      "walk": 1
+    },
+    "trailLength": 2,
+    "stall": null,
+    "result": {
+      "dead": false,
+      "taken": 2,
+      "attained": false
+    },
+    "error": null
+  },
+  {
+    "mode": "transient",
+    "cap": 2,
+    "before": {
+      "turn": 0,
+      "hp": 19
+    },
+    "after": {
+      "turn": 20,
+      "hp": 19
+    },
+    "calls": [
+      {
+        "enteredClock": 1000,
+        "preparedClock": 1000,
+        "afterClock": 1000,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1001,
+        "preparedClock": 1001,
+        "afterClock": 1001,
+        "reset": false,
+        "command": "walk"
+      }
+    ],
+    "commands": {
+      "walk": 1
+    },
+    "trailLength": 2,
+    "stall": null,
+    "error": "seed 47: the census counts 1 commands over 2 decisions - the record would disagree with the game"
+  },
+  {
+    "mode": "idle",
+    "cap": 30,
+    "before": {
+      "turn": 0,
+      "hp": 19
+    },
+    "after": {
+      "turn": 0,
+      "hp": 19
+    },
+    "calls": [
+      {
+        "enteredClock": 1000,
+        "preparedClock": 1000,
+        "afterClock": 1000,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1001,
+        "preparedClock": 1001,
+        "afterClock": 1001,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1002,
+        "preparedClock": 1002,
+        "afterClock": 1002,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1003,
+        "preparedClock": 1003,
+        "afterClock": 1003,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1004,
+        "preparedClock": 1004,
+        "afterClock": 1004,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1005,
+        "preparedClock": 1005,
+        "afterClock": 1005,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1006,
+        "preparedClock": 1006,
+        "afterClock": 1006,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1007,
+        "preparedClock": 1007,
+        "afterClock": 1007,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1008,
+        "preparedClock": 1008,
+        "afterClock": 1008,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1009,
+        "preparedClock": 1009,
+        "afterClock": 1009,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1010,
+        "preparedClock": 1010,
+        "afterClock": 1010,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1011,
+        "preparedClock": 1011,
+        "afterClock": 1011,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1012,
+        "preparedClock": 1012,
+        "afterClock": 1012,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1013,
+        "preparedClock": 1013,
+        "afterClock": 1013,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1014,
+        "preparedClock": 1014,
+        "afterClock": 1014,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1015,
+        "preparedClock": 1015,
+        "afterClock": 1015,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1016,
+        "preparedClock": 1016,
+        "afterClock": 1016,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1017,
+        "preparedClock": 1017,
+        "afterClock": 1017,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1018,
+        "preparedClock": 1018,
+        "afterClock": 1018,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1019,
+        "preparedClock": 1019,
+        "afterClock": 1019,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1020,
+        "preparedClock": 1020,
+        "afterClock": 1020,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1021,
+        "preparedClock": 1021,
+        "afterClock": 1021,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1022,
+        "preparedClock": 1022,
+        "afterClock": 1022,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1023,
+        "preparedClock": 1023,
+        "afterClock": 1023,
+        "reset": false,
+        "command": null
+      },
+      {
+        "enteredClock": 1024,
+        "preparedClock": 1024,
+        "afterClock": 1024,
+        "reset": false,
+        "command": null
+      }
+    ],
+    "commands": {},
+    "trailLength": 25,
+    "stall": {
+      "kind": "idle",
+      "command": null,
+      "decision": 25,
+      "turn": 0
+    },
+    "error": "seed 47: the census counts 0 commands over 25 decisions - the record would disagree with the game"
+  },
+  {
+    "mode": "normal",
+    "cap": 1,
+    "before": {
+      "turn": 0,
+      "hp": 19
+    },
+    "after": {
+      "turn": 20,
+      "hp": 19
+    },
+    "calls": [
+      {
+        "enteredClock": 1000,
+        "preparedClock": 1000,
+        "afterClock": 1000,
+        "reset": false,
+        "command": "walk"
+      }
+    ],
+    "commands": {
+      "walk": 1
+    },
+    "trailLength": 1,
+    "stall": null,
+    "result": {
+      "dead": false,
+      "taken": 1,
+      "attained": false
+    },
+    "error": null
+  },
+  {
+    "mode": "normal",
+    "cap": 1,
+    "before": {
+      "turn": 0,
+      "hp": 19
+    },
+    "after": {
+      "turn": 20,
+      "hp": 19
+    },
+    "calls": [
+      {
+        "enteredClock": 1000,
+        "preparedClock": 1000,
+        "afterClock": 1000,
+        "reset": false,
+        "command": "walk"
+      }
+    ],
+    "commands": {
+      "__intentional_test_corruption__": 1,
+      "walk": 1
+    },
+    "trailLength": 1,
+    "stall": null,
+    "error": "seed 47: the census counts 2 commands over 1 decisions - the record would disagree with the game"
+  }
+]

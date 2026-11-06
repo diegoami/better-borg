@@ -1,0 +1,10 @@
+$ vitest run src/play-stop.test.ts src/run-record.test.ts src/play-parity.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+
+ Test Files  3 passed (3)
+      Tests  32 passed (32)
+   Start at  23:11:08
+   Duration  16.21s (transform 3.51s, setup 1.93s, import 4.26s, tests 14.47s, environment 1ms)
+

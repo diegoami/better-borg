@@ -269,6 +269,8 @@ export class BorgWorld {
    * advance exactly once per think (see controller.ts).
    */
   clock = 0;
+  /** FORK: Mandos #47, diagnostic for the last explicit Borg stop; not a policy input. */
+  stopReason: string | null = null;
 
   /** True once at least one perception has populated the model. */
   seeded = false;

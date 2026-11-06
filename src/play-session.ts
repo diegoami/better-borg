@@ -37,17 +37,11 @@
  * engine's own onPlayerKill hook, a wall-clock stamp). None of them draws
  * RNG, so a session on a given engine build is what it always was.
  *
- * ONE COUNTING RULE (adopted from the archived fork's review #36): a
- * decision is counted WHEN IT COMPLETES, whatever its outcome. The killing
- * decision of a dying run is a decision like any other - it was issued (the
- * census saw it) and it completes (the loop returns DEAD) - so `decisions`
- * and the census agree on every run, and the driver throws the moment they
- * do not, because a record that disagrees with the game is about to be
- * committed. The archived fork's committed records under #36's fix counted
- * this way; B02's committed record (2026-11-02-b02-verify) predates it and
- * undercounts its one dying run by exactly one (seed 7: 1228 recorded, 1229
- * issued) - that record stays as committed (append-only), and every record
- * from here on counts the killing decision.
+ * COUNTING: a completed command reply is a decision, including the command
+ * that kills the character. An armed reply with no command is an attempt,
+ * counted separately, not a fabricated command. The outer loop-call budget
+ * stays bounded. Independent scalar counters protect the command census;
+ * normal command-only records retain their previous counting and shape.
  *
  * Determinism (rule 5): the birth input fixes the game, and the Borg starts
  * its private stream exactly as the shipped plugin does (#54). Wall-clock
@@ -270,7 +264,8 @@ export function loadPack(dir: string): GamePack {
 /**
  * FORK (Mandos #56): a life that stalled - the same command against the same
  * scene STALLS_BEFORE_RELEASE times, or no command IDLE_BEFORE_RELEASE times.
- * `decision` is the 1-based decision that completed the stall.
+ * `decision` retains its historical name: the 1-based armed reply/attempt
+ * that completed the stall, including replies with no command.
  */
 export interface LifeStall {
   readonly kind: "repeat" | "idle";
@@ -303,6 +298,12 @@ interface LifeObservation {
   };
   /** FORK (Mandos #56): the stall that ended this life, or null (src/loop/stall.ts). */
   readonly stall: LifeStall | null;
+  /** Independent actual callback counters, never derived from the census map. */
+  readonly issuedCommands: number;
+  readonly attempts: number;
+  readonly noCommandReplies: number;
+  /** The last actual Borg decision's explicit stop, not an arbitrary null. */
+  readonly stopReason: string | null;
   /** Arm the Borg for the next decision (the host's latch, main.ts). */
   arm(): void;
   /** Remove the controller (the engine restores the previous provider). */
@@ -386,6 +387,8 @@ export function observingLife(
   const watch = createStallWatch();
   let stall: LifeStall | null = null;
   let decision = 0;
+  let issuedCommands = 0;
+  let noCommandReplies = 0;
   const session = core.installController(
     state,
     (legacyView, legacyAct) => {
@@ -397,7 +400,12 @@ export function observingLife(
         return actual === null ? false : legacyAct.setTargetMonster(actual);
       } };
       const cmd = borg.controller(view, act);
-      if (cmd) commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
+      if (cmd) {
+        issuedCommands++;
+        commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
+      } else {
+        noCommandReplies++;
+      }
       decision += 1;
       const step = watch.observe(cmd === null ? "" : sceneKey(view), cmd);
       if (step.forget && cmd !== null) {
@@ -449,6 +457,10 @@ export function observingLife(
     get stall(): LifeStall | null {
       return stall;
     },
+    get issuedCommands() { return issuedCommands; },
+    get attempts() { return decision; },
+    get noCommandReplies() { return noCommandReplies; },
+    get stopReason() { return borg.world.stopReason; },
     arm: () => {
       armed = true;
     },
@@ -475,10 +487,11 @@ export function driveLife(
   seed: number,
   stage: StageDefinition | undefined = undefined,
   visit: (() => void) | undefined = undefined,
-): { dead: boolean; taken: number; attained: boolean } {
+): { dead: boolean; taken: number; attained: boolean; attempts: number; noCommandReplies: number; stopped: string | null } {
   const state: GameState = game.state;
   let dead = false;
   let attained = false;
+  let stopped: string | null = null;
   let taken = 0;
   /** The stage watch (#25): the same sticky facts the mod's tick reads -
    * level and maxDepth from the LIVE player - asked before each decision
@@ -487,7 +500,9 @@ export function driveLife(
    * no further decision. */
   const attainedNow = (): boolean =>
     stage !== undefined && stageAttained(stage, { clvl: state.actor.player.lev, maxDepth: state.actor.player.maxDepth });
-  for (; taken < decisions; ) {
+  // Cap Core loop calls, not just commands: null replies must not add an
+  // unbounded number of extra attempts to the requested budget.
+  for (let calls = 0; calls < decisions; calls++) {
     visit?.();
     if (attainedNow()) {
       attained = true;
@@ -495,13 +510,9 @@ export function driveLife(
     }
     life.arm();
     const status = core.runGameLoop(state, game.registry);
-    /* The decision is counted WHEN IT COMPLETES, whatever its outcome
-     * (#36): a death breaks out AFTER the killing decision is counted, so
-     * the record never disagrees with the census (asserted below). A
-     * retirement is counted the same way - attainment is observed after
-     * the decision completes, so a RETIRING run's census balances exactly
-     * as a dying run's does. */
-    taken += 1;
+    // Command replies are counted independently from their per-code census.
+    // This still includes the killing command; empty replies stay attempts.
+    taken = life.issuedCommands;
     life.places.add(
       `${String(state.chunk.depth)}:${String(state.actor.grid.x)},${String(state.actor.grid.y)}`,
     );
@@ -510,7 +521,12 @@ export function driveLife(
       dead = true;
       break;
     }
-    /* #56: a stalled life ends after the decision that completed the stall. */
+    if (life.stopReason !== null) {
+      stopped = life.stopReason;
+      break;
+    }
+    /* #56: arbitrary nulls retain the existing 25-idle wait; repeat stalls
+     * remain stalls, not a newly invented explicit Borg stop. */
     if (life.stall !== null) break;
     if (status === core.LOOP_STATUS.DEATH_CONFIRM) {
       state.pendingDeath?.resolve(true);
@@ -526,7 +542,7 @@ export function driveLife(
    * completed it) still counts: the mod's next wait would retire it. A
    * DEAD run never does - death breaks the loop first and the killing
    * decision cannot newly complete an attainment. */
-  if (!attained && !dead && attainedNow()) attained = true;
+  if (!attained && !dead && stopped === null && attainedNow()) attained = true;
 
   /* The census, counted independently of `taken` (it counts commands as
    * the controller issues them, not loop iterations), must agree with it:
@@ -534,12 +550,12 @@ export function driveLife(
    * is to fail the session rather than commit it (#36's required assertion,
    * in the driver so every caller - test, runners, sweeps - inherits it). */
   const issued = Object.values(life.commands).reduce((total, count) => total + count, 0);
-  if (issued !== taken) {
+  if (issued !== taken || life.attempts !== taken + life.noCommandReplies) {
     throw new Error(
-      `seed ${String(seed)}: the census counts ${String(issued)} commands over ${String(taken)} decisions - the record would disagree with the game`,
+      `seed ${String(seed)}: the census counts ${String(issued)} commands over ${String(taken)} decisions (${String(life.attempts)} armed attempts, ${String(life.noCommandReplies)} no-command replies) - the record would disagree with the game`,
     );
   }
-  return { dead, taken, attained };
+  return { dead, taken, attained, attempts: life.attempts, noCommandReplies: life.noCommandReplies, stopped };
 }
 
 /**
@@ -620,6 +636,11 @@ export interface RunReport extends BirthReplayData {
   restedBesideMonster: number;
   /** #56, additive: present only when the life stalled. */
   stall?: LifeStall;
+  /** #47, additive: present for attempts that did not issue a command. */
+  attempts?: number;
+  noCommandReplies?: number;
+  /** #47, an explicit Borg stop reason; not death or an ordinary idle stall. */
+  stopped?: string;
   /**
    * The uncertainty journal (#27, additive in spirit - records before it
    * carry no `unsure` key): how many decisions marked themselves unsure, and
@@ -721,7 +742,7 @@ export function playSession(
     const turnStart = state.turn;
     const startedAt = Date.now();
 
-    const { dead, taken, attained } = driveLife(core, game, opts.decisions, observed, opts.seed, opts.stage);
+    const { dead, taken, attained, attempts, noCommandReplies, stopped } = driveLife(core, game, opts.decisions, observed, opts.seed, opts.stage);
 
     const player = state.actor.player;
     const depthsSorted = [...observed.depths].sort((a, b) => a - b);
@@ -734,6 +755,8 @@ export function playSession(
       class: player.cls.name,
       baseStats: [...player.statBirth],
       decisions: taken,
+      ...(attempts === taken ? {} : { attempts, noCommandReplies }),
+      ...(stopped === null ? {} : { stopped }),
       turns: state.turn - turnStart,
       depths: depthsSorted,
       maxDepth: depthsSorted[depthsSorted.length - 1] ?? 0,
@@ -761,6 +784,7 @@ export function playSession(
      * measures the stage, it does not keep saves - the mod's retire keeps
      * those. */
     observed.uninstall();
+    if (stopped !== null) break;
     if (life < lives) game.reincarnate();
   }
 
@@ -944,6 +968,9 @@ export interface SessionLife extends BirthReplayData {
   readonly restedBesideMonster: number;
   /** #56, additive: present only when the life stalled. */
   readonly stall?: LifeStall;
+  readonly attempts?: number;
+  readonly noCommandReplies?: number;
+  readonly stopped?: string;
   /**
    * The uncertainty journal (#27), the stock RunReport's own field: the
    * total and the bounded tail, from the same observation both drivers share.
@@ -1088,7 +1115,7 @@ export async function playPackSession(
   for (const seed of options.seeds) {
     const previous = lives[lives.length - 1];
     if (previous !== undefined && !previous.dead && !previous.retired) {
-      say(`the session stops at seed ${String(previous.seed)}: that character survived its slice, so the loop would never have booted seed ${String(seed)}`);
+      say(`the session stops at seed ${String(previous.seed)}: that character ${previous.stopped !== undefined ? `stopped: ${previous.stopped}` : previous.stall !== undefined ? `stalled (${previous.stall.kind})` : "survived its slice"}, so the loop would never have booted seed ${String(seed)}`);
       break;
     }
 
@@ -1138,7 +1165,7 @@ export async function playPackSession(
 
     const observed = observingLife(core, game, pack);
     const startedAt = Date.now();
-    const { dead, taken, attained } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
+    const { dead, taken, attained, attempts, noCommandReplies, stopped } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
 
     /* THE RETIRE PROTOCOL (#25) for a life that attained: the same
      * `retireAtStage` the mod's loop runs, over this harness's roster
@@ -1219,6 +1246,8 @@ export async function playPackSession(
       life: lives.length + 1,
       dead,
       decisions: taken,
+      ...(attempts === taken ? {} : { attempts, noCommandReplies }),
+      ...(stopped === null ? {} : { stopped }),
       turns: state.turn,
       maxDepth: state.actor.player.maxDepth,
       endDepth: state.chunk.depth,

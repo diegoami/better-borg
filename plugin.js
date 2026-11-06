@@ -629,6 +629,8 @@ var BorgWorld = class {
    * advance exactly once per think (see controller.ts).
    */
   clock = 0;
+  /** FORK: Mandos #47, diagnostic for the last explicit Borg stop; not a policy input. */
+  stopReason = null;
   /** True once at least one perception has populated the model. */
   seeded = false;
   /** A forced level update restarts exploration (borg-think-dungeon.c:1195, 2113). */
@@ -16423,7 +16425,10 @@ function borgThinkDungeon(ctx, session) {
     const cmd = borgPickUpHere(ctx, session);
     if (cmd) return cmd;
   }
-  if (w.clock >= 3e4) return null;
+  if (w.clock >= 3e4) {
+    w.stopReason = `clock overflow (Borg clock ${String(w.clock)})`;
+    return null;
+  }
   if (w.clock - st2.borgBegan >= 1e4) {
     g.leaving = true;
     g.fleeing = true;
@@ -16916,6 +16921,7 @@ function borgThinkDungeon(ctx, session) {
     const cmd = flow.twitchy(ctx);
     if (cmd) return cmd;
   }
+  w.stopReason = "no viable action (borg_oops)";
   return null;
 }
 function borgThinkDungeonBrave(ctx, session) {
@@ -17080,6 +17086,7 @@ function distance2(ax, ay, bx, by) {
   return Math.max(Math.abs(ax - bx), Math.abs(ay - by));
 }
 function think(ctx) {
+  ctx.world.stopReason = null;
   const p = ctx.view.player();
   if (p.dead) return null;
   const session = getThinkSession(ctx.world);

@@ -25,6 +25,16 @@ import type { RunReport } from "./play-session.js";
 import { birthReplayDataOf, type BirthReplayData } from "./records/birth-replay.js";
 import { reachRate } from "./measure/bakeoff.js";
 
+/** Basic outcome text shared by the record runner; this is not a new SDK outcome. */
+export function runOutcome(run: Pick<RunReport, "dead" | "causeOfDeath" | "stopped" | "stall" | "retired" | "stageAttained" | "decisions" | "attempts" | "noCommandReplies">): string {
+  if (run.dead) return `died to ${run.causeOfDeath ?? "?"}`;
+  if (run.stopped !== undefined) return `STOPPED: ${run.stopped} (${String(run.decisions)} commands / ${String(run.attempts ?? "?")} armed attempts)`;
+  if (run.stall !== undefined) return `STALLED (${run.stall.kind}${run.stall.command ? ` ${run.stall.command}` : ""} at ${run.noCommandReplies ? "attempt" : "decision"} ${String(run.stall.decision)})`;
+  if (run.retired) return "retired into the library";
+  if (run.stageAttained) return "attained (keep refused)";
+  return "survived its slice";
+}
+
 /** Stable identifier; optional additive fields are compatible, incompatible formats need a new id. */
 export const RUNS_SCHEMA_ID = "better-borg/runs@1";
 /* ^ Deliberately NOT renamed with the mod (#19): this is a FORMAT identifier
@@ -115,6 +125,10 @@ interface RunEntry extends BirthReplayData {
    * `unsure` key; a reader treats absence as `{ total: 0, points: [] }`.
    */
   unsure: { total: number; points: UnknownPoint[] };
+  /** #47, additive; omitted on ordinary command-only records. */
+  attempts?: number;
+  noCommandReplies?: number;
+  stopped?: string;
   meta: { wallClockMs: number };
 }
 
@@ -180,6 +194,9 @@ function runEntry(run: RunReport): RunEntry {
         aim: point.aim === null ? null : { x: point.aim.x, y: point.aim.y },
       })),
     },
+    ...(run.attempts === undefined ? {} : { attempts: run.attempts }),
+    ...(run.noCommandReplies === undefined ? {} : { noCommandReplies: run.noCommandReplies }),
+    ...(run.stopped === undefined ? {} : { stopped: run.stopped }),
     meta: { wallClockMs: run.wallClockMs },
   };
 }
@@ -272,6 +289,8 @@ export function buildSummary(record: SessionRecord): string {
   lines.push(`- ${String(deaths)} of ${String(record.runs.length)} runs died`);
   lines.push(`- mean turns: ${meanTurns.toFixed(0)}`);
   lines.push(`- kills: ${String(kills)}`);
+  const stopped = record.runs.filter(run => run.stopped !== undefined);
+  if (stopped.length) lines.push(`- stopped: ${stopped.map(run => `${String(run.seed)}.${String(run.life)}: ${run.stopped}; ${String(run.decisions)} commands, ${String(run.attempts ?? "?")} armed attempts`).join("; ")}`);
   lines.push(`- unsure points (#27): ${String(unsure)} across the cohort - decisions the Borg could not separate (attack-valuation ties) or made against terrain it had never seen`);
   if (record.runner.stage !== null) {
     const attained = record.runs.filter((r) => r.stageAttained).length;

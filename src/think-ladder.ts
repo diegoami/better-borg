@@ -720,7 +720,11 @@ export function borgThinkDungeon(
   }
 
   /* Prevent clock overflow -> panic (:1209): yield to a human. */
-  if (w.clock >= 30000) return null;
+  if (w.clock >= 30000) {
+    // FORK: Mandos #47 records this pre-existing explicit stop without changing its choice.
+    w.stopReason = `clock overflow (Borg clock ${String(w.clock)})`;
+    return null;
+  }
 
   /* Boredom leaving/fleeing (:1247). */
   if (w.clock - st.borgBegan >= 10000) {
@@ -1458,7 +1462,8 @@ export function borgThinkDungeon(
     if (cmd) return cmd;
   }
 
-  /* Oops (:2328). */
+  /* Oops (:2328). FORK: Mandos #47, diagnostic only; the stop is unchanged. */
+  w.stopReason = "no viable action (borg_oops)";
   return null;
 }
 
