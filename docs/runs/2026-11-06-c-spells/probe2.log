@@ -1,0 +1,49 @@
+$ vitest run src/fight/c-spell-carry.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/fight/c-spell-carry.test.ts (8 tests | 8 failed) 416ms
+   × 'dispel-living' published spell probe 135ms
+   × 'dispel-undead' published spell probe 59ms
+   × 'nether-control' published spell probe 47ms
+   × 'vampire-near-far' published spell probe 35ms
+   × 'vampire-far-near' published spell probe 36ms
+   × 'vampire-near-near' published spell probe 35ms
+   × 'vampire-far' published spell probe 34ms
+   × 'vampire-undead' published spell probe 34ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-living' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-undead' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'nether-control' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-far' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-far-near' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-near' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-far' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-undead' published spell probe
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/fight/c-spell-carry.test.ts:70:95
+     68|  const exposed=ctx.view.spellbooks().flatMap(b=>b.spells).find(s=>s.si…
+     69|  const visible=ctx.view.monsters().map(m=>({name:m.race,visible:m.visi…
+     70|  for(const m of nativeMonsters)expect(ctx.view.monsters().find(v=>v.in…
+       |                                                                                               ^
+     71|  for(const [,k]of ctx.world.kills.entries()){fs.tempX[fs.tempN]=k.pos.…
+     72|  const effect=c.spell==="Dispel Life"?BF.PRAYER_DISPEL_LIFE:c.spell===…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  17:43:39
+   Duration  1.12s (transform 431ms, setup 145ms, import 488ms, tests 416ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

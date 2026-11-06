@@ -1,0 +1,46 @@
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 53ms using pnpm v12.16.1
+$ vitest run src/fight/c-spell-carry.test.ts
+
+ RUN  v4.1.11 <before-tree>
+
+ ❯ src/fight/c-spell-carry.test.ts (17 tests | 7 failed) 783ms
+   × 'dispel-living-seed77' published spell probe 143ms
+   × 'vampire-near-far-seed77' published spell probe 66ms
+   × 'dispel-living-seed441' published spell probe 61ms
+   × 'vampire-near-far-seed441' published spell probe 61ms
+   × 'dispel-living' published spell probe 44ms
+   × 'vampire-near-far' published spell probe 31ms
+   × 'vampire-far-near' published spell probe 29ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-living-seed77' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-far-seed77' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-living-seed441' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-far-seed441' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-living' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-far' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-far-near' published spell probe
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/fight/c-spell-carry.test.ts:157:22
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 10 passed (17)
+   Start at  17:52:08
+   Duration  1.49s (transform 426ms, setup 152ms, import 484ms, tests 783ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

@@ -1,0 +1,47 @@
+# Mandos Necromancer C-correction proof
+
+Two independent inherited C corrections, from a Mandos baseline of d36c867f795ce5ff41b608229f3735d6b8aaf963:
+
+| Mandos consumer | Canonical C proposal and source | Independent marked TS translation/removal unit |
+| --- | --- | --- |
+| [175](https://github.com/diegoami/mandos/issues/175), Dispel Life living filter | [diegoami/neo-angband-tracker248](https://github.com/diegoami/neo-angband-tracker/issues/248), [291 at6912b85cb7b902616ad786dfc20afe3b4cf28b10](https://github.com/diegoami/neo-angband-tracker/pull/291), [evidence292](https://github.com/diegoami/neo-angband-tracker/pull/292) | [4eb72dca1707af4d18cecb198bbd3ea7e4466801](https://github.com/diegoami/mandos/commit/4eb72dca1707af4d18cecb198bbd3ea7e4466801), [source248-dispel-living.patch](../../../patches/c-translations/source248-dispel-living.patch) |
+| [176](https://github.com/diegoami/mandos/issues/176), Vampire Strike chosen distance | [diegoami/neo-angband-tracker257](https://github.com/diegoami/neo-angband-tracker/issues/257), [293 at0119d5daee9b8a07a8096331eea78dbbb6c26050](https://github.com/diegoami/neo-angband-tracker/pull/293), [evidence294](https://github.com/diegoami/neo-angband-tracker/pull/294) | [fca27df4de0d2036c3c0ab8111c0ac273ae589ad](https://github.com/diegoami/mandos/commit/fca27df4de0d2036c3c0ab8111c0ac273ae589ad), [source257-vampire-selected-distance.patch](../../../patches/c-translations/source257-vampire-selected-distance.patch) |
+
+Lead credit: borg-rs. Native reproduction, these independent TS measurements and consumers are separate. Source issues remain producer-owned. No official C post or faithful-port behavioral repair is claimed.
+
+## Actual result and consequence
+
+Final identical seventeen-case fixture: immutable baseline fails seven intended assertions and passes ten controls; corrected source passes17/17. Existing combat controls add78 tests, for95/95 across two files, zero skips,1.47s. Typecheck passes. `frozen2-before.*`, `frozen2-after.*` and `comparison.json` are the final records. All ten complete negative/control JSON records are byte-equivalent as decoded values, including the native RNG snapshots. This is a scoped fixture result, not a claim about unchanged autonomous gameplay.
+
+Dispel Life's rating changes from−21 to52 against a real living hill giant. The complete production chooser changes from throwing a starting item to requesting actual spell12. Before, a **separate direct native cast probe** establishes the registered host transaction despite the unchosen rating; after, the exact selected command is executed. All three explicitly retained living cases (seeds1000,441,77) fail their actual concentration roll: the real message is “You failed to concentrate hard enough!”,100 energy is spent and mana falls53→33. WORKED remains false and HP is unchanged. The correction makes a working spell eligible for selection; this fixture does **not** measure a successful Dispel Life hit or health benefit. Native C's66HP result is not a TS result.
+
+Vampire Strike's rating changes0→70 with a nearby living kobold and a distance20 giant bystander. The production chooser changes NULL→registered spell11, with100 energy and5 mana spent. Both insertion orderings are tested; actual public-memory target-list ordering is recorded, not presumed to equal native allocation order. Seed1000/441 casts fail with the same actual concentration message and no damage; these are retained. The final permitted diagnostic seed77 succeeds: the real effect independently selects the nearest living kobold, teleports the player75,26→81,27, bites/drains it, and removes it (the final retained native object has12→−58HP; `present:false`). The distant giant remains240HP/present. Player HP stays253; food8999→9012. No hidden chosen-target substitution is made: the spell's registered JUMP_AND_BITE effect chooses its own nearest living victim. This is an actual attack consequence, not a survival or population claim.
+
+Near-near casting, far-only refusal, actual undead/nonliving immunity, blocked paths, no mana and unrelated Nether Bolt remain controls. The unchanged Nether cast removes15HP from the giant (154→139), costs1mana and sets WORKED. This published Neo content has **46 NONLIVING races**, unlike the native report's zero: a real registered Clay golem is used and its successful Dispel effect leaves HP unchanged, as does the successful undead vampire-bat immunity probe. We do not fabricate a combined flags population to mimic C.
+
+## Real legality, APIs and scope
+
+Actual published Core/SDK/content1.23.0-beta.2 and the existing named Core patch are unchanged. Human Necromancer35 uses valid rolled birth stats18, actual experience/bonus and spell allowance APIs, actual registered class book kinds, Core.objectPrep/inventory/awareness, and Core.spellLearn after spellOkayToStudy. Only the named real spell is learned. Public buildKnownWorld→production API2 readWorld exposes that learned spell and visible targets; legal class/book/mana checks run normally. Static bound race/book metadata feeds the existing declared resolver seam; no hidden actor state feeds the controller. The constructed glowing arena, awake monster placements and full-health/mana preparation are controlled fixtures, not copied native saves.
+
+The production attack helper is scored in simulation mode and its target intents are recorded separately from the full chooser's committed target intents. Only committed intents are submitted through declared native target setters, followed by the returned registered cast. Spell failure/resource effects are executed on the actual host; no spell-success RNG override, forced hit, threshold retune or hidden target replacement exists. Native RNG snapshots are observations only; live streams are never reset or drawn for diagnostics.
+
+Borg's estimate is9% in these level35 cases, but the **actual public SpellView.chance and direct Core.spellChance with makeSpellChanceEnv agree**: Dispel31% and Vampire25% for1000/441,35% and29% for77 because real level-up stats differ. Actual messages prove failure, rather than inferring it solely from WORKED/no damage. This is the existing documented Necromancer BORG_LIGHT versus host square_is_lit/glowing-room distinction in src/item/magic.ts:600–609; it is not a new change or simply “add25 to final9”. Historical port16/Mandos141 preserve that inherited predicate. A separate source lead may investigate it; this batch does not change it.
+
+No intervening monster turns/full game/long-term conservation/survival are measured. The whole chooser is exercised but not the full autonomous turn loop. The two runtime changes affect only damage-filter membership and which stored distance the existing closeness guard reads. They do not change thresholds, class policy, target rankings, spell failure estimates, mana reserve, projection semantics or dependencies.
+
+## Attempts and reproducibility
+
+The original fixture is frozen at d644b7839c40d2f6f46f9b506a0454b41afd014f before source changes. Its13-case baseline has3 intended failures/10 controls (`before.*`). Additional fixed441 cases produce5/10 (`expanded-before.*`); all attempts remain. Parent permitted exactly one final seed77 pair; the complete17-case fixture produces7/10 before (`frozen2-before.*`). No additional seeds were searched after seeing that result.
+
+Earlier prototypes are preserved: `probe.*`/`probe2.*` contain fixture name/type/identity mistakes, not defect failures. `probe3.*` exposes real level26 Borg legality refusals (Dispel36%, Vampire30% exceed the existing25% limit) and an out-of-FOV geometry error. These are counterevidence to that setup, not corrected source defects. `probe4.*` switches explicitly to a legally castable level35 and actual collinear distances5/20, retaining the same thresholds and seed. `final-*`/`frozen-*` preserve intermediate formatted/message-capture comparisons; final `frozen2-*` includes committed target separation and native effect/removal assertions. Filesystem prefixes in logs are replaced with `<task-tree>`, `<before-tree>` and `<installed-dependencies>`; outcomes are unchanged. The original private scratch outputs remain available during this review, not committed as private paths.
+
+To reproduce, use separate immutable d36c867 and corrected worktrees with identical final src/fight/c-spell-carry.test.ts bytes and the same lockfile dependencies. Neither checkout should opt into local Core. From each:
+
+```sh
+flock /tmp/angband-validation.lock sh -c 'C_SPELL_OUTPUT=/tmp/spells.json pnpm test src/fight/c-spell-carry.test.ts'
+pnpm typecheck
+```
+
+Expected before7 failures/10 passes; after17 passes. Include unchanged combat controls with `pnpm test src/fight/c-spell-carry.test.ts src/fight/fight.test.ts` under the same lock:95 passes after. Runtime source must not change while a comparison is queued/running.
+
+The source/evidence is ready for parent review. Plugin, standalone replay and required full integration gate are deliberately separate pending checks; a branch/patch/focused test is not a carried main fix. The reviewed CCW168 head5d0393e remains preserved and will be normally integrated, retaining all three separate removal units. Its older hold-for-glyph-port-adoption receipt is historical: glyph attribution was subsequently found inherited from C and no faithful-port adoption is pending. No glyph implementation belongs in this integration.

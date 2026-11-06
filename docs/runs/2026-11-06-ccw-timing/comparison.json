@@ -1,0 +1,32 @@
+{
+  "comparedRecords": 23,
+  "identicalExcludingRngSnapshot": 18,
+  "changed": [
+    {
+      "case": "recover-boundary",
+      "clock": 1000,
+      "elapsed": 0
+    },
+    {
+      "case": "recover-boundary",
+      "clock": 1004,
+      "elapsed": 4
+    },
+    {
+      "case": "never-drunk-contract",
+      "clock": 0,
+      "elapsed": null
+    },
+    {
+      "case": "never-drunk-contract",
+      "clock": 1,
+      "elapsed": null
+    },
+    {
+      "case": "never-drunk-contract",
+      "clock": 3,
+      "elapsed": null
+    }
+  ],
+  "note": "RNG draw eligibility is intentionally changed; identical action/state records do not imply identical subsequent RNG or full-game traces."
+}

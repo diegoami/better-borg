@@ -1,0 +1,22 @@
+{
+  "core": "1.23.0-beta.2",
+  "sdk": "1.23.0-beta.2",
+  "content": "1.23.0-beta.2",
+  "profile": "published plus existing named core patch; no NEO_ANGBAND_LOCAL_CORE",
+  "sourceUnits": {
+    "ccw": "a3a72f088d1d17f08758389da6384433b4e95e4f",
+    "dispel": "4eb72dca1707af4d18cecb198bbd3ea7e4466801",
+    "vampire": "fca27df4de0d2036c3c0ab8111c0ac273ae589ad"
+  },
+  "proofHeads": {
+    "ccw": "5d0393ebc7fb12f9a4adbf51d9b5ee8ec2f09029",
+    "spells": "18484643d54179561c48f93f663da604da1b0823"
+  },
+  "sha256": {
+    "plugin.js": "d3ea31f0bfdf83581d0a0ccf2117c1e8cd8f9486698ecaac465bc93b87f33f6b",
+    "pnpm-lock.yaml": "7e705515d6c04ca1cfdf61ceba89cb98f5602431754ae77b237a21fe3245a761",
+    "patches/@rpgm-tools__neo-angband-core@1.23.0-beta.2.patch": "32af5c48c56b71889dfa70551c053a17430ad174da59634f96b1170fb1ea8513",
+    "src/item/ccw-timing.test.ts": "83e69d425e4b761bbd501287d0e5e439f3c9050724094b501b0e977ed19373e9",
+    "src/fight/c-spell-carry.test.ts": "5181a3513eede45268ba5c60c7d979707ab869a74a53d52e2792476fa9d4d1a0"
+  }
+}

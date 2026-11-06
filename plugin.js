@@ -10095,7 +10095,7 @@ var quaffStore = /* @__PURE__ */ new WeakMap();
 function quaffState(world) {
   let s = quaffStore.get(world);
   if (!s) {
-    s = { whenLastQuaff: 0 };
+    s = { whenLastQuaff: null };
     quaffStore.set(world, s);
   }
   return s;
@@ -10109,7 +10109,7 @@ function borgQuaffCrit(ctx, noCheck, d) {
     if (cmd2) st2.whenLastQuaff = borgT;
     return cmd2;
   }
-  if (st2.whenLastQuaff > borgT - 4 && st2.whenLastQuaff <= borgT && ctx.rng.randint1(100) < 75)
+  if (st2.whenLastQuaff !== null && st2.whenLastQuaff < borgT && st2.whenLastQuaff >= borgT - 4 && ctx.rng.randint1(100) < 75)
     return null;
   if (trait3(ctx, 231 /* ACCW */) < 2) return null;
   const cmd = borgQuaffPotion(ctx, sval, d);
@@ -11779,8 +11779,7 @@ function borgLaunchDamageOne(ctx, fs, i, dam, typ, ammo) {
       if (!rf(facts, "EVIL")) dam = 0;
       break;
     case 56 /* DRAIN_LIFE */:
-      if (!rf(facts, "NONLIVING")) dam = 0;
-      if (!rf(facts, "UNDEAD")) dam = 0;
+      if (rf(facts, "NONLIVING") || rf(facts, "UNDEAD")) dam = 0;
       break;
     case 15 /* HOLY_WORD */:
       if (!rf(facts, "EVIL")) dam = 0;
@@ -13301,7 +13300,7 @@ function auxVampireStrike(ctx, fs) {
     bI = i;
   }
   if (bI === -1) return 0;
-  if (curDist >= 20) return 0;
+  if (bestDist >= 20) return 0;
   const x = fs.tempX[bI];
   const y = fs.tempY[bI];
   let found = false;

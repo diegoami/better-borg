@@ -1,0 +1,16 @@
+diff --git a/src/fight/attack.ts b/src/fight/attack.ts
+index 449d25f..219caa7 100644
+--- a/src/fight/attack.ts
++++ b/src/fight/attack.ts
+@@ -389,8 +389,9 @@ export function borgLaunchDamageOne(
+       if (!rf(facts, "EVIL")) dam = 0;
+       break;
+     case BA.DRAIN_LIFE:
+-      if (!rf(facts, "NONLIVING")) dam = 0;
+-      if (!rf(facts, "UNDEAD")) dam = 0;
++      /* FORK: Mandos175 translates diegoami/neo-angband-tracker#248
++       * (6912b85c): Dispel Life hurts the living; undead/nonliving are immune. */
++      if (rf(facts, "NONLIVING") || rf(facts, "UNDEAD")) dam = 0;
+       break;
+     case BA.HOLY_WORD:
+       if (!rf(facts, "EVIL")) dam = 0;

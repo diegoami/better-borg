@@ -1,0 +1,31 @@
+{
+  "identicalCompleteRecords": [
+    "dispel-nonliving",
+    "dispel-blocked",
+    "dispel-no-mana",
+    "vampire-blocked",
+    "vampire-no-mana",
+    "dispel-undead",
+    "nether-control",
+    "vampire-near-near",
+    "vampire-far",
+    "vampire-undead"
+  ],
+  "changedCompleteRecords": [
+    "dispel-living-seed77",
+    "vampire-near-far-seed77",
+    "dispel-living-seed441",
+    "vampire-near-far-seed441",
+    "dispel-living",
+    "vampire-near-far",
+    "vampire-far-near"
+  ],
+  "beforeTests": {
+    "fail": 7,
+    "pass": 10
+  },
+  "afterTests": {
+    "pass": 17
+  },
+  "existingCombatControls": 78
+}

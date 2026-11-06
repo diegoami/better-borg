@@ -1,0 +1,46 @@
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 54ms using pnpm v12.16.1
+$ vitest run src/fight/c-spell-carry.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/fight/c-spell-carry.test.ts (8 tests | 8 failed) 305ms
+   × 'dispel-living' published spell probe 100ms
+   × 'dispel-undead' published spell probe 40ms
+   × 'nether-control' published spell probe 28ms
+   × 'vampire-near-far' published spell probe 34ms
+   × 'vampire-far-near' published spell probe 25ms
+   × 'vampire-near-near' published spell probe 24ms
+   × 'vampire-far' published spell probe 27ms
+   × 'vampire-undead' published spell probe 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-living' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-undead' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'nether-control' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-far' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-far-near' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-near' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-far' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-undead' published spell probe
+AssertionError: expected undefined to be defined
+ ❯ src/fight/c-spell-carry.test.ts:55:72
+     53|  const nativeMonsters=[];
+     54|  for(const [i,m]of c.monsters.entries()){
+     55|   const race=reg.monsters.races.find(r=>r.name===m.name)!;expect(race)…
+       |                                                                        ^
+     56|   expect(Core.placeNewMonsterLive(state,grid,race,false,false,{index:0…
+     57|   nativeMonsters.push(state.monsters.find(mon=>mon?.race.ridx===race.r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  17:43:13
+   Duration  987ms (transform 412ms, setup 142ms, import 470ms, tests 305ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

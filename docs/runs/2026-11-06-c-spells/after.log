@@ -1,0 +1,10 @@
+$ vitest run src/fight/c-spell-carry.test.ts src/fight/fight.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+
+ Test Files  2 passed (2)
+      Tests  93 passed (93)
+   Start at  17:47:29
+   Duration  1.47s (transform 838ms, setup 328ms, import 947ms, tests 1.00s, environment 0ms)
+

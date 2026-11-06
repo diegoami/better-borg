@@ -1,0 +1,141 @@
+[
+  {
+    "case": "controller",
+    "step": 0,
+    "clock": 1000,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 0
+    },
+    "after": {
+      "hp": 180,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 8
+  },
+  {
+    "case": "controller",
+    "step": 1,
+    "clock": 1001,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    },
+    "energy": 0,
+    "before": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 2,
+    "clock": 1002,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    },
+    "energy": 0,
+    "before": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 3,
+    "clock": 1003,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    },
+    "energy": 0,
+    "before": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 4,
+    "clock": 1004,
+    "command": {
+      "code": "rest"
+    },
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 5,
+    "clock": 1005,
+    "command": {
+      "code": "walk",
+      "dir": 2
+    },
+    "energy": 0,
+    "before": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 252,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  }
+]
