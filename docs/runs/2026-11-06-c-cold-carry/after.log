@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-cold-melee-resistance
+
+
+ Test Files  3 passed (3)
+      Tests  43 passed (43)
+   Start at  12:58:52
+   Duration  1.01s (transform 1.04s, setup 442ms, import 1.23s, tests 439ms, environment 0ms)
+
