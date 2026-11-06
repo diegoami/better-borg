@@ -51,6 +51,57 @@ owner integration issue and checkpoint36 at merge/stop. No background agent
 without owner direction; independent model review remains owner-launched,
 with a ready-to-paste read-only prompt in migrations/review.md.
 
+## Native C proposal intake
+
+Canonical C source bugs, native evidence and reusable proposals remain in
+[neo-angband-tracker](https://github.com/diegoami/neo-angband-tracker/issues).
+Mandos owns the corresponding TypeScript applicability decision and translation.
+The separate better-borg-c product consumes C directly; its adoption is neither
+proof of Mandos applicability nor a replacement for our own tests.
+
+On session startup and a producer-ready handoff, inspect the ready named C
+proposals and their existing Mandos dispositions on integration queue111 before
+choosing work. A validated clean local proposal is eligible **before upstream
+acceptance**, including a retained closed-unmerged/c-proposal branch. A source
+issue can remain open while Mandos carries the verified correction. Do not use
+an official merge or package release as an extra gate to start a useful carry.
+Keep broad upstream reconciliation weekly/manual; this adds no daemon, Rust
+polling or duplicate live C-defect catalogue.
+
+For each ready correction:
+1. Record the canonical source issue, reviewed source/proposal and evidence
+   commits, native observed consequence and limits. Confirm producer/task
+   ownership; do not reimplement its source repair in this repository.
+2. Trace the exact defect into the current pinned TS call path. Distinguish
+   **applicable**, **already correct**, **absent/not applicable at this pin**
+   and **deferred behind a named missing subsystem**. For absent or unused
+   symbols, give a scoped exhaustive search and decisive caller context, not
+   just a matching name or a proposed patch. Record the inspected TS revision.
+3. Link the disposition from queue111 and the source issue. Applicable work gets
+   a distinct linked Mandos adoption issue before its isolated implementation
+   PR. An absent path gets a reasoned audit receipt, not an invented correction
+   or carried/fixed label. Deferred work names its existing dependency issue
+   and an explicit re-evaluation trigger; do not create duplicate omissions.
+4. Translate an applicable correction under declared Neo APIs, with provenance
+   and marked baseline departure. Prove legal TS fail-before/pass-after and
+   controls, rebuild the plugin and run the normal required consumer gates.
+   Keep original native versus translated evidence separate. Maintain actual
+   consumer patch/removal records where applicable; historical C patch copies
+   under patches/upstream-c are not an active Mandos implementation ledger.
+5. Verified local application is carried/OPEN until upstream resolves it and
+   the correction is adopted and normally verified here; then fixed/CLOSED.
+   Existing equivalent carries can already satisfy adoption: do not reimport
+   or repeat an unchanged full suite just to close the original scope.
+   Keep patch-active independent of closure and remove each hunk only after
+   its own package/build replacement is proved. Source state remains producer-
+   owned; new actual recurrences get new linked reports.
+
+Re-evaluate an absent/deferred disposition when its named counterpart arrives
+or the inspected TS path materially changes. Merely importing unrelated source
+history or a narrower HOME valuation leaf does not implement a tactical swap
+selector. The [dated intake audit](tasks/C-fix-intake-2026-11-06.md) records the
+first four dispositions and copyable evidence, not a second live status board.
+
 ## Records and lab safety
 
 The lab remains on its intentional branch/build and uses ../mandos-lab-data.
@@ -71,6 +122,7 @@ to commit Mandos work on a fresh three-session setup.
 
 [Current private-backup procedure](backup.md) covers lab state, restore points,
 selected unique evidence and verification. The supplementary owner workspace
-records the three Git submodules, directory inventory and exact recovery pins.
+records four Git submodules (including the independent native C consumer),
+directory inventory and exact recovery pins.
 This supplements the accepted session plan; it changes no source ownership or
 consumer lifecycle. OAuth migration remains tracked by Mandos #52.
