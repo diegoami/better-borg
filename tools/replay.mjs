@@ -7,7 +7,7 @@
  * seed, the planned birth and the whole command census, the engine is
  * deterministic, and the Borg is (rule 5) - so this tool reboots each dead
  * run exactly as the session booted it, drives it to the death AGAIN, and
- * freezes a dossier at every rung of the ladder (5/10/15/20 turns before
+ * freezes a dossier at every rung of the ladder (5/12/25/40/60/82/105 Neo game turns before
  * the death by default; --offsets widens the set, the owner's "extensible
  * by setting" - a numeric manifest row cannot carry a set). The replay's
  * death line is VERIFIED against the record (cause, turn, decisions,
@@ -25,7 +25,7 @@
  * Usage:
  *
  *   node tools/replay.mjs --record docs/runs/2026-11-03-stage-baseline-c2d1
- *       [--seeds 20,34] [--offsets 5,10,15,20] [--pack warrior]
+ *       [--seeds 20,34] [--profile v2 | legacy-v1] [--offsets 5,12,25,40,60,82,105] [--pack warrior]
  *
  * Writes <record>/postmortem/README.md and <record>/postmortem/seed-<n>/
  * offset-<k>.md per rung. The AI post-mortem workflow (docs/postmortem.md)
@@ -69,11 +69,13 @@ const seedsFilter = arg("seeds", null) === null
       .split(",")
       .map((text) => Number(text.trim()))
       .filter((n) => Number.isInteger(n) && n > 0);
-const offsets = arg("offsets", "5,10,15,20")
+const profileName = arg("profile", "v2");
+const offsetsArg = arg("offsets", null);
+const offsets = offsetsArg === null ? undefined : offsetsArg
   .split(",")
   .map((text) => Number(text.trim()))
   .filter((n) => Number.isInteger(n) && n > 0);
-if (offsets.length === 0) fail(`--offsets must be a comma-separated list of positive integers`);
+if (offsets !== undefined && offsets.length === 0) fail(`--offsets must be a comma-separated list of positive integers`);
 
 /* The bundle: one file in git-ignored artifacts/, engine and SDK external so
  * the published copies in node_modules are the ones that run (the same
@@ -84,6 +86,7 @@ await build({
     contents:
       'export * from "./src/play-session.js";\n' +
       'export * from "./src/postmortem/replay.js";\n' +
+      'export { windowProfile } from "./src/postmortem/windows.js";\n' +
       'export { POSTMORTEM_SCHEMA_ID } from "./src/postmortem/dossier.js";\n' +
       'export { PACKS, packForClass } from "./src/class/registry.js";\n',
     resolveDir: REPO_ROOT,
@@ -97,7 +100,7 @@ await build({
   logLevel: "silent",
 });
 
-const { loadPack, packRoot, packSource, replayDeadRun, DEFAULT_OFFSETS, PACKS, packForClass } = await import(pathToFileURL(bundle).href);
+const { loadPack, packRoot, packSource, replayDeadRun, windowProfile, PACKS, packForClass } = await import(pathToFileURL(bundle).href);
 
 const strategy = PACKS.find((p) => p.id === packId);
 if (strategy === undefined) fail(`unknown pack "${packId}" (known: ${PACKS.map((p) => p.id).join(", ")})`);
@@ -133,7 +136,8 @@ const buildBlock = {
   cap: document.runner?.decisions ?? 0,
 };
 
-const ladder = offsets.length > 0 ? offsets : [...DEFAULT_OFFSETS];
+const selectedProfile = windowProfile(profileName, offsets);
+const ladder = selectedProfile.offsets;
 const lines = [];
 const log = (message) => lines.push(`[borg] ${message}`);
 
@@ -163,7 +167,7 @@ for (const run of deadRuns) {
     },
     { label: recordLabel, directory: recordDirName, recorded: recordRecorded },
     buildBlock,
-    { offsets: ladder, log },
+    { profile: profileName, ...(offsets === undefined ? {} : { offsets }), log },
   );
   outcomes.push({ run, replay });
 }
@@ -171,6 +175,25 @@ for (const run of deadRuns) {
 /* The ladder README: the computed layer over the dossiers, deterministic
  * (every number comes from the record or the replay, none from a clock). */
 mkdirSync(outRoot, { recursive: true });
+const windowReport = {
+  schema: "mandos/replay-windows@1",
+  profile: selectedProfile,
+  attemptRole: "replay-not-independent-life",
+  runs: outcomes.map(({ run, replay }) => ({
+    seed: run.seed,
+    life: run.life,
+    startTurn: replay.startTurn,
+    verificationScope: replay.verification.scope,
+    earlierAnchors: replay.earlierAnchors,
+    windows: replay.rungs.map(rung => ({
+      offset: rung.offset,
+      targetTurn: rung.targetTurn,
+      boundaryTurn: rung.boundaryTurn,
+    })),
+    missed: replay.missed,
+  })),
+};
+writeFileSync(join(outRoot, "windows.json"), JSON.stringify(windowReport, null, 2) + "\n");
 {
   const readme = [];
   readme.push(`# Post-mortem dossier ladder - ${recordLabel}`);
@@ -182,6 +205,8 @@ mkdirSync(outRoot, { recursive: true });
       `The AI post-mortem workflow is docs/postmortem.md; a diagnosis artifact lands beside ` +
       `the dossiers it was written from (seed-<n>/diagnosis.md).`,
   );
+  readme.push("");
+  readme.push(`Window profile: ${selectedProfile.id} (base ${selectedProfile.baseProfile}); units ${selectedProfile.units}; pre-start ${selectedProfile.preStart}. Earlier event anchors are separate and not captured here. Exact means endpoint/census agreement, not full ordered trajectory/RNG identity. Replay windows are not additional independent lives.`);
   readme.push("");
   readme.push("| seed | died to | turn | ladder rungs | replay |");
   readme.push("| --- | --- | --- | --- | --- |");

@@ -63,3 +63,8 @@
     Do not send it to the fidelity-only port tracker as a port omission.
     carried stays open until the C source correction is fixed upstream and
     adopted/verified downstream; Rust translation is borg-rs's independent work.
+
+14. At active death-session start and stop, follow docs/deaths/DISCUSSIONS.md.
+    Reread targeted case/action comments including edits; preserve ID, updated_at,
+    UTF-8 body SHA and pending dispositions. Mark agent receipts explicitly.
+    Acknowledgement is not resolution; no unattended-monitoring claim.

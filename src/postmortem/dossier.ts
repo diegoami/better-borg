@@ -1,3 +1,4 @@
+import type { WindowProfile } from "./windows.js";
 /**
  * THE POST-MORTEM DOSSIER (#29): one dead run, one offset, one deterministic
  * page of text.
@@ -104,6 +105,8 @@ export interface PostmortemCapture {
 
 /** The rung's facts: which dead run, which offset, and how the replay ended. */
 export interface DossierHeader {
+  readonly windowProfile?: WindowProfile;
+  readonly replayStartTurn?: number;
   /** The dead run's seed (the harness owns it; the record carries it). */
   readonly seed: number;
   /** The life number within the record (1-based, the record's own key). */
@@ -328,6 +331,12 @@ export function renderDossier(header: DossierHeader, capture: PostmortemCapture)
 
   lines.push(section("The rung"));
   lines.push("");
+  if (header.windowProfile) {
+    lines.push(`- window profile: ${header.windowProfile.id} (base ${header.windowProfile.baseProfile}); units: ${header.windowProfile.units}; replay start: ${String(header.replayStartTurn)}`);
+    lines.push(`- boundary policy: ${header.windowProfile.boundary}; pre-start: ${header.windowProfile.preStart}`);
+    lines.push("- earlier event anchors: separate labelled evidence; not captured by this profile");
+    lines.push("- verification scope: endpoint and command census, not full ordered trajectory/RNG identity");
+  }
   lines.push(`- ladder: ${ladder} turns before death (this dossier: ${String(header.offset)})`);
   lines.push(
     `- recorded death: turn ${String(header.death.turn)}, to "${header.death.cause}" ` +

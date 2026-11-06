@@ -1,0 +1,107 @@
+{
+  "schema": "mandos/manual-death-discussion-read@1",
+  "phase": "active-session-start",
+  "observed_at": "2026-11-06T16:03:35.374257+00:00",
+  "task": "https://github.com/diegoami/mandos/issues/166",
+  "scope": "profile/instructions slice1 only",
+  "threads": [
+    {
+      "url": "https://github.com/diegoami/mandos/issues/166",
+      "coverage": "all-comment-pages",
+      "comments": [
+        {
+          "id": 6684195261,
+          "updated_at": "2026-11-06T11:53:21Z",
+          "body_sha256": "fb9cd62f9db3fa0a4f87f9c1573cf0cc332b5ac1fddd7ee79a674d7387fc0be2",
+          "author": "diegoami",
+          "actor_role": "agent-receipt-known-from-session-history",
+          "disposition": "historical receipt; not a new owner request"
+        },
+        {
+          "id": 6685265600,
+          "updated_at": "2026-11-06T12:53:13Z",
+          "body_sha256": "bf370f66ba56975d9200917819c34d2d46a7ca6549f891865ddaee47fcb43df2",
+          "author": "diegoami",
+          "actor_role": "agent-receipt-known-from-session-history",
+          "disposition": "historical receipt; not a new owner request"
+        },
+        {
+          "id": 6685381195,
+          "updated_at": "2026-11-06T12:59:40Z",
+          "body_sha256": "0796e9ee1145a6e9bb5c3e2c5b305bd02e2f484e72651b4de595e2e8e820ae03",
+          "author": "diegoami",
+          "actor_role": "agent-receipt-known-from-session-history",
+          "disposition": "historical receipt; not a new owner request"
+        },
+        {
+          "id": 6685556969,
+          "updated_at": "2026-11-06T13:08:47Z",
+          "body_sha256": "860d17eb24fe508fb1204d055fca0f72ea66d872f8158b267d6dfcc0fac41193",
+          "author": "diegoami",
+          "actor_role": "agent-receipt-known-from-session-history",
+          "disposition": "historical receipt; not a new owner request"
+        },
+        {
+          "id": 6686805311,
+          "updated_at": "2026-11-06T14:10:12Z",
+          "body_sha256": "a939cecf87dfd77ee5369f466bb479dee29594e529bedc82a18a0bf47a69a2b5",
+          "author": "diegoami",
+          "actor_role": "agent-receipt-known-from-session-history",
+          "disposition": "historical receipt; not a new owner request"
+        },
+        {
+          "id": 6688448994,
+          "updated_at": "2026-11-06T15:26:10Z",
+          "body_sha256": "8ce29bdd0dcad32973dd0744e4d501e6f5b90f9e4000269c3716217330a1509e",
+          "author": "diegoami",
+          "actor_role": "owner-request-copied-by-agent",
+          "disposition": "acknowledged-not-resolved; slice1 active, slices2/3 pending"
+        },
+        {
+          "id": 6688485559,
+          "updated_at": "2026-11-06T15:27:51Z",
+          "body_sha256": "cc60eb46f1e67f12bba5c88ce1cd2d304f70ac3f8d6f5a55cb03000c9795e1c4",
+          "author": "diegoami",
+          "actor_role": "agent-receipt-known-from-session-history",
+          "disposition": "historical receipt; not a new owner request"
+        },
+        {
+          "id": 6688719857,
+          "updated_at": "2026-11-06T15:38:06Z",
+          "body_sha256": "3f1b8b050946c8300714baefd27c1ce8d43237905e7e524beaa08e3672bca06d",
+          "author": "diegoami",
+          "actor_role": "agent-receipt-known-from-session-history",
+          "disposition": "historical receipt; not a new owner request"
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/diegoami/mandos/issues/32",
+      "coverage": "all-comment-pages",
+      "comments": [
+        {
+          "id": 6609927973,
+          "updated_at": "2026-11-03T16:44:35Z",
+          "body_sha256": "c2ca9a0a227ee6d75de38834daf302c28d6cd3eb393853708c8ed43c0d10c1de",
+          "author": "diegoami",
+          "actor_role": "agent-receipt-known-from-session-history",
+          "disposition": "historical receipt; not a new owner request"
+        }
+      ]
+    }
+  ],
+  "failed_reads": [
+    {
+      "thread": "https://github.com/diegoami/mandos/issues/166",
+      "reason": "restricted-network read failed; subsequent targeted retry succeeded",
+      "recovered": true
+    }
+  ],
+  "pending": [
+    "Slice1 profile/instructions implementation and required review/gates",
+    "Slice2 investigation/feedback pilot not implemented",
+    "Slice3 fidelity/coverage pilot and preserved exporter unfinished"
+  ],
+  "unattended_monitor": false,
+  "actor_classification": "Manual from current session history and explicitly marked/copied receipts, not GitHub login alone"
+}

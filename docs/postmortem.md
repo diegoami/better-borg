@@ -33,8 +33,10 @@ reports do not imply a full fatal-state save or an automatic analysis service.
    The tool replays recorded deaths and stalls and writes
    `<session>/postmortem/`:
    a `README.md` ladder table and one `seed-<n>/offset-<k>.md` dossier per
-   ended run x ladder rung (5/10/15/20 turns before the endpoint by default;
-   `--offsets` widens the set). A rung whose target turn falls inside a
+   ended run x ladder rung (v2:5/12/25/40/60/82/105 Neo game turns;
+   `--profile legacy-v1` retains5/10/15/20 and `--offsets` selects a named custom list).
+   [Profile units/boundaries and earlier anchors](deaths/WINDOWS.md) are explicit
+   in new dossiers and windows.json; old evidence is not rewritten. A rung whose target turn falls inside a
    single decision has NO live boundary and is listed as `none` - the
    killing decision of a fast death can spend more turns than the smallest
    rung. The replay's death line is verified against the record (cause,
@@ -48,7 +50,7 @@ reports do not imply a full fatal-state save or an automatic analysis service.
    `seed-<n>/diagnosis.md` beside the dossiers it read.
 4. **Diagnoses become tracked findings**: file a reproduced defect with its
    evidence and provenance. A suggested valuation or strategy change stays
-   a backlog idea while rule 15 limits work to defects. Nothing applies a
+   a backlog idea while rule3 prioritizes defects. Nothing applies a
    diagnosis to live play (rule 5).
 
 ## What a dossier is
@@ -80,12 +82,14 @@ One deterministic page of text per dead run x rung (format
 
 For the same Borg code, initial state, configuration, engine and content,
 the replay observations are deterministic. The exactness test protects its
-named committed fixture; the per-run verification decides whether another
-replay reproduces its record. A deliberate code change can move an old
+named committed fixture; the per-run verification checks endpoint/census agreement, not complete
+ordered trajectory or RNG identity. A deliberate code change can move an old
 death, so identical seed values alone do not establish equivalence.
 
 ## The routine (what a diagnosing session does)
 
+Read targeted discussion/action comments at session start and stop under
+[the manual read contract](deaths/DISCUSSIONS.md); ACK is not resolution.
 Read the dossier, then walk the decision code beside it. In order:
 
 1. **Read the rung and the census first.** What was the character doing at
