@@ -1,0 +1,367 @@
+[
+  {
+    "name": "clear caster-origin hill giant",
+    "kind": "clear",
+    "ridx": 284,
+    "from": {
+      "x": 105,
+      "y": 33
+    },
+    "to": {
+      "x": 99,
+      "y": 33
+    },
+    "range": 20,
+    "native": true,
+    "pure": true,
+    "originKill": 1,
+    "spell": 48,
+    "danger": 48,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "after": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "nativeAfter": true,
+    "terrainAfter": true,
+    "fleeing": true,
+    "leaving": true,
+    "attack": {
+      "processed": true,
+      "beforeHp": 70,
+      "afterHp": 53
+    }
+  },
+  {
+    "name": "real intervening yellow mold",
+    "kind": "mold",
+    "ridx": 284,
+    "from": {
+      "x": 105,
+      "y": 33
+    },
+    "to": {
+      "x": 99,
+      "y": 33
+    },
+    "range": 20,
+    "native": false,
+    "pure": false,
+    "originKill": 2,
+    "spell": 0,
+    "danger": 0,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "after": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "nativeAfter": false,
+    "terrainAfter": true,
+    "fleeing": false,
+    "leaving": false,
+    "attack": {
+      "processed": true,
+      "beforeHp": 70,
+      "afterHp": 70
+    }
+  },
+  {
+    "name": "new wall and remembered caster",
+    "kind": "wall",
+    "ridx": 284,
+    "from": {
+      "x": 105,
+      "y": 33
+    },
+    "to": {
+      "x": 99,
+      "y": 33
+    },
+    "range": 20,
+    "native": false,
+    "pure": false,
+    "originKill": 0,
+    "spell": 0,
+    "danger": 0,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "after": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "nativeAfter": false,
+    "terrainAfter": false,
+    "fleeing": false,
+    "leaving": false,
+    "attack": null
+  },
+  {
+    "name": "unknown remembered cell contract",
+    "kind": "unknown",
+    "ridx": 284,
+    "from": {
+      "x": 105,
+      "y": 33
+    },
+    "to": {
+      "x": 99,
+      "y": 33
+    },
+    "range": 20,
+    "native": true,
+    "pure": false,
+    "originKill": 1,
+    "spell": null,
+    "danger": null,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "after": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "nativeAfter": true,
+    "terrainAfter": true,
+    "fleeing": false,
+    "leaving": false,
+    "attack": null
+  },
+  {
+    "name": "player origin with monster endpoint",
+    "kind": "player",
+    "ridx": 284,
+    "from": {
+      "x": 99,
+      "y": 33
+    },
+    "to": {
+      "x": 105,
+      "y": 33
+    },
+    "range": 20,
+    "native": true,
+    "pure": true,
+    "originKill": 0,
+    "spell": null,
+    "danger": null,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "after": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "nativeAfter": true,
+    "terrainAfter": true,
+    "fleeing": false,
+    "leaving": false,
+    "attack": null
+  },
+  {
+    "name": "range shorter than target distance",
+    "kind": "range",
+    "ridx": 284,
+    "from": {
+      "x": 105,
+      "y": 33
+    },
+    "to": {
+      "x": 99,
+      "y": 33
+    },
+    "range": 5,
+    "native": false,
+    "pure": false,
+    "originKill": 1,
+    "spell": null,
+    "danger": null,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "after": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "nativeAfter": true,
+    "terrainAfter": true,
+    "fleeing": false,
+    "leaving": false,
+    "attack": null
+  },
+  {
+    "name": "empty origin with player endpoint",
+    "kind": "empty",
+    "ridx": 284,
+    "from": {
+      "x": 98,
+      "y": 33
+    },
+    "to": {
+      "x": 99,
+      "y": 33
+    },
+    "range": 20,
+    "native": true,
+    "pure": true,
+    "originKill": 0,
+    "spell": null,
+    "danger": null,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "after": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "nativeAfter": true,
+    "terrainAfter": true,
+    "fleeing": false,
+    "leaving": false,
+    "attack": null
+  },
+  {
+    "name": "mixed storm spells behind real mold",
+    "kind": "mixed",
+    "ridx": 486,
+    "from": {
+      "x": 105,
+      "y": 33
+    },
+    "to": {
+      "x": 99,
+      "y": 33
+    },
+    "range": 20,
+    "native": false,
+    "pure": false,
+    "originKill": 2,
+    "spell": 315,
+    "danger": 1260,
+    "command": {
+      "code": "read",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "before": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "quantity": 1,
+      "hp": 70,
+      "turn": 0
+    },
+    "after": {
+      "grid": {
+        "x": 96,
+        "y": 24
+      },
+      "quantity": 0,
+      "hp": 70,
+      "turn": 0
+    },
+    "nativeAfter": false,
+    "terrainAfter": false,
+    "fleeing": false,
+    "leaving": false,
+    "attack": null
+  }
+]

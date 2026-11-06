@@ -2042,7 +2042,7 @@ function borgProjectablePure(world, maxRange3, y1, x1, y2, x2) {
     if (dist4 && ag.feat === FEAT.NONE) break;
     if (dist4 && !borgCaveFloorGrid2(ag)) break;
     if (x === x2 && y === y2) return true;
-    if (ag.kill) break;
+    if (dist4 && ag.kill) break;
     [y, x] = borgIncMotion(y, x, y1, x1, y2, x2);
   }
   return false;
@@ -10314,6 +10314,8 @@ function borgUseThings(ctx, d) {
     if (item.tval === TV.POTION) {
       if (item.sval === P.enlightenment) {
         if (inTown) continue;
+        const cmd = borgQuaffPotion(ctx, item.sval, d);
+        if (cmd) return cmd;
       } else if (item.sval === P.inc_all) {
         const cmd = borgQuaffPotion(ctx, item.sval, d);
         if (cmd) return cmd;
