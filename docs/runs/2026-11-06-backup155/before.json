@@ -1,0 +1,10 @@
+{
+  "runtime": "original9db5a5c3backup.mjs; only remote() maps to temporary local directories and wrapper forces --config /dev/null",
+  "rclone": "rclone v1.75.2",
+  "empty_existing_exit": 0,
+  "empty_current_files_after": 0,
+  "previous_files_archived": 2,
+  "hot_profile_exit": 0,
+  "hot_profile_uploaded": true,
+  "fixture": "/tmp/mandos-backup155-before-09350s5f"
+}

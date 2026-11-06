@@ -64,6 +64,13 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Install local backup fixture dependency
+        if: steps.scope.outputs.full == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rclone
+          rclone --config /dev/null version
+
       - run: pnpm install --frozen-lockfile
         if: steps.scope.outputs.full == 'true'
 

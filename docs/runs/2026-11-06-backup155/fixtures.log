@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-backup-preflight-155
+
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  03:00:52
+   Duration  58.53s (transform 143ms, setup 569ms, import 92ms, tests 57.61s, environment 0ms)
+
