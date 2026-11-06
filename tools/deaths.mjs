@@ -357,7 +357,7 @@ function deriveIndex(root) {
     }
     return { id: item.id, facts: pick(item.facts, ['seed', 'life', 'race', 'class', 'causeOfDeath', 'clvl', 'maxDepth', 'turns']), source: item.source,
       report: `cases/${item.id}/report.md`, diagnosis: status, confidence: review?.confidence ?? 'unassessed', analysisBasis: review?.basis ?? null, analysisAuthor: review?.author ?? null,
-      replay: review?.replay ?? item.replay, latestAnalysis: latest?.file ?? null, artifacts: review?.evidence ?? item.artifacts };
+      replay: review?.replay ?? item.replay, latestAnalysis: latest?.file ?? null, artifacts: item.artifacts, analysisEvidence: review?.evidence ?? [] };
   });
   for (const event of events.values()) counts[event.outcome]++;
   const reviewCoverage = { pending: cases.filter(item => !item.latestAnalysis).length, legacyImports: cases.filter(item => item.analysisBasis === 'legacy-import').length, observedAnalyses: cases.filter(item => item.analysisBasis === 'observed').length, assessedLatest: cases.filter(item => item.latestAnalysis && item.confidence !== 'unassessed').length };
@@ -366,7 +366,7 @@ function deriveIndex(root) {
     cohorts, cases, mechanisms: [...mechanisms.values()].sort((a, b) => compare(a.disposition + a.mechanism, b.disposition + b.mechanism)),
     actions: [...actions.values()].sort((a, b) => compare(a.url, b.url)).map(action => ({ ...action, cases: [...new Set(action.cases)].sort(), relationships: [...new Set(action.relationships)].sort() })) };
   const lines = ['# Death report index', '', 'Derived from immutable completed intake receipts and attributed analysis revisions. No gameplay, automatic diagnosis or pooled survival claim.', '',
-    `Source records: ${records.length}; unique recorded events: ${events.size}; death cases: ${cases.length}; pending diagnoses: ${states['pending-diagnosis'] ?? 0}.`, '',
+    `Source records: ${records.length}; distinct intake event identities: ${events.size}; death cases: ${cases.length}; pending diagnoses: ${states['pending-diagnosis'] ?? 0}.`, '',
     '| case | character | raw cause | diagnosis | basis / confidence | replay |', '| --- | --- | --- | --- | --- | --- |'];
   for (const item of cases) lines.push(`| [${cell(item.facts.seed)}/${cell(item.facts.life)}](${item.report}) | ${cell(item.facts.race)} ${cell(item.facts.class)} | ${cell(item.facts.causeOfDeath)} | ${item.latestAnalysis ? `[${cell(item.diagnosis)}](${item.latestAnalysis})` : 'pending-diagnosis'} | ${cell(item.analysisBasis)} / ${cell(item.confidence)} | ${cell(item.replay.status)} |`);
   lines.push('', `Legacy imports: ${reviewCoverage.legacyImports}; attributed observed analyses: ${reviewCoverage.observedAnalyses}; assessed latest analyses: ${reviewCoverage.assessedLatest}. These are declared review states, not automatic causal verification.`, '', '## Linked actions', '', ...index.actions.map(action => `- [${cell(action.url)}](${action.url}) — ${action.cases.length} case(s); ${action.relationships.join(', ')}`), '', 'Unknown, unreviewed and non-death outcomes remain in index.json. Case frequency is not proved bug impact or fix benefit.', '');

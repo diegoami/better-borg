@@ -97,6 +97,8 @@ describe('offline death corpus', () => {
     const first = analysis({ evidence: [{ kind: 'terminal sheet', availability: 'unverified', locator: 'https://example.test/public/record.json', knowledge: 'terminal-revealed' }] });
     expect(appendAnalysis({ corpus: f.corpus, caseId, analysis: first })).toEqual({ revision: 1, alreadyPresent: false });
     expect(appendAnalysis({ corpus: f.corpus, caseId, analysis: first })).toEqual({ revision: 1, alreadyPresent: true });
+    expect(readIndex(f).cases[0].artifacts.every(ref => ref.availability === 'not-captured')).toBe(true);
+    expect(readIndex(f).cases[0].analysisEvidence[0].knowledge).toBe('terminal-revealed');
     appendAnalysis({ corpus: f.corpus, caseId, analysis: analysis({ disposition: 'no-bug-found', mechanism: null }) });
     const index = readIndex(f); expect(index.cases[0].diagnosis).toBe('no-bug-found');
     const history = readdirSync(join(f.corpus, 'cases', caseId, 'analysis')); expect(history).toHaveLength(2);
@@ -153,7 +155,9 @@ describe('offline death corpus', () => {
     }
     const index = readIndex(f), caseId = index.cases.find(item => item.facts.seed === 34).id;
     appendAnalysis({ corpus: f.corpus, caseId, analysis: join(repo, 'docs/deaths/example-analysis-input.json') });
-    expect(readIndex(f).totals).toMatchObject({ sourceRecords: 2, uniqueEvents: 5, deaths: 3, outcomes: { retired: 2 }, reviewCoverage: { pending: 2, legacyImports: 1, observedAnalyses: 0, assessedLatest: 0 } });
+    const b99 = readIndex(f).cases.find(item => item.facts.seed === 99110530).id;
+    appendAnalysis({ corpus: f.corpus, caseId: b99, analysis: join(repo, 'docs/deaths/b99-assessment-input.json') });
+    expect(readIndex(f).totals).toMatchObject({ sourceRecords: 2, uniqueEvents: 5, deaths: 3, outcomes: { retired: 2 }, reviewCoverage: { pending: 1, legacyImports: 1, observedAnalyses: 1, assessedLatest: 1 } });
     expect(allFiles(f.corpus)).toEqual(allFiles(join(repo, 'docs/deaths/example')));
   });
   it('keeps nullable legacy context unknown and rejects contradictory explicit outcomes', () => {

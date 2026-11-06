@@ -37,7 +37,9 @@ explicitly declares a trusted host event key, unique within `origin`. Do not
 reuse a generic profile/character nickname as a global event key. Identical
 trusted-key payloads deduplicate; conflicting facts fail visibly. Input keys are
 not inferred from seed/name alone. Different raw records remain separate source
-occurrences even when they reference one trusted event.
+occurrences even when they reference one trusted event. The uniqueEvents field
+counts these declared intake identities, not independently proven natural
+deaths; fallback record hashes cannot identify every historical alias.
 
 Each death gets an immutable `cases/<id>/case.json` and readable `report.md`.
 Missing or null legacy context, unattempted/diverged replay and unavailable recording/save
@@ -94,7 +96,9 @@ disposition, confidence, separate observations/hypotheses, replay status,
 evidence references and action references. Optional tool/mechanism describe
 provenance and a proposed cause. Supported dispositions are needs-evidence,
 hypothesis, confirmed-defect, design-proposal, ordinary-loss and no-bug-found.
-A confirmed claim requires observations, assessed confidence and hashed evidence;
+The observed basis means a new attributed review of supplied evidence, not
+automatically a fresh game or replay. A confirmed claim requires observations,
+assessed confidence and hashed evidence;
 the CLI checks structure, not the truth of causal reasoning. Exact replay claims
 need a usable (`present` or `local-only`) hashed evidence locator and an explicit
 scope note; the CLI does not verify
@@ -113,7 +117,12 @@ Each revision is immutable and hash-chained. Re-importing the same analysis is
 idempotent; changing a diagnosis appends another revision. Case facts are never
 relabelled as a new analysis. The index shows pending cases, legacy imports,
 observed/assessed analyses, dispositions and replay statuses independently.
-Unassessed legacy reasoning is not a newly completed diagnosis.
+Unassessed legacy reasoning is not a newly completed diagnosis. Initial capture
+artifact availability stays visible separately from later analysis evidence;
+adding an assessment does not erase a missing recording or save marker.
+The initial not-captured markers mean the selected raw record supplied no such
+artifact to this intake; they are not a search of all historical files. Later
+analysis can link an existing trace separately without rewriting initial facts.
 
 Aggregate mechanism groups keep confirmed defects separate from hypotheses and
 design proposals. Linked issue URLs are deduplicated; relationships distinguish
@@ -127,14 +136,20 @@ no pooled survival rate, new fix benefit or causal conclusion is inferred.
 [Example index](example/index.md) imports two **existing committed** records:
 the older stage baseline and B99 desktop replay fixture. It contains five
 recorded events: three death cases and two retirements, not five deaths. One
-legacy diagnosis is imported by reference with unassessed confidence and no
-new replay attempt; two cases remain pending. The known historical action is
-linked rather than filed again. Nothing was re-diagnosed or played for this
-example. The original dirty-build/legacy context and raw causes are preserved.
+legacy diagnosis is imported by reference with unassessed confidence. A separate
+[actual offline B99 assessment](b99-assessment-input.json) reads the recorded
+trace and immutable engine code, concluding needs-evidence/low confidence rather
+than a root cause. Its observed stationary west commands are not proof of a
+movement loop: walk can also mean melee, and the trace lacks map/enemy/status/
+inventory/branch facts. Pre-command HP0 is not an invented fatal HP snapshot.
+It proposes matching-build dossier/context capture under existing issue166; the
+legacy action32 remains historical. One case remains pending. No game or replay
+was executed, no fresh recording was made and no new gameplay bug was filed. The original dirty-build/legacy context and raw causes are preserved.
 
 To reconstruct its deterministic output in a new directory, run the two ingest
-commands with those source paths and the same source ref, then append the input
-JSON to the seed34/life3 case ID shown in the resulting index. Output location
+commands with those source paths and the same source ref, then append the legacy input
+JSON to seed34/life3 and the B99 input JSON to seed99110530/life1 using their case
+IDs from the resulting index. Output location
 is not part of case identity. The committed example and its machine-readable
 index are small reports, not a recording or private backup.
 
