@@ -27,6 +27,7 @@ import { existsSync, readFileSync, writeFileSync, mkdtempSync, rmSync } from "no
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { enginePin } from "./engine-pin.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("./", import.meta.url)), "..");
 const REPO = "diegoami/mandos";
@@ -99,7 +100,9 @@ if (stashes > 0) lines.push("", `**Stashes**: ${String(stashes)}.`);
 
 const trapPath = join(ROOT, TRAP);
 const md5 = existsSync(trapPath) ? createHash("md5").update(readFileSync(trapPath)).digest("hex") : null;
-lines.push("", `**Engine fingerprint**: ${md5 === null ? "trap.js missing (run pnpm install)" : md5 === FINGERPRINT ? `\`${md5}\` (published beta.3, no applied package patches)` : `\`${md5}\` - CHANGED from \`${FINGERPRINT}\``}.`);
+lines.push("", `**Engine fingerprint**: ${md5 === null ? "trap.js missing (run pnpm install)" : md5 === FINGERPRINT ? `\`${md5}\` (trap.js matches published beta.3)` : `\`${md5}\` - CHANGED from \`${FINGERPRINT}\``}.`);
+
+lines.push(`**Installed package profile**: ${enginePin(ROOT)}.`);
 
 const prs = gh(["pr", "list", "--state", "open", "--json", "number,title,headRefName,isDraft,labels"]);
 lines.push("", "**Open PRs**:");
