@@ -131,7 +131,7 @@ function installMemory(slot, log = () => {
         const base = value !== null && typeof value === "object" && !Array.isArray(value) ? value : {};
         return { write: true, next: { ...base, profileIds: wanted }, result: true };
       });
-      if (!changed.ok) log(`the Borg could not persist its title profile memory (${changed.message}); kept for this session only`);
+      if (!changed.ok) log(`the Borg could not persist its title profile memory (${changed.message})`);
     }
   };
 }

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-install-mutations-20
+
+
+ Test Files  1 passed (1)
+      Tests  29 passed (29)
+   Start at  00:11:01
+   Duration  2.37s (transform 797ms, setup 578ms, import 828ms, tests 708ms, environment 0ms)
+

@@ -1,0 +1,57 @@
+
+ RUN  v4.1.11 /tmp/mandos-install-mutations-20
+
+ ❯ src/loop/restart.test.ts (38 tests | 2 failed) 109ms
+     × still contains a create whose refusal arrives after the loop stopped 24ms
+     × lets a create that already succeeded stand when the loop stops mid-flight 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/loop/restart.test.ts > the restart loop > still contains a create whose refusal arrives after the loop stopped
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/loop/restart.test.ts:724:25
+    722|     });
+    723|     expect(seen).toEqual([]);
+    724|     expect(f.created()).toHaveLength(1);
+       |                         ^
+    725|     expect(f.held()).toEqual({ profileIds: ["p1"] });
+    726|     expect(f.logs().join(" ")).toContain("could not start the next cha…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/loop/restart.test.ts > the restart loop > lets a create that already succeeded stand when the loop stops mid-flight
+AssertionError: expected [] to deeply equal [ { resumeAutoplayer: true } ]
+
+- Expected
++ Received
+
+- [
+-   {
+-     "resumeAutoplayer": true,
+-   },
+- ]
++ []
+
+ ❯ src/loop/restart.test.ts:748:25
+    746|     });
+    747|     expect(seen).toEqual([]);
+    748|     expect(f.created()).toEqual([{ resumeAutoplayer: true }]);
+       |                         ^
+    749|     expect((f.held() as Record<string, unknown>)[BIRTH_FLAG_KEY]).toBe…
+    750|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  2 failed | 98 passed (100)
+   Start at  23:53:35
+   Duration  1.68s (transform 966ms, setup 4.36s, import 1.02s, tests 276ms, environment 3ms)
+

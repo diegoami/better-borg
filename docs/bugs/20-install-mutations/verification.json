@@ -1,0 +1,17 @@
+{
+  "schema": "mandos/install-mutation-verification@1",
+  "runtimeSourceCommit": "9158cf7835e25232bd7ad7d466771f6eef96195e",
+  "base": "05ea56fce0001e95f23bbfeddeeafc2da4d6acf0",
+  "before": "0fd2d12e346367a16adc523bbe5a773b37899700",
+  "platformControl": "cc9379aaf5db67bea63ce2eacb7e54e9699d481b",
+  "externalLockWrapper": false,
+  "executedSourceHashesVerified": true,
+  "pluginSha256": "53af77c14849516637e2296a23ee2d5f01d972f8ec4e7da89c9356e87bee1761",
+  "preservedCAndPackageDiff": [],
+  "focused": {
+    "tests": 116,
+    "files": 6
+  },
+  "builtPluginTests": 29,
+  "node22": "required hosted gate pending; not locally run"
+}
