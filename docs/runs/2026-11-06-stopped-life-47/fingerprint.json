@@ -1,0 +1,16 @@
+{
+  "baseline": "03fcb3fc1109b64d090f2f618fe487fb823fb365",
+  "beforeFixture": "e09ed248e7cbf554af15afbda81620c996c6c40a",
+  "implementation": "213616f60e044715a97d1ca965a7e79f83cdc542",
+  "engineProfile": "unmodified published Core/SDK/content1.23.0-beta.3",
+  "appliedEnginePatches": [],
+  "pluginSha256": "7417d2f82fc0be828e25552a2e0ac794a9a5e67976c14859e83b6be82fed4a5c",
+  "pluginKiB": 737.4,
+  "focusedTests": 32,
+  "focusedFiles": 3,
+  "focusedSkipped": 0,
+  "focusedSeconds": 16.21,
+  "historicalWipHeadUnchanged": "0144049f4401a01b6516cf6583a9fad5faae0729",
+  "requiredFull": "pending exact-final-head hosted verification; no redundant local full",
+  "optionalReplay": "parked separate profile; not required for47"
+}
