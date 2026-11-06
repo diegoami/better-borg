@@ -842,15 +842,17 @@ describe("the restart loop", () => {
     const gate = new Promise<void>((resolve) => {
       releaseWrite = resolve;
     });
+    let enteredWrite!: () => void;
+    const entered = new Promise<void>(resolve => { enteredWrite = resolve; });
     const theSlot = slot({ profileIds: ["p1"] });
     const f = await installed({
       slot: theSlot,
       create: createRecorder("ok", theSlot),
-      graveyard: () => gate,
+      graveyard: () => { enteredWrite(); return gate; },
     });
 
     f.bus.report({ key: "cedar", report: report("death") });
-    await settle(8); /* the report is parked inside the graveyard write */
+    await entered; /* Actual archive callback reached; its result is parked. */
     await f.restart.stop();
     expect(f.created()).toEqual([]);
 

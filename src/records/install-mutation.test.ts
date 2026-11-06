@@ -83,8 +83,26 @@ describe("cooperating install metadata mutations", () => {
     const title = installMemory(unreadable, m => logs.push(m));
     await title.write(["new"]);
     expect(await title.read()).toEqual(["new"]); // Existing session-only fallback remains.
-    expect(logs.join(" ")).toContain("session only");
+    expect(logs.join(" ")).toContain("could not persist");
     expect(state.slot.set).not.toHaveBeenCalled();
+    expect(state.read()).toEqual(initial);
+  });
+  it.each(["denied-lock", "refused-write"])("title memory makes no false fallback claim after %s with a readable old list", async mode => {
+    const initial = { lineage: 7, profileIds: ["old"], foreign: { retain: true } };
+    const state = memory(initial);
+    let slot: Api2Slot = state.slot;
+    if (mode === "denied-lock") {
+      vi.stubGlobal("window", {});
+      vi.stubGlobal("navigator", { locks: { request: async () => { throw Error("denied"); } } });
+    } else {
+      slot = { get: state.slot.get, set: async () => ({ ok: false, reason: "unavailable", message: "write refused" }) };
+    }
+    const logs: string[] = [];
+    const title = installMemory(slot, message => logs.push(message));
+    await title.write(["new"]);
+    expect(await title.read()).toEqual(["old"]); // Preserve readable persisted-list preference.
+    expect(logs.join(" ")).toContain("could not persist");
+    expect(logs.join(" ")).not.toContain("kept for this session only");
     expect(state.read()).toEqual(initial);
   });
   it("keeps read refusal ahead of malformed report reduction and never writes", async () => {
