@@ -10,11 +10,16 @@
 3. Prioritize owner-directed Mandos defects, reliable run/replay/stall evidence,
    archive/data safety and correct package/plugin/lab integration. Current
    roadmap features remain parked, not auto-started from old planning docs.
-4. For a C correction, inspect the native evidence and applicability to our
+4. Review ready named C proposals and existing intake dispositions at startup
+   and producer handoff (integration queue111; docs/process.md). Local validated
+   proposals are eligible before official upstream acceptance. For a C
+   correction, inspect the native evidence and applicability to our
    TS derivative. Translate it here, not in the fidelity-only mod tracker;
    prove corresponding legal scenarios/controls under Neo's declared APIs.
    Link the source C issue, preserve provenance and mark any baseline departure.
-   If there is no corresponding TS path, record not-applicable.
+   If there is no corresponding TS path, record a pinned not-applicable
+   disposition. A missing subsystem needs an existing dependency and explicit
+   revisit trigger, not an invented carry or duplicate port omission.
 5. For a delivered correction, inspect exact source change and dependency/API
    compatibility. Adopt with marked Mandos differences, preserve active patch
    hunks until each consumer has its verified replacement, rebuild plugin.js.
