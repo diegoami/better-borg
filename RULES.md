@@ -28,9 +28,11 @@
    Default functionality and basic evidence remain required; parked advanced
    suites have an explicit optional profile, not blanket upgrade-gate status.
    Local-core testing is an explicit opt-in and must not masquerade as published.
-7. Adopt upstream corrections with local changes, rebuild and verify actual
-   package/plugin/harness/lab consumers before closing an adoption task. A
-   source merge is not a running-app deployment. No release wait alone.
+7. Adopt upstream corrections with local changes, rebuild and verify the
+   affected in-scope package/plugin/harness consumers before closing adoption.
+   Verify a lab only when separately authorized; otherwise record its unverified/
+   undeployed boundary. A private lab deployment is not an ordinary bug-fix gate.
+   A source merge is not a running-app deployment. No release wait alone.
    Source forks do not have consumer carry/fixed/patch-active tags. Linked
    Mandos issues own those states: carried means fixed on our side and OPEN
    until the correction is fixed upstream AND adopted downstream, rebuilt and

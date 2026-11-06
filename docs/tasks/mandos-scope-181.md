@@ -1,16 +1,17 @@
 # Scope181: open-issue review and proposed dispositions
 
-**PROPOSAL for parent review, not an applied issue-state table.** Read all35 open
+**Parent-reviewed recommendations, not an applied issue-state table.** Read all35 open
 Mandos issue bodies/labels at the start of this pass on2026-11-06, plus newly
 created [181](https://github.com/diegoami/mandos/issues/181). No other issue's
 labels, body, priority or open/closed state was changed by this worker.
-Runtime180 chooses the supported profile from actual stock-beta.3 evidence;
-this scope document does not claim that adoption already passed.
+Runtime180 has selected raw beta.3 Core/harness from focused evidence; final
+adoption checks remain separate. Official stock interactive hosts still block
+Mandos controller registration; no lab deployment is claimed.
 
 Existing `backlog` can mark preserved parked work. There is no existing
 park/deferred label, and no new taxonomy is proposed. Keep consumer/source
 labels meaningful: an unapplied optional carry or a parked feature is not an
-upstream correction. Parent applies the reviewed changes and records exceptions.
+upstream correction. Parent approved the purpose/dispositions and applies the reviewed changes, recording exceptions.
 The live board stays authoritative, not this dated recommendation snapshot.
 
 | Issue | Proposed disposition | Scope/reason and recommended parent action |
@@ -35,10 +36,10 @@ The live board stays authoritative, not this dated recommendation snapshot.
 | [67](https://github.com/diegoami/mandos/issues/67) mushroom-memory candidate | Keep bug triage active | It asks whether a seen immobile threat is forgotten. Requalify a bounded current-default scenario and ownership; old class-grid frequency is historical, not a reason to rerun a grid or retune policy. |
 | [111](https://github.com/diegoami/mandos/issues/111) fix integration | Keep active | The consumer intake/carry/upstream-resolution queue is Mandos's main purpose. Source boards remain authoritative. |
 | [125](https://github.com/diegoami/mandos/issues/125) swap adoption | Keep bug adoption/status active | Weapon/HOME leaf is already carried; armour/tactical omissions are named incomplete port components, not permission for local strategy research. Preserve partial/open and take delivered source corrections through normal applicability review. |
-| [128](https://github.com/diegoami/mandos/issues/128) input flush432 | Keep source/consumer status watch; necessity proof-dependent | Runtime180 tests whether stock beta.3 needs this carry on an actual Mandos path. Preserve old receipts/optional unit. Removing an unnecessary default carry must not mark the general source bug fixed; parent reconciles profile-scoped labels after proof. |
+| [128](https://github.com/diegoami/mandos/issues/128) input flush432 | Park not-required-default after verified raw adoption; source status watch | Actual Mandos paths do not subscribe to the event and raw Core clears native queues. Preserve old receipts/optional unit. Removing an unnecessary carry does not fix the general source bug; parent reconciles profile-scoped labels after final proof. |
 | [129](https://github.com/diegoami/mandos/issues/129) seed/birth433 | Park advanced; reconcile named-profile state | Default upgrade/play must not require replay provenance enhancement. Preserve old carried profile and optional unapplied unit; parent removes misleading default patch-active dependency only after actual adoption, not a fixed-bug closure. |
 | [130](https://github.com/diegoami/mandos/issues/130) unattended load/resume | Park research dependency | Source7 itself says this seam gates the unattended ladder and is parked. Keep the upstream proposal/history; do not make a new Mandos default requirement. |
-| [132](https://github.com/diegoami/mandos/issues/132) combined seams watch | Owner/status follow-up; park optional expansion | Separate actual basic run-end/archive correctness from headless-first-party/advanced transport enhancement. Verify what remains partial; do not infer all seams required by default or reopen completed scopes. Basic integrity has20/47/56. |
+| [132](https://github.com/diegoami/mandos/issues/132) combined seams watch | Keep basic host compatibility/status active; park advanced expansion | Official stock hosts block own-ID Mandos controller registration. Track this basic host boundary separately from optional headless/seed/advanced transport seams; parent narrows the mixed scope without inventing a stock Ctrl-Z fallback. Basic archive correctness remains with20/47/56. |
 | [164](https://github.com/diegoami/mandos/issues/164) cold melee | Keep carried bug active | Applied correction and targeted control remain mandatory preservation. Open source-resolution watch, not new research. |
 | [165](https://github.com/diegoami/mandos/issues/165) Itangast | Keep carried bug active | Applied message-recognition correction, controls and removal unit remain. Preserve carried/open pending real upstream replacement. |
 | [166](https://github.com/diegoami/mandos/issues/166) advanced death loop | Park advanced | Offline corpus/profile code and live-export110d682/ca627bf are preserved. Do not finish outbox/feedback/analysis/aggregation here or claim every live death captured; basic records stay active separately. |
@@ -54,5 +55,5 @@ The live board stays authoritative, not this dated recommendation snapshot.
 
 No issue/task/code is automatically migrated to better-borg-c or borg-rs.
 The documentation worker changed only181's own body when the owner replaced the
-432-only assumption with stock-engine preference. All other changes above await
-parent review; existing evidence/source/consumer lifecycle remains intact.
+432-only assumption with stock-engine preference. Parent applies the approved dispositions; existing evidence/source/consumer
+lifecycle remains intact. This worker still changes no other task state.

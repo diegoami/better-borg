@@ -14,16 +14,24 @@ analysis are parked optional tools. Their code, branches and evidence are
 preserved, not deleted or automatically moved elsewhere. See
 [the scope contract](docs/MANDOS-SCOPE.md) and [scope task181](https://github.com/diegoami/mandos/issues/181).
 
-Prefer the **unpatched published engine**. [Adoption180](https://github.com/diegoami/mandos/issues/180)
-qualifies beta.3 and chooses the actual supported default from runtime evidence;
-preparation is not verified adoption. A local engine backport is an exception
-for a demonstrated required Mandos gameplay defect, with its own regression and
-removal condition. Optional replay is not a reason to require PR433 or a patched
-engine for ordinary use. A valid general engine bug can remain open even when
-Mandos does not require its carry. The manifest, package pins and final adoption
-receipt describe the delivered profile; this documentation does not deploy it.
-Package/Core tests alone do not certify stock-desktop loading, trust or grants;
-those are separate from the retained lab profile.
+The selected default for the **Core/harness** is unpatched published beta.3.
+[Runtime180](https://github.com/diegoami/mandos/issues/180) records the actual
+proof: 87 controller/rest checks and three basic cases pass on raw beta.3 with
+identical traces to the input-flush carry profile; 99 C/class controls also pass.
+A local engine backport remains an exception for a demonstrated required Mandos
+gameplay defect, with its regression/removal condition. Optional replay does not
+require PR433 in the default engine. Dropping an unneeded carry does not fix its
+general upstream issue. Final package/plugin adoption checks remain part of180.
+
+**Official stock beta.3 desktop/web cannot currently run the Mandos controller
+under its own `mandos` identity.** The [official97ce controller gate](https://github.com/neostryder/neo-angband/blob/97ceec2925e6715ba725624a61866ab93a196a12/packages/web/src/mod-api2-shim.ts#L603)
+is first-party-only, and the compiled origins omit Mandos. No supported
+configuration route was found; `engine:access` alone is insufficient. Core/npm
+verification is therefore not an interactive installation claim, and Ctrl-Z or
+the title screen is not a stock-host fallback. Existing authorized first-party
+host/lab code is retained unchanged; no lab upgrade or deployment is claimed.
+See [the host boundary](docs/MANDOS-SCOPE.md#interactive-host-boundary) and
+[coordination22](https://github.com/diegoami/angband-workspace/issues/22).
 
 Start an agent at [AGENTS](AGENTS.md), [RULES](RULES.md), [PLAN](PLAN.md) and
 [checkpoint36](https://github.com/diegoami/mandos/issues/36). The

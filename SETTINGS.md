@@ -6,6 +6,11 @@ advanced replay are PARKED optional work, not ordinary-play or engine-upgrade
 gates. Runtime180 defines the delivered profile; prefer stock published beta.3,
 with an engine carry only if a real required gameplay defect proves it necessary.
 PR433 is not a default dependency or a promise of live seed/birth metadata.
+Official stock beta.3 desktop/web currently does not register the Mandos
+controller under its own ID; the title/Ctrl-Z controls in this reference apply
+only to a retained authorized first-party host. Unpatched-Core/harness checks
+do not supply a stock interactive fallback or deploy the existing lab.
+See [the host boundary](docs/MANDOS-SCOPE.md#interactive-host-boundary).
 The retained optional suite is `pnpm test:optional-replay`; historical replay
 needs its original executable/content/configuration and accepted start inputs.
 

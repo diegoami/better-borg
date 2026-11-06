@@ -12,6 +12,15 @@ strategy/stage research and advanced death tooling. Existing code/evidence stays
 Future experiments may be independently owner-directed in better-borg-c or
 borg-rs, without automatic task/code migration or Rust dispatch/polling.
 
+Mandos's selected default is the verified unpatched beta.3 **Core/harness**.
+Official stock desktop/web has a separate first-party controller gate and does
+not register Mandos under its own ID. There is no supported configuration or
+Ctrl-Z fallback; `engine:access` alone is insufficient. See
+[the exact host boundary](MANDOS-SCOPE.md#interactive-host-boundary) and
+[runtime180](https://github.com/diegoami/mandos/issues/180). The retained authorized
+host/lab code is unchanged and undeployed by this integration. Do not infer a
+stock interactive launch or lab refresh from passing npm/harness checks.
+
 Each session reads its own AGENTS/RULES/PLAN/checkpoint. It does not inherit
 another repository's queue or start fixing a different component silently.
 The old neo-angband lab checkout and pristine neo-angband-upstream / original

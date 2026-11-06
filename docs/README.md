@@ -8,7 +8,20 @@ The optional compatibility settings below do not define Mandos's active purpose.
 Start with the [repository README](../README.md) for the purpose, evidence
 and desktop lab setup.
 
-## Play and control
+## Interactive host requirement
+
+The unpatched beta.3 Core/harness profile passes its focused checks. Official
+stock beta.3 desktop/web, however, does **not register the Mandos controller**
+under its own ID: its first-party-only registration policy excludes Mandos.
+No supported configuration route exists in the inspected release; `engine:access`
+alone and Ctrl-Z do not bypass that restriction. See
+[the source/audit boundary](MANDOS-SCOPE.md#interactive-host-boundary).
+
+The following controls describe the retained **authorized first-party host/lab**,
+not a stock-desktop install recipe. That host code remains unchanged, and this
+upgrade does not deploy or refresh the existing lab.
+
+## Controls in the authorized host
 
 | Action | Where |
 | --- | --- |
@@ -85,15 +98,15 @@ study and test spells, and eligible attack spells enter the combat chooser.
 
 ## Engine and permissions
 
-Prefer the supported **stock published engine**. [Runtime180](https://github.com/diegoami/mandos/issues/180)
-qualifies beta.3 and records the actual delivered profile; this documentation
-change alone does not establish adoption. Read the manifest/package/final receipt
-for exact versions. An engine patch is an exception only for a demonstrated
-required Mandos gameplay correction, not optional replay/PR433. Raw beta.3 does
-not contain every still-open source proposal merely because its version is new.
-The mod folder must be named `mandos`, matching its manifest id. Package-level compatibility does not certify stock-desktop loading/trust or
-grants. The old running lab is a separate retained profile and is not silently
-refreshed by a merge.
+The selected package default is unpatched published beta.3 Core/SDK/content;
+[runtime180](https://github.com/diegoami/mandos/issues/180) records the focused
+proof and final adoption checks. No engine patch is required by the tested
+Mandos harness paths, and PR433 is not a default requirement. A generally valid
+upstream bug is not declared fixed because a carry is unnecessary here.
+The mod folder is named `mandos`, matching its manifest ID. This identity is
+currently blocked by the official stock desktop/web controller policy described
+above; package compatibility does not make those hosts supported. The authorized
+host/lab profile remains separate and has not been deployed by this change.
 
 The [manifest](../manifest.json) is the authority for the requested grants.
 Use **Choose one by one** in the consent screen: the powerful

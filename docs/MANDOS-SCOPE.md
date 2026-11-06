@@ -24,10 +24,10 @@ This supersedes old experimental roadmaps as the current Mandos purpose.
 Prefer an unpatched published engine. An engine carry requires evidence that a
 real supported Mandos gameplay path needs it, a focused regression and a named
 removal condition. Generic engine defects remain source-owned even when no
-Mandos carry is necessary. The final180 proof selects the supported beta.3
-profile; no unpatched verification is claimed merely by this policy change.
-Package/Core verification is distinct from stock-desktop loading/trust/grants,
-and neither silently refreshes the existing lab.
+Mandos carry is necessary. Runtime180 has selected unpatched beta.3 for the
+Core/harness after actual raw/carry controller and basic-run equivalence checks,
+plus C/class controls. This does not establish interactive stock-host support
+or deploy the old lab; final package/plugin adoption checks stay explicit.
 PR433/seed-birth recording is not a mandatory default dependency. Preserve its
 optional patch and historical profile, without pretending missing metadata exists.
 
@@ -35,6 +35,24 @@ At baseline6c7916a, the seven applied C units are164/165/168/171/172/175/176.
 Their code, controls, provenance and removal units remain. This is a preservation
 requirement for the current upgrade, not a second live status ledger: their
 canonical issues and patch ledger own actual state.
+
+## Interactive host boundary
+
+Official beta.3 desktop/web does not register an automatic controller for the
+own Mandos ID. The [official97ce shim gate at603](https://github.com/neostryder/neo-angband/blob/97ceec2925e6715ba725624a61866ab93a196a12/packages/web/src/mod-api2-shim.ts#L603)
+restricts registration to first-party origins, whose compiled list lacks Mandos.
+No supported configuration route was found; adding `engine:access` alone does
+not make it work. The successful unpatched-Core/harness tests are a different
+consumer profile, not a stock-desktop title/Ctrl-Z/autorestart recipe.
+
+The retained authorized first-party host/lab code remains unchanged, with no
+upgrade/deployment claim. Host compatibility stays a basic tracked limitation
+under132/source8 and [180](https://github.com/diegoami/mandos/issues/180) /
+[workspace22](https://github.com/diegoami/angband-workspace/issues/22); it does not
+start a new platform implementation, host rewrite or identity substitution task.
+Lab validation requires separate authorization. Ordinary bug completion checks
+the affected in-scope package/plugin/harness and records the undeployed/unverified
+lab boundary; it does not require a private lab deployment.
 
 ## Parked optional work
 
