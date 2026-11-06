@@ -16,8 +16,10 @@
 5. The mod obeys declared APIs; no privileged engine reads or network/wall
    clock in its controller. Determinism is required. Offline tools produce
    frozen data; do not sneak new gameplay policy into an integration fix.
-6. pnpm verify is the merge gate: typecheck, session check, tests and committed
-   plugin currency. Relevant tests must execute; CI missing content fails.
+6. Full changes use pnpm verify as the merge gate: typecheck, session check,
+   tests and committed plugin currency. The narrow prose-only gate in docs/CI.md
+   checks metadata/docs/privacy; unknown and workflow changes stay full.
+   Relevant tests must execute; CI missing content fails.
    Use the pinned published engine plus named carried patches by default.
    Local-core testing is an explicit opt-in and must not masquerade as published.
 7. Adopt upstream corrections with local changes, rebuild and verify actual
