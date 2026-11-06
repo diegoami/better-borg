@@ -1,0 +1,72 @@
+{
+  "author": "Codex offline case reviewer, workspace #16 / mandos_death_review",
+  "tool": "Read-only inspection of immutable Git objects; no game or replay execution",
+  "basis": "observed",
+  "summary": "The recorded Human Mage dies to a yellow mold after five stationary westward walk commands while the captured pre-command HP falls from 10 to 0. This is an observed terminal command pattern, not an established cause of bad decisions. The available trace omits the character-known map, monsters, inventory, status and decision-path facts needed to decide whether these were intended attacks, blocked movement, or a missed legal alternative. Next action under Mandos #166: preserve or export a matching-build dossier/known-view and decision rationale for commands 94 through 98, with an explicit exact/diverged/missing-input replay verdict. Do not diagnose this by substituting the older B54 dossier or by replaying current code and assuming it is the historical run.",
+  "disposition": "needs-evidence",
+  "confidence": "low",
+  "observations": [
+    "The immutable run record identifies Human Mage, seed 99110530, life 1, level 1, maximum depth 1, 98 decisions, terminal turn 3167 and raw engine cause yellow mold. Its build context names the generic Mage pack, accepted birth RNG/options, patched published core/content beta.2 and controller commit c7fbfe16ee75aab242b99fc84a28c6e6bdb968c5.",
+    "Trace entries 94 through 98 all issue walk direction 4 from grid (105,12), at pre-command turns 3121, 3131, 3141, 3151 and 3161. Their captured HP values are 10, 7, 5, 3 and 0; SP remains 2. The zero is a pre-command trace value, not a supplied full fatal-state HP snapshot.",
+    "The terminal record reports death at turn 3167, six turn units after the last captured command. No new recording, game trajectory or counterfactual was generated during this assessment.",
+    "The trace records commands, turn, grid, HP, SP and depth, but not the known monsters, remembered terrain, messages, pack/equipment knowledge, temporary statuses, danger estimate or issuing ladder branch at those five decisions. Those omissions prevent a supported conclusion that healing, escape or a different attack was available and wrongly refused.",
+    "The recorded engine walk implementation can attack a monster in the destination as well as move. Repeated walk commands with an unchanged grid therefore do not establish a non-combat movement loop or prove that the Borg never attacked.",
+    "The historical README reports that all 98 desktop commands/arguments and pre-command observations matched a headless driver, and that an uninstrumented control had matching end facts. This assessment reads that attributed result; it did not rerun or independently revalidate the historical parity claim."
+  ],
+  "hypotheses": [
+    "The final repeated west commands may be an intentional bump-attack engagement, blocked movement, or another command path. The inspected trace cannot distinguish these alternatives or establish why the Borg continued at low HP."
+  ],
+  "mechanism": null,
+  "replay": {
+    "status": "not-attempted",
+    "note": "No game or replay was executed for this review. The B99 README reports historical desktop/headless equality for its captured build and birth context; that does not establish a new exact replay under current code. A matching-build known-view/dossier is the next evidence request."
+  },
+  "evidence": [
+    {
+      "kind": "terminal run record and accepted birth/build context",
+      "availability": "present",
+      "knowledge": "terminal-revealed",
+      "locator": "https://github.com/diegoami/mandos/blob/2690ae09c4166332fa9f5ff8f032e0fb52327bcc/docs/runs/2026-11-05-b99-desktop-death-replay/runs.json",
+      "sha256": "f56eb208521efe19c76b0a27d6e9117ab77ddf2a48b0541f33e49460a1c8fba1",
+      "note": "Complete committed file was read and hashed locally. The cause/outcome are terminal facts; they do not establish pre-decision monster or item knowledge. Remote URL was not fetched by this review."
+    },
+    {
+      "kind": "captured pre-command trace and submitted commands",
+      "availability": "present",
+      "knowledge": "character-known",
+      "locator": "https://github.com/diegoami/mandos/blob/2690ae09c4166332fa9f5ff8f032e0fb52327bcc/docs/runs/2026-11-05-b99-desktop-death-replay/desktop-trace.json#L1317-L1386",
+      "sha256": "50a42d7c12c8c2f10f1ebe013f1b0ffd6aa30bcb1ef36f2f83565bede8fba50c",
+      "note": "Hash covers the complete 98-entry committed file. The fragment shows entries 94-98; domain applies only to captured player turn/grid/HP/SP/depth and issued commands, not omitted map, inventory, monsters or terminal revealed gear."
+    },
+    {
+      "kind": "historical capture and parity explanation",
+      "availability": "present",
+      "knowledge": "engine-diagnostic",
+      "locator": "https://github.com/diegoami/mandos/blob/2690ae09c4166332fa9f5ff8f032e0fb52327bcc/docs/runs/2026-11-05-b99-desktop-death-replay/README.md",
+      "sha256": "eb13516788d57b07030ba70619cf1bbc98d91597a5bc9bf8d608f2d1ca62fdc6",
+      "note": "Historical author-reported comparison and observer/control build caveats, not a replay newly executed by this reviewer."
+    },
+    {
+      "kind": "uninstrumented historical terminal control and source fingerprint",
+      "availability": "present",
+      "knowledge": "terminal-revealed",
+      "locator": "https://github.com/diegoami/mandos/blob/2690ae09c4166332fa9f5ff8f032e0fb52327bcc/docs/runs/2026-11-05-b99-desktop-death-replay/desktop-control.json",
+      "sha256": "d5b53679fe42bf6e58b31d5f82f88daa6f462d9581420f13395fe0097e2765e8",
+      "note": "Contains terminal outcome and source/plugin identity, not a full pre-death dungeon save."
+    },
+    {
+      "kind": "recorded control engine walk semantics",
+      "availability": "present",
+      "knowledge": "engine-diagnostic",
+      "locator": "https://github.com/diegoami/neo-angband-tracker/blob/9d6ae21ec5f733134f8411414359bae3019c7c2d/packages/core/src/game/player-turn.ts#L419-L545",
+      "sha256": "26b27e655751bc970e2eab23f5455342fd910d7324d24df8e64fce3c7c435d13",
+      "note": "Hash covers the complete committed file. The walk contract and monster branch establish command ambiguity; they do not identify the branch selected in this trace."
+    }
+  ],
+  "actions": [
+    {
+      "url": "https://github.com/diegoami/mandos/issues/166",
+      "relationship": "proposed"
+    }
+  ]
+}

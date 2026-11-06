@@ -1,0 +1,173 @@
+{
+  "artifacts": [
+    {
+      "availability": "not-captured",
+      "kind": "recording",
+      "knowledge": "unspecified",
+      "locator": null
+    },
+    {
+      "availability": "not-captured",
+      "kind": "decision-trace",
+      "knowledge": "unspecified",
+      "locator": null
+    },
+    {
+      "availability": "not-captured",
+      "kind": "pre-death-save",
+      "knowledge": "unspecified",
+      "locator": null
+    }
+  ],
+  "context": {
+    "build": {
+      "borg": "generic-mage pack (stock parameters; captured desktop birth)",
+      "commit": "c7fbfe16ee75aab242b99fc84a28c6e6bdb968c5",
+      "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+      "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428), PR #433 (fixes #431), commit 0cc75b4af (actual book spell counts)"
+    },
+    "label": "b99-desktop-death-replay",
+    "recorded": "2026-11-05T09:05:07.015Z",
+    "runner": {
+      "decisions": 600,
+      "lives": 1,
+      "seeds": [
+        99110530
+      ],
+      "stage": {
+        "clvl": 50,
+        "depth": 100
+      },
+      "tool": "B99 verified desktop replay (playPackSession)"
+    }
+  },
+  "facts": {
+    "baseStats": [
+      17,
+      16,
+      10,
+      10,
+      16
+    ],
+    "birthOptions": {
+      "birth_ai_learn": true,
+      "birth_connect_stairs": true,
+      "birth_feelings": true,
+      "birth_force_descend": false,
+      "birth_know_flavors": false,
+      "birth_know_runes": false,
+      "birth_levels_persist": false,
+      "birth_lose_arts": false,
+      "birth_no_artifacts": false,
+      "birth_no_recall": false,
+      "birth_no_selling": true,
+      "birth_percent_damage": false,
+      "birth_randarts": false,
+      "birth_stacking": true,
+      "birth_start_kit": true
+    },
+    "birthRngState": {
+      "fixed": false,
+      "fixval": 0,
+      "quick": false,
+      "state": [
+        1578886941,
+        2343144563,
+        1231553764,
+        2103466390,
+        3434296286,
+        1409947435,
+        3721819616,
+        718450016,
+        3252967864,
+        239293822,
+        2285033056,
+        79997820,
+        1640749976,
+        3249608854,
+        1628867744,
+        1200249024,
+        1522864154,
+        3082239053,
+        1534034332,
+        1520917410,
+        4219550082,
+        3489935864,
+        2914343002,
+        3813378241,
+        755880427,
+        2333774946,
+        3677751369,
+        1022642921,
+        3137890344,
+        4032588147,
+        1162916868,
+        988178115
+      ],
+      "stateI": 20,
+      "value": 99110530
+    },
+    "causeOfDeath": "yellow mold",
+    "class": "Mage",
+    "clvl": 1,
+    "commands": {
+      "ascend": 4,
+      "cast": 4,
+      "descend": 6,
+      "pickup": 1,
+      "read": 1,
+      "rest": 4,
+      "study": 1,
+      "walk": 76,
+      "wield": 1
+    },
+    "dead": true,
+    "decisions": 98,
+    "depths": [
+      0,
+      1
+    ],
+    "gold": 319,
+    "jitter": 999,
+    "kills": 3,
+    "life": 1,
+    "maxDepth": 1,
+    "meta": {
+      "wallClockMs": 1607
+    },
+    "places": 47,
+    "race": "Human",
+    "restedBesideMonster": 0,
+    "retired": false,
+    "seed": 99110530,
+    "stageAttained": false,
+    "turns": 3167,
+    "unsure": {
+      "points": [],
+      "total": 0
+    }
+  },
+  "factsKnowledge": "terminal-summary",
+  "fingerprint": "af456809a1eedbd39f76b7b6d38dd25f6a829e48ca19d6a0b020373dbba566ca",
+  "id": "case-d791ddf97f2c3fb9eae5f0964216463185fc0238b884ed395467c5b55e26f1b0",
+  "identity": {
+    "origin": "diegoami/mandos",
+    "record": "f56eb208521efe19c76b0a27d6e9117ab77ddf2a48b0541f33e49460a1c8fba1",
+    "row": 0
+  },
+  "initialAnalysis": "pending-diagnosis",
+  "integritySha256": "a721eb4f973945f483bdbca65ef076c5b1490154293d36bff946d85b4c52c900",
+  "missingContext": [],
+  "outcome": "death",
+  "replay": {
+    "status": "not-attempted"
+  },
+  "schema": "mandos/death-case@1",
+  "source": {
+    "locator": "docs/runs/2026-11-05-b99-desktop-death-replay/runs.json",
+    "origin": "diegoami/mandos",
+    "ref": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+    "repository": "diegoami/mandos",
+    "sha256": "f56eb208521efe19c76b0a27d6e9117ab77ddf2a48b0541f33e49460a1c8fba1"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "context": {
+    "build": {
+      "borg": "generic-mage pack (stock parameters; captured desktop birth)",
+      "commit": "c7fbfe16ee75aab242b99fc84a28c6e6bdb968c5",
+      "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+      "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428), PR #433 (fixes #431), commit 0cc75b4af (actual book spell counts)"
+    },
+    "label": "b99-desktop-death-replay",
+    "recorded": "2026-11-05T09:05:07.015Z",
+    "runner": {
+      "decisions": 600,
+      "lives": 1,
+      "seeds": [
+        99110530
+      ],
+      "stage": {
+        "clvl": 50,
+        "depth": 100
+      },
+      "tool": "B99 verified desktop replay (playPackSession)"
+    }
+  },
+  "events": [
+    {
+      "caseId": "case-d791ddf97f2c3fb9eae5f0964216463185fc0238b884ed395467c5b55e26f1b0",
+      "fingerprint": "af456809a1eedbd39f76b7b6d38dd25f6a829e48ca19d6a0b020373dbba566ca",
+      "id": "case-d791ddf97f2c3fb9eae5f0964216463185fc0238b884ed395467c5b55e26f1b0",
+      "identity": {
+        "origin": "diegoami/mandos",
+        "record": "f56eb208521efe19c76b0a27d6e9117ab77ddf2a48b0541f33e49460a1c8fba1",
+        "row": 0
+      },
+      "outcome": "death",
+      "row": 0
+    }
+  ],
+  "integritySha256": "c7bc6a9a80d8df01423bc09154232257448508673b7db8757f237a11eb64d0af",
+  "schema": "mandos/death-ingest@1",
+  "source": {
+    "locator": "docs/runs/2026-11-05-b99-desktop-death-replay/runs.json",
+    "origin": "diegoami/mandos",
+    "ref": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+    "repository": "diegoami/mandos",
+    "sha256": "f56eb208521efe19c76b0a27d6e9117ab77ddf2a48b0541f33e49460a1c8fba1"
+  }
+}
