@@ -20,7 +20,15 @@
         "restore-points/**",
         "chromium/blob_storage/**",
         "chromium/Session Storage/**"
-      ]
+      ],
+      "preflight": {
+        "requiredPrefixes": [
+          "user/",
+          "chromium/IndexedDB/"
+        ],
+        "profileDirectory": "chromium",
+        "processDirectory": "../neo-angband/packages/desktop"
+      }
     },
     "mandos-evidence": {
       "local": "artifacts",
