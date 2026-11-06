@@ -1,0 +1,7 @@
+Preparing worktree (detached HEAD 2690ae0)
+HEAD is now at 2690ae0 Merge pull request #163 from diegoami/task/weapon-backup-home-carry
+Preparing worktree (detached HEAD 81600f9)
+HEAD is now at 81600f9 Match the complete unseen-attacker pronoun
+Before:2 expected failures/4 controls; after:6 passes; complete four controls unchanged
+Full logs, observation JSON, exit codes and hashes: /tmp/mandos-cbug0086-replay-lwpde0mu
+No world turns, monster attack, HP-loss or survival claim; full consumer gate is separate
