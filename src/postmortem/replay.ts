@@ -142,6 +142,9 @@ export async function replayDeadRun(
     || (dead.birthOptions !== undefined && birth.birthOptions === undefined)) {
     throw new Error(`seed ${String(dead.seed)}: invalid accepted-birth replay input`);
   }
+  if (birth.birthRngState === undefined) {
+    throw new Error(`Optional replay unavailable for seed ${String(dead.seed)}: accepted-birth RNG input is missing; a seed alone cannot verify a captured birth`);
+  }
   if (birth.birthRngState?.quick || birth.birthRngState?.fixed) {
     throw new Error(`seed ${String(dead.seed)}: a debug RNG birth cannot be replayed as normal play`);
   }

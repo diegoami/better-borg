@@ -374,6 +374,16 @@ describe("the built plugin.js", () => {
     player: { grid: { x: 5, y: 5 }, level: 2, maxDepth: 1, depth: 1 },
   };
 
+  it("normal play does not retire at the historical benchmark without explicit opt-in", async () => {
+    const game = await begin({ scenario: ATTAINED });
+    await tick(game);
+    for (let i = 0; i < 32; i++) await Promise.resolve();
+    expect(game.savesMade()).toBe(0);
+    expect(game.created).toEqual([]);
+    expect(game.submitted.length).toBeGreaterThan(0);
+    expect(said(game)).not.toContain("attained its stage");
+  });
+
   it("retires a character that attains its stage: saves, renames the slot into the library, starts the next one", async () => {
     /* THE RAIL ITSELF (#25), driven through the BUILT bundle the way the
      * game drives it: the tick reads a world whose character has attained,
@@ -382,7 +392,7 @@ describe("the built plugin.js", () => {
      * identity, the stage's thresholds), arms the birth flag, and creates
      * the next character with resumeAutoplayer - unattended, no prompt, the
      * mod's own stage settings being the consent. */
-    const game = await begin({ scenario: ATTAINED });
+    const game = await begin({ scenario: ATTAINED, flags: { "mandos.stageRetirement": true } });
     await tick(game);
     expect(game.submitted).toEqual([]); /* no decision spent on an attained life */
     for (let i = 0; i < 32; i++) await Promise.resolve();
@@ -402,7 +412,7 @@ describe("the built plugin.js", () => {
      * renamed or created, the log says the run keeps playing - and the very
      * next wait is an ORDINARY DECISION (the watch latched), so the
      * character plays on rather than stalling. */
-    const game = await begin({ scenario: ATTAINED, session: "refused" });
+    const game = await begin({ scenario: ATTAINED, flags: { "mandos.stageRetirement": true }, session: "refused" });
     await tick(game);
     for (let i = 0; i < 32; i++) await Promise.resolve();
 
@@ -422,7 +432,7 @@ describe("the built plugin.js", () => {
   it("plays an attained run on when the game gives it no session seam", async () => {
     /* A host without session:control cannot be retired into: the loop says
      * so once, nothing is saved or created, and the run plays on. */
-    const game = await begin({ scenario: ATTAINED, session: "absent" });
+    const game = await begin({ scenario: ATTAINED, flags: { "mandos.stageRetirement": true }, session: "absent" });
     await tick(game);
     for (let i = 0; i < 32; i++) await Promise.resolve();
     expect(game.created).toEqual([]);
@@ -435,7 +445,7 @@ describe("the built plugin.js", () => {
     /* The non-vacuity guard: the same world, one level short of the stage,
      * never triggers the retire - the saves pile up only for runs that
      * actually attained. */
-    const game = await begin({ scenario: FIGHT });
+    const game = await begin({ scenario: FIGHT, flags: { "mandos.stageRetirement": true } });
     for (let turn = 0; turn < 4; turn++) await tick(game);
     for (let i = 0; i < 32; i++) await Promise.resolve();
     expect(game.savesMade()).toBe(0);

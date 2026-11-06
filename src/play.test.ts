@@ -41,6 +41,7 @@
  */
 
 import { describe, expect, it } from "vitest";
+import { writeFileSync } from "node:fs";
 import * as Core from "@rpgm-tools/neo-angband-core";
 import { startGame } from "@rpgm-tools/neo-angband-core";
 import type { GamePack, StartedGame } from "@rpgm-tools/neo-angband-core";
@@ -361,6 +362,11 @@ suite("the pack restart chain, headless", () => {
      * so this session exercises both an archive and a rebirth. */
     const seeds = [3, 7, 34];
     const session = await playPackSession(Core, pack!, CHAIN_PACK, { seeds, capFor: () => 600 });
+    const proof = process.env["MANDOS_ENGINE_COMPAT_OUTPUT"];
+    if (proof) writeFileSync(proof, JSON.stringify({
+      lives: session.lives.map(({ wallClockMs: _timing, arrivalStamps, ...facts }) => ({ ...facts, arrivalStamps: [...arrivalStamps] })),
+      graveyard: session.graveyard,
+    }, null, 2) + "\n");
 
     /* AT LEAST ONE DEATH AND ONE REBIRTH, which is this test's requirement
      * (the chain test above pins death followed by survival on these
@@ -404,7 +410,7 @@ suite("the pack restart chain, headless", () => {
         expect(life.graveyard[0]).toMatchObject({
           outcome: "death",
           seed: life.seed,
-          birthRngState: life.birthRngState,
+          ...(life.birthRngState === undefined ? {} : { birthRngState: life.birthRngState }),
           birthOptions: life.birthOptions,
           cause: life.causeOfDeath,
           name: expect.any(String),
@@ -417,6 +423,7 @@ suite("the pack restart chain, headless", () => {
           turn: life.turns,
           score: expect.any(Number),
         });
+        if (life.birthRngState === undefined) expect(life.graveyard[0]).not.toHaveProperty("birthRngState");
       } else {
         expect(life.graveyard).toEqual([]);
       }
@@ -494,7 +501,7 @@ suite("the pack restart chain, headless", () => {
         race: life.race,
         class: life.className,
         baseStats: [...life.baseStats],
-        birthRngState: life.birthRngState,
+        ...(life.birthRngState === undefined ? {} : { birthRngState: life.birthRngState }),
         birthOptions: life.birthOptions,
         decisions: life.decisions,
         turns: life.turns,
@@ -509,6 +516,7 @@ suite("the pack restart chain, headless", () => {
          * flows into the record beside the census, totals agreeing. */
         unsure: { total: life.unsure.total, points: [...life.unsure.points] },
       });
+      if (life.birthRngState === undefined) expect(entry).not.toHaveProperty("birthRngState");
       /* Kills come from the game's own lore counters (per-race pkills,
        * summed - the number the character dump prints): a count, never a
        * guess, and never negative. */

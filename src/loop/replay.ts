@@ -1,4 +1,6 @@
 /**
+ * PARKED optional workflow: requires sufficient original captured inputs and
+ * matching runtime/controller conditions. A seed alone does not guarantee replay.
  * THE REPLAY MODE (#29, the optional human path): drive to the rung, then
  * hand the owner the keyboard with the death banner.
  *
@@ -56,7 +58,7 @@ export const REPLAY_RELEASE_SETTING: PackSetting = {
   id: "borg.replayReleaseTurn",
   title: "Death replay release turn",
   description:
-    "The death-replay trainer's release point (#29): when the game's turn counter reaches this value the Borg stops playing and hands the keyboard back with the death banner, so the owner can play the last turns of a dead run themselves. Take the number from the dossier ladder's release-boundary line (docs/runs/, the run's postmortem directory); 0 (the default) keeps the replay mode off. Birth the character on the recorded seed (?seed=<S>&new, the dossier names the race settings) - the Borg replays the run deterministically to this turn. Read once per page, so the release point is fixed for the whole life.",
+    "Parked optional replay release point. Requires sufficient original captured birth inputs and compatible runtime/controller data; a seed alone does not guarantee reproduction. At this game turn the Borg hands back the keyboard. Default 0 keeps this feature off; read once per page.",
   min: 0,
   max: 1000000,
   step: 1,

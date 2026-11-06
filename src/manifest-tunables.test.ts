@@ -26,6 +26,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defaultCfg, type BorgCfg } from "./trait/config.js";
+import { STAGE_RETIREMENT_FLAG } from "./loop/stage.js";
 import { CLASS_RULES, RACE_RULES } from "./birth/pools.js";
 
 const srcRoot = dirname(fileURLToPath(import.meta.url));
@@ -78,6 +79,7 @@ function ruleCfg(): Map<string, string> {
  * #16 they are the twenty class and race toggles.
  */
 const BIRTH_RULES = new Set([...CLASS_RULES, ...RACE_RULES].map((rule) => rule.flag));
+const WORKFLOW_RULES = new Set([STAGE_RETIREMENT_FLAG]);
 
 /**
  * Upstream's `borg_settings[]` (borg-init.c:57-92), for the settings this mod
@@ -105,6 +107,10 @@ const UPSTREAM_DEFAULT: Readonly<Partial<Record<keyof BorgCfg, boolean | number>
 };
 
 describe("the Borg's settings", () => {
+  it("keeps benchmark retirement opt-in and separate from upstream combat settings", () => {
+    expect(manifest().rules.find(rule => rule.flag === STAGE_RETIREMENT_FLAG)).toMatchObject({ default: false, requiresReload: true });
+    expect(ruleCfg().has(STAGE_RETIREMENT_FLAG)).toBe(false);
+  });
   it("keeps every default on upstream's own value", () => {
     const stock = defaultCfg();
     for (const [key, value] of Object.entries(UPSTREAM_DEFAULT)) {
@@ -121,7 +127,7 @@ describe("the Borg's settings", () => {
     const stock = defaultCfg();
     /* BIRTH_RULES are read by the birth wiring, not through BorgCfg (see the
      * set's comment); everything else must map to a real setting. */
-    const flags = manifest().rules.filter((r) => !BIRTH_RULES.has(r.flag)).map((r) => r.flag);
+    const flags = manifest().rules.filter((r) => !BIRTH_RULES.has(r.flag) && !WORKFLOW_RULES.has(r.flag)).map((r) => r.flag);
 
     expect([...table.keys()].sort()).toEqual([...flags].sort());
     for (const [flag, key] of table) {
@@ -133,7 +139,7 @@ describe("the Borg's settings", () => {
     const table = ruleCfg();
     const stock = defaultCfg();
     for (const rule of manifest().rules) {
-      if (BIRTH_RULES.has(rule.flag)) continue; /* birth side; no cfg key */
+      if (BIRTH_RULES.has(rule.flag) || WORKFLOW_RULES.has(rule.flag)) continue; /* birth side; no cfg key */
       const key = table.get(rule.flag);
       expect(key, `${rule.flag} has no setting`).toBeDefined();
       expect(stock[key as keyof BorgCfg], `${rule.flag} default`).toBe(rule.default);
@@ -150,7 +156,7 @@ describe("the Borg's settings", () => {
       /* BIRTH_RULES are excepted on purpose: they are the pack's own toggles
        * and there is no upstream name to carry - their descriptions say so
        * outright. */
-      if (!BIRTH_RULES.has(rule.flag)) {
+      if (!BIRTH_RULES.has(rule.flag) && !WORKFLOW_RULES.has(rule.flag)) {
         expect(rule.description, `${rule.flag} names no borg_ setting`).toMatch(/\bborg_\w+\b/u);
       }
       expect(seen.has(rule.title), `${rule.title} is used twice`).toBe(false);

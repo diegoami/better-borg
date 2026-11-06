@@ -32,7 +32,7 @@
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
 const CORE = "@rpgm-tools/neo-angband-core";
 
@@ -68,6 +68,13 @@ function localCore() {
   );
 }
 
+export const OPTIONAL_REPLAY_TESTS = [
+  "src/postmortem/replay.test.ts",
+  "src/postmortem/dossier.test.ts",
+  "src/postmortem/windows.test.ts",
+  "src/loop/replay.test.ts",
+];
+
 export default defineConfig({
   resolve: { alias: localCore() },
   test: {
@@ -75,5 +82,7 @@ export default defineConfig({
      * no host, so this stands in for one. A setup file rather than a beforeAll
      * because it has to run before the first test module is evaluated. */
     setupFiles: ["./src/test-bind-core.ts"],
+    // Owner-parked analysis tools retain a named opt-in suite, not hidden skips.
+    exclude: [...configDefaults.exclude, ...OPTIONAL_REPLAY_TESTS],
   },
 });

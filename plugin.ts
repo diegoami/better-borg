@@ -76,7 +76,7 @@ import { forgetGrid } from "./src/loop/stall.js";
 import { plannedBirth, TITLE_ROW_LABEL } from "./src/class/birth.js";
 import { installBorgJournal, type BorgJournal } from "./src/records/journal.js";
 import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
-import { librarySlotName, stageAttained, stageOf, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING, type StageDefinition } from "./src/loop/stage.js";
+import { librarySlotName, stageAttained, stageOf, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING, STAGE_RETIREMENT_FLAG, type StageDefinition } from "./src/loop/stage.js";
 import { replayBanner, replayModeOf, REPLAY_DEATH_SETTING, REPLAY_RELEASE_SETTING, type ReplayMode } from "./src/loop/replay.js";
 import { assessUncertainty, MAX_UNSURE_KEPT, type UnsurePoint } from "./src/uncertainty.js";
 import { readLineage } from "./src/class/warrior/lineage.js";
@@ -476,10 +476,12 @@ async function begin(mod: ModApi2): Promise<Running | null> {
    * will carry them) and the library name (this page's stage, and the
    * lineage counter as the identity - the seed is not a thing a mod can
    * know). */
+  // Workflow opt-in is fixed for this controller/page; existing thresholds stay unchanged.
+  const stageRetirementEnabled = mod.meta.flags[STAGE_RETIREMENT_FLAG] === true;
   let attainmentSeen = false;
   const stageWatch: NonNullable<Parameters<typeof createTick>[1]>["stage"] = {
     attained: (world) => {
-      if (attainmentSeen) return false;
+      if (!stageRetirementEnabled || attainmentSeen) return false;
       const player = world.view.player();
       if (!stageAttained(activeStage, { clvl: player.level, maxDepth: player.maxDepth })) return false;
       attainmentSeen = true;

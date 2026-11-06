@@ -8,8 +8,8 @@
     "api": ">=2.0.0 <3.0.0",
     "runtime": "in-process",
     "engine": {
-      "range": ">=1.23.0-beta.2-mandos.2 <1.23.0",
-      "because": "Needs our engine fork's build until a Neo Angband release carries our pull requests: neo-angband PR #429 (the door-close loop, #428), PR #432 (input-flush, #414) and PR #433 (the master seed, #431), on diegoami/neo-angband's neowarrior-lab branch, whose engine reports 1.23.0-beta.2-mandos.N. Also the first line with mod API 2, the truth domain and the loadout simulation."
+      "range": "1.23.0-beta.3",
+      "because": "Validated against Neo Angband 1.23.0-beta.3 with mod API 2, truth views and loadout simulation. Accepted-birth capture, advanced replay and custom fork versions are not installation requirements. Known upstream engine defects remain tracked separately."
     },
     "dependencies": {
       "required": {
@@ -42,7 +42,7 @@
       "saves:manage",
       "session:control"
     ],
-    "description": "Mandos, formerly better-borg: a class-agnostic Borg - a hard fork of Angband's automatic player (the borg in Angband 4.2.6, as ported to Neo Angband by neostryder) carrying defect fixes and strength improvements for every class. You choose the classes and races it may play: one toggle per class and per race, and each new character is drawn from the ones switched on (all of them by default). A warrior is born through the archived neowarrior-borg fork's measured plan; every other class through the game's own suggested stats. It grinds for you: it plays unattended, concentrates on reaching a chosen stage reliably, retires each successful run into a kept, loadable save, and starts the next character when one dies. Deterministic, plays by the same rules as the stock Borg. Port defects are staged here as upstream pull requests; improvements upstream declines still live here.\n\nInstalling and enabling it does not give it your character. Start it from the title screen's New Mandos character row, or press Ctrl-Z in play to hand over the keyboard, as with the stock Borg.",
+    "description": "Mandos carries validated Neo Borg bug fixes with traceable source and consumer evidence, plus basic run/death records. Existing class/race settings and automation are preserved. Benchmark retirement is off unless mandos.stageRetirement is explicitly enabled; strategy research, cohorts and advanced death replay are parked optional tools.\n\nStart from the title screen New Mandos character row, or press Ctrl-Z to hand over the keyboard. Exact replay requires sufficient original birth inputs and compatible runtime/controller data; a seed alone does not guarantee reproduction.",
     "author": "diegoami",
     "license": "GPL-2.0-only",
     "repository": "https://github.com/diegoami/mandos",
@@ -253,13 +253,20 @@
         "description": "The Borg may birth a Kobold. Each birth draws its race from the races switched on; switch on just one to always play it. All off counts as all on.",
         "default": true,
         "requiresReload": true
+      },
+      {
+        "flag": "mandos.stageRetirement",
+        "title": "Enable optional benchmark retirement",
+        "description": "Parked legacy stage workflow. Explicitly enable to save and retire characters at borg.stageClvl and borg.stageDepth. Off by default so normal bug-fix play continues beyond the old benchmark. This does not change Borg combat settings.",
+        "default": false,
+        "requiresReload": true
       }
     ],
     "settings": [
       {
         "id": "borg.stageClvl",
         "title": "Stage character level",
-        "description": "The character level a run must reach for the Borg to count it as having attained its target stage, together with borg.stageDepth. A run that attains is saved under a library name and the next character starts. The default (2) is the stage baseline's calibration (2026-11-03): the strongest rung today's Borg attains on half the standard seed grid; raise it as the Borg grows stronger. Read once per page, so a change applies to the next birth.",
+        "description": "Parked optional benchmark threshold, used only when mandos.stageRetirement is explicitly enabled. Together with borg.stageDepth it selects when to save and retire a character. The historical default 2 is retained; normal play does not retire at this threshold. Read once per page for the next birth.",
         "min": 0,
         "max": 50,
         "step": 1,
@@ -268,7 +275,7 @@
       {
         "id": "borg.stageDepth",
         "title": "Stage depth",
-        "description": "The dungeon depth a run must have arrived on (0 is the town) for the Borg to count it as having attained its target stage, together with borg.stageClvl. The default (1) is the stage baseline's calibration (2026-11-03); the owner's destination is a moderate depth at character level around 20, which the settings reach as the Borg grows stronger. Read once per page, so a change applies to the next birth.",
+        "description": "Parked optional benchmark depth, used only when mandos.stageRetirement is explicitly enabled. Together with borg.stageClvl it selects when to save and retire a character. The historical default 1 is retained; normal play continues past it. Read once per page for the next birth.",
         "min": 0,
         "max": 100,
         "step": 1,
@@ -277,7 +284,7 @@
       {
         "id": "borg.replayReleaseTurn",
         "title": "Death replay release turn",
-        "description": "The death-replay trainer's release point (#29): when the game's turn counter reaches this value the Borg stops playing and hands the keyboard back with the death banner, so the owner can play the last turns of a dead run themselves. Take the number from the dossier ladder's release-boundary line (docs/runs/, the run's postmortem directory); 0 (the default) keeps the replay mode off. Birth the character on the recorded seed (?seed=<S>&new, the dossier names the race settings) - the Borg replays the run deterministically to this turn. Read once per page, so the release point is fixed for the whole life.",
+        "description": "Parked optional replay release point. Requires sufficient original captured birth inputs and compatible runtime/controller data; a seed alone does not guarantee reproduction. At this game turn the Borg hands back the keyboard. Default 0 keeps this feature off; read once per page.",
         "min": 0,
         "max": 1000000,
         "step": 1,
