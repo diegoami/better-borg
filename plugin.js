@@ -1,6 +1,66 @@
 // mandos - generated from plugin.ts by neo-angband-mod-build
 // (@rpgm-tools/neo-angband-mod-sdk). Edit the TypeScript source, not this file.
 
+// src/records/install-mutation.ts
+var INSTALL_MUTATION_LOCK = "mandos:install-metadata";
+var NODE_QUEUE = /* @__PURE__ */ Symbol.for("mandos.install-metadata.single-realm-queue.v1");
+var message = (error) => error instanceof Error ? error.message : String(error);
+var failure = (phase, text) => ({ ok: false, phase, message: text });
+async function coordinate(work) {
+  const env = globalThis;
+  const browser = env.window !== void 0 || env.WorkerGlobalScope !== void 0;
+  if (browser) {
+    try {
+      const locks = env.navigator?.locks;
+      if (typeof locks?.request !== "function") return failure("coordination", "Web Locks unavailable; install metadata was not written");
+      return await locks.request(INSTALL_MUTATION_LOCK, { mode: "exclusive" }, work);
+    } catch (error) {
+      return failure("coordination", `Install metadata lock refused: ${message(error)}`);
+    }
+  }
+  if (env.process?.release?.name === "node" && typeof env.process.versions?.node === "string") {
+    const state = env[NODE_QUEUE] ?? (env[NODE_QUEUE] = { tail: Promise.resolve() });
+    const result = state.tail.then(work, work);
+    state.tail = result.then(() => void 0, () => void 0);
+    return result;
+  }
+  return failure("coordination", "No supported install metadata coordinator; nothing was written");
+}
+async function mutateInstall(slot, reduce, verification) {
+  return coordinate(async () => {
+    let read;
+    try {
+      read = await slot.get();
+    } catch (error) {
+      return failure("read", message(error));
+    }
+    if (!read.ok) return failure("read", read.message);
+    let change;
+    try {
+      change = reduce(read.value);
+    } catch (error) {
+      return failure("reduce", message(error));
+    }
+    if (!change.write) return { ok: true, value: change.result };
+    try {
+      const written = await slot.set(change.next);
+      if (!written.ok) return failure("write", written.message);
+    } catch (error) {
+      return failure("write", message(error));
+    }
+    if (verification) {
+      try {
+        const checked = await slot.get();
+        if (!checked.ok) return failure("verify", checked.message);
+        if (!verification.accepts(checked.value)) return failure("verify", verification.message);
+      } catch (error) {
+        return failure("verify", message(error));
+      }
+    }
+    return { ok: true, value: change.result };
+  });
+}
+
 // src/birth/flag.ts
 var BIRTH_FLAG_KEY = "warriorBirth";
 function flagIsSet(value) {
@@ -19,23 +79,19 @@ function withoutFlag(value) {
   return any ? kept : null;
 }
 async function setBirthFlag(slot) {
-  const current = await slot.get().catch(() => null);
-  const base = current !== null && current.ok && current.value !== null && typeof current.value === "object" && !Array.isArray(current.value) ? current.value : {};
-  const written = await slot.set({ ...base, [BIRTH_FLAG_KEY]: true }).catch(() => void 0);
-  return written !== void 0 && written.ok;
+  const changed = await mutateInstall(slot, (value) => {
+    const base = value !== null && typeof value === "object" && !Array.isArray(value) ? value : {};
+    return { write: true, next: { ...base, [BIRTH_FLAG_KEY]: true }, result: true };
+  });
+  return changed.ok && changed.value;
 }
 async function clearBirthFlag(slot) {
-  try {
-    const current = await slot.get();
-    if (!current.ok) return false;
-    if (!flagIsSet(current.value)) return true;
-    const written = await slot.set(withoutFlag(current.value));
-    if (!written.ok) return false;
-    const check = await slot.get();
-    return check.ok && !flagIsSet(check.value);
-  } catch {
-    return false;
-  }
+  const changed = await mutateInstall(
+    slot,
+    (value) => flagIsSet(value) ? { write: true, next: withoutFlag(value), result: true } : { write: false, result: true },
+    { accepts: (value) => !flagIsSet(value), message: "birth flag remained set after clear" }
+  );
+  return changed.ok && changed.value;
 }
 
 // title.ts
@@ -56,7 +112,8 @@ function idsFrom(stored) {
   const ids = stored["profileIds"];
   return Array.isArray(ids) ? ids.filter((id) => typeof id === "string") : [];
 }
-function installMemory(slot) {
+function installMemory(slot, log = () => {
+}) {
   let session = [];
   return {
     async read() {
@@ -68,13 +125,13 @@ function installMemory(slot) {
       return session;
     },
     async write(ids) {
-      session = [...ids];
-      try {
-        const current = await slot.get();
-        const base = current.ok && current.value !== null && typeof current.value === "object" && !Array.isArray(current.value) ? current.value : {};
-        await slot.set({ ...base, profileIds: session });
-      } catch {
-      }
+      const wanted = [...ids];
+      session = wanted;
+      const changed = await mutateInstall(slot, (value) => {
+        const base = value !== null && typeof value === "object" && !Array.isArray(value) ? value : {};
+        return { write: true, next: { ...base, profileIds: wanted }, result: true };
+      });
+      if (!changed.ok) log(`the Borg could not persist its title profile memory (${changed.message})`);
     }
   };
 }
@@ -18661,7 +18718,7 @@ function createBridge(mod2) {
         objects,
         shopnum: () => facts.shopnum,
         kindCost: (tval, sval) => facts.kinds.get(`${String(tval)}:${String(sval)}`) ?? null,
-        blowMethods: blows.map((message) => ({ messages: [message] })),
+        blowMethods: blows.map((message2) => ({ messages: [message2] })),
         monsterSpells: spells,
         ...magic
       };
@@ -18994,15 +19051,11 @@ async function readLineage(slot) {
   }
 }
 async function bumpLineage(slot) {
-  try {
-    const read = await slot.get();
-    if (!read.ok) return false;
-    const base = read.value !== null && typeof read.value === "object" && !Array.isArray(read.value) ? read.value : {};
-    const written = await slot.set({ ...base, [LINEAGE_KEY]: lineageFrom(read.value) + 1 });
-    return written.ok;
-  } catch {
-    return false;
-  }
+  const changed = await mutateInstall(slot, (value) => {
+    const base = value !== null && typeof value === "object" && !Array.isArray(value) ? value : {};
+    return { write: true, next: { ...base, [LINEAGE_KEY]: lineageFrom(value) + 1 }, result: true };
+  });
+  return changed.ok && changed.value;
 }
 
 // src/class/warrior/plan.ts
@@ -19150,23 +19203,16 @@ function createWarriorBirthPresenter(deps) {
       prepared = { state: "not-ours" };
       return;
     }
-    const unconsumed = (message) => {
-      prepared = { state: "unconsumed", message };
+    const unconsumed = (message2) => {
+      prepared = { state: "unconsumed", message: message2 };
     };
-    try {
-      const current = await deps.slot.get();
-      if (!current.ok) return unconsumed(current.message);
-      if (flagIsSet2(current.value)) {
-        const written = await deps.slot.set(withoutFlag2(current.value));
-        if (!written.ok) return unconsumed(written.message);
-        const check = await deps.slot.get();
-        if (!check.ok) return unconsumed(check.message);
-        if (flagIsSet2(check.value)) return unconsumed("it was still set after being cleared");
-      }
-      prepared = { state: "armed" };
-    } catch (error) {
-      unconsumed(messageOf(error));
-    }
+    const consumed = await mutateInstall(
+      deps.slot,
+      (value) => flagIsSet2(value) ? { write: true, next: withoutFlag2(value), result: true } : { write: false, result: true },
+      { accepts: (value) => !flagIsSet2(value), message: "it was still set after being cleared" }
+    );
+    if (!consumed.ok) return unconsumed(consumed.message);
+    prepared = { state: "armed" };
   })();
   const attempt = (what, result) => {
     if (result.ok) return true;
@@ -19286,11 +19332,11 @@ function plannedBirth(mod2, core) {
   );
   return createWarriorBirthPresenter({
     slot: mod2.store.install,
-    log: (message) => mod2.meta.log(message),
+    log: (message2) => mod2.meta.log(message2),
     choose: () => {
       const pair = resolveBirthPair(
         { flags: mod2.meta.flags, lineage, gameClasses, gameRaces },
-        (message) => mod2.meta.log(message)
+        (message2) => mod2.meta.log(message2)
       );
       void bumpLineage(mod2.store.install).then((landed) => {
         if (!landed) {
@@ -19564,39 +19610,30 @@ function storeGraveyardEntry(entry) {
   };
 }
 async function archiveFinishedRun(deps, report, dossier = {}) {
-  let read;
-  try {
-    read = await deps.archive.get();
-  } catch {
-    deps.log("the Borg could not read its install storage, so the run that just ended is not archived in it");
+  const changed = await mutateInstall(deps.archive, (value) => {
+    const base = value !== null && typeof value === "object" && !Array.isArray(value) ? value : {};
+    const entry2 = {
+      run: typeof report.key === "string" ? report.key : null,
+      ...graveyardEntryOf(report),
+      ...dossier.unsure === void 0 ? {} : { unsure: dossier.unsure },
+      ...dossier.touched === true ? { touched: true } : {}
+    };
+    const current = graveyardArchiveOf(base[GRAVEYARD_KEY] ?? null);
+    const runs = [...current.runs];
+    const at = entry2.run === null ? -1 : runs.findIndex((stored) => stored.run === entry2.run);
+    if (at >= 0) runs[at] = entry2;
+    else runs.push(entry2);
+    return {
+      write: true,
+      next: { ...base, [GRAVEYARD_KEY]: { journal: JOURNAL_FORMAT, runs: runs.map(storeArchiveRun) } },
+      result: entry2
+    };
+  });
+  if (!changed.ok) {
+    deps.log(changed.phase === "read" ? "the Borg could not read its install storage, so the run that just ended is not archived in it" : `the Borg could not archive the run that just ended in its install storage (${changed.message})`);
     return false;
   }
-  if (!read.ok) {
-    deps.log("the Borg could not read its install storage, so the run that just ended is not archived in it");
-    return false;
-  }
-  const base = read.value !== null && typeof read.value === "object" && !Array.isArray(read.value) ? read.value : {};
-  const current = graveyardArchiveOf(base[GRAVEYARD_KEY] ?? null);
-  const entry = {
-    run: typeof report.key === "string" ? report.key : null,
-    ...graveyardEntryOf(report),
-    ...dossier.unsure === void 0 ? {} : { unsure: dossier.unsure },
-    ...dossier.touched === true ? { touched: true } : {}
-  };
-  const runs = [...current.runs];
-  const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);
-  if (at >= 0) runs[at] = entry;
-  else runs.push(entry);
-  try {
-    const written = await deps.archive.set({ ...base, [GRAVEYARD_KEY]: { journal: JOURNAL_FORMAT, runs: runs.map(storeArchiveRun) } });
-    if (!written.ok) {
-      deps.log(`the Borg could not archive the run that just ended in its install storage (${written.message})`);
-      return false;
-    }
-  } catch (error) {
-    deps.log(`the Borg could not archive the run that just ended in its install storage (${error instanceof Error ? error.message : String(error)})`);
-    return false;
-  }
+  const entry = changed.value;
   deps.log(
     `the Borg archived the ended run: ${entry.race ?? "?"} ${entry.class ?? "?"}, ${entry.seed === void 0 ? "no seed (this engine does not report one)" : `seed ${String(entry.seed)}`}${entry.touched === true ? ", touched by the player (the seed alone does not replay it)" : ""}`
   );
@@ -19611,10 +19648,10 @@ function installBorgJournal(deps) {
     return run;
   };
   let warned = false;
-  const warn = (message) => {
+  const warn = (message2) => {
     if (warned) return;
     warned = true;
-    deps.log(message);
+    deps.log(message2);
   };
   let touched = false;
   void enqueue(async () => {
@@ -20109,13 +20146,13 @@ async function begin(mod2) {
   registerBorgTitle(
     {
       id: mod2.meta.id,
-      log: (message) => mod2.meta.log(message),
+      log: (message2) => mod2.meta.log(message2),
       ...mod2.presentation?.title ? { title: mod2.presentation.title } : {},
       ...mod2.manage ? { profiles: mod2.manage.profiles } : {},
       slot: mod2.store.install,
       label: TITLE_ROW_LABEL
     },
-    installMemory(mod2.store.install)
+    installMemory(mod2.store.install, (message2) => mod2.meta.log(message2))
   );
   mod2.meta.log(
     made.hasTruth ? "the Borg has the keyboard, with danger vision over the monsters the character perceives, activation identity, the in-shop signal and loadout evaluation" : "the Borg has the keyboard, but the game gave it no truth domain: it plays from the known world only, with monster hit points read from health bands"
@@ -20126,7 +20163,7 @@ async function begin(mod2) {
   const journal = installBorgJournal({
     slot: mod2.store.character,
     archive: mod2.store.install,
-    log: (message) => mod2.meta.log(message),
+    log: (message2) => mod2.meta.log(message2),
     events: mod2.events,
     stamps: async () => {
       let level = null;
@@ -20148,7 +20185,7 @@ async function begin(mod2) {
   });
   const restart = installBorgRestart({
     slot: mod2.store.install,
-    log: (message) => mod2.meta.log(message),
+    log: (message2) => mod2.meta.log(message2),
     ownsKeyboard: () => mod2.act.controller.owns(),
     create: mod2.manage?.saves.create ?? null,
     events: mod2.events,

@@ -1,0 +1,33 @@
+{
+  "schema": "mandos/issue20-platform-control@1",
+  "sourceMode": "actual-production-helper-under-test",
+  "baseline": "05ea56fce0001e95f23bbfeddeeafc2da4d6acf0",
+  "frontendRef": "97ceec2925e6715ba725624a61866ab93a196a12",
+  "node": "v26.13.0",
+  "node22": "not run: no local Node22 binary; final hosted qualification still required",
+  "chromium": {
+    "sequential": 4,
+    "independentFacades": 4,
+    "independentPages": 8,
+    "lostUpdates": 0
+  },
+  "electron": {
+    "sequential": 4,
+    "independentFacades": 4,
+    "independentPages": 8,
+    "lostUpdates": 0
+  },
+  "scope": "Actual production coordinator/callers, no outer lock wrapper; same current-version cooperating writers only. No cached birth-draw uniqueness guarantee.",
+  "adapters": "Unused Vite discovery/production constants only; no get/set shim, Core patch, controller, new grant or owner data.",
+  "toolingIncident": "Initial package lookup required electron/index.js and triggered its ignored dependency installer/path metadata. No tracked engine/lock or owner profile changed. This probe subsequently resolves a checked binary path without running that installer; no shared dependency cleanup.",
+  "inputs": {
+    "tools/proofs/issue20-platform.mjs": "d39431b3b6d112a2b740e692c60cbcf8be1c279ab7ae12a31b57f0cbf49946d3",
+    "tools/proofs/issue20-platform-client.mjs": "de3f5bf2df28520c4489166f3b89b8f93febe6d26be62fe42f33981faf25103e",
+    "src/records/journal.ts": "4d2b5ca8fe533541c06e11846449f980180fc8f251b904bfa730ecaba2906c20",
+    "src/class/warrior/lineage.ts": "e0cab8fed2f0b29ce8a4d1fb8741ad719985ab79edc422d873efd47c60e8e9c6",
+    "src/records/install-mutation.ts": "05ecccc5698e0bee537e4a7054d2d0d7c234b3ba3bddff72ce52fafb72567199",
+    "src/birth/flag.ts": "4ced9be726ac866b35a4593069b88d1b66a6cc960d63202839286021ddc50446",
+    "src/class/warrior/presenter.ts": "06a469ef29c74a48346c234a93f72085a96aee7a5789a92deb192732d00f3529",
+    "title.ts": "9a4780d91f4619f6e5a996031cfcd675eb2f93dba8334fa5104ed540e7c7ee15"
+  }
+}

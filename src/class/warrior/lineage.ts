@@ -24,6 +24,7 @@
  * never invent entropy - so failures are answered (false), never thrown.
  */
 
+import { mutateInstall } from "../../records/install-mutation.js";
 import type { Api2Slot, JsonValue } from "@rpgm-tools/neo-angband-mod-sdk";
 
 /** The install slot's get/set half, the same slice the presenter consumes under. */
@@ -77,19 +78,15 @@ export async function readLineage(slot: Slot): Promise<number> {
  * the drawing page read at registration: two pages drawing off the same
  * counter (two tabs on one install) both draw the same race and the counter
  * still advances by whole reads - interleavings can repeat or skip a race,
- * never add entropy, and never disturb a sibling.
+ * never add entropy. Cooperating current-version install writers preserve
+ * siblings under the metadata coordinator. Older/noncooperating writers are
+ * outside that guarantee; cached race/class draws are not globally unique.
  */
 export async function bumpLineage(slot: Slot): Promise<boolean> {
-  try {
-    const read = await slot.get();
-    if (!read.ok) return false;
-    const base =
-      read.value !== null && typeof read.value === "object" && !Array.isArray(read.value)
-        ? (read.value as Record<string, JsonValue>)
-        : {};
-    const written = await slot.set({ ...base, [LINEAGE_KEY]: lineageFrom(read.value) + 1 });
-    return written.ok;
-  } catch {
-    return false;
-  }
+  const changed = await mutateInstall(slot, value => {
+    const base = value !== null && typeof value === "object" && !Array.isArray(value)
+      ? value as Record<string, JsonValue> : {};
+    return { write: true, next: { ...base, [LINEAGE_KEY]: lineageFrom(value) + 1 }, result: true };
+  });
+  return changed.ok && changed.value;
 }

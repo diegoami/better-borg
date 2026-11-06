@@ -256,7 +256,7 @@ type CreateMode = "ok" | "refused" | "throw" | "reject";
  * call first parks on the gate, so a stop can land between the call and its
  * settlement (#29's deferred-create case).
  */
-function createRecorder(mode: CreateMode = "ok", witness?: { held(): JsonValue | null }, gate?: Promise<void>) {
+function createRecorder(mode: CreateMode = "ok", witness?: { held(): JsonValue | null }, gate?: Promise<void>, entered?: () => void) {
   const calls: Array<Api2CreateCharacter | undefined> = [];
   const slotAtCall: Array<JsonValue | null> = [];
   const behave = (): Api2Call<null> => {
@@ -270,6 +270,7 @@ function createRecorder(mode: CreateMode = "ok", witness?: { held(): JsonValue |
   return {
     fn: (options?: Api2CreateCharacter): Api2Call<null> => {
       calls.push(options);
+      entered?.();
       if (witness !== undefined) slotAtCall.push(structuredClone(witness.held()));
       return gate === undefined ? behave() : gate.then(behave);
     },
@@ -710,10 +711,12 @@ describe("the restart loop", () => {
       releaseCreate = resolve;
     });
     const theSlot = slot({ profileIds: ["p1"] });
-    const f = await installed({ slot: theSlot, create: createRecorder("refused", theSlot, gate) });
+    let enteredCreate!: () => void;
+    const entered = new Promise<void>(resolve => { enteredCreate = resolve; });
+    const f = await installed({ slot: theSlot, create: createRecorder("refused", theSlot, gate, enteredCreate) });
 
     f.bus.report({ key: "cedar", report: report("death") });
-    await settle(8); /* the flag is written and verified; create is parked */
+    await entered; /* Actual create call reached; its result is still parked. */
     expect((f.held() as Record<string, unknown>)[BIRTH_FLAG_KEY]).toBe(true);
     await f.restart.stop();
 
@@ -735,10 +738,12 @@ describe("the restart loop", () => {
       releaseCreate = resolve;
     });
     const theSlot = slot({ profileIds: ["p1"] });
-    const f = await installed({ slot: theSlot, create: createRecorder("ok", theSlot, gate) });
+    let enteredCreate!: () => void;
+    const entered = new Promise<void>(resolve => { enteredCreate = resolve; });
+    const f = await installed({ slot: theSlot, create: createRecorder("ok", theSlot, gate, enteredCreate) });
 
     f.bus.report({ key: "cedar", report: report("death") });
-    await settle(8);
+    await entered;
     await f.restart.stop();
 
     const seen = await unhandledRejections(() => {
@@ -837,15 +842,17 @@ describe("the restart loop", () => {
     const gate = new Promise<void>((resolve) => {
       releaseWrite = resolve;
     });
+    let enteredWrite!: () => void;
+    const entered = new Promise<void>(resolve => { enteredWrite = resolve; });
     const theSlot = slot({ profileIds: ["p1"] });
     const f = await installed({
       slot: theSlot,
       create: createRecorder("ok", theSlot),
-      graveyard: () => gate,
+      graveyard: () => { enteredWrite(); return gate; },
     });
 
     f.bus.report({ key: "cedar", report: report("death") });
-    await settle(8); /* the report is parked inside the graveyard write */
+    await entered; /* Actual archive callback reached; its result is parked. */
     await f.restart.stop();
     expect(f.created()).toEqual([]);
 

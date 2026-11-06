@@ -49,7 +49,8 @@
  * merge, and write back carrying every sibling forward (#26's discipline).
  * Arrivals and run reports can overlap (a report while a load re-fire's write
  * is still in flight), so the installed journal funnels every write through
- * one chain and no operation ever sees a half-written value.
+ * one per-journal chain for character records. Install-wide mutations additionally
+ * use the shared metadata coordinator across cooperating current-version writers.
  *
  * NEVER THROWS, NEVER REJECTS. The host calls event listeners synchronously
  * and must not receive (or swallow) a promise (the restart loop's contract
@@ -59,6 +60,7 @@
  * carried rather than aspiring to a shape the host did not send.
  */
 
+import { mutateInstall } from "./install-mutation.js";
 import type {
   Api2Events,
   Api2LevelEvent,
@@ -563,41 +565,33 @@ export async function archiveFinishedRun(
   report: RunReport,
   dossier: RunDossier = {},
 ): Promise<boolean> {
-  let read: Awaited<ReturnType<Slot["get"]>>;
-  try {
-    read = await deps.archive.get();
-  } catch {
-    deps.log("the Borg could not read its install storage, so the run that just ended is not archived in it");
+  const changed = await mutateInstall(deps.archive, value => {
+    const base = value !== null && typeof value === "object" && !Array.isArray(value)
+      ? value as Record<string, JsonValue> : {};
+    const entry: ArchivedRun = {
+      run: typeof report.key === "string" ? report.key : null,
+      ...graveyardEntryOf(report),
+      ...(dossier.unsure === undefined ? {} : { unsure: dossier.unsure }),
+      ...(dossier.touched === true ? { touched: true as const } : {}),
+    };
+    const current = graveyardArchiveOf(base[GRAVEYARD_KEY] ?? null);
+    const runs = [...current.runs];
+    const at = entry.run === null ? -1 : runs.findIndex(stored => stored.run === entry.run);
+    if (at >= 0) runs[at] = entry;
+    else runs.push(entry);
+    return {
+      write: true,
+      next: { ...base, [GRAVEYARD_KEY]: { journal: JOURNAL_FORMAT, runs: runs.map(storeArchiveRun) } },
+      result: entry,
+    };
+  });
+  if (!changed.ok) {
+    deps.log(changed.phase === "read"
+      ? "the Borg could not read its install storage, so the run that just ended is not archived in it"
+      : `the Borg could not archive the run that just ended in its install storage (${changed.message})`);
     return false;
   }
-  if (!read.ok) {
-    deps.log("the Borg could not read its install storage, so the run that just ended is not archived in it");
-    return false;
-  }
-  const base = read.value !== null && typeof read.value === "object" && !Array.isArray(read.value)
-    ? (read.value as Record<string, JsonValue>)
-    : {};
-  const current = graveyardArchiveOf(base[GRAVEYARD_KEY] ?? null);
-  const entry: ArchivedRun = {
-    run: typeof report.key === "string" ? report.key : null,
-    ...graveyardEntryOf(report),
-    ...(dossier.unsure === undefined ? {} : { unsure: dossier.unsure }),
-    ...(dossier.touched === true ? { touched: true as const } : {}),
-  };
-  const runs = [...current.runs];
-  const at = entry.run === null ? -1 : runs.findIndex((stored) => stored.run === entry.run);
-  if (at >= 0) runs[at] = entry;
-  else runs.push(entry);
-  try {
-    const written = await deps.archive.set({ ...base, [GRAVEYARD_KEY]: { journal: JOURNAL_FORMAT, runs: runs.map(storeArchiveRun) } });
-    if (!written.ok) {
-      deps.log(`the Borg could not archive the run that just ended in its install storage (${written.message})`);
-      return false;
-    }
-  } catch (error: unknown) {
-    deps.log(`the Borg could not archive the run that just ended in its install storage (${error instanceof Error ? error.message : String(error)})`);
-    return false;
-  }
+  const entry = changed.value;
   /* FORK (Mandos #54): one line per ended run, so a lab check
    * (tools/lab.mjs check) can name what replays it without reading the
    * browser profile's storage. */
