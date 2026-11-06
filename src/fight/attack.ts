@@ -389,8 +389,9 @@ export function borgLaunchDamageOne(
       if (!rf(facts, "EVIL")) dam = 0;
       break;
     case BA.DRAIN_LIFE:
-      if (!rf(facts, "NONLIVING")) dam = 0;
-      if (!rf(facts, "UNDEAD")) dam = 0;
+      /* FORK: Mandos175 translates diegoami/neo-angband-tracker#248
+       * (6912b85c): Dispel Life hurts the living; undead/nonliving are immune. */
+      if (rf(facts, "NONLIVING") || rf(facts, "UNDEAD")) dam = 0;
       break;
     case BA.HOLY_WORD:
       if (!rf(facts, "EVIL")) dam = 0;
