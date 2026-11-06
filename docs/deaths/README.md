@@ -22,7 +22,9 @@ node tools/deaths.mjs index --corpus artifacts/death-corpus
 
 Choose a separate corpus directory, initially empty. Never use a source-record
 parent, a nonempty unrelated directory or a symlinked path. The source is read
-only; no neighboring files are searched or copied. Explicit `--source-locator`
+only; no neighboring files are searched or copied. Only the explicit
+`better-borg/runs@1` format is supported; older pre-schema documents fail
+visibly rather than being guessed into a different record shape. Explicit `--source-locator`
 can supply a safe relative path or durable HTTPS URL. An immutable `--source-ref`
 is declared source provenance, not a Git/network lookup. The input's SHA-256
 always identifies the actual bytes read. Locators outside this checkout are not
@@ -38,7 +40,7 @@ not inferred from seed/name alone. Different raw records remain separate source
 occurrences even when they reference one trusted event.
 
 Each death gets an immutable `cases/<id>/case.json` and readable `report.md`.
-Unknown context, unattempted/diverged replay and unavailable recording/save
+Missing or null legacy context, unattempted/diverged replay and unavailable recording/save
 references remain explicit. All non-death outcomes are retained in coverage
 receipts: stall, retirement, cap survivor, survived slice, crash, timeout,
 failure and unknown. A malformed record/importer failure exits nonzero; it is
@@ -46,13 +48,37 @@ not recast as a survivor or successful analysis.
 
 `records/<id>.json` publishes a completed ingestion only after its case files
 exist. Interrupted writes can leave harmless orphan files, which are not counted
-as completed deaths and are reused on retry. Re-run the same command and then
-`index`; it neither deletes nor overwrites immutable facts. The derived index
+as completed deaths and are reused on retry. Normal exceptions release the
+writer lock; after any required recovery, re-run the same command and then
+`index`. Neither operation deletes or overwrites immutable facts. The derived index
 can always be regenerated. Corrupted content, wrong schemas, invalid analysis
 chains and unexpected persisted filenames fail rather than silently vanish.
 Hidden pending temporary files are ignored until a complete file is published.
 Persisted digests detect accidental modification; they are not signatures or
-proof of an author's identity. Keep one coordinated writer per corpus.
+proof of an author's identity.
+
+All mutations, including index regeneration, acquire one atomic corpus writer
+lock. A competing process fails visibly instead of racing analysis revision
+numbers or publishing a stale index. Locks contain temporary PID/host/token
+metadata and are ignored by Git along with unpublished temporary files. They
+are not report provenance or a distributed coordination service. Keep one
+coordinated writer per corpus; do not transfer an actively written corpus.
+
+A killed process can leave a stale lock. Confirm the original writer has stopped,
+then inspect and explicitly recover the **same token**:
+
+```sh
+node tools/deaths.mjs inspect-lock --corpus <corpus-directory>
+node tools/deaths.mjs recover-lock --corpus <corpus-directory> --token <inspected-token> --stopped yes
+```
+
+A still-present local PID is refused; no writer is automatically killed or lock
+stolen. If that PID was reused or the lock came from another host, independently
+verify the actual stopped owner before manual/operator recovery. Interrupted
+recovery claims or malformed metadata require explicit inspection; the tool does
+not silently delete them. Successful recovery only unlocks; retrying intake and
+`index` completes the receipt-last transaction. These are process-crash controls,
+not a claim of power-loss or private off-machine backup verification.
 
 ## Analysis and linked actions
 
@@ -70,7 +96,8 @@ provenance and a proposed cause. Supported dispositions are needs-evidence,
 hypothesis, confirmed-defect, design-proposal, ordinary-loss and no-bug-found.
 A confirmed claim requires observations, assessed confidence and hashed evidence;
 the CLI checks structure, not the truth of causal reasoning. Exact replay claims
-need an evidence reference and an explicit scope note; the CLI does not verify
+need a usable (`present` or `local-only`) hashed evidence locator and an explicit
+scope note; the CLI does not verify
 a game trajectory. An analysis author remains responsible for those assertions.
 
 Evidence references distinguish `character-known`, `terminal-revealed`,

@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { appendAnalysis, buildIndex, hash, ingestRecord, json } from './deaths.mjs';
+import { once } from 'node:events';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { appendAnalysis, buildIndex, hash, ingestRecord, inspectWriter, json, recoverWriter } from './deaths.mjs';
 
 const temporary = [];
 afterEach(() => { for (const root of temporary.splice(0)) rmSync(root, { recursive: true, force: true }); });
@@ -127,7 +128,7 @@ describe('offline death corpus', () => {
     expect(() => buildIndex(f.corpus)).toThrow(/chain/);
     const g = put(fixture(), document([dead()])); ingest(g); rmSync(join(g.corpus, 'index.md'));
     symlinkSync(join(g.root, 'absent'), join(g.corpus, 'index.md'));
-    expect(() => buildIndex(g.corpus)).toThrow(/regular/); expect(existsSync(join(g.root, 'absent'))).toBe(false);
+    expect(() => buildIndex(g.corpus)).toThrow(/Symlink refused/); expect(existsSync(join(g.root, 'absent'))).toBe(false);
   });
   it('rejects receipt corruption and unrecognised persisted analysis names', () => {
     const f = put(fixture(), document([dead()])); ingest(f);
@@ -154,6 +155,78 @@ describe('offline death corpus', () => {
     appendAnalysis({ corpus: f.corpus, caseId, analysis: join(repo, 'docs/deaths/example-analysis-input.json') });
     expect(readIndex(f).totals).toMatchObject({ sourceRecords: 2, uniqueEvents: 5, deaths: 3, outcomes: { retired: 2 }, reviewCoverage: { pending: 2, legacyImports: 1, observedAnalyses: 0, assessedLatest: 0 } });
     expect(allFiles(f.corpus)).toEqual(allFiles(join(repo, 'docs/deaths/example')));
+  });
+  it('keeps nullable legacy context unknown and rejects contradictory explicit outcomes', () => {
+    const f = put(fixture(), document([dead({ seed: null, runKey: null, baseStats: null, commands: null })]));
+    const caseId = ingest(f).cases[0], item = JSON.parse(readFileSync(join(f.corpus, 'cases', caseId, 'case.json')));
+    expect(item.missingContext).toEqual(['seed', 'baseStats', 'commands']);
+    expect(item.replay.status).toBe('missing-input');
+    for (const run of [dead({ outcome: 'death', dead: false }), dead({ outcome: 'retired' }), dead({ outcome: 'death', retired: true }), dead({ dead: false, retired: true, stall: { kind: 'idle', decision: 3, turn: 50 } })]) {
+      const g = put(fixture(), document([run])); expect(() => ingest(g)).toThrow(/Conflicting/);
+    }
+  });
+  it('reads every supported committed public run document without guessing older formats', () => {
+    const f = fixture(), repo = fileURLToPath(new URL('../', import.meta.url));
+    const paths = execFileSync('git', ['ls-files', 'docs/runs'], { cwd: repo, encoding: 'utf8' }).trim().split('\n').filter(path => path.endsWith('/runs.json'));
+    const supported = new Map();
+    for (const path of paths) {
+      const bytes = readFileSync(join(repo, path)), value = JSON.parse(bytes);
+      if (value.schema === 'better-borg/runs@1') supported.set(hash(bytes), { path, value });
+    }
+    for (const { path } of supported.values()) ingestRecord({ record: join(repo, path), corpus: f.corpus });
+    expect(readIndex(f).totals.sourceRecords).toBe(supported.size);
+    expect(readIndex(f).totals.deaths).toBe([...supported.values()].reduce((total, record) => total + record.value.runs.filter(run => run.dead === true).length, 0));
+  });
+  it('refuses an ancestor symlink even when the external case directory already exists', () => {
+    const f = put(fixture(), document([])); ingest(f);
+    put(f, document([dead()]));
+    const id = 'case-' + hash(json({ origin: 'diegoami/mandos', record: hash(readFileSync(f.record)), row: 0 }));
+    const outside = join(f.root, 'outside'); mkdirSync(join(outside, id), { recursive: true });
+    symlinkSync(outside, join(f.corpus, 'cases'), 'dir');
+    expect(() => ingest(f)).toThrow(/Symlink refused/);
+    expect(readdirSync(join(outside, id))).toEqual([]);
+  });
+  it('exact replay needs usable hashed evidence and a scope note, not an empty reference', () => {
+    const f = put(fixture(), document([dead()])), caseId = ingest(f).cases[0];
+    const exact = analysis({ replay: { status: 'exact', note: 'Synthetic structural control only' } });
+    expect(() => appendAnalysis({ corpus: f.corpus, caseId, analysis: exact })).toThrow(/Exact replay/);
+    exact.evidence = [{ kind: 'test trajectory', availability: 'present', locator: 'https://example.test/test-trajectory', sha256: hash('synthetic trajectory'), knowledge: 'character-known' }];
+    expect(appendAnalysis({ corpus: f.corpus, caseId, analysis: exact }).revision).toBe(1);
+  });
+  it('serializes actual competing processes so analysis and index cannot poison a live ingest', async () => {
+    const f = put(fixture(), document([dead()])), caseId = ingest(f).cases[0];
+    const tool = fileURLToPath(new URL('./deaths.mjs', import.meta.url));
+    const module = pathToFileURL(tool).href;
+    const analysisPath = join(f.root, 'analysis.json'); writeFileSync(analysisPath, json(analysis()));
+    put(f, document([dead({ life: 2 })], { label: 'competing ingest' }));
+    const code = `import {ingestRecord} from ${JSON.stringify(module)}; ingestRecord({record:${JSON.stringify(f.record)},corpus:${JSON.stringify(f.corpus)},onCaseWritten:()=>{console.log('LOCKED');Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,1800);}});`;
+    const child = spawn(process.execPath, ['--input-type=module', '-e', code], { stdio: ['ignore', 'pipe', 'pipe'], env: { PATH: process.env.PATH ?? '' } });
+    const finished = once(child, 'exit');
+    try {
+      const result = await Promise.race([once(child.stdout, 'data').then(([data]) => data.toString()), finished.then(() => { throw new Error('writer exited before contention control'); })]);
+      expect(result).toContain('LOCKED');
+      const rival = spawnSync(process.execPath, [tool, 'analyse', '--corpus', f.corpus, '--case', caseId, '--analysis', analysisPath], { encoding: 'utf8', env: { PATH: process.env.PATH ?? '' } });
+      expect(rival.status).toBe(1); expect(rival.stderr).toMatch(/writer lock/);
+      expect(() => buildIndex(f.corpus)).toThrow(/writer lock/);
+      expect(() => recoverWriter({ corpus: f.corpus, token: inspectWriter(f.corpus).token, writerStopped: true })).toThrow(/PID is still present/);
+      expect((await finished)[0]).toBe(0);
+    } finally { if (child.exitCode === null && child.signalCode === null) { child.kill('SIGKILL'); await finished; } }
+    appendAnalysis({ corpus: f.corpus, caseId, analysis: analysis() });
+    expect(readIndex(f).totals.deaths).toBe(2);
+    expect(readIndex(f).cases.find(item => item.id === caseId).latestAnalysis).toMatch(/0001-/);
+  }, 10000);
+  it('requires explicit token-matched stopped-writer recovery after an actual process crash', () => {
+    const f = put(fixture(), document([dead()])), tool = pathToFileURL(fileURLToPath(new URL('./deaths.mjs', import.meta.url))).href;
+    const code = `import {ingestRecord} from ${JSON.stringify(tool)}; ingestRecord({record:${JSON.stringify(f.record)},corpus:${JSON.stringify(f.corpus)},onCaseWritten:()=>process.kill(process.pid,'SIGKILL')});`;
+    const child = spawnSync(process.execPath, ['--input-type=module', '-e', code], { encoding: 'utf8', env: { PATH: process.env.PATH ?? '' } });
+    expect(child.signal).toBe('SIGKILL');
+    const lock = inspectWriter(f.corpus); expect(lock).not.toBeNull();
+    expect(() => ingest(f)).toThrow(/writer lock/);
+    expect(() => recoverWriter({ corpus: f.corpus, token: 'wrong', writerStopped: true })).toThrow(/token/);
+    expect(() => recoverWriter({ corpus: f.corpus, token: lock.token, writerStopped: false })).toThrow(/confirmation/);
+    expect(recoverWriter({ corpus: f.corpus, token: lock.token, writerStopped: true })).toEqual({ recovered: true });
+    expect(buildIndex(f.corpus).totals.deaths).toBe(0);
+    ingest(f); expect(buildIndex(f.corpus).totals.deaths).toBe(1);
   });
   it('the real CLI reports errors nonzero and ingests existing files without a game process', () => {
     const f = put(fixture(), document([dead()])), tool = fileURLToPath(new URL('./deaths.mjs', import.meta.url));

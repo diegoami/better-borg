@@ -3,6 +3,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { linkSync, lstatSync, mkdirSync, readFileSync, readdirSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
+import { hostname } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -62,7 +63,7 @@ function noSymlinks(path) {
 }
 function within(parent, child) { const r = relative(parent, child); return r === '' || (!r.startsWith('..' + sep) && r !== '..' && !isAbsolute(r)); }
 function immutable(path, data) {
-  safeParents(path);
+  noSymlinks(path); safeParents(path);
   if (existsSync(path)) { regular(path); assert(readFileSync(path, 'utf8') === data, `Immutable content conflict: ${path}`); return false; }
   const temp = resolve(dirname(path), `.pending-${randomUUID()}`);
   writeFileSync(temp, data, { flag: 'wx' });
@@ -73,7 +74,7 @@ function immutable(path, data) {
   return true;
 }
 function derived(path, data) {
-  safeParents(path); if (existsSync(path)) regular(path);
+  noSymlinks(path); safeParents(path); if (existsSync(path)) regular(path);
   const temp = resolve(dirname(path), `.pending-${randomUUID()}`);
   writeFileSync(temp, data, { flag: 'wx' });
   try { renameSync(temp, path); } finally { if (existsSync(temp)) unlinkSync(temp); }
@@ -97,6 +98,51 @@ function names(path, pattern) {
   assert(entries.every(name => pattern.test(name)), `Unexpected corpus entry: ${path}`);
   return entries.sort();
 }
+const LOCK = '.writer-lock.json';
+function withWriter(root, run) {
+  const path = resolve(root, LOCK), owner = { schema: 'mandos/death-corpus-lock@1', token: randomUUID(), pid: process.pid, host: hostname() };
+  noSymlinks(path);
+  const temp = resolve(root, `.pending-lock-${owner.token}`);
+  writeFileSync(temp, json(owner), { flag: 'wx', mode: 0o600 });
+  try {
+    try { linkSync(temp, path); }
+    catch (error) { if (error.code !== 'EEXIST') throw error; throw new Error('Corpus writer lock exists; inspect it and recover explicitly only after its writer stopped'); }
+  } finally { unlinkSync(temp); }
+  try {
+    immutable(resolve(root, '.gitignore'), '/.writer-lock.json\n.pending-*\n');
+    return run();
+  } finally {
+    assert(parse(path).token === owner.token, 'Writer lock changed during operation; inspect corpus before continuing');
+    unlinkSync(path);
+  }
+}
+export function inspectWriter(corpus) {
+  const root = openCorpus(corpus), path = resolve(root, LOCK);
+  if (!existsSync(path)) return null;
+  const owner = parse(path);
+  assert(owner.schema === 'mandos/death-corpus-lock@1' && string(owner.token) && Number.isInteger(owner.pid) && owner.pid > 0 && string(owner.host), 'Malformed writer lock; inspect it manually without starting another writer');
+  return owner;
+}
+export function recoverWriter({ corpus, token, writerStopped }) {
+  assert(writerStopped === true, 'Explicit confirmation that the writer stopped is required');
+  assert(string(token), 'Expected inspected lock token');
+  const root = openCorpus(corpus), claim = resolve(root, `.pending-recovery-${hash(token)}`);
+  noSymlinks(claim);
+  // Recovery itself has one operator. Re-inspect under this claim so two
+  // stale-token recoveries cannot remove a newly acquired writer's lock.
+  writeFileSync(claim, token, { flag: 'wx', mode: 0o600 });
+  try {
+    const owner = inspectWriter(root);
+    assert(owner && owner.token === token, 'Lock token changed or no lock exists');
+    if (owner.host === hostname()) {
+      try { process.kill(owner.pid, 0); throw new Error('Writer PID is still present; automatic lock recovery refused'); }
+      catch (error) { if (error.code !== 'ESRCH') throw error; }
+    }
+    assert(inspectWriter(root).token === token, 'Lock changed during recovery');
+    unlinkSync(resolve(root, LOCK));
+    return { recovered: true };
+  } finally { unlinkSync(claim); }
+}
 function sourceLocator(path, locator) {
   if (locator !== undefined) { validateLocator(locator); return locator; }
   return within(ROOT, path) ? relative(ROOT, path).split(sep).join('/') : null;
@@ -109,10 +155,15 @@ function validateLocator(locator) {
   } else assert(!/^[a-z][a-z0-9+.-]*:/i.test(locator) && !isAbsolute(locator) && !locator.includes('\\') && !locator.split('/').some(part => part === '..' || part === ''), 'Locator must be HTTPS or a safe relative path');
 }
 function outcomeOf(run, cap) {
-  if (run.outcome !== undefined) { assert(outcomes.includes(run.outcome), 'Unknown explicit outcome'); assert(run.dead !== true || run.outcome === 'death', 'Conflicting death/outcome flags'); return run.outcome; }
-  assert(!(run.dead === true && (run.retired === true || run.stall !== undefined)), 'Conflicting terminal flags');
+  assert([run.dead === true, run.retired === true, run.stall != null].filter(Boolean).length <= 1, 'Conflicting terminal flags');
+  if (run.outcome !== undefined) {
+    assert(outcomes.includes(run.outcome), 'Unknown explicit outcome');
+    assert((run.dead !== true || run.outcome === 'death') && (run.dead !== false || run.outcome !== 'death') && (run.retired !== true || run.outcome === 'retired') && (run.retired !== false || run.outcome !== 'retired') && (run.stall == null || run.outcome === 'stall'), 'Conflicting outcome flags');
+    return run.outcome;
+  }
+  assert(!(run.dead === true && (run.retired === true || run.stall != null)), 'Conflicting terminal flags');
   if (run.dead === true) return 'death';
-  if (run.stall !== undefined) return 'stall';
+  if (run.stall != null) return 'stall';
   if (run.retired === true) return 'retired';
   if (run.dead === false) return Number.isFinite(cap) && run.decisions >= cap ? 'cap-survivor' : 'survived-slice';
   return 'unknown';
@@ -125,19 +176,19 @@ function contextOf(document) {
 function factsOf(run) {
   const integer = value => Number.isInteger(value) && value >= 0;
   for (const key of ['seed', 'life', 'decisions', 'turns', 'maxDepth', 'clvl', 'gold', 'kills', 'places', 'jitter', 'restedBesideMonster'])
-    if (run[key] !== undefined) assert(integer(run[key]) && (key !== 'life' || run[key] > 0), `Invalid run field: ${key}`);
+    if (run[key] !== undefined && run[key] !== null) assert(integer(run[key]) && (key !== 'life' || run[key] > 0), `Invalid run field: ${key}`);
   for (const key of ['race', 'class', 'causeOfDeath']) if (run[key] !== undefined && run[key] !== null) assert(string(run[key]), `Invalid run field: ${key}`);
   for (const key of ['dead', 'retired', 'stageAttained']) if (run[key] !== undefined) assert(typeof run[key] === 'boolean', `Invalid run field: ${key}`);
-  for (const key of ['baseStats', 'depths']) if (run[key] !== undefined) assert(Array.isArray(run[key]) && run[key].every(integer), `Invalid run field: ${key}`);
-  if (run.commands !== undefined) assert(object(run.commands) && Object.values(run.commands).every(integer), 'Invalid command census');
-  if (run.birthOptions !== undefined) assert(object(run.birthOptions) && Object.entries(run.birthOptions).every(([name, value]) => name.startsWith('birth_') && typeof value === 'boolean'), 'Invalid accepted birth options');
-  if (run.birthRngState !== undefined) {
+  for (const key of ['baseStats', 'depths']) if (run[key] !== undefined && run[key] !== null) assert(Array.isArray(run[key]) && run[key].every(integer), `Invalid run field: ${key}`);
+  if (run.commands !== undefined && run.commands !== null) assert(object(run.commands) && Object.values(run.commands).every(integer), 'Invalid command census');
+  if (run.birthOptions !== undefined && run.birthOptions !== null) assert(object(run.birthOptions) && Object.entries(run.birthOptions).every(([name, value]) => name.startsWith('birth_') && typeof value === 'boolean'), 'Invalid accepted birth options');
+  if (run.birthRngState !== undefined && run.birthRngState !== null) {
     const rng = run.birthRngState;
     const uint = value => integer(value) && value <= 0xffffffff;
     assert(object(rng) && typeof rng.quick === 'boolean' && typeof rng.fixed === 'boolean' && uint(rng.value) && uint(rng.stateI) && rng.stateI < 32 && uint(rng.fixval) && Array.isArray(rng.state) && rng.state.length === 32 && rng.state.every(uint), 'Invalid accepted birth RNG');
   }
-  if (run.stall !== undefined) assert(object(run.stall) && ['repeat', 'idle'].includes(run.stall.kind) && integer(run.stall.turn) && integer(run.stall.decision), 'Invalid stall facts');
-  if (run.unsure !== undefined) assert(object(run.unsure) && integer(run.unsure.total) && Array.isArray(run.unsure.points), 'Invalid uncertainty facts');
+  if (run.stall != null) assert(object(run.stall) && ['repeat', 'idle'].includes(run.stall.kind) && integer(run.stall.turn) && integer(run.stall.decision), 'Invalid stall facts');
+  if (run.unsure !== undefined && run.unsure !== null) assert(object(run.unsure) && integer(run.unsure.total) && Array.isArray(run.unsure.points), 'Invalid uncertainty facts');
   const facts = pick(run, factKeys);
   if (facts.birthRngState) facts.birthRngState = pick(facts.birthRngState, ['quick', 'fixed', 'value', 'stateI', 'fixval', 'state']);
   if (facts.stall) facts.stall = pick(facts.stall, ['kind', 'command', 'decision', 'turn']);
@@ -182,9 +233,9 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
   const context = contextOf(document), source = { sha256: hash(bytes), repository, origin, locator: sourceLocator(path, locator), ref: sourceRef ?? null };
   const prepared = document.runs.map((run, row) => {
     assert(object(run), `Run row ${row} is not an object`);
-    if (run.runKey !== undefined) assert(string(run.runKey), `Run row ${row} has an invalid runKey`);
+    if (run.runKey !== undefined && run.runKey !== null) assert(string(run.runKey), `Run row ${row} has an invalid runKey`);
     const facts = factsOf(run), outcome = outcomeOf(run, context.runner.decisions);
-    const identity = run.runKey === undefined ? { origin, record: source.sha256, row } : { origin, runKey: run.runKey };
+    const identity = run.runKey == null ? { origin, record: source.sha256, row } : { origin, runKey: run.runKey };
     const id = 'case-' + hash(json(identity));
     const fingerprint = hash(json({ build: context.build, outcome, facts }));
     const missingContext = ['seed', 'life', 'race', 'class', 'baseStats', 'commands', 'decisions', 'turns', 'clvl', 'maxDepth'].filter(key => facts[key] === undefined || facts[key] === null || (key === 'baseStats' && facts[key].length === 0));
@@ -202,24 +253,27 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
     assert(!prior || prior === event.fingerprint, `Conflicting trusted identity in source: ${event.id}`);
     inBatch.set(event.id, event.fingerprint);
   }
-  const root = openCorpus(output, true), prior = receipts(root);
-  const known = new Map(prior.flatMap(receipt => receipt.events.map(event => [event.id, event.fingerprint])));
-  for (const { event } of prepared) assert(!known.has(event.id) || known.get(event.id) === event.fingerprint, `Conflicting trusted identity: ${event.id}`);
-  const receiptId = hash(json({ origin, source: source.sha256 })), receiptPath = resolve(root, 'records', receiptId + '.json');
-  if (existsSync(receiptPath)) { buildIndex(root); return { receipt: receiptId, alreadyPresent: true, cases: prepared.filter(p => p.event.caseId).map(p => p.event.caseId) }; }
-  for (const { event, item } of prepared) if (event.caseId) {
-    const file = resolve(root, 'cases', event.id, 'case.json');
-    if (existsSync(file)) {
+  const root = openCorpus(output, true);
+  return withWriter(root, () => {
+    const prior = receipts(root);
+    const known = new Map(prior.flatMap(receipt => receipt.events.map(event => [event.id, event.fingerprint])));
+    for (const { event } of prepared) assert(!known.has(event.id) || known.get(event.id) === event.fingerprint, `Conflicting trusted identity: ${event.id}`);
+    const receiptId = hash(json({ origin, source: source.sha256 })), receiptPath = resolve(root, 'records', receiptId + '.json');
+    if (existsSync(receiptPath)) { deriveIndex(root); return { receipt: receiptId, alreadyPresent: true, cases: prepared.filter(p => p.event.caseId).map(p => p.event.caseId) }; }
+    for (const { event, item } of prepared) if (event.caseId) {
+      const file = resolve(root, 'cases', event.id, 'case.json');
+      if (existsSync(file)) {
+        const existing = checked(parse(file));
+        assert(existing.fingerprint === item.fingerprint && json(existing.identity) === json(item.identity), `Existing case conflict: ${event.id}`);
+      } else immutable(file, json(item));
       const existing = checked(parse(file));
-      assert(existing.fingerprint === item.fingerprint && json(existing.identity) === json(item.identity), `Existing case conflict: ${event.id}`);
-    } else immutable(file, json(item));
-    const existing = checked(parse(file));
-    immutable(resolve(dirname(file), 'report.md'), caseReport(existing));
-    onCaseWritten(event.id);
-  }
-  immutable(receiptPath, json(seal({ schema: INGEST, source, context, events: prepared.map(p => p.event) })));
-  buildIndex(root);
-  return { receipt: receiptId, alreadyPresent: false, cases: [...new Set(prepared.filter(p => p.event.caseId).map(p => p.event.caseId))] };
+      immutable(resolve(dirname(file), 'report.md'), caseReport(existing));
+      onCaseWritten(event.id);
+    }
+    immutable(receiptPath, json(seal({ schema: INGEST, source, context, events: prepared.map(p => p.event) })));
+    deriveIndex(root);
+    return { receipt: receiptId, alreadyPresent: false, cases: [...new Set(prepared.filter(p => p.event.caseId).map(p => p.event.caseId))] };
+  });
 }
 
 function artifact(value) {
@@ -238,7 +292,7 @@ function analysisInput(value) {
   assert(Array.isArray(value.observations) && value.observations.every(string) && Array.isArray(value.hypotheses) && value.hypotheses.every(string), 'Separate observation/hypothesis arrays are required');
   assert(Array.isArray(value.evidence) && Array.isArray(value.actions), 'Evidence/action arrays are required');
   assert(object(value.replay) && replayStatuses.includes(value.replay.status), 'Explicit replay status required');
-  if (value.replay.status === 'exact') assert(value.evidence.length && string(value.replay.note), 'Exact replay claims need attributed evidence and scope');
+  if (value.replay.status === 'exact') assert(value.evidence.some(ref => string(ref.locator) && HEX.test(ref.sha256) && ['present', 'local-only'].includes(ref.availability)) && string(value.replay.note), 'Exact replay claims need attributed evidence and scope');
   if (value.disposition === 'confirmed-defect') assert(value.observations.length && value.confidence !== 'unassessed' && value.evidence.some(ref => string(ref.locator) && HEX.test(ref.sha256)), 'Confirmed diagnosis requires observations, assessed confidence and hashed evidence');
   const actions = value.actions.map(action => {
     assert(object(action) && string(action.url) && ['proposed', 'confirmed', 'historical-follow-up'].includes(action.relationship), 'Invalid action reference');
@@ -260,21 +314,24 @@ function revisions(root, id) {
 }
 export function appendAnalysis({ corpus, caseId, analysis }) {
   assert(ID.test(caseId), 'Invalid case identifier');
-  const root = openCorpus(corpus), item = checked(parse(resolve(root, 'cases', caseId, 'case.json')));
-  assert(item.schema === CASE && item.id === caseId, 'Invalid case');
-  assert(receipts(root).some(receipt => receipt.events.some(event => event.caseId === caseId)), 'Cannot analyse an uncommitted ingestion');
-  const value = analysisInput(typeof analysis === 'string' ? parse(analysis) : analysis), digest = hash(json(value)), history = revisions(root, caseId);
-  const duplicate = history.find(entry => hash(json(entry.value.analysis)) === digest);
-  if (duplicate) { buildIndex(root); return { revision: duplicate.value.revision, alreadyPresent: true }; }
-  const revision = history.length + 1;
-  immutable(resolve(root, 'cases', caseId, 'analysis', `${String(revision).padStart(4, '0')}-${digest}.json`), json({ schema: ANALYSIS, caseId, revision, previousSha256: history.at(-1)?.sha256 ?? null, analysis: value }));
-  buildIndex(root);
-  return { revision, alreadyPresent: false };
+  const root = openCorpus(corpus);
+  return withWriter(root, () => {
+    const item = checked(parse(resolve(root, 'cases', caseId, 'case.json')));
+    assert(item.schema === CASE && item.id === caseId, 'Invalid case');
+    assert(receipts(root).some(receipt => receipt.events.some(event => event.caseId === caseId)), 'Cannot analyse an uncommitted ingestion');
+    const value = analysisInput(typeof analysis === 'string' ? parse(analysis) : analysis), digest = hash(json(value)), history = revisions(root, caseId);
+    const duplicate = history.find(entry => hash(json(entry.value.analysis)) === digest);
+    if (duplicate) { deriveIndex(root); return { revision: duplicate.value.revision, alreadyPresent: true }; }
+    const revision = history.length + 1;
+    immutable(resolve(root, 'cases', caseId, 'analysis', `${String(revision).padStart(4, '0')}-${digest}.json`), json({ schema: ANALYSIS, caseId, revision, previousSha256: history.at(-1)?.sha256 ?? null, analysis: value }));
+    deriveIndex(root);
+    return { revision, alreadyPresent: false };
+  });
 }
 
 /** The index is derived only from completed receipts; orphan writes never inflate totals. */
-export function buildIndex(corpus) {
-  const root = openCorpus(corpus), records = receipts(root), events = new Map(), cohorts = [];
+function deriveIndex(root) {
+  const records = receipts(root), events = new Map(), cohorts = [];
   for (const record of records) {
     const counts = {};
     for (const event of record.events) {
@@ -317,15 +374,19 @@ export function buildIndex(corpus) {
   return index;
 }
 
+export function buildIndex(corpus) { const root = openCorpus(corpus); return withWriter(root, () => deriveIndex(root)); }
+
 function main(argv) {
-  if (argv.length === 1 && argv[0] === '--help') return { usage: 'ingest --record runs.json --corpus dir [--repository owner/repo --origin public-namespace --source-locator relative-or-https --source-ref commit] | analyse --corpus dir --case id --analysis file.json | index --corpus dir', scope: 'Offline exported-record intake only; no game, network or automatic diagnosis' };
+  if (argv.length === 1 && argv[0] === '--help') return { usage: 'ingest --record runs.json --corpus dir [--repository owner/repo --origin public-namespace --source-locator relative-or-https --source-ref commit] | analyse --corpus dir --case id --analysis file.json | index --corpus dir | inspect-lock --corpus dir | recover-lock --corpus dir --token value --stopped yes', scope: 'Offline exported-record intake only; no game, network or automatic diagnosis' };
   const command = argv.shift(), options = {};
   while (argv.length) { const flag = argv.shift(); assert(/^--[a-z-]+$/.test(flag) && argv.length && !String(argv[0]).startsWith('--'), 'Expected --option value'); assert(!(flag in options), 'Duplicate option'); options[flag] = argv.shift(); }
-  const allowed = command === 'ingest' ? ['--record', '--corpus', '--repository', '--origin', '--source-locator', '--source-ref'] : command === 'analyse' ? ['--corpus', '--case', '--analysis'] : command === 'index' ? ['--corpus'] : [];
+  const allowed = command === 'ingest' ? ['--record', '--corpus', '--repository', '--origin', '--source-locator', '--source-ref'] : command === 'analyse' ? ['--corpus', '--case', '--analysis'] : ['index', 'inspect-lock'].includes(command) ? ['--corpus'] : command === 'recover-lock' ? ['--corpus', '--token', '--stopped'] : [];
   assert(allowed.length && Object.keys(options).every(key => allowed.includes(key)), 'Usage: deaths.mjs ingest --record runs.json --corpus dir | analyse --corpus dir --case id --analysis file.json | index --corpus dir');
   assert(options['--corpus'], '--corpus is required');
   if (command === 'ingest') { assert(options['--record'], '--record is required'); return ingestRecord({ record: options['--record'], corpus: options['--corpus'], ...(options['--repository'] ? { repository: options['--repository'] } : {}), ...(options['--origin'] ? { origin: options['--origin'] } : {}), ...(options['--source-locator'] ? { locator: options['--source-locator'] } : {}), ...(options['--source-ref'] ? { sourceRef: options['--source-ref'] } : {}) }); }
   if (command === 'analyse') { assert(options['--case'] && options['--analysis'], '--case and --analysis are required'); return appendAnalysis({ corpus: options['--corpus'], caseId: options['--case'], analysis: options['--analysis'] }); }
+  if (command === 'inspect-lock') return inspectWriter(options['--corpus']);
+  if (command === 'recover-lock') return recoverWriter({ corpus: options['--corpus'], token: options['--token'], writerStopped: options['--stopped'] === 'yes' });
   return buildIndex(options['--corpus']).totals;
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
