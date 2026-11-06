@@ -37,6 +37,7 @@ would be a mid-life policy shift, which determinism forbids (rule 5).
 | `borg.worshipsGold` | off | Makes the Borg prioritize gold and delay some descents. | Yes, controller side. |
 | `borg.selfScum` | on | Lets the Borg work in town toward a chosen purchase. | Yes, controller side. |
 | `borg.munchkinStart` | off | Reduces early stockpile priorities for a faster cash focused start. | Yes, controller side. |
+| `mandos.stageRetirement` | off | Explicitly opt in to the retained stage save/retire workflow; normal play continues when off. | Yes, workflow side: fixed per controller/page. |
 | `borg.classWarrior` ... `borg.classBlackguard` | on | The class pool: one toggle per class the game defines (Warrior, Mage, Druid, Priest, Necromancer, Paladin, Rogue, Ranger, Blackguard). Each birth draws its class from the classes switched on. | Yes, birth side: read once per page. |
 | `borg.raceHuman` ... `borg.raceKobold` | on | The race pool: one toggle per race (Human, Half-Elf, Elf, Hobbit, Gnome, Dwarf, Half-Orc, Half-Troll, Dunadan, High-Elf, Kobold). Each birth draws its race from the races switched on. | Yes, birth side: read once per page. |
 

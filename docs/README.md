@@ -86,6 +86,7 @@ explains the pools; each switch remains individually listed here.
 | Race: Dunadan | `borg.raceDunadan` | on | Allow this race in the next-birth draw pool. |
 | Race: High-Elf | `borg.raceHighElf` | on | Allow this race in the next-birth draw pool. |
 | Race: Kobold | `borg.raceKobold` | on | Allow this race in the next-birth draw pool. |
+| Enable optional benchmark retirement | `mandos.stageRetirement` | off | Explicitly opt in to legacy save/retire at the stage thresholds; off keeps normal play going. |
 
 Stage retirement is an explicit optional opt-in; it is not the default grind
 or active research queue. Advanced replay tests use `pnpm test:optional-replay`
