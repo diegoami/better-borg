@@ -52,6 +52,8 @@ export function distance(
  * perceive/borgNotice/borgPower for this view (borg-think.c ordering).
  */
 export function think(ctx: BorgContext): AgentCommand | null {
+  // FORK: Mandos #47, never retain a previous decision's stop diagnostic.
+  ctx.world.stopReason = null;
   const p = ctx.view.player();
   if (p.dead) return null;
 

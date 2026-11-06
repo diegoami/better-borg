@@ -96,7 +96,7 @@ export function runSweep(args: SweepArgs): SweepResult {
         `[sweep] seed ${String(seed)} life ${String(run.life)}: ` +
           `${String(run.decisions)} decisions, turns ${String(run.turns)}, ` +
           `maxDepth ${String(run.maxDepth)}, clvl ${String(run.clvl)}, ` +
-          `kills ${String(run.kills)}, ${run.dead ? `died (${run.causeOfDeath ?? "?"})` : "alive"}` +
+          `kills ${String(run.kills)}, ${run.dead ? `died (${run.causeOfDeath ?? "?"})` : run.stopped !== undefined ? `STOPPED (${run.stopped})` : "alive"}` +
           `${run.stageAttained ? `, ATTAINED the stage` : ""}, ` +
           `top command ${top ? `${top[0]} x${String(top[1])}` : "-"}`,
       );

@@ -1,0 +1,99 @@
+✓ Lockfile passes supply-chain policies (verified 3h ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 203ms using pnpm v12.16.1
+$ vitest run src/play-stop.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/play-stop.test.ts (6 tests | 4 failed) 874ms
+   × retains an actual clock-stop reply rather than throwing away the life 214ms
+   × a temporary no-command reply does not terminate at its first null 130ms
+   × retains the existing25-idle stop contract without losing its record 148ms
+   × still rejects an independently corrupted command census 76ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/play-stop.test.ts > retains an actual clock-stop reply rather than throwing away the life
+AssertionError: expected 'seed 47: the census counts 0 commands…' to be null
+
+- Expected:
+null
+
++ Received:
+"seed 47: the census counts 0 commands over 1 decisions - the record would disagree with the game"
+
+ ❯ src/play-stop.test.ts:56:26
+     54|     expect(result.calls[0]).toMatchObject({ enteredClock: 1000, prepar…
+     55|     expect(result.commands).toEqual({});
+     56|     expect(result.error).toBeNull();
+       |                          ^
+     57|   } finally { f.life.uninstall(); }
+     58| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/play-stop.test.ts > a temporary no-command reply does not terminate at its first null
+AssertionError: expected 'seed 47: the census counts 1 commands…' to be null
+
+- Expected:
+null
+
++ Received:
+"seed 47: the census counts 1 commands over 2 decisions - the record would disagree with the game"
+
+ ❯ src/play-stop.test.ts:78:26
+     76|     expect(result.calls[0]!.command).toBeNull();
+     77|     expect(result.calls[1]!.command).not.toBeNull();
+     78|     expect(result.error).toBeNull();
+       |                          ^
+     79|   } finally { f.life.uninstall(); }
+     80| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/play-stop.test.ts > retains the existing25-idle stop contract without losing its record
+AssertionError: expected 'seed 47: the census counts 0 commands…' to be null
+
+- Expected:
+null
+
++ Received:
+"seed 47: the census counts 0 commands over 25 decisions - the record would disagree with the game"
+
+ ❯ src/play-stop.test.ts:88:26
+     86|     expect(result.calls).toHaveLength(25);
+     87|     expect(result.stall).toMatchObject({ kind: "idle", decision: 25 });
+     88|     expect(result.error).toBeNull();
+       |                          ^
+     89|   } finally { f.life.uninstall(); }
+     90| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/play-stop.test.ts > still rejects an independently corrupted command census
+AssertionError: expected 'seed 47: the census counts 2 commands…' to match /the census counts2 commands over1 de…/u
+
+- Expected:
+/the census counts2 commands over1 decisions/u
+
++ Received:
+"seed 47: the census counts 2 commands over 1 decisions - the record would disagree with the game"
+
+ ❯ src/play-stop.test.ts:110:26
+    108|     f.life.commands["__intentional_test_corruption__"] = 1;
+    109|     const result = f.measure(1);
+    110|     expect(result.error).toMatch(/the census counts2 commands over1 de…
+       |                          ^
+    111|   } finally { f.life.uninstall(); }
+    112| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 2 passed (6)
+   Start at  22:53:15
+   Duration  2.60s (transform 975ms, setup 480ms, import 1.13s, tests 874ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

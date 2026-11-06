@@ -184,3 +184,28 @@ in-repo example: 1228 recorded, 1229 issued).
 | `2026-11-03-b15-verify/` | B15's unified runner on B15's own tree | The unified session module reproduces B02's record field-for-field on the same cohort (seed 1 close 771, turns 8691; seed 42 identical) - the stock path did not move; seed 7's `decisions` is 1229 against B02's 1228, the adopted #36 counting rule (count the killing decision) and the only difference |
 | `2026-11-03-stage-baseline-c2d1/` (+ `-c1d1`, `-c2d2`) | B25's stage rail on B25's own tree | The stage baseline that calibrated the default: three candidate rungs over the standard grid at cap 10000 - c1d1 4/4 (100%, degenerate floor), **c2d1 2/4 (50%, the chosen default - the strongest rung inside the measured frontier)**, c2d2 0/4 (stretch, no warrior reaches depth 2 alive). The project's number starts at 50%; the first library cohort (seeds 23, 49) is what the ladder (#26) resumes from |
 | `2026-11-03-b32-stage-c2d1/` | B32's caution/attack fix on `task/B32-caution-attack@ef7f2235` | The first strength move the number recorded: same grid/stage/cap as the calibration baseline, **75% (3/4)** against its 50% - seed 34's grey-mold death (the unit case) became a stage retirement, seed 20's floating-eye oscillation (same family, cured by the bounce-guard half) became a LATER death at depth 2 (confused beside a one-hit blocker - the follow-on), seed 49 byte-identical. The replay-exactness test rides this record now |
+
+## Stopped controller replies (Mandos #47)
+
+A command decision counts an issued non-null command, including a killing or
+refused command. Armed requests with no command are recorded separately as
+optional `attempts` and `noCommandReplies`; they are not game turns, energy or
+unarmed provider polls. The requested cap still bounds Core loop calls, so empty
+replies cannot add unlimited retries. Normal command-only records omit these
+new fields and keep their previous shape/counts.
+
+An existing explicit Borg clock-limit/final-oops stop adds optional `stopped`
+with its reason. This is an owned harness field, not a new SDK outcome or a death;
+`dead` stays false and `causeOfDeath` stays null. Arbitrary empty replies still
+use the shared 25-idle tolerance; those remain `stall` records rather than newly
+invented explicit Borg stops. Death takes precedence, then a genuine explicit
+stop, then an existing stall, retirement/attainment and ordinary cap completion.
+If a stop and a stall coincide, both observations remain but CLI outcome names
+the explicit reason. Missing optional attempt counts display `?`, not a guess.
+
+The clock 30000 contract fixture is prepared after real controller initialization;
+the current 12000/25000 reset windows are counterevidence to treating the old
+seed 34 natural-overflow story as a current default run. Historical records and
+unfinished task/B35-census-long-life remain unchanged. Normal gameplay and all
+seven C corrections retain their existing policies; the correction preserves
+basic evidence when the Borg legitimately stops instead of throwing it away.
