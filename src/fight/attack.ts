@@ -2252,7 +2252,9 @@ function auxVampireStrike(ctx: BorgContext, fs: FightState): number {
     bI = i;
   }
   if (bI === -1) return 0;
-  if (curDist >= 20) return 0;
+  /* FORK: Mandos176 translates diegoami/neo-angband-tracker#257
+   * (0119d5da): judge the selected closest target, not the last bystander. */
+  if (bestDist >= 20) return 0;
   const x = fs.tempX[bI]!;
   const y = fs.tempY[bI]!;
 
