@@ -42,3 +42,11 @@ them as a second ledger. Native C map-cancel proposal1 remains closed/unmerged
 and linkable in that fork. Mandos88 lighting wrapper is closed/unmerged and
 retained as historical report evidence; practical impact remains unproven.
 No official C submission is authorized by this index or migration.
+
+## Mandos translations of C source corrections
+
+[Native C translation provenance and independent TS units](c-translations/README.md)
+link canonical C source issues/proposals, exact original translations, Mandos
+consumer issues and replacement conditions. These are TS source deltas, separate
+from the published core package patch and frozen historical upstream-c copies.
+Live consumer carry/fixed state belongs on the linked issues, not this index.

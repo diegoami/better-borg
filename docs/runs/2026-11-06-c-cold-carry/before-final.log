@@ -1,0 +1,57 @@
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 61ms using pnpm v12.16.1
+
+ RUN  v4.1.11 /tmp/mandos-c-cold-melee-resistance
+
+ ❯ src/danger/cold-melee-carry.test.ts (6 tests | 2 failed) 378ms
+   × 'acid only / cold troll' uses the applicable protection for its escape proxy 139ms
+   × 'cold only / cold troll' uses the applicable protection for its escape proxy 77ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/danger/cold-melee-carry.test.ts > 'acid only / cold troll' uses the applicable protection for its escape proxy
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/danger/cold-melee-carry.test.ts:106:35
+    104| it.each(cases)("$name uses the applicable protection for its escape pr…
+    105|  const s=await scene(c);
+    106|  expect(s.command?.code==="read").toBe(c.escape);
+       |                                   ^
+    107| });
+    108|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/danger/cold-melee-carry.test.ts > 'cold only / cold troll' uses the applicable protection for its escape proxy
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/danger/cold-melee-carry.test.ts:106:35
+    104| it.each(cases)("$name uses the applicable protection for its escape pr…
+    105|  const s=await scene(c);
+    106|  expect(s.command?.code==="read").toBe(c.escape);
+       |                                   ^
+    107| });
+    108|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  12:58:08
+   Duration  1.07s (transform 422ms, setup 143ms, import 483ms, tests 378ms, environment 0ms)
+
