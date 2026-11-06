@@ -217,7 +217,9 @@ export interface BorgRestartDeps {
    * contained the same way a create failure is: the run still restarts, and
    * the log says the record could not be kept.
    */
-  readonly graveyard?: (report: RunReport) => Promise<void>;
+  readonly graveyard?: (report: RunReport) => Promise<void | boolean>;
+  /** Mandos166: refusal/throw must stop reload until the new durable outbox verifies. */
+  readonly recordingRequired?: boolean;
 }
 
 /** A running restart loop. */
@@ -245,6 +247,7 @@ export interface BorgRestart {
    * this is for a mod stop that keeps the page (the headless runner's
    * re-registration, and plugin.ts's own stop).
    */
+  retryRecording(): Promise<void>;
   stop(): Promise<void>;
 }
 
@@ -442,6 +445,7 @@ export function installBorgRestart(deps: BorgRestartDeps): BorgRestart {
   /* One restart per page: the report arrives once, and one birth per reload
    * is the contract the presenter's one-shot arming already carries. */
   let spent = false;
+  let pendingRecording: Api2RunEndEvent | null = null;
   /* One RETIRE attempt per page (#25): a refused leg leaves the run
    * playing, and the watcher never asks twice - the same one-shot
    * discipline as `spent`, deliberately a SEPARATE latch so a refused
@@ -519,10 +523,25 @@ export function installBorgRestart(deps: BorgRestartDeps): BorgRestart {
      * races the page teardown and can be lost to it); a journal that cannot
      * write says so itself and never blocks the restart, and a throw here is
      * contained like every other seam's. */
+    if (deps.recordingRequired && deps.graveyard === undefined) {
+      pendingRecording = event;
+      deps.log("Mandos terminal recording is required but unavailable; no next character starts.");
+      return;
+    }
     if (deps.graveyard !== undefined) {
       try {
-        await deps.graveyard(report);
+        const recorded = await deps.graveyard(report);
+        if (deps.recordingRequired && recorded !== true) {
+          pendingRecording = event;
+          deps.log("Mandos could not verify the terminal outbox; no next character starts. Export/import and acknowledge the pending report, or retry recording.");
+          return;
+        }
       } catch (error: unknown) {
+        if (deps.recordingRequired) {
+          pendingRecording = event;
+          deps.log(`Mandos terminal recording failed (${messageOf(error)}); no next character starts. Retry recording or export the pending report before reloading.`);
+          return;
+        }
         deps.log(`the Borg could not record the run that just ended (${messageOf(error)}), so it restarts without a journal entry`);
       }
       if (retired()) return dropped("it was still recording the run that ended");
@@ -645,6 +664,11 @@ export function installBorgRestart(deps: BorgRestartDeps): BorgRestart {
           `${String(facts.depth)}); the Borg is keeping a save and starting the next one`,
       );
       void retireAtStage(deps, facts, (): boolean => stopped || mine !== epoch);
+    },
+    async retryRecording(): Promise<void> {
+      if (stopped || pendingRecording === null) return;
+      const event = pendingRecording; pendingRecording = null; spent = false;
+      await onReport(event);
     },
     async stop(): Promise<void> {
       /* Invalidate FIRST and synchronously (#29): from this moment no

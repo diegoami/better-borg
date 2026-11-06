@@ -75,6 +75,8 @@ import { createTick, type Tick } from "./src/api2/controller.js";
 import { forgetGrid } from "./src/loop/stall.js";
 import { plannedBirth, TITLE_ROW_LABEL } from "./src/class/birth.js";
 import { installBorgJournal, type BorgJournal } from "./src/records/journal.js";
+import { createLiveRecorder, decisionFrame } from "./src/records/live-deaths.js";
+import { installDeathExport } from "./src/records/death-export.js";
 import { installBorgRestart, type BorgRestart } from "./src/loop/restart.js";
 import { librarySlotName, stageAttained, stageOf, STAGE_CLVL_SETTING, STAGE_DEPTH_SETTING, type StageDefinition } from "./src/loop/stage.js";
 import { replayBanner, replayModeOf, REPLAY_DEATH_SETTING, REPLAY_RELEASE_SETTING, type ReplayMode } from "./src/loop/replay.js";
@@ -265,6 +267,7 @@ let bridge: Bridge | undefined;
 let running: Promise<Running | null> | undefined;
 /* The restart loop's handle, retired in stop() with the bridge. */
 let restartHandle: BorgRestart | undefined;
+let deathExportHandle: { stop(): void } | undefined;
 /* The journal's handle, retired the same way. Module-level for the same
  * reason: a stop can land before `running` settles. */
 let journalHandle: BorgJournal | undefined;
@@ -307,6 +310,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
     void made.dispose();
     return null;
   }
+  let observedSettings: Readonly<Record<string, number>> = {};
   /* THE STAGE (#25), read from the persisted settings - fire-and-forget
    * here (the settings call is async), settled long before any birth is
    * offered: both stage settings resolve through their declared ranges
@@ -319,6 +323,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
       void mod.meta.settings().then(
         (read) => {
           if (read.ok) {
+            observedSettings = { ...read.value };
             activeStage = stageOf({
               clvl: read.value[STAGE_CLVL_SETTING.id],
               depth: read.value[STAGE_DEPTH_SETTING.id],
@@ -432,7 +437,13 @@ async function begin(mod: ModApi2): Promise<Running | null> {
    * report, journal, flag, create, reload, presenter, armed controller -
    * and every failure mode's landing place are documented in
    * src/loop/restart.ts. */
+  const deathRecorder = createLiveRecorder({
+    store: mod.store.kv,
+    source: () => ({ mod: mod.meta.id, engine: mod.meta.engine, api: mod.meta.api, codeDigest: null, flags: mod.meta.flags, settings: observedSettings }),
+    log: message => mod.meta.log(message),
+  });
   const restart = installBorgRestart({
+    recordingRequired: true,
     slot: mod.store.install,
     log: (message) => mod.meta.log(message),
     ownsKeyboard: () => mod.act.controller.owns(),
@@ -443,15 +454,17 @@ async function begin(mod: ModApi2): Promise<Running | null> {
      * the report itself carries - the on-death report's "where I was not
      * sure" half. Nothing journaled means no dossier: the entry keeps its
      * pre-#27 shape. */
-    graveyard: (report) =>
-      journal.graveyard(
-        report,
-        unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {},
-      ),
+    graveyard: async (report) => {
+      const durable = await deathRecorder.capture(report);
+      await journal.graveyard(report, unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {});
+      return durable;
+    },
     save: mod.manage?.session?.save ?? null,
     listSaves: mod.manage?.saves.list ?? null,
     rename: mod.manage?.saves.rename ?? null,
   });
+  deathExportHandle?.stop();
+  deathExportHandle = installDeathExport(mod, deathRecorder, () => restart.retryRecording());
   /* THE UNCERTAINTY JOURNAL (#27, phase 1): this page's unsure points, the
    * bounded tail beside the raw total, collected by the tick's trainer rail
    * at every decision the signal marks. Pure observation - the assess call
@@ -560,7 +573,7 @@ async function begin(mod: ModApi2): Promise<Running | null> {
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, observe: (world, command, messages) => deathRecorder.observe(decisionFrame(world.view, command, made.hasTruth, messages)), forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
 }
 
 const definition: Api2ModDefinition = {
@@ -616,6 +629,8 @@ const definition: Api2ModDefinition = {
      * loops listening for one report. Torn down before the bridge (reverse
      * of begin's order); the journal's arrival listener leaves with them,
      * for the same reason again. */
+    deathExportHandle?.stop();
+    deathExportHandle = undefined;
     const loop = restartHandle;
     restartHandle = undefined;
     void loop?.stop();

@@ -323,7 +323,8 @@
       "stall": 0,
       "survived-slice": 0,
       "timeout": 0,
-      "unknown": 0
+      "unknown": 0,
+      "winner": 0
     },
     "recordedOutcomeOccurrences": 5,
     "reviewCoverage": {

@@ -194,6 +194,7 @@ export function fakeGame(options: FakeGameOptions = {}): FakeGame {
   const view = makeScenarioView(options.scenario);
   const logs: string[] = [];
   const submitted: FakeGame["submitted"][number][] = [];
+  const terminalKV = new Map<string, unknown>();
   const answered: FakeGame["answered"][number][] = [];
   const released: string[] = [];
   const truthCalls: string[] = [];
@@ -287,7 +288,13 @@ export function fakeGame(options: FakeGameOptions = {}): FakeGame {
       records: (_file: string): ReturnType<ModApi2["content"]["records"]> => ok([] as readonly JsonRecord[]),
       activation: () => ok(null),
     },
+    ui: {
+      commands: { register: () => ok(null) },
+      mount: () => refused("optional panel grant absent in this contract fake"),
+      unmount: () => ok(null),
+    },
     store: {
+      kv: { keys: () => ok([...terminalKV.keys()]), get: (key: string) => ok(structuredClone(terminalKV.get(key) ?? null)), set: (key: string, value: unknown) => { if (value === null) terminalKV.delete(key); else terminalKV.set(key, structuredClone(value)); return ok(null); } },
       install: { get: () => ok(installSlot.value), set: (value: unknown) => { installSlot.value = value; return ok(null); } },
       /* The current character's slot in its own save, where the journal
        * records; a get before any character exists would be the host's

@@ -20,6 +20,8 @@
     },
     "capabilities": [
       "command:add",
+      "store:kv",
+      "ui:panel.mount",
       "state:player.read",
       "state:monsters.read",
       "state:map.read",

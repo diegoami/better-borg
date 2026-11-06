@@ -58,6 +58,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { decisionFrame, type DecisionFrame, MAX_LIVE_FRAMES } from "./records/live-deaths.js";
 import { birthReplayDataOf, type BirthReplayData } from "./records/birth-replay.js";
 import type { JsonRecord, KnownWorldData, LoadoutSimulation } from "@rpgm-tools/neo-angband-mod-sdk";
 import { itemView, playerView, simulationView } from "./api2/world.js";
@@ -281,6 +282,8 @@ export interface LifeStall {
 
 /** What one life's controller observed, asked of the LIVE game. */
 interface LifeObservation {
+  /** Diagnostic snapshot; never fed back into a decision. */
+  borgRng(): number;
   /** The command census: how many times each code was issued. */
   readonly commands: Record<string, number>;
   /** One entry per decision: where the character stood, and whether anything was in sight. */
@@ -325,6 +328,7 @@ export function observingLife(
   core: typeof Core,
   game: StartedGame,
   pack: GamePack,
+  observe?: (frame: DecisionFrame) => void,
 ): LifeObservation {
   const state: GameState = game.state;
   /* FORK: Mandos #99 keeps the measurement on the shipped API2 item analysis. */
@@ -396,7 +400,10 @@ export function observingLife(
         const actual = core.knownMonsterMidx(state, id);
         return actual === null ? false : legacyAct.setTargetMonster(actual);
       } };
-      const cmd = borg.controller(view, act);
+      const deliveredMessages: string[] = [];
+      const decisionView = observe ? { ...view, messages: () => { const batch = view.messages(); deliveredMessages.push(...batch); return batch; } } : view;
+      const cmd = borg.controller(decisionView, act);
+      if (observe && cmd) observe(decisionFrame(view, cmd, true, deliveredMessages));
       if (cmd) commands[cmd.code] = (commands[cmd.code] ?? 0) + 1;
       decision += 1;
       const step = watch.observe(cmd === null ? "" : sceneKey(view), cmd);
@@ -438,6 +445,7 @@ export function observingLife(
   );
 
   return {
+    borgRng: () => borg.rng.snapshot(),
     commands,
     trail,
     places,
@@ -906,6 +914,7 @@ function killsOf(state: GameState): number {
 
 /** One pack character's life, with its records read back from the journal's slots. */
 export interface SessionLife extends BirthReplayData {
+  readonly decisionTail?: readonly DecisionFrame[];
   readonly seed: number;
   /** 1-based life number within the session (one character per life). */
   readonly life: number;
@@ -1019,6 +1028,9 @@ export interface PackSessionOptions {
   readonly seeds: readonly number[];
   /** The decision cap for each life. */
   readonly capFor: (seed: number) => number;
+  /** Mandos166: awaited per ended life before another boot; failures stop the session. */
+  readonly onLifeEnd?: (life: SessionLife) => void | Promise<void>;
+  readonly captureDecisionTail?: boolean;
   /** The race to birth; the pack's default candidate when omitted. */
   readonly raceName?: string;
   /**
@@ -1136,7 +1148,8 @@ export async function playPackSession(
      * the listeners are attached and before the first changeLevel. */
     game.announceArrival();
 
-    const observed = observingLife(core, game, pack);
+    const decisionTail: DecisionFrame[] = [];
+    const observed = observingLife(core, game, pack, options.captureDecisionTail ? frame => { decisionTail.push(frame); if (decisionTail.length > MAX_LIVE_FRAMES) decisionTail.shift(); } : undefined);
     const startedAt = Date.now();
     const { dead, taken, attained } = driveLife(core, game, options.capFor(seed), observed, seed, options.stage);
 
@@ -1214,6 +1227,7 @@ export async function playPackSession(
 
     lives.push({
       seed,
+      ...(options.captureDecisionTail ? { decisionTail } : {}),
       ...birthReplayDataOf(state),
       ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
       life: lives.length + 1,
@@ -1244,6 +1258,7 @@ export async function playPackSession(
       graveyard: archived.slice(archivedBefore.length),
     });
     observed.uninstall();
+    if (options.onLifeEnd) await options.onLifeEnd(structuredClone(lives[lives.length - 1]!));
   }
 
   return { lives, library, graveyard: archivedSoFar() };

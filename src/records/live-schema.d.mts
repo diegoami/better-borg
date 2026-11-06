@@ -1,0 +1,12 @@
+import type { StoredLivePacket } from './live-deaths.js';
+export const LIVE_FORMAT: 'mandos/live-deaths@1';
+export const ACK_FORMAT: 'mandos/live-import-ack@1';
+export const LIVE_PREFIX: string;
+export const MAX_LIVE_BYTES: number;
+export const MAX_LIVE_FRAMES: number;
+export const LIVE_EXPORT_LIMIT: number;
+export function isHash(value: unknown): value is string;
+export function isObject(value: unknown): value is Record<string, unknown>;
+export function packetText(value: unknown): string;
+export function packetHash(value: unknown): Promise<string>;
+export function packetShape(value: unknown): value is StoredLivePacket;

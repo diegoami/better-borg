@@ -167,3 +167,7 @@ replay/analysis task execution and verified durable recording transport. A plan
 or successful intake cannot claim those bridges exist. Existing replay paths
 are unchanged, including the named seed-only collision follow-up. New gameplay
 strategy, cheat death and fatal-save changes remain separate work.
+
+The report-delivering live profile and explicit download/import/ACK bridge are
+documented in [LIVE-EXPORT.md](LIVE-EXPORT.md). Public-tier hosts without a full
+terminal report remain unsupported; no existing lab was deployed by this change.

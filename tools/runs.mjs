@@ -45,6 +45,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as Core from "@rpgm-tools/neo-angband-core";
+import { writeImmutableObservation } from "./live-deaths.mjs";
 import { enginePin } from "./engine-pin.mjs";
 
 const HERE = fileURLToPath(new URL("./", import.meta.url));
@@ -149,21 +150,34 @@ const commit = head !== null ? `${branch ?? "?"}@${head.slice(0, 8)}${dirty ? " 
 
 /* --- the session, the record --------------------------------------------- */
 
+const now = new Date();
+const date = `${String(now.getFullYear())}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+const dir = join(outRoot, `${date}-${label}`);
+const terminalOutbox = dir + "-terminal-outbox";
+if (existsSync(dir) || existsSync(terminalOutbox)) fail(`${dir} or its terminal outbox already exists; pick a new label.`);
+const buildMetadata = { commit, engine: enginePin(REPO_ROOT), content: packSource(packDir), borg: `${strategy.id} pack (stock parameters)` };
 const lines = [];
 const session = await playPackSession(Core, loadPack(packDir), strategy, {
   seeds,
   capFor: () => cap,
   ...(raceName === undefined ? {} : { raceName }),
   ...(stage === null ? {} : { stage }),
-  log: (message) => lines.push(`[borg] ${message}`),
+  captureDecisionTail: true,
+  onLifeEnd: life => {
+    const key = `life-${String(life.life).padStart(4, "0")}`;
+    const row = runOf(life);
+    const record = { schema: "better-borg/runs@1", label, recorded: now.toISOString(), build: buildMetadata,
+      runner: { tool: "tools/runs.mjs", decisions: cap, seeds: [life.seed], lives: 1, stage }, runs: [row] };
+    // Atomic immutable terminal receipt before another life can boot. A later batch failure leaves this intact.
+    const tail = { schema: "mandos/headless-decision-tail@1", life: life.life, seed: life.seed,
+      knowledge: "pre-decision-known+granted-monster-truth", decisions: life.decisions,
+      truncated: life.decisions > (life.decisionTail?.length ?? 0), frames: life.decisionTail ?? [] };
+    writeImmutableObservation(join(terminalOutbox, key, "decision-tail.json"), JSON.stringify(tail, null, 2) + "\n");
+    writeImmutableObservation(join(terminalOutbox, key, "runs.json"), JSON.stringify(record, null, 2) + "\n");
+    process.stderr.write(`[mandos] terminal receipt preserved: ${terminalOutbox}/${key}; export/analysis pending\n`);
+  },
+  log: message => lines.push(`[borg] ${message}`),
 });
-
-const now = new Date();
-const date = `${String(now.getFullYear())}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-const dir = join(outRoot, `${date}-${label}`);
-if (existsSync(dir)) {
-  fail(`${dir} already exists. Run records are append-only (docs/runs/README.md); pick a new label.`);
-}
 
 /* The pack session's lives carry every field the ONE writer's per-run shape
  * names (the shared observation made that possible); the mapping below is
@@ -184,7 +198,10 @@ const record = {
     borg: `${strategy.id} pack (stock parameters)`,
   },
   recorded: now.toISOString(),
-  runs: session.lives.map((life) => ({
+  runs: session.lives.map(runOf),
+};
+
+function runOf(life) { return {
     seed: life.seed,
     life: life.life,
     race: life.race,
@@ -210,8 +227,7 @@ const record = {
     retired: life.retired,
     unsure: { total: life.unsure.total, points: [...life.unsure.points] },
     wallClockMs: life.wallClockMs,
-  })),
-};
+  }; }
 
 const paths = writeSessionRecord(dir, record);
 

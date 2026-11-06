@@ -18,7 +18,7 @@ const dispositions = ['needs-evidence', 'hypothesis', 'confirmed-defect', 'desig
 const replayStatuses = ['not-attempted', 'exact', 'diverged', 'missing-input', 'failed'];
 const knowledgeDomains = ['character-known', 'terminal-revealed', 'engine-diagnostic', 'unspecified'];
 const artifactStatuses = ['present', 'local-only', 'unverified', 'missing', 'not-captured'];
-const outcomes = ['death', 'stall', 'retired', 'cap-survivor', 'survived-slice', 'crash', 'timeout', 'failure', 'unknown'];
+const outcomes = ['death', 'winner', 'stall', 'retired', 'cap-survivor', 'survived-slice', 'crash', 'timeout', 'failure', 'unknown'];
 const factKeys = ['seed', 'life', 'race', 'class', 'baseStats', 'birthRngState', 'birthOptions', 'decisions', 'turns', 'depths', 'maxDepth', 'clvl', 'gold', 'kills', 'places', 'dead', 'causeOfDeath', 'commands', 'jitter', 'restedBesideMonster', 'stall', 'stageAttained', 'retired', 'unsure'];
 
 function assert(ok, message) { if (!ok) throw new Error(message); }
@@ -223,7 +223,7 @@ function caseReport(item) {
 }
 
 /** A receipt is published last; interrupted immutable case writes are safely reusable on retry. */
-export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', origin = repository, locator, sourceRef, onCaseWritten = () => {} }) {
+export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', origin = repository, locator, sourceRef, onCaseWritten = () => {}, artifacts }) {
   const path = resolve(record), output = resolve(corpus);
   noSymlinks(path); noSymlinks(output);
   assert(!within(output, path) && !within(dirname(path), output), 'Corpus and source-record tree must be separate');
@@ -232,6 +232,8 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
   if (sourceRef !== undefined) assert(/^[a-f0-9]{40}$/.test(sourceRef), 'Source ref must be an immutable commit');
   const bytes = read(path), document = JSON.parse(bytes);
   assert(object(document) && document.schema === 'better-borg/runs@1' && Array.isArray(document.runs), 'Expected better-borg/runs@1 with a runs array');
+  if (artifacts !== undefined) assert(Array.isArray(artifacts) && artifacts.length <= 16, 'Invalid initial artifacts');
+  const initialArtifacts = artifacts?.map(artifact);
   const context = contextOf(document), source = { sha256: hash(bytes), repository, origin, locator: sourceLocator(path, locator), ref: sourceRef ?? null };
   const prepared = document.runs.map((run, row) => {
     assert(object(run), `Run row ${row} is not an object`);
@@ -247,7 +249,7 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
     const item = seal({ schema: CASE, id, identity, fingerprint, source, context, facts, outcome,
       factsKnowledge: 'terminal-summary', missingContext,
       replay: { status: missingContext.length ? 'missing-input' : 'not-attempted' },
-      artifacts: ['recording', 'decision-trace', 'pre-death-save'].map(kind => ({ kind, availability: 'not-captured', locator: null, knowledge: 'unspecified' })),
+      artifacts: initialArtifacts ?? ['recording', 'decision-trace', 'pre-death-save'].map(kind => ({ kind, availability: 'not-captured', locator: null, knowledge: 'unspecified' })),
       initialAnalysis: 'pending-diagnosis' });
     return { event, item };
   });

@@ -16,6 +16,9 @@ import { createActFacade, intentOf, REST_COMPLETE } from "./act.js";
 import { createTick, promptAnswer, IDLE_BEFORE_RELEASE, REFUSALS_BEFORE_RELEASE, STALLS_BEFORE_FORGET, STALLS_BEFORE_RELEASE, type Decider } from "./controller.js";
 import { createBridge, type Bridge } from "./host.js";
 import type { World } from "./world.js";
+import { makeScenarioView } from "../harness.js";
+import { decisionFrame } from "../records/live-deaths.js";
+import { Rng } from "../rng.js";
 import { createBorg } from "../controller.js";
 import * as Think from "../think.js";
 import { buildItemDeps, getThinkSession } from "../think-session.js";
@@ -388,5 +391,32 @@ describe("Mandos abandoned-pass private RNG (#54)", () => {
     };
     try { expect(await run(true)).toEqual(await run(false)); }
     finally { selection.mockRestore(); }
+  });
+});
+
+
+describe("Mandos166 message observation during async settling", () => {
+  it("copies only controller-consumed batches without another drain or a command/RNG change", async () => {
+    async function run(record: boolean) {
+      const queue = ["before decision"], consumed: string[][] = [], captured: unknown[] = [];
+      const privateRng = new Rng(12), gameRng = new Core.Rng(9); let reads = 0, settled = false, late = false;
+      const view = { ...makeScenarioView(), messages: () => { reads++; const batch = queue.splice(0); consumed.push([...batch]); return batch; } };
+      const world = { view, facts: { shopnum: null, kinds: new Map() } } as World;
+      const b = bridge({ readWorld: async () => world, loadoutsPending: () => {
+        if (!settled) return true;
+        if (!late) { late = true; queue.push("arrived after final decision"); }
+        return false;
+      }, settleLoadouts: async () => { await Promise.resolve(); queue.push("arrived during settling"); settled = true; return 1; } });
+      const game = fakeGame();
+      const d: Decider = { controller: (v, act) => { v.messages(); privateRng.randint0(10); gameRng.randint0(10); return act.move(6); }, rewind: () => {},
+        ...(record ? { observe: (w: World, c: AgentCommand, messages: readonly string[]) => captured.push(decisionFrame(w.view, c, false, messages)) } : {}) };
+      const tick = createTick(b, d);
+      await tick(game.mod, { phase: "play", prompt: null, token: { epoch: 1, revision: 1 } } as never);
+      return { reads, consumed, remaining: [...queue], sent: game.submitted, privateRng: privateRng.snapshot(), gameRng: gameRng.getState(), captured };
+    }
+    const off = await run(false), on = await run(true);
+    const { captured, ...facts } = on; const { captured: _unused, ...baseline } = off;
+    expect(facts).toEqual(baseline); expect(on.reads).toBe(2); expect(on.remaining).toEqual(["arrived after final decision"]);
+    expect(captured).toHaveLength(1); expect((captured[0] as { messages: string[] }).messages).toEqual(["before decision", "arrived during settling"]);
   });
 });

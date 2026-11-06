@@ -65,6 +65,8 @@ export function promptAnswer(prompt: Api2Prompt, resetRecallDepth = false): Api2
 export interface Decider {
   readonly controller: AgentController;
   rewind(): void;
+  /** Mandos166: same settled cached view/command, before submission; no policy feedback. */
+  observe?(world: World, command: AgentCommand, deliveredMessages: readonly string[]): void;
   /** Drop what the Borg's own map believes about one grid, so the next decision treats it as unknown. */
   forget?(x: number, y: number): void;
   /**
@@ -158,13 +160,15 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
       return;
     }
 
+    const deliveredMessages: string[] = [];
+    const decisionView = borg.observe ? { ...world.view, messages: () => { const batch = world.view.messages(); deliveredMessages.push(...batch); return batch; } } : world.view;
     let facade = createActFacade();
-    let command = borg.controller(world.view, facade.act);
+    let command = borg.controller(decisionView, facade.act);
     for (let pass = 0; pass < MAX_EXTRA_PASSES && bridge.loadoutsPending(); pass++) {
       if ((await bridge.settleLoadouts()) === 0) break;
       borg.rewind();
       facade = createActFacade();
-      command = borg.controller(world.view, facade.act);
+      command = borg.controller(decisionView, facade.act);
     }
     const targets = facade.take();
 
@@ -203,6 +207,7 @@ export function createTick(bridge: Bridge, borg: Decider): Tick {
       mod.meta.log("the Borg is playing");
     }
 
+    try { borg.observe?.(world, command, deliveredMessages); } catch (error) { mod.meta.log(`Mandos decision recording failed: ${String(error)}`); }
     let token = input.token;
     for (const target of targets) {
       const result = await mod.act.submit(token, target);

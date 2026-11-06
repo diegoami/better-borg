@@ -1,0 +1,21 @@
+{
+  "schema": "mandos/live-host-proof@1",
+  "frontendRef": "9d6ae21ec5f733134f8411414359bae3019c7c2d",
+  "publishedEngine": "1.23.0-beta.2 with Mandos carried patch set",
+  "seed": 3,
+  "actualCoreDeath": {
+    "turn": 1960,
+    "decisions": 116,
+    "cause": "a kobold shaman"
+  },
+  "deliveredByRealBroker": true,
+  "freshHostPersistentKV": true,
+  "actualApi2PanelDownloadImported": true,
+  "verifiedImportAcknowledged": true,
+  "removedOnlyNewOutboxPacket": true,
+  "packetId": "a6f72b7ce1b12ab5424e04b55084921cd2a6c8352059f8190c5d732a132d41a2",
+  "packetSha256": "8e26c3ca1ba778f30bab6ec978a15d7f30200f6b13796894db81fbb5c1628524",
+  "downloadSha256": "8bec02e7e0f770c21e87c9920c9510ba8dd3a1559bff6ca914f4755f51440ff6",
+  "buildAdapter": "Vite import.meta.glob build-time mod/content discovery returns no bundled UI mods; not exercised by this report/KV/broker/panel contract proof. Frontend fflate dependency resolved from tracker install.",
+  "scope": "Published Core death plus pinned real frontend report builder/broker/API2 KV/panel contract, explicit driver publication. No full Electron deployment, owner profile, fatal save or exact replay."
+}

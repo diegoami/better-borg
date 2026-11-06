@@ -366,7 +366,8 @@ async function installed(options: {
   readonly create?: ReturnType<typeof createRecorder> | null;
   readonly events?: ReturnType<typeof eventBus>;
   /** The graveyard writer the loop awaits ahead of its flag/create sequence. */
-  readonly graveyard?: (report: RunReport) => Promise<void>;
+  readonly graveyard?: (report: RunReport) => Promise<void | boolean>;
+  readonly recordingRequired?: boolean;
 } = {}): Promise<Fixture> {
   const logs: string[] = [];
   const theSlot = options.slot ?? slot({ profileIds: ["p1"] });
@@ -378,6 +379,7 @@ async function installed(options: {
     ownsKeyboard: options.owns ?? owns({ ok: true, value: true }),
     create: recorder === null ? null : recorder.fn,
     events: bus.api,
+    ...(options.recordingRequired === undefined ? {} : { recordingRequired: options.recordingRequired }),
     ...(options.graveyard === undefined ? {} : { graveyard: options.graveyard }),
   });
   await settle();
@@ -767,6 +769,20 @@ describe("the restart loop", () => {
   /* ------------------------------------------------------------------
    * The graveyard writer the report path awaits (neowarrior's T06, #9)
    * ------------------------------------------------------------------ */
+
+  it.each(["refused", "thrown"])("required terminal recording %s pauses birth until an explicit successful retry", async mode => {
+    let durable = false;
+    const f = await installed({ recordingRequired: true, graveyard: async () => {
+      if (!durable && mode === "thrown") throw new Error("storage unavailable");
+      return durable;
+    } });
+    f.bus.report({ key: "cedar", report: report("death") }); await settle();
+    expect(f.created()).toHaveLength(0); expect(f.held()).not.toHaveProperty(BIRTH_FLAG_KEY);
+    expect(f.logs().join(" ")).toMatch(/no next character/);
+    durable = true; await f.restart.retryRecording(); await settle();
+    expect(f.created()).toHaveLength(1);
+    await f.restart.retryRecording(); expect(f.created()).toHaveLength(1);
+  });
 
   it("writes the graveyard entry before the flag and the create, and restarts anyway when the writer fails", async () => {
     /* THE ORDER the task pins: journal, then flag, then create - read from
