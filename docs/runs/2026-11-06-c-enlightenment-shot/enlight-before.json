@@ -1,0 +1,144 @@
+[
+  {
+    "name": "recognized Enlightenment in dungeon",
+    "kind": 245,
+    "tval": 26,
+    "sval": 22,
+    "aware": true,
+    "publicKind": "kind:245",
+    "publicSval": 22,
+    "depth": 28,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    },
+    "after": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    }
+  },
+  {
+    "name": "recognized Enlightenment in town",
+    "kind": 245,
+    "tval": 26,
+    "sval": 22,
+    "aware": true,
+    "publicKind": "kind:245",
+    "publicSval": 22,
+    "depth": 0,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    },
+    "after": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    }
+  },
+  {
+    "name": "unrecognized Enlightenment",
+    "kind": 245,
+    "tval": 26,
+    "sval": 22,
+    "aware": false,
+    "publicKind": "flavor:236",
+    "publicSval": -236,
+    "depth": 28,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    },
+    "after": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    }
+  },
+  {
+    "name": "unrelated True Seeing",
+    "kind": 254,
+    "tval": 26,
+    "sval": 31,
+    "aware": true,
+    "publicKind": "kind:254",
+    "publicSval": 31,
+    "depth": 28,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    },
+    "after": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    }
+  },
+  {
+    "name": "Augmentation in dungeon",
+    "kind": 229,
+    "tval": 26,
+    "sval": 6,
+    "aware": true,
+    "publicKind": "kind:229",
+    "publicSval": 6,
+    "depth": 28,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "before": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    },
+    "after": {
+      "quantity": 1,
+      "stairsKnown": false,
+      "turn": 0
+    }
+  },
+  {
+    "name": "Augmentation in town",
+    "kind": 229,
+    "tval": 26,
+    "sval": 6,
+    "aware": true,
+    "publicKind": "kind:229",
+    "publicSval": 6,
+    "depth": 0,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "quantity": 2,
+      "stairsKnown": false,
+      "turn": 0
+    },
+    "after": {
+      "quantity": 1,
+      "stairsKnown": false,
+      "turn": 0
+    }
+  }
+]

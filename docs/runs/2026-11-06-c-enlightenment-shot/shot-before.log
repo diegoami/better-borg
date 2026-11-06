@@ -1,0 +1,33 @@
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 53ms using pnpm v12.16.1
+
+ RUN  v4.1.11 /tmp/mandos-shot-before-b5
+
+ ❯ src/danger/shot-origin-carry.test.ts (8 tests | 1 failed) 548ms
+   × 'clear caster-origin hill giant' retains geometry scope 157ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/danger/shot-origin-carry.test.ts > 'clear caster-origin hill giant' retains geometry scope
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ scene src/danger/shot-origin-carry.test.ts:107:15
+
+ ❯ src/danger/shot-origin-carry.test.ts:111:57
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:17:10
+   Duration  1.24s (transform 421ms, setup 150ms, import 477ms, tests 548ms, environment 0ms)
+

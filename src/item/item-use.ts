@@ -568,6 +568,10 @@ export function borgUseThings(
     if (item.tval === TV.POTION) {
       if (item.sval === P.enlightenment) {
         if (inTown) continue; /* never in town */
+        /* FORK: Mandos171 translates diegoami/neo-angband-tracker#81,
+         * native source526906c0: use the recognized dungeon potion. */
+        const cmd = borgQuaffPotion(ctx, item.sval, d);
+        if (cmd) return cmd;
       } else if (item.sval === P.inc_all) {
         const cmd = borgQuaffPotion(ctx, item.sval, d);
         if (cmd) return cmd;

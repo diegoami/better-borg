@@ -1,0 +1,62 @@
+{
+  "enlight": [
+    {
+      "case": "recognized Enlightenment in dungeon",
+      "identical": false
+    },
+    {
+      "case": "recognized Enlightenment in town",
+      "identical": true
+    },
+    {
+      "case": "unrecognized Enlightenment",
+      "identical": true
+    },
+    {
+      "case": "unrelated True Seeing",
+      "identical": true
+    },
+    {
+      "case": "Augmentation in dungeon",
+      "identical": true
+    },
+    {
+      "case": "Augmentation in town",
+      "identical": true
+    }
+  ],
+  "shot": [
+    {
+      "case": "clear caster-origin hill giant",
+      "identical": false
+    },
+    {
+      "case": "real intervening yellow mold",
+      "identical": true
+    },
+    {
+      "case": "new wall and remembered caster",
+      "identical": true
+    },
+    {
+      "case": "unknown remembered cell contract",
+      "identical": true
+    },
+    {
+      "case": "player origin with monster endpoint",
+      "identical": true
+    },
+    {
+      "case": "range shorter than target distance",
+      "identical": true
+    },
+    {
+      "case": "empty origin with player endpoint",
+      "identical": true
+    },
+    {
+      "case": "mixed storm spells behind real mold",
+      "identical": true
+    }
+  ]
+}

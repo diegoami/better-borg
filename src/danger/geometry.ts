@@ -455,8 +455,9 @@ export function borgProjectablePure(
     /* Check for arrival at "final target" */
     if (x === x2 && y === y2) return true;
 
-    /* Stop at monsters */
-    if (ag.kill) break;
+    /* FORK: Mandos172 translates diegoami/neo-angband-tracker#279,
+     * native source1bce07d8: the origin caster is not an intervening monster. */
+    if (dist && ag.kill) break;
 
     [y, x] = borgIncMotion(y, x, y1, x1, y2, x2);
   }
