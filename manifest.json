@@ -9,7 +9,7 @@
     "runtime": "in-process",
     "engine": {
       "range": "1.23.0-beta.3",
-      "because": "Validated against Neo Angband 1.23.0-beta.3 with mod API 2, truth views and loadout simulation. Accepted-birth capture, advanced replay and custom fork versions are not installation requirements. Known upstream engine defects remain tracked separately."
+      "because": "Core and harness gameplay are validated against published Neo Angband1.23.0-beta.3 without package patches. Desktop play additionally needs a host that authorizes this API2 in-process controller; ordinary stock beta.3 refuses public controllers. Accepted-birth capture and advanced replay are not installation requirements."
     },
     "dependencies": {
       "required": {
@@ -42,7 +42,7 @@
       "saves:manage",
       "session:control"
     ],
-    "description": "Mandos carries validated Neo Borg bug fixes with traceable source and consumer evidence, plus basic run/death records. Existing class/race settings and automation are preserved. Benchmark retirement is off unless mandos.stageRetirement is explicitly enabled; strategy research, cohorts and advanced death replay are parked optional tools.\n\nStart from the title screen New Mandos character row, or press Ctrl-Z to hand over the keyboard. Exact replay requires sufficient original birth inputs and compatible runtime/controller data; a seed alone does not guarantee reproduction.",
+    "description": "Mandos carries validated Neo Borg bug fixes with traceable source and consumer evidence, plus basic run/death records. Existing class/race settings and automation are preserved. Benchmark retirement is off unless mandos.stageRetirement is explicitly enabled; strategy research, cohorts and advanced death replay are parked optional tools.\n\nDesktop play needs a host that authorizes this autoplayer. Stock beta.3 does not allow its controller when installed as an ordinary public mod. Existing authorized-host code is preserved; this change does not deploy or certify the retained lab. Exact optional replay needs sufficient original birth inputs and compatible runtime/controller data; a seed alone does not guarantee reproduction.",
     "author": "diegoami",
     "license": "GPL-2.0-only",
     "repository": "https://github.com/diegoami/mandos",

@@ -19924,7 +19924,7 @@ var STAGE_RETIREMENT_FLAG = "mandos.stageRetirement";
 var STAGE_CLVL_SETTING = {
   id: "borg.stageClvl",
   title: "Stage character level",
-  description: "Parked optional benchmark threshold, used only when mandos.stageRetirement is explicitly enabled. Together with borg.stageDepth it selects when to save and retire a character. The historical default2 is retained; normal play does not retire at this threshold. Read once per page for the next birth.",
+  description: "Parked optional benchmark threshold, used only when mandos.stageRetirement is explicitly enabled. Together with borg.stageDepth it selects when to save and retire a character. The historical default 2 is retained; normal play does not retire at this threshold. Read once per page for the next birth.",
   min: 0,
   max: 50,
   step: 1,
@@ -19933,7 +19933,7 @@ var STAGE_CLVL_SETTING = {
 var STAGE_DEPTH_SETTING = {
   id: "borg.stageDepth",
   title: "Stage depth",
-  description: "Parked optional benchmark depth, used only when mandos.stageRetirement is explicitly enabled. Together with borg.stageClvl it selects when to save and retire a character. The historical default1 is retained; normal play continues past it. Read once per page for the next birth.",
+  description: "Parked optional benchmark depth, used only when mandos.stageRetirement is explicitly enabled. Together with borg.stageClvl it selects when to save and retire a character. The historical default 1 is retained; normal play continues past it. Read once per page for the next birth.",
   min: 0,
   max: 100,
   step: 1,
@@ -19975,7 +19975,7 @@ function librarySlotName(stage, identity) {
 var REPLAY_RELEASE_SETTING = {
   id: "borg.replayReleaseTurn",
   title: "Death replay release turn",
-  description: "Parked optional replay release point. Requires sufficient original captured birth inputs and compatible runtime/controller data; a seed alone does not guarantee reproduction. At this game turn the Borg hands back the keyboard. Default0 keeps this feature off; read once per page.",
+  description: "Parked optional replay release point. Requires sufficient original captured birth inputs and compatible runtime/controller data; a seed alone does not guarantee reproduction. At this game turn the Borg hands back the keyboard. Default 0 keeps this feature off; read once per page.",
   min: 0,
   max: 1e6,
   step: 1,

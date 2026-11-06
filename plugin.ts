@@ -476,7 +476,8 @@ async function begin(mod: ModApi2): Promise<Running | null> {
    * will carry them) and the library name (this page's stage, and the
    * lineage counter as the identity - the seed is not a thing a mod can
    * know). */
-  // Workflow opt-in is fixed for this controller/page; existing thresholds stay unchanged.
+  // FORK: Mandos180 keeps benchmark retirement off unless explicitly requested.
+  // The workflow opt-in is fixed for this controller/page; thresholds stay unchanged.
   const stageRetirementEnabled = mod.meta.flags[STAGE_RETIREMENT_FLAG] === true;
   let attainmentSeen = false;
   const stageWatch: NonNullable<Parameters<typeof createTick>[1]>["stage"] = {

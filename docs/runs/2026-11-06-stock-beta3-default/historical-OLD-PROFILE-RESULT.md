@@ -1,0 +1,9 @@
+# Superseded 432+433 profile — not new-default acceptance
+
+Owner steering changed Mandos to a bug-fix consumer while the frozen full gate was already running. It was allowed to finish without source/fixture/seed/assertion/timeout edits. Its outcome is retained here as **old-profile evidence only**; it does not accept the newly requested432-only default.
+
+Old frozen head ac1343f0dfbc4ffe519ea856575c96874b0f6821 uses official published Core/SDK/content beta.3 plus BOTH PR432/input-flush and PR433/accepted-birth provenance. Actual CI=1 pnpm verify under the shared lock completed EXIT0: **1,290/1,290 tests across80 files, zero skips,179.98s**, typecheck/session/plugin currency passed. The own plugin remains737.6KiB/API2, SHA256d3ea31f0bfdf83581d0a0ccf2117c1e8cd8f9486698ecaac465bc93b87f33f6b. Exact normalized log/exit are old-432-433-verify.log/exit. The earlier standalone replay ALONE6/6/12.71s also belongs to this old profile.
+
+No PR, publication, merge, label retirement, main adoption or lab deployment occurred. This topic, prior source/proof heads, enhanced-provenance patch and historical evidence remain preserved. The old raw-vs-patched433 assertions are not requirements for the new default. A separate reviewed432-only dependency/runtime/test profile needs its own appropriate focused and full verification; these green results cannot substitute for it.
+
+The proposed narrow follow-up retains all seven C corrections, changes only the required default package backport to432, keeps433 as unapplied optional historical work, removes the harness's typed requirement on undeclared masterSeed, preserves basic known-seed run/death records and separates advanced replay into an explicit optional check with honest input limits. Parent must approve the precise implementation plan before those edits. Other worker owns README/instructions/PLAN/death-process rewriting. No speculative glyph/light fix or strategy research belongs in this change.

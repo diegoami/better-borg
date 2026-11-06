@@ -19,12 +19,20 @@ Native C submissions remain paused; no repo performs them automatically.
 
 Use Node22+, source ~/.nvm/nvm.sh locally, and pnpm from package.json.
 pnpm install --frozen-lockfile installs the matching published content/engine
-and applies the named patch. Run-record tools use tools/engine-pin.mjs; md5sum of
+with no default package patch. Run-record tools use tools/engine-pin.mjs; md5sum of
 node_modules/@rpgm-tools/neo-angband-core/dist/game/trap.js identify the runtime;
-current carried trap fingerprint is34c27241f96aceff581bcb186a9d898f.
+current published beta.3 trap fingerprint is ce8b43e933803487d70973d5a9e0905c.
+Optional historical backports under patches/optional are not applied. Old
+beta.2 records retain their original34c27241f96aceff581bcb186a9d898f profile.
+Core/harness verification does not certify ordinary stock desktop loading: beta.3
+gates the current API2 controller to first-party mods; no trust bypass is implied.
 
-Run relevant focused tests first, replay.test.ts alone when its boundary is
-affected, then CI=1 pnpm verify logged under artifacts/. Use
+Run relevant basic gameplay/record and bug regressions first, then
+CI=1 pnpm verify logged under artifacts/. The default discovery explicitly
+excludes four advanced postmortem/human-replay suites. Preserve them through
+pnpm test:optional-replay; its separate result is optional and never a runtime
+requirement. It needs sufficient captured birth inputs and compatible code/data;
+missing input reports unavailable rather than fabricating a replay. Use
 flock /tmp/angband-validation.lock to avoid another local heavy gate across
 sessions. A worktree must have dependencies; install or use an owned symlink.
 Relevant skips/reds require diagnosis, not assertion/seed edits to pass.
@@ -33,8 +41,8 @@ Full gate checks session bootstrap, types/tests and committed plugin currency.
 gate, PR/main/manual triggers and workflow-maintenance validation. Unknown,
 workflow and runtime paths retain full verification.
 
-Behavior changes retain before/after fixed-seed stage records and legal
-scenario controls; source-only evidence is not a practical outcome claim.
+Bug fixes retain before/after legal scenario controls and relevant basic
+run/death evidence; experimental cohorts/stage research are parked and optional; source-only evidence is not a practical outcome claim.
 Committed docs/runs/evidence is append-only. Bulky scratch data stays ignored.
 
 ## Adoption and merge

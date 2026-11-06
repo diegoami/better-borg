@@ -1,0 +1,13 @@
+{
+  "completeBasicLifeArchiveJournalRecordsEqual": true,
+  "excludedFromLifeRecords": [
+    "wallClockMs"
+  ],
+  "mapNormalization": "arrivalStamps serialized as entries",
+  "controlTestsEach": 87,
+  "controlFilesEach": 4,
+  "selectedBasicTestsEach": 3,
+  "unselectedByFocusEach": 12,
+  "rawC7ClassTests": 99,
+  "rawOptionalTests": 25
+}
