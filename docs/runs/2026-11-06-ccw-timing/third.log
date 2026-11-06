@@ -1,0 +1,40 @@
+$ vitest run src/item/ccw-timing.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/item/ccw-timing.test.ts (6 tests | 5 failed) 381ms
+   × observes real prior drink and heal caller at elapsed 0 63ms
+   × observes real prior drink and heal caller at elapsed 1 38ms
+   × observes real prior drink and heal caller at elapsed 3 35ms
+   × observes real prior drink and heal caller at elapsed 4 35ms
+   × observes real prior drink and heal caller at elapsed 5 34ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/item/ccw-timing.test.ts > observes real prior drink and heal caller at elapsed 0
+ FAIL  src/item/ccw-timing.test.ts > observes real prior drink and heal caller at elapsed 1
+ FAIL  src/item/ccw-timing.test.ts > observes real prior drink and heal caller at elapsed 3
+ FAIL  src/item/ccw-timing.test.ts > observes real prior drink and heal caller at elapsed 4
+ FAIL  src/item/ccw-timing.test.ts > observes real prior drink and heal caller at elapsed 5
+TypeError: Cannot read properties of undefined (reading '0')
+ ❯ playerTimedGrade ../..<installed-dependencies>/.pnpm/@rpgm-tools+neo-angband-core@1.23.0-beta.2_patch_hash=32af5c48c56b71889dfa70551c053a17430ad174da59634f96b1170fb1ea8513/node_modules/@rpgm-tools/neo-angband-core/src/player/timed.ts:190:20
+ ❯ playerSetTimed ../..<installed-dependencies>/.pnpm/@rpgm-tools+neo-angband-core@1.23.0-beta.2_patch_hash=32af5c48c56b71889dfa70551c053a17430ad174da59634f96b1170fb1ea8513/node_modules/@rpgm-tools/neo-angband-core/src/player/timed.ts:299:19
+ ❯ Module.playerIncTimed ../..<installed-dependencies>/.pnpm/@rpgm-tools+neo-angband-core@1.23.0-beta.2_patch_hash=32af5c48c56b71889dfa70551c053a17430ad174da59634f96b1170fb1ea8513/node_modules/@rpgm-tools/neo-angband-core/src/player/timed.ts:403:11
+ ❯ Object.confuse src/item/ccw-timing.test.ts:52:126
+     50|  function frame(){return {hp:p.chp,maxhp:p.mhp,quantity:gear.store.get…
+     51|  function execute(cmd:ReturnType<typeof borgQuaffCrit>){if(!cmd)return…
+     52|  function confuse(){const effect=game.players.timed.findIndex(t=>t.nam…
+       |                                                                                                                              ^
+     53|  return {game,world,rng,p,context,injure,confuse,frame,execute,obj,han…
+     54| }
+ ❯ src/item/ccw-timing.test.ts:67:38
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)
+   Start at  17:32:34
+   Duration  1.07s (transform 421ms, setup 144ms, import 479ms, tests 381ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

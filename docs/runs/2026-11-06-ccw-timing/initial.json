@@ -1,0 +1,240 @@
+[
+  {
+    "case": "controller",
+    "step": 0,
+    "clock": 1000,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 19,
+      "maxhp": 252,
+      "quantity": 8,
+      "confused": 0
+    },
+    "after": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 8
+  },
+  {
+    "case": "controller",
+    "step": 1,
+    "clock": 1001,
+    "command": {
+      "code": "rest"
+    },
+    "energy": 0,
+    "before": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 2,
+    "clock": 1002,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 8
+      }
+    },
+    "energy": 100,
+    "before": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 139,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "accw": 7
+  },
+  {
+    "case": "controller",
+    "step": 3,
+    "clock": 1003,
+    "command": {
+      "code": "rest"
+    },
+    "energy": 0,
+    "before": {
+      "hp": 139,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "after": {
+      "hp": 139,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "accw": 6
+  },
+  {
+    "case": "controller",
+    "step": 4,
+    "clock": 1004,
+    "command": {
+      "code": "rest"
+    },
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "accw": 6
+  },
+  {
+    "case": "controller",
+    "step": 5,
+    "clock": 1005,
+    "command": {
+      "code": "rest"
+    },
+    "energy": 0,
+    "before": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "after": {
+      "hp": 120,
+      "maxhp": 252,
+      "quantity": 6,
+      "confused": 0
+    },
+    "accw": 6
+  },
+  {
+    "case": "heal-boundary",
+    "elapsed": 0,
+    "clock": 1000,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "heal-boundary",
+    "elapsed": 1,
+    "clock": 1001,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "heal-boundary",
+    "elapsed": 3,
+    "clock": 1003,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "heal-boundary",
+    "elapsed": 4,
+    "clock": 1004,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  },
+  {
+    "case": "heal-boundary",
+    "elapsed": 5,
+    "clock": 1005,
+    "command": null,
+    "energy": 0,
+    "before": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "after": {
+      "hp": 79,
+      "maxhp": 252,
+      "quantity": 7,
+      "confused": 0
+    },
+    "rng": 1
+  }
+]

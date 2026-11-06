@@ -1,0 +1,83 @@
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 54ms using pnpm v12.16.1
+$ vitest run src/item/ccw-timing.test.ts
+
+ RUN  v4.1.11 <before-tree>
+
+ ❯ src/item/ccw-timing.test.ts (18 tests | 5 failed) 731ms
+   × recovery with real prior drink at elapsed 0 60ms
+   × recovery with real prior drink at elapsed 4 36ms
+   × contract: never-drunk helper at supplied clock 0 27ms
+   × contract: never-drunk helper at supplied clock 1 26ms
+   × contract: never-drunk helper at supplied clock 3 27ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/item/ccw-timing.test.ts > recovery with real prior drink at elapsed 0
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/item/ccw-timing.test.ts:106:19
+    104|     const ctx = await f.context(), before = f.frame(), cmd = borgRecov…
+    105|     observations.push({ case: "recover-boundary", elapsed, clock: f.wo…
+    106|     expect(!!cmd).toBe(elapsed === 0 || elapsed === 5);
+       |                   ^
+    107|     expect(f.frame()).toMatchObject(cmd ? { hp: 180, quantity: 6, conf…
+    108| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/item/ccw-timing.test.ts > recovery with real prior drink at elapsed 4
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/item/ccw-timing.test.ts:106:19
+    104|     const ctx = await f.context(), before = f.frame(), cmd = borgRecov…
+    105|     observations.push({ case: "recover-boundary", elapsed, clock: f.wo…
+    106|     expect(!!cmd).toBe(elapsed === 0 || elapsed === 5);
+       |                   ^
+    107|     expect(f.frame()).toMatchObject(cmd ? { hp: 180, quantity: 6, conf…
+    108| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/item/ccw-timing.test.ts > contract: never-drunk helper at supplied clock 0
+ FAIL  src/item/ccw-timing.test.ts > contract: never-drunk helper at supplied clock 1
+ FAIL  src/item/ccw-timing.test.ts > contract: never-drunk helper at supplied clock 3
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/item/ccw-timing.test.ts:116:19
+    114|     const ctx = await f.context(), before = f.frame(), cmd = borgQuaff…
+    115|     observations.push({ case: "never-drunk-contract", clock, command: …
+    116|     expect(!!cmd).toBe(true);
+       |                   ^
+    117|     expect(f.frame()).toMatchObject({ hp: 180, quantity: 7, confused: …
+    118| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 13 passed (18)
+   Start at  17:37:40
+   Duration  1.44s (transform 429ms, setup 151ms, import 487ms, tests 731ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.
