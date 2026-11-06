@@ -1,0 +1,9 @@
+# Verified producer code handoff and final gate plan
+
+Engine source [PR300](https://github.com/diegoami/neo-angband-tracker/pull/300) was normally merged as f576b099b18e0016e0827e43a5770a369f53e279 after its required hosted verification, including14,156 tests across12 suites plus package/parity/MCP/live checks. Runtime artifact203cd50fb78c4897f93e0e51701f6b5e3521eb25 remains the reviewed source code. Actual producer post-main checks are pending at this handoff; parent observes them before consumer merge/adoption.
+
+Mandos uses the actual official published Core/SDK/content beta.3 packages from97ceec2925e6715ba725624a61866ab93a196a12 plus its explicitly retained PR432 and PR433 package patch. The source fork code pin above is provenance, **not** a local-Core test override. Engine source retains432 only; Mandos's accepted-birth433 package unit remains independently necessary. Producer documentation follow-ups do not change these package inputs or require consumer source-ref chasing.
+
+Parent reviewed frozen consumer8dbba291d5af8947e4388f8f65c891d824301690 unit/dependency/lock/preservation/current-profile metadata and approved final required testing. Standalone replay must run ALONE, then one logged watched CI=1 pnpm verify under /tmp/angband-validation.lock. No source/fixture/seed/cap/assertion/timeout changes, extra local full, label retirement or lab deployment are authorized by this receipt. Expected counts are not substituted for actual summaries. All seven C translations stay byte-identical to verified main6c7916a.
+
+Own plugin was already built once with the exact beta.3 profile and remained byte-identical. The final full gate will verify currency, rather than gratuitously rebuilding it. Actual results/exit/fingerprints will be appended separately; pending checks are not claimed passed. Parent owns final semantic/gate review, normal merge, actual post-main verification, consumer label reconciliation, primary and recovery pins.
