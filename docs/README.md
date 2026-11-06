@@ -1,8 +1,10 @@
 # Mandos quick reference
 
-Mandos is the class-agnostic Borg fork for measured stage grinding in Neo
-Angband. It restores defects in the original TypeScript port and adds
-class/race birth pools, kept stage saves, journals and replay analysis.
+Mandos consumes validated Neo Borg bug fixes, keeps their provenance and
+consumer regressions, and records basic run/death/stall facts. Existing control
+and class/race choices remain. [Current scope](MANDOS-SCOPE.md) parks strategy
+research, cohorts, stage/save-ladder work and advanced death/replay analysis.
+The optional compatibility settings below do not define Mandos's active purpose.
 Start with the [repository README](../README.md) for the purpose, evidence
 and desktop lab setup.
 
@@ -13,7 +15,7 @@ and desktop lab setup.
 | Start a new lineage | **New Mandos character** on the title screen. |
 | Hand over or take back an existing character | Ctrl-Z in play; the game asks for confirmation when handing over. |
 | Choose classes and races | Enable the desired `Class:` and `Race:` toggles in the Mods screen. One of each pins a combination; all off in a pool means all on. |
-| Choose the stage to keep saves at | `borg.stageClvl` and `borg.stageDepth`; both thresholds must be reached. |
+| Optional retained stage thresholds | `borg.stageClvl` and `borg.stageDepth`; experimental retirement requires explicit opt-in, not default play. |
 | Check a watched lab session | `node tools/lab.mjs check` reports births, deaths, kept saves and missing consent. |
 
 Enabling the mod alone does not give it your character. A character handed
@@ -28,7 +30,8 @@ recipes. The Mods screen carries the full descriptions.
 | --- | --- | --- |
 | Class pool | `borg.classWarrior` through `borg.classBlackguard` | All nine classes on. |
 | Race pool | `borg.raceHuman` through `borg.raceKobold` | All eleven races on. |
-| Target stage | `borg.stageClvl`, `borg.stageDepth` | 2 and 1 (c2d1). |
+| Optional stage retirement | `mandos.stageRetirement` | Off; reload required. |
+| Retained stage thresholds | `borg.stageClvl`, `borg.stageDepth` | 2 and 1; inactive unless retirement is explicitly enabled. |
 | Risk | `borg.playsRisky` | Off. |
 | Gear valuation | `borg.worshipsDamage`, `borg.worshipsSpeed`, `borg.worshipsHp`, `borg.worshipsMana`, `borg.worshipsAc`, `borg.worshipsGold` | All off. |
 | Town saving and early stockpiles | `borg.selfScum`, `borg.munchkinStart` | Self-scum on, munchkin start off. |
@@ -71,6 +74,10 @@ explains the pools; each switch remains individually listed here.
 | Race: High-Elf | `borg.raceHighElf` | on | Allow this race in the next-birth draw pool. |
 | Race: Kobold | `borg.raceKobold` | on | Allow this race in the next-birth draw pool. |
 
+Stage retirement is an explicit optional opt-in; it is not the default grind
+or active research queue. Advanced replay tests use `pnpm test:optional-replay`
+with their matching profile, not the ordinary upgrade gate.
+
 Birth pools and stage settings are fixed for a life and apply on the next
 birth. Behavior-toggle changes need a reload. A Warrior uses its measured
 point-buy plan; other classes use the game's suggested stats. Casters can
@@ -78,12 +85,15 @@ study and test spells, and eligible attack spells enter the combat chooser.
 
 ## Engine and permissions
 
-The current manifest requires **our engine fork**, with range
-`>=1.23.0-beta.2-mandos.2 <1.23.0`, and mod API `>=2.0.0 <3.0.0`.
-Use the `neowarrior-lab` branch of
-[diegoami/neo-angband-tracker](https://github.com/diegoami/neo-angband-tracker) and follow the
-[lab runbook](process.md#8-watched-runs-lab-builds). The mod folder must be
-named `mandos`, matching its manifest id.
+Prefer the supported **stock published engine**. [Runtime180](https://github.com/diegoami/mandos/issues/180)
+qualifies beta.3 and records the actual delivered profile; this documentation
+change alone does not establish adoption. Read the manifest/package/final receipt
+for exact versions. An engine patch is an exception only for a demonstrated
+required Mandos gameplay correction, not optional replay/PR433. Raw beta.3 does
+not contain every still-open source proposal merely because its version is new.
+The mod folder must be named `mandos`, matching its manifest id. Package-level compatibility does not certify stock-desktop loading/trust or
+grants. The old running lab is a separate retained profile and is not silently
+refreshed by a merge.
 
 The [manifest](../manifest.json) is the authority for the requested grants.
 Use **Choose one by one** in the consent screen: the powerful
@@ -100,11 +110,16 @@ session with a harness record.
 
 ## Records and limits
 
-The metric is reach-rate at a named stage over fixed seeds. c2d1 is an early
-calibration milestone, not a late-game benchmark. Committed records retain
-older builds and results so improvements can be checked.
+Targeted legal/fixed-seed regression scenarios and basic run/death/stall
+records support bug fixes. Reach-rate cohorts and c2d1 grids below are historical
+experiments, not mandatory upgrade gates or current strategy-improvement work.
+Committed records retain their original build/profile and are not rewritten.
 
-Harness replays verify the recorded death line and label divergences.
+Advanced replay is PARKED optional tooling. It needs the original executable,
+content/configuration and accepted start inputs; the default engine does not
+promise PR433 birth/seed capture. Missing provenance stays unavailable. A seed
+or endpoint/census match alone is not full trajectory identity. Historical
+harness replay tools compare recorded endpoint facts and label divergences.
 The [#54 desktop death case](runs/2026-11-04-b54-desktop-death-replay/README.md)
 reproduces all 113 commands and observed death facts with matching code,
 engine/content and accepted-birth RNG/options/controller context. This
@@ -121,7 +136,7 @@ integration. Old upstream tracker URLs redirect after the recorded migration.
 
 A source merge does not deploy the running lab. Named package/plugin/harness/
 lab receipts distinguish proposal, applied backport and verified adoption.
-See [the adoption workflow](UPSTREAM.md) and [three-session map](SESSION.md).
+See [the adoption workflow](UPSTREAM.md) and [component map](SESSION.md).
 
 ## Documentation map
 

@@ -1,5 +1,13 @@
 # Review prompts
 
+**Current review scope:** [Mandos is a bug-fix consumer](MANDOS-SCOPE.md).
+Require a specific defect regression, legal controls, provenance and truthful
+supported-default verification. Do not demand a stage cohort, optional replay,
+PR433 or a patched engine merely to review an ordinary bug upgrade. Source
+ownership follows current AGENTS/RULES and named pins, not an obsolete import
+or protected reference checkout. Historical research criteria below are retained
+context, not current default requirements.
+
 The owner launches every review and picks its model (process.md section 4).
 The main session fills in the `<...>` slots and hands the owner the prompt;
 it never dispatches one itself. The reviewer posts ONE comment and never

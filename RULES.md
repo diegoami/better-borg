@@ -1,6 +1,7 @@
 # Mandos working rules
 
-1. Scope is Mandos-only development/integration, harness/lab and owner work.
+1. Mandos is a verified bug-fix consumer; docs/MANDOS-SCOPE.md defines active
+   versus parked work. Keep targeted regressions and basic run/death evidence.
    Upstream port fixes belong in diegoami/neo-angband-borg-mod-tracker; C Borg/C game/
    Neo engine fixes belong in diegoami/neo-angband-tracker. Do not fix a different
    repository silently or duplicate its authoritative defect state here.
@@ -11,7 +12,8 @@
    snapshots/unattended stage-resume features stay parked unless the owner
    explicitly authorizes them. Restoring C parity is a defect, not a strategy.
 4. Mandos remains class-agnostic; class/build policy belongs under src/class.
-   Every behavior change names its reach-rate stage/cohort or relevant proxy.
+   Bug corrections use a targeted legal regression and relevant proxy; a broad
+   reach-rate cohort or strategy round is not a prerequisite.
    Mark intentional divergence FORK with source reference and what/why.
 5. The mod obeys declared APIs; no privileged engine reads or network/wall
    clock in its controller. Determinism is required. Offline tools produce
@@ -20,7 +22,11 @@
    tests and committed plugin currency. The narrow prose-only gate in docs/CI.md
    checks metadata/docs/privacy; unknown and workflow changes stay full.
    Relevant tests must execute; CI missing content fails.
-   Use the pinned published engine plus named carried patches by default.
+   Prefer an unpatched published engine. An engine carry is an exception for
+   a demonstrated required gameplay defect, with regression and removal criteria.
+   Optional replay/PR433 is not a mandatory runtime or upgrade requirement.
+   Default functionality and basic evidence remain required; parked advanced
+   suites have an explicit optional profile, not blanket upgrade-gate status.
    Local-core testing is an explicit opt-in and must not masquerade as published.
 7. Adopt upstream corrections with local changes, rebuild and verify actual
    package/plugin/harness/lab consumers before closing an adoption task. A
@@ -64,7 +70,11 @@
     carried stays open until the C source correction is fixed upstream and
     adopted/verified downstream; Rust translation is borg-rs's independent work.
 
-14. At active death-session start and stop, follow docs/deaths/DISCUSSIONS.md.
-    Reread targeted case/action comments including edits; preserve ID, updated_at,
-    UTF-8 body SHA and pending dispositions. Mark agent receipts explicitly.
+14. Read current bug/source/action comments and mark agent receipts explicitly.
+    Advanced death-analysis/feedback sessions and DISCUSSIONS.md are parked
+    optional reference, not routine startup or upgrade prerequisites.
     Acknowledgement is not resolution; no unattended-monitoring claim.
+15. Preserve all applied bug fixes and historical code/evidence/branches when
+    parking experiments. Do not silently move tasks/code to better-borg-c or
+    independent borg-rs, poll Rust or dispatch a Rust worker. Parent reviews
+    scope labels; parking/unapplying a carry is never a fixed-bug closure.
