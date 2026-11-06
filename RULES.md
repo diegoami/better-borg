@@ -31,6 +31,10 @@
    verified. Then fixed/CLOSED. Partial scope stays open; patch-active remains
    on required consumer backports independently of closure. A file/proposal is
    not applied.
+   Close the original resolved scope once the accepted upstream correction is
+   adopted and normal required consumer checks pass. Do not keep it open for
+   hypothetical residual concerns. Partial requires an identified unapplied or
+   unverified component; a concrete post-adoption failure gets a new linked bug.
 8. Keep C defect catalogue, native evidence and active C proposals canonical
    in the engine/C fork. Historical Mandos evidence/patch copies stay immutable
    for old links. No angband/angband issues, PRs or comments from us; C posting
