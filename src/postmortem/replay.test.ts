@@ -46,6 +46,7 @@ import { join } from "node:path";
 import * as Core from "@rpgm-tools/neo-angband-core";
 import { loadPack, packRoot } from "../play-session.js";
 import { packForClass } from "../class/registry.js";
+import { LEGACY_WINDOW_PROFILE } from "./windows.js";
 import { DEFAULT_OFFSETS, replayDeadRun, type DeadRunFacts } from "./replay.js";
 import type { DossierHeader } from "./dossier.js";
 import type { BirthReplayData } from "../records/birth-replay.js";
@@ -142,13 +143,29 @@ suite("the death replay (#29)", () => {
      * never a live moment at T-N to capture, and a post-mortem snapshot is
      * not a release point. That is the honest set semantics, and the ladder
      * README names it (`none`). NON-VACUITY: the widest rung must capture
-     * on this record (its target sits 20 turns before a death whose
+     * on this record (its target sits 105 turns before a death whose
      * decisions spend a handful of turns each, so a live boundary exists at
      * it) - an empty rungs list here would mean the visit hook never
      * fired. */
     expect(replay.rungs.length + replay.missed.length).toBe([...DEFAULT_OFFSETS].length);
     expect(replay.rungs.length).toBeGreaterThan(0);
-    expect(replay.rungs.map((r) => r.offset)).toContain(20);
+    expect(replay.rungs.map((r) => r.offset)).toContain(105);
+  }, 300_000);
+
+  it("keeps the named legacy profile and new windows neutral to recorded endpoint/census", async () => {
+    const { run, header } = recordedRun();
+    const args = [Core, pack!, REPLAY_PACK, factsOf(run, header.cap, header.stage), { label: header.label, directory: RECORD_DIR, recorded: header.recorded }, header.build] as const;
+    const legacy = await replayDeadRun(...args, { profile: "legacy-v1" });
+    const current = await replayDeadRun(...args, { offsets: [...DEFAULT_OFFSETS, run.turns + 100] });
+    expect(current.missed.find(m => m.offset === run.turns + 100)?.why).toContain("precedes replay start turn");
+    expect(current.rungs.some(r => r.offset === run.turns + 100)).toBe(false);
+    expect(current.verification).toEqual(legacy.verification);
+    expect(current.verification.exact).toBe(true);
+    expect(current.verification.scope).toBe("endpoint-and-command-census");
+    expect(legacy.profile).toEqual(LEGACY_WINDOW_PROFILE);
+    expect(legacy.rungs.length + legacy.missed.length).toBe(4);
+    expect(current.profile.offsets).not.toContain(10);
+    expect(current.earlierAnchors).toEqual({ status: "not-captured", anchors: [] });
   }, 300_000);
 
   it("captures the ladder's rungs at boundaries after their targets and before the death", async () => {
@@ -176,7 +193,7 @@ suite("the death replay (#29)", () => {
     }
     for (const miss of replay.missed) {
       expect(miss.targetTurn).toBe(run.turns - miss.offset);
-      expect(miss.why).toContain("before turn");
+      expect(miss.why).toContain("live decision boundary");
     }
   }, 300_000);
 
@@ -212,6 +229,9 @@ suite("the death replay (#29)", () => {
       expect(text).toContain("## Recent decisions");
       expect(text).toContain("## Command census");
       expect(text).toContain("## Provenance");
+      expect(text).toContain("window profile: mandos-death-windows-v2");
+      expect(text).toContain("units: neo-core-game-turns");
+      expect(text).toContain("not full ordered trajectory/RNG identity");
     }
   }, 300_000);
 

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-death-window-profile-166
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  17:04:53
+   Duration  12.71s (transform 436ms, setup 148ms, import 490ms, tests 12.01s, environment 0ms)
+

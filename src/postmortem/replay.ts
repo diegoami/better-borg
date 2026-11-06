@@ -1,42 +1,20 @@
 /**
- * THE DEATH REPLAY (#29): same seed, same planned birth, drive to the rung,
- * keep driving to the death, and PROVE the death line came back identical.
+ * Mandos death replay: reconstruct the accepted birth under matching original
+ * code/content/configuration, drive once and inspect versioned living windows.
+ * A seed alone does not establish equivalence. The retained verification checks
+ * endpoint facts and the whole command census; it does not prove full ordered
+ * commands, observations or RNG trajectory identity.
  *
- * The determinism insight the issue opens with: a dead run is replayable
- * WITHOUT any copy/snapshot seam because the Borg is deterministic (rule 5)
- * and `?seed=`/`startGame({seed})` re-establishes a game exactly. So the
- * replay is not a recording played back - it is the SAME RUN run again:
- * boot the recorded seed with the recorded planned birth (the pack's own
- * planFor over the record's race), install the same observing controller
- * the session drivers install, drive the same loop. Rule 5 is what makes
- * the verification meaningful: any difference between the replayed death
- * line and the recorded one is a real defect (a nondeterminism, a changed
- * decision, a changed engine), not noise.
+ * V2 uses5/12/25/40/60/82/105 Neo Core game-turn offsets. The named legacy v1
+ * retains5/10/15/20 and its former first-boundary handling of pre-start targets.
+ * One visit hook observes every requested window at the first living decision
+ * boundary at or after its target. Shared boundaries are explicit; no trailing
+ * post-death visit or interpolated/pre-start state is invented. Earlier event
+ * anchors are separate evidence and are not captured by this profile change.
  *
- * THE LADDER, not one offset (owner, 2026-11-03): the moments to go back to
- * are a SET - 5/10/15/20 turns before death by default, extensible by the
- * runner's --offsets. Each offset is its own rung with its own dossier. The
- * rungs ride ONE drive: the visit hook (play-session's driveLife) freezes a
- * capture at the FIRST decision boundary at or after T-N, for every N, in
- * one pass - a decision can spend enough turns to cross two rungs at once,
- * and then both rungs share a boundary, which the dossier names rather than
- * hides (the boundary turn is printed, and two rungs printing the same
- * boundary turn is the honest statement that no decision boundary fell
- * between them).
- *
- * WHAT THE REPLAY ASSERTS (rule 5, the issue's done-when): the replayed
- * death must reproduce the recorded line EXACTLY - cause, turn, decision
- * count, and the whole command census (the census/turn stamps match the
- * record). The census agreement is already asserted inside driveLife
- * (#36's rule: the record must not disagree with the game); the replay adds
- * the RECORD agreement on top, and the exactness test (src/postmortem/
- * replay.test.ts) pins a committed record's dead run against it.
- *
- * THE SEAM GAP this rides beside (scope 1, verified 2026-11-03): no
- * mod-facing surface carries the master seed (upstream ask
- * neo-angband#431), so V1 replays HARNESS runs only - runs whose seeds the
- * runner drove and the record carries. A watched lineage's deaths (the mod
- * playing, seed crypto-random per page) are the follow-on the seam unblocks.
+ * The existing accepted-birth plan/RNG/options checks and endpoint/census
+ * comparison remain the source of the verdict. Missing executable/start facts
+ * or divergent attempts must remain visible; no replay is a new natural life.
  */
 
 import type * as Core from "@rpgm-tools/neo-angband-core";
@@ -46,10 +24,12 @@ import { driveLife, observingLife, type LifeStall } from "../play-session.js";
 import type { StrategyPack } from "../class/pack.js";
 import type { StageDefinition } from "../loop/stage.js";
 import { birthReplayDataOf, type BirthReplayData } from "../records/birth-replay.js";
+import { DEFAULT_WINDOW_PROFILE, windowProfile, windowSchedule, missingBoundaryReason, type WindowProfile } from "./windows.js";
+export { normalizeOffsets } from "./windows.js";
 import { capturePostmortem, renderDossier, type DossierHeader, type PostmortemCapture } from "./dossier.js";
 
-/** The ladder's default rungs: 5/10/15/20 turns before death (owner, 2026-11-03). */
-export const DEFAULT_OFFSETS: readonly number[] = [5, 10, 15, 20];
+/** Current v2 windows; named v1 retains historical behavior/evidence. */
+export const DEFAULT_OFFSETS = DEFAULT_WINDOW_PROFILE.offsets;
 
 /** The recorded facts a replay needs, read out of a runs.json entry + header. */
 export interface DeadRunFacts extends BirthReplayData {
@@ -98,6 +78,7 @@ export interface RungOutcome {
 
 /** How the replay's death compared with the record. */
 export interface ReplayVerification {
+  readonly scope: "endpoint-and-command-census";
   readonly exact: boolean;
   readonly differences: readonly string[];
   readonly replayed: {
@@ -111,17 +92,13 @@ export interface ReplayVerification {
 
 /** Everything one replay learned. */
 export interface DeathReplay {
+  readonly profile: WindowProfile;
+  readonly startTurn: number;
+  readonly earlierAnchors: { readonly status: "not-captured"; readonly anchors: readonly never[] };
   readonly verification: ReplayVerification;
   readonly rungs: readonly RungOutcome[];
   /** Offsets whose boundary never came (the run ended first), with why. */
   readonly missed: readonly { readonly offset: number; readonly targetTurn: number; readonly why: string }[];
-}
-
-/** Resolve the ladder's rungs: positive, whole, deduplicated, smallest first. */
-export function normalizeOffsets(offsets: readonly number[]): number[] {
-  const clean = [...new Set(offsets.filter((n) => Number.isInteger(n) && n > 0))].sort((a, b) => a - b);
-  if (clean.length === 0) throw new Error("the replay ladder needs at least one positive whole-number offset");
-  return clean;
 }
 
 /** Compare a census pair key-by-key: same codes, same counts. */
@@ -154,11 +131,12 @@ export async function replayDeadRun(
   dead: DeadRunFacts,
   record: DossierHeader["record"],
   build: DossierHeader["build"],
-  options: { readonly offsets?: readonly number[]; readonly log?: (message: string) => void } = {},
+  options: { readonly profile?: string; readonly offsets?: readonly number[]; readonly log?: (message: string) => void } = {},
 ): Promise<DeathReplay> {
   if (!coreIsBound()) bindCore(core);
   const say = options.log ?? ((): void => undefined);
-  const ladder = normalizeOffsets(options.offsets ?? DEFAULT_OFFSETS);
+  const profile = windowProfile(options.profile, options.offsets);
+  const ladder = profile.offsets;
   const birth = birthReplayDataOf(dead);
   if ((dead.birthRngState !== undefined && birth.birthRngState === undefined)
     || (dead.birthOptions !== undefined && birth.birthOptions === undefined)) {
@@ -219,13 +197,10 @@ export async function replayDeadRun(
    * each of them at that shared boundary (the dossier names the boundary
    * turn, so two rungs sharing it is visible, not hidden). */
   const rungs: { offset: number; targetTurn: number; capture: PostmortemCapture }[] = [];
-  const pending = ladder
-    .map((offset) => ({ offset, targetTurn: dead.deathTurn - offset }))
-    .sort((a, b) => a.targetTurn - b.targetTurn);
-  let visitIndex = 0;
+  const schedule = windowSchedule(dead.deathTurn, state.turn, profile);
+  const startTurn = state.turn;
   const visit = (): void => {
-    while (visitIndex < pending.length && state.turn >= pending[visitIndex]!.targetTurn) {
-      const rung = pending[visitIndex]!;
+    for (const rung of schedule.take(state.turn)) {
       rungs.push({
         offset: rung.offset,
         targetTurn: rung.targetTurn,
@@ -234,7 +209,6 @@ export async function replayDeadRun(
           trail: observed.trail,
         }),
       });
-      visitIndex += 1;
     }
   };
 
@@ -280,24 +254,26 @@ export async function replayDeadRun(
   if (state.actor.player.maxDepth !== dead.maxDepth) differences.push(`max depth: replay ${String(state.actor.player.maxDepth)} vs record ${String(dead.maxDepth)}`);
 
   say(
-    `seed ${String(dead.seed)} replay ${differences.length === 0 ? "reproduced the recorded death exactly" : `DIVERGED (${differences.join("; ")})`}`,
+    `seed ${String(dead.seed)} replay ${differences.length === 0 ? "matched the recorded death endpoint/census" : `DIVERGED (${differences.join("; ")})`}`,
   );
 
   const verification: ReplayVerification = {
+    scope: "endpoint-and-command-census",
     exact: differences.length === 0,
     differences,
     replayed: { dead: died, cause: replayedCause, turn: state.turn, decisions: taken, commands: replayedCommands },
   };
 
-  const missed = pending.slice(rungs.length).map((rung) => ({
-    offset: rung.offset,
-    targetTurn: rung.targetTurn,
-    why: died
-      ? `the replay died at turn ${String(state.turn)} before turn ${String(rung.targetTurn)} had a decision boundary`
-      : observed.stall !== null
-        ? `the replay stalled at turn ${String(state.turn)} before turn ${String(rung.targetTurn)} had a decision boundary`
-        : `the replay survived its cap before turn ${String(rung.targetTurn)}`,
-  }));
+  const missed = [
+    ...schedule.preStart.map(rung => ({
+      ...rung,
+      why: `target turn ${String(rung.targetTurn)} precedes replay start turn ${String(startTurn)}; no pre-start state is available`,
+    })),
+    ...schedule.remaining().map(rung => ({
+      ...rung,
+      why: missingBoundaryReason(died ? "death" : observed.stall !== null ? "stall" : "cap", state.turn, rung.targetTurn),
+    })),
+  ];
   for (const miss of missed) say(`seed ${String(dead.seed)} offset ${String(miss.offset)}: ${miss.why}`);
 
   const rungOutcomes: RungOutcome[] = rungs.map((rung) => {
@@ -308,6 +284,8 @@ export async function replayDeadRun(
       death: { turn: dead.deathTurn, cause: dead.cause, clvl: dead.clvl, maxDepth: dead.maxDepth, decisions: dead.decisions },
       offset: rung.offset,
       ladder,
+      windowProfile: profile,
+      replayStartTurn: startTurn,
       targetTurn: rung.targetTurn,
       boundaryTurn: rung.capture.turn,
       /* The census the capture froze is the WHOLE life so far, so its total
@@ -325,7 +303,7 @@ export async function replayDeadRun(
     };
   });
 
-  return { verification, rungs: rungOutcomes, missed };
+  return { profile, startTurn, earlierAnchors: { status: "not-captured", anchors: [] }, verification, rungs: rungOutcomes, missed };
 }
 
 /** Sum a census record. */

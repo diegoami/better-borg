@@ -1,0 +1,17 @@
+{
+  "schema": "mandos/death-window-profile@1",
+  "profile": {
+    "id": "mandos-death-windows-v1",
+    "baseProfile": "mandos-death-windows-v1",
+    "units": "neo-core-game-turns",
+    "boundary": "first-live-decision-at-or-after-target",
+    "preStart": "legacy-first-boundary",
+    "offsets": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "earlierAnchors": "separate-labelled-events-not-captured-by-this-profile"
+  }
+}
