@@ -1,0 +1,9 @@
+# Combined consumer integration receipt
+
+Preserved CCW topic5d0393ebc7fb12f9a4adbf51d9b5ee8ec2f09029 is normally merged into the spell topic18484643d54179561c48f93f663da604da1b0823 on task/c-carry-ccw-spells, from common d36c867. No source history was amended/squashed/force-pushed. Source77/248/257 corrections retain separate attributed commits and independent TS removal units. The provenance index has seven units: the historical four plus these three; live state remains on consumer issues168/175/176.
+
+The historical CCW hold-for-glyph-port-adoption receipt is superseded. Investigation found that the glyph-recognition behavior is inherited from C, so no faithful-port adoption is pending and no glyph runtime change belongs in this batch. The C source session owns its new lead. The existing Necromancer glow-vs-torch fail-rate mismatch likewise stays outside these three minimal corrections; its observed public/native rates and messages are retained in the spell proof.
+
+This integration preserves the pinned published beta.2 Core/SDK/content, combined engine patch, package/lock and all unrelated Mandos behavior. The own generated plugin, standalone replay alone, normal full gate and actual results will be recorded additively once completed. Focused proof alone is not a claim of carried main adoption or lab deployment. Source issues remain open/unresolved; applied verified main consumers therefore stay carried/open, not fixed/closed.
+
+Pre-full frozen-source verification: own plugin737.6KiB/API2 rebuilt; SHA256d3ea31f0bfdf83581d0a0ccf2117c1e8cd8f9486698ecaac465bc93b87f33f6b. Replay ran ALONE:6/6, one file, zero skips,12.47s. See integration-build.log/integration-replay-alone.log and integration-fingerprint.json for exact three source/proof heads, fixture/dependency/plugin fingerprints. Required full gate is pending on this frozen integration head, not inferred from prior component gates.

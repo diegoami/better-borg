@@ -1,0 +1,10 @@
+$ vitest run src/postmortem/replay.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  17:54:38
+   Duration  12.47s (transform 427ms, setup 143ms, import 483ms, tests 11.77s, environment 0ms)
+

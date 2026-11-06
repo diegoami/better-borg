@@ -15,6 +15,9 @@ and removal units, not a second live carry/status table.
 
 | [diegoami/neo-angband-tracker#77](https://github.com/diegoami/neo-angband-tracker/issues/77), [C proposal271](https://github.com/diegoami/neo-angband-tracker/pull/271), cedf25eb790f2ff7c7c161cd1612b18ed99fb35e | [a3a72f088d1d17f08758389da6384433b4e95e4f](https://github.com/diegoami/mandos/commit/a3a72f088d1d17f08758389da6384433b4e95e4f), explicit prior-request existence and elapsed 1..4 conservation boundary | [Mandos168](https://github.com/diegoami/mandos/issues/168), [CBUG-0061-ccw-timing.patch](CBUG-0061-ccw-timing.patch) |
 
+| [diegoami/neo-angband-tracker#248](https://github.com/diegoami/neo-angband-tracker/issues/248), [C proposal291](https://github.com/diegoami/neo-angband-tracker/pull/291), 6912b85cb7b902616ad786dfc20afe3b4cf28b10 | [4eb72dca1707af4d18cecb198bbd3ea7e4466801](https://github.com/diegoami/mandos/commit/4eb72dca1707af4d18cecb198bbd3ea7e4466801), Dispel Life living-target filter | [Mandos175](https://github.com/diegoami/mandos/issues/175), [source248-dispel-living.patch](source248-dispel-living.patch) |
+| [diegoami/neo-angband-tracker#257](https://github.com/diegoami/neo-angband-tracker/issues/257), [C proposal293](https://github.com/diegoami/neo-angband-tracker/pull/293), 0119d5daee9b8a07a8096331eea78dbbb6c26050 | [fca27df4de0d2036c3c0ab8111c0ac273ae589ad](https://github.com/diegoami/mandos/commit/fca27df4de0d2036c3c0ab8111c0ac273ae589ad), chosen Vampire Strike distance | [Mandos176](https://github.com/diegoami/mandos/issues/176), [source257-vampire-selected-distance.patch](source257-vampire-selected-distance.patch) |
+
 Discovery attribution is source-specific: the CBUG-numbered leads above credit
 borg-rs; source279 was independently found during native validation of another
 report. Native C reproduction and Mandos TS proof are independent and linked
