@@ -1,0 +1,154 @@
+[
+  {
+    "case": "acid only / cold troll",
+    "identical": false,
+    "before": {
+      "danger": 26,
+      "command": null,
+      "remainingScrolls": 1,
+      "grid": {
+        "x": 99,
+        "y": 33
+      }
+    },
+    "after": {
+      "danger": 58,
+      "command": {
+        "code": "read",
+        "args": {
+          "handle": 7
+        }
+      },
+      "remainingScrolls": 0,
+      "grid": {
+        "x": 92,
+        "y": 38
+      }
+    }
+  },
+  {
+    "case": "cold only / cold troll",
+    "identical": false,
+    "before": {
+      "danger": 58,
+      "command": {
+        "code": "read",
+        "args": {
+          "handle": 7
+        }
+      },
+      "remainingScrolls": 0,
+      "grid": {
+        "x": 92,
+        "y": 38
+      }
+    },
+    "after": {
+      "danger": 26,
+      "command": null,
+      "remainingScrolls": 1,
+      "grid": {
+        "x": 99,
+        "y": 33
+      }
+    }
+  },
+  {
+    "case": "neither / cold troll",
+    "identical": true,
+    "before": {
+      "danger": 58,
+      "command": {
+        "code": "read",
+        "args": {
+          "handle": 7
+        }
+      },
+      "remainingScrolls": 0,
+      "grid": {
+        "x": 92,
+        "y": 38
+      }
+    },
+    "after": {
+      "danger": 58,
+      "command": {
+        "code": "read",
+        "args": {
+          "handle": 7
+        }
+      },
+      "remainingScrolls": 0,
+      "grid": {
+        "x": 92,
+        "y": 38
+      }
+    }
+  },
+  {
+    "case": "both / cold troll",
+    "identical": true,
+    "before": {
+      "danger": 26,
+      "command": null,
+      "remainingScrolls": 1,
+      "grid": {
+        "x": 99,
+        "y": 33
+      }
+    },
+    "after": {
+      "danger": 26,
+      "command": null,
+      "remainingScrolls": 1,
+      "grid": {
+        "x": 99,
+        "y": 33
+      }
+    }
+  },
+  {
+    "case": "acid only / scorpion",
+    "identical": true,
+    "before": {
+      "danger": 36,
+      "command": null,
+      "remainingScrolls": 1,
+      "grid": {
+        "x": 99,
+        "y": 33
+      }
+    },
+    "after": {
+      "danger": 36,
+      "command": null,
+      "remainingScrolls": 1,
+      "grid": {
+        "x": 99,
+        "y": 33
+      }
+    }
+  },
+  {
+    "case": "cold only / scorpion",
+    "identical": true,
+    "before": {
+      "danger": 36,
+      "command": null,
+      "remainingScrolls": 1,
+      "grid": {
+        "x": 99,
+        "y": 33
+      }
+    },
+    "after": {
+      "danger": 36,
+      "command": null,
+      "remainingScrolls": 1,
+      "grid": {
+        "x": 99,
+        "y": 33
+      }
+    }
+  }
+]

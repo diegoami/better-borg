@@ -2367,7 +2367,7 @@ function borgDangerPhysical(world, g, facts, fullDamage) {
         z = dDice * dSide;
         power = 10;
         if (trait2(world, 70 /* RCOLD */)) z = div(z + 2, 3);
-        if (temp.resAcid) z = div(z + 2, 3);
+        if (temp.resCold) z = div(z + 2, 3);
         z = z * 2;
         if (pfe && !attacking) z = div(z, 2);
         break;
@@ -17220,7 +17220,7 @@ function raceNameOf(who) {
 }
 function isInvisibleAttacker(who) {
   const lower = who.toLowerCase();
-  return lower.startsWith("something") || lower.startsWith("it");
+  return lower.startsWith("something") || lower === "it";
 }
 function locateAttacker(w, names, who, r) {
   if (isInvisibleAttacker(who)) {

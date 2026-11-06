@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-carry-integration
+
+
+ Test Files  6 passed (6)
+      Tests  155 passed (155)
+   Start at  13:13:05
+   Duration  1.98s (transform 2.15s, setup 965ms, import 2.67s, tests 2.44s, environment 0ms)
+

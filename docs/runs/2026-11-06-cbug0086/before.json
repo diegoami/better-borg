@@ -1,0 +1,111 @@
+[
+  {
+    "who": "Itangast the Fire Drake",
+    "messageKind": "miss",
+    "stamp": 100,
+    "fear": 22,
+    "beforeDanger": 448,
+    "danger": 470,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "spent": 1,
+    "decisionHp": 421,
+    "transactionHpBefore": 19,
+    "transactionHpAfter": 19
+  },
+  {
+    "who": "Itangast the Fire Drake",
+    "messageKind": "hit",
+    "stamp": 100,
+    "fear": 44,
+    "beforeDanger": 448,
+    "danger": 492,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "spent": 1,
+    "decisionHp": 421,
+    "transactionHpBefore": 19,
+    "transactionHpAfter": 19
+  },
+  {
+    "who": "The Ogre",
+    "messageKind": "miss",
+    "stamp": 0,
+    "fear": 0,
+    "beforeDanger": 16,
+    "danger": 16,
+    "command": null,
+    "energy": 0,
+    "spent": 0,
+    "decisionHp": 421,
+    "transactionHpBefore": 19,
+    "transactionHpAfter": 19
+  },
+  {
+    "who": "It",
+    "messageKind": "miss",
+    "stamp": 100,
+    "fear": 22,
+    "beforeDanger": 0,
+    "danger": 22,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "spent": 1,
+    "decisionHp": 421,
+    "transactionHpBefore": 19,
+    "transactionHpAfter": 19
+  },
+  {
+    "who": "it",
+    "messageKind": "miss",
+    "stamp": 100,
+    "fear": 22,
+    "beforeDanger": 0,
+    "danger": 22,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "spent": 1,
+    "decisionHp": 421,
+    "transactionHpBefore": 19,
+    "transactionHpAfter": 19
+  },
+  {
+    "who": "Something",
+    "messageKind": "miss",
+    "stamp": 100,
+    "fear": 22,
+    "beforeDanger": 0,
+    "danger": 22,
+    "command": {
+      "code": "quaff",
+      "args": {
+        "handle": 7
+      }
+    },
+    "energy": 100,
+    "spent": 1,
+    "decisionHp": 421,
+    "transactionHpBefore": 19,
+    "transactionHpAfter": 19
+  }
+]
