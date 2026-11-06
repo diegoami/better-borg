@@ -1,0 +1,38 @@
+$ vitest run src/fight/c-spell-carry.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/fight/c-spell-carry.test.ts (15 tests | 5 failed) 710ms
+   × 'dispel-living-seed441' published spell probe 149ms
+   × 'vampire-near-far-seed441' published spell probe 79ms
+   × 'dispel-living' published spell probe 45ms
+   × 'vampire-near-far' published spell probe 36ms
+   × 'vampire-far-near' published spell probe 44ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-living-seed441' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-far-seed441' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'dispel-living' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-far' published spell probe
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-far-near' published spell probe
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/fight/c-spell-carry.test.ts:93:19
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 10 passed (15)
+   Start at  17:46:15
+   Duration  1.40s (transform 429ms, setup 143ms, import 484ms, tests 710ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

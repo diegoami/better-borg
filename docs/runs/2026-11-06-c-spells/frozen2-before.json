@@ -1,0 +1,3007 @@
+[
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 75,
+        "y": 26
+      },
+      "hp": 253,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 75,
+        "y": 26
+      },
+      "hp": 253,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [
+      {
+        "x": 80,
+        "y": 26
+      }
+    ],
+    "nativeChance": 35,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 77,
+      "state": [
+        1204242485,
+        3773193136,
+        652933703,
+        2596227766,
+        380645799,
+        1002640056,
+        596243006,
+        1422652986,
+        459268148,
+        475894544,
+        3418006109,
+        4227574481,
+        4126981663,
+        4134904538,
+        3750501728,
+        2819179209,
+        721804772,
+        3947303808,
+        1807754740,
+        4255486185,
+        3161567576,
+        1420407534,
+        2631178204,
+        3616579249,
+        3737867880,
+        2983600249,
+        1424743667,
+        3742443261,
+        1453271996,
+        2701703067,
+        1362102581,
+        1705688275
+      ],
+      "stateI": 15,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [
+      "You failed to concentrate hard enough!"
+    ],
+    "actualTemp": [
+      {
+        "x": 80,
+        "y": 26
+      }
+    ],
+    "nativeCommand": {
+      "code": "cast",
+      "args": {
+        "spell": 12
+      }
+    },
+    "nativeCastWasSelected": false,
+    "name": "dispel-living-seed77",
+    "level": 35,
+    "spell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "PROJECT_LOS_AWARE",
+          "type": "MON_DRAIN",
+          "dice": "d$S",
+          "expr": [
+            {
+              "name": "S",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 3"
+            }
+          ]
+        }
+      ],
+      "text": "Inflicts unresistable damage on each living monster within line of sight."
+    },
+    "publicSpell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 35
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 15,
+    "visible": [
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 80,
+          "y": 26
+        }
+      }
+    ],
+    "light": 1,
+    "rating": -41,
+    "command": {
+      "code": "throw",
+      "args": {
+        "handle": 4
+      }
+    },
+    "targets": [
+      {
+        "x": 80,
+        "y": 26
+      }
+    ],
+    "energy": 100,
+    "manaBefore": 39,
+    "manaAfter": 19,
+    "before": [
+      {
+        "midx": 72,
+        "hp": 230,
+        "grid": {
+          "x": 80,
+          "y": 26
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 72,
+        "hp": 230,
+        "grid": {
+          "x": 80,
+          "y": 26
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 75,
+        "y": 26
+      },
+      "hp": 253,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 75,
+        "y": 26
+      },
+      "hp": 253,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 29,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 77,
+      "state": [
+        2011163184,
+        4153000547,
+        1503504618,
+        3128057059,
+        2949238064,
+        2150810481,
+        2239907667,
+        76790030,
+        2417450829,
+        3068077911,
+        2566591846,
+        4225976745,
+        3334123492,
+        279034088,
+        2504333384,
+        1083035284,
+        4244270387,
+        2119497341,
+        2458076170,
+        3957665720,
+        3464631818,
+        1425041536,
+        3062665573,
+        629085341,
+        1837636569,
+        2615675276,
+        670563005,
+        267415435,
+        3203670230,
+        312338010,
+        3061851128,
+        1019967071
+      ],
+      "stateI": 0,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 80,
+        "y": 26
+      },
+      {
+        "x": 95,
+        "y": 26
+      }
+    ],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "vampire-near-far-seed77",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 29
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 15,
+    "visible": [
+      {
+        "name": "kobold",
+        "visible": true,
+        "grid": {
+          "x": 80,
+          "y": 26
+        }
+      },
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 95,
+          "y": 26
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 0,
+    "command": null,
+    "targets": [],
+    "energy": 0,
+    "manaBefore": 39,
+    "manaAfter": 39,
+    "before": [
+      {
+        "midx": 72,
+        "hp": 12,
+        "grid": {
+          "x": 80,
+          "y": 26
+        }
+      },
+      {
+        "midx": 73,
+        "hp": 240,
+        "grid": {
+          "x": 95,
+          "y": 26
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 72,
+        "hp": 12,
+        "grid": {
+          "x": 80,
+          "y": 26
+        },
+        "present": true
+      },
+      {
+        "midx": 73,
+        "hp": 240,
+        "grid": {
+          "x": 95,
+          "y": 26
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 32
+      },
+      "hp": 199,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 32
+      },
+      "hp": 199,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [
+      {
+        "x": 104,
+        "y": 32
+      }
+    ],
+    "nativeChance": 31,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 441,
+      "state": [
+        1495036679,
+        3253383188,
+        1902236694,
+        2271199720,
+        926127903,
+        1122960637,
+        2078561686,
+        2599886057,
+        3554849868,
+        2104758277,
+        3304663619,
+        3163542975,
+        1614435431,
+        371475601,
+        3296654482,
+        4116117037,
+        2664894636,
+        660570756,
+        4117873370,
+        3389164992,
+        2058147830,
+        981318798,
+        3429473471,
+        395975752,
+        3780677726,
+        1712766890,
+        2784311557,
+        1573899143,
+        3582056313,
+        1591745343,
+        4183864366,
+        3444787722
+      ],
+      "stateI": 14,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [
+      "You failed to concentrate hard enough!"
+    ],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 32
+      }
+    ],
+    "nativeCommand": {
+      "code": "cast",
+      "args": {
+        "spell": 12
+      }
+    },
+    "nativeCastWasSelected": false,
+    "name": "dispel-living-seed441",
+    "level": 35,
+    "spell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "PROJECT_LOS_AWARE",
+          "type": "MON_DRAIN",
+          "dice": "d$S",
+          "expr": [
+            {
+              "name": "S",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 3"
+            }
+          ]
+        }
+      ],
+      "text": "Inflicts unresistable damage on each living monster within line of sight."
+    },
+    "publicSpell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 31
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 32
+        }
+      }
+    ],
+    "light": 1,
+    "rating": -21,
+    "command": {
+      "code": "throw",
+      "args": {
+        "handle": 4
+      }
+    },
+    "targets": [
+      {
+        "x": 104,
+        "y": 32
+      }
+    ],
+    "energy": 100,
+    "manaBefore": 53,
+    "manaAfter": 33,
+    "before": [
+      {
+        "midx": 134,
+        "hp": 171,
+        "grid": {
+          "x": 104,
+          "y": 32
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 134,
+        "hp": 171,
+        "grid": {
+          "x": 104,
+          "y": 32
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 32
+      },
+      "hp": 199,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 32
+      },
+      "hp": 199,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 25,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 441,
+      "state": [
+        1495036679,
+        3253383188,
+        1902236694,
+        2271199720,
+        926127903,
+        1122960637,
+        2078561686,
+        2599886057,
+        3554849868,
+        4104492902,
+        83570403,
+        684390321,
+        3103894104,
+        1165407684,
+        4045237340,
+        4116117037,
+        2664894636,
+        660570756,
+        4117873370,
+        3389164992,
+        2058147830,
+        981318798,
+        3429473471,
+        395975752,
+        3780677726,
+        1712766890,
+        2784311557,
+        1573899143,
+        3582056313,
+        1591745343,
+        4183864366,
+        3444787722
+      ],
+      "stateI": 9,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 32
+      },
+      {
+        "x": 119,
+        "y": 32
+      }
+    ],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "vampire-near-far-seed441",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 25
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "kobold",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 32
+        }
+      },
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 119,
+          "y": 32
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 0,
+    "command": null,
+    "targets": [],
+    "energy": 0,
+    "manaBefore": 53,
+    "manaAfter": 53,
+    "before": [
+      {
+        "midx": 134,
+        "hp": 6,
+        "grid": {
+          "x": 104,
+          "y": 32
+        }
+      },
+      {
+        "midx": 135,
+        "hp": 233,
+        "grid": {
+          "x": 119,
+          "y": 32
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 134,
+        "hp": 6,
+        "grid": {
+          "x": 104,
+          "y": 32
+        },
+        "present": true
+      },
+      {
+        "midx": 135,
+        "hp": 233,
+        "grid": {
+          "x": 119,
+          "y": 32
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeChance": 31,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        1752528004,
+        3563838280,
+        4216809224,
+        2953761521,
+        3856723679,
+        2517315150,
+        636016285,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 9,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [
+      "You failed to concentrate hard enough!"
+    ],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeCommand": {
+      "code": "cast",
+      "args": {
+        "spell": 12
+      }
+    },
+    "nativeCastWasSelected": false,
+    "name": "dispel-living",
+    "level": 35,
+    "spell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "PROJECT_LOS_AWARE",
+          "type": "MON_DRAIN",
+          "dice": "d$S",
+          "expr": [
+            {
+              "name": "S",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 3"
+            }
+          ]
+        }
+      ],
+      "text": "Inflicts unresistable damage on each living monster within line of sight."
+    },
+    "publicSpell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 31
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": -21,
+    "command": {
+      "code": "throw",
+      "args": {
+        "handle": 4
+      }
+    },
+    "targets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "energy": 100,
+    "manaBefore": 53,
+    "manaAfter": 33,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 31,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        1752528004,
+        3563838280,
+        4216809224,
+        2953761521,
+        3856723679,
+        2372905939,
+        2154619906,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 10,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeCommand": {
+      "code": "cast",
+      "args": {
+        "spell": 12
+      }
+    },
+    "nativeCastWasSelected": false,
+    "name": "dispel-nonliving",
+    "level": 35,
+    "spell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "PROJECT_LOS_AWARE",
+          "type": "MON_DRAIN",
+          "dice": "d$S",
+          "expr": [
+            {
+              "name": "S",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 3"
+            }
+          ]
+        }
+      ],
+      "text": "Inflicts unresistable damage on each living monster within line of sight."
+    },
+    "publicSpell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 31
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "clay golem",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": -21,
+    "command": null,
+    "targets": [],
+    "energy": 100,
+    "manaBefore": 53,
+    "manaAfter": 33,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 38,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 38,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": true,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 31,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        1752528004,
+        3563838280,
+        4216809224,
+        2953761521,
+        3856723679,
+        2517315150,
+        636016285,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 9,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [
+      "You failed to concentrate hard enough!"
+    ],
+    "actualTemp": [],
+    "nativeCommand": {
+      "code": "cast",
+      "args": {
+        "spell": 12
+      }
+    },
+    "nativeCastWasSelected": false,
+    "name": "dispel-blocked",
+    "level": 35,
+    "spell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "PROJECT_LOS_AWARE",
+          "type": "MON_DRAIN",
+          "dice": "d$S",
+          "expr": [
+            {
+              "name": "S",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 3"
+            }
+          ]
+        }
+      ],
+      "text": "Inflicts unresistable damage on each living monster within line of sight."
+    },
+    "publicSpell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 31
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [],
+    "light": 1,
+    "rating": -21,
+    "command": null,
+    "targets": [],
+    "energy": 100,
+    "manaBefore": 53,
+    "manaAfter": 33,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeChance": 50,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        1752528004,
+        3563838280,
+        4216809224,
+        2953761521,
+        3856723679,
+        2517315150,
+        636016285,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 9,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "dispel-no-mana",
+    "level": 35,
+    "spell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "PROJECT_LOS_AWARE",
+          "type": "MON_DRAIN",
+          "dice": "d$S",
+          "expr": [
+            {
+              "name": "S",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 3"
+            }
+          ]
+        }
+      ],
+      "text": "Inflicts unresistable damage on each living monster within line of sight."
+    },
+    "publicSpell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 50
+    },
+    "legal": true,
+    "okay": false,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 0,
+    "command": {
+      "code": "throw",
+      "args": {
+        "handle": 4
+      }
+    },
+    "targets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "energy": 0,
+    "manaBefore": 0,
+    "manaAfter": 0,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 25,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        3940884195,
+        2864990425,
+        683778597,
+        3758615546,
+        1295199354,
+        1449239935,
+        3271861370,
+        270243621,
+        52568787,
+        3031351499,
+        3502357506,
+        2894376216,
+        2991967945,
+        1083769769,
+        2500400305,
+        2938292043,
+        510797336,
+        4126824531,
+        1119848650,
+        3308034321,
+        975161165,
+        2436408492,
+        480518795,
+        453883001,
+        1997814263,
+        1186470816,
+        569113004,
+        2205681165,
+        1835524083,
+        1483959493,
+        3324281655,
+        4221860750
+      ],
+      "stateI": 0,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "vampire-blocked",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 25
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [],
+    "light": 1,
+    "rating": 0,
+    "command": null,
+    "targets": [],
+    "energy": 0,
+    "manaBefore": 53,
+    "manaAfter": 53,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 4,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 4,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 50,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        3940884195,
+        2864990425,
+        683778597,
+        3758615546,
+        1295199354,
+        1449239935,
+        3271861370,
+        270243621,
+        52568787,
+        3031351499,
+        3502357506,
+        2894376216,
+        2991967945,
+        1083769769,
+        2500400305,
+        2938292043,
+        510797336,
+        4126824531,
+        1119848650,
+        3308034321,
+        975161165,
+        2436408492,
+        480518795,
+        453883001,
+        1997814263,
+        1186470816,
+        569113004,
+        2205681165,
+        1835524083,
+        1483959493,
+        3324281655,
+        4221860750
+      ],
+      "stateI": 0,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "vampire-no-mana",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 50
+    },
+    "legal": true,
+    "okay": false,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "kobold",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 0,
+    "command": null,
+    "targets": [],
+    "energy": 0,
+    "manaBefore": 0,
+    "manaAfter": 0,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 4,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 4,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeChance": 31,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        1752528004,
+        3563838280,
+        4216809224,
+        2953761521,
+        3856723679,
+        2372905939,
+        2154619906,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 10,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeCommand": {
+      "code": "cast",
+      "args": {
+        "spell": 12
+      }
+    },
+    "nativeCastWasSelected": false,
+    "name": "dispel-undead",
+    "level": 35,
+    "spell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "PROJECT_LOS_AWARE",
+          "type": "MON_DRAIN",
+          "dice": "d$S",
+          "expr": [
+            {
+              "name": "S",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 3"
+            }
+          ]
+        }
+      ],
+      "text": "Inflicts unresistable damage on each living monster within line of sight."
+    },
+    "publicSpell": {
+      "name": "Dispel Life",
+      "sidx": 12,
+      "bidx": 2,
+      "level": 22,
+      "mana": 20,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 31
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "vampire bat",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": -21,
+    "command": {
+      "code": "throw",
+      "args": {
+        "handle": 4
+      }
+    },
+    "targets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "energy": 100,
+    "manaBefore": 53,
+    "manaAfter": 33,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 31,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 31,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": true,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeChance": 6,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        1752528004,
+        3563838280,
+        4216809224,
+        2953761521,
+        3856723679,
+        2517315150,
+        636016285,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 9,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeCommand": {
+      "code": "cast",
+      "args": {
+        "spell": 0
+      }
+    },
+    "nativeCastWasSelected": true,
+    "name": "nether-control",
+    "level": 35,
+    "spell": {
+      "name": "Nether Bolt",
+      "sidx": 0,
+      "bidx": 0,
+      "level": 1,
+      "mana": 1,
+      "fail": 22,
+      "exp": 2,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "BOLT",
+          "type": "NETHER",
+          "dice": "$Dd4",
+          "expr": [
+            {
+              "name": "D",
+              "base": "PLAYER_LEVEL",
+              "expr": "/ 4 + 3"
+            }
+          ]
+        }
+      ],
+      "text": "Fires a bolt of nether magic."
+    },
+    "publicSpell": {
+      "name": "Nether Bolt",
+      "sidx": 0,
+      "bidx": 0,
+      "level": 1,
+      "mana": 1,
+      "fail": 22,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 6
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 32,
+    "command": {
+      "code": "cast",
+      "args": {
+        "spell": 0
+      }
+    },
+    "targets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "energy": 100,
+    "manaBefore": 53,
+    "manaAfter": 52,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 139,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": true,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 25,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1918386470,
+        7952934,
+        1441998670,
+        3203085223,
+        2081395566,
+        3979117311,
+        1002068325,
+        2716174004,
+        2441887908,
+        2533262368,
+        1013930395,
+        2014615017,
+        4000861732,
+        876704536,
+        2252719751,
+        2942356394,
+        2750345398,
+        3101379404,
+        296567800,
+        3885596957,
+        1619418708,
+        2558085425,
+        3644790717,
+        3214469679,
+        1666024800,
+        4240243308,
+        629466511,
+        578310869,
+        3050537130,
+        988005577,
+        3287641658,
+        273998639
+      ],
+      "stateI": 14,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      },
+      {
+        "x": 119,
+        "y": 33
+      }
+    ],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "vampire-near-far",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 25
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "kobold",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      },
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 119,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 0,
+    "command": null,
+    "targets": [],
+    "energy": 0,
+    "manaBefore": 53,
+    "manaAfter": 53,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 4,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      },
+      {
+        "midx": 138,
+        "hp": 222,
+        "grid": {
+          "x": 119,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 4,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      },
+      {
+        "midx": 138,
+        "hp": 222,
+        "grid": {
+          "x": 119,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 25,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        4042113022,
+        2077094138,
+        475004027,
+        2273497621,
+        1403951581,
+        1997484621,
+        636016285,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 4,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      },
+      {
+        "x": 119,
+        "y": 33
+      }
+    ],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "vampire-far-near",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 25
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "kobold",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      },
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 119,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 0,
+    "command": null,
+    "targets": [],
+    "energy": 0,
+    "manaBefore": 53,
+    "manaAfter": 53,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 119,
+          "y": 33
+        }
+      },
+      {
+        "midx": 138,
+        "hp": 12,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 119,
+          "y": 33
+        },
+        "present": true
+      },
+      {
+        "midx": 138,
+        "hp": 12,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 25,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1918386470,
+        7952934,
+        1441998670,
+        3203085223,
+        2081395566,
+        3979117311,
+        1002068325,
+        2716174004,
+        2441887908,
+        2533262368,
+        1013930395,
+        2014615017,
+        4000861732,
+        876704536,
+        2252719751,
+        2942356394,
+        2750345398,
+        3101379404,
+        296567800,
+        3885596957,
+        1619418708,
+        2558085425,
+        3644790717,
+        3214469679,
+        1666024800,
+        4240243308,
+        629466511,
+        578310869,
+        3050537130,
+        988005577,
+        3287641658,
+        273998639
+      ],
+      "stateI": 14,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [
+      "You failed to concentrate hard enough!"
+    ],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      },
+      {
+        "x": 107,
+        "y": 33
+      }
+    ],
+    "nativeCommand": {
+      "code": "cast",
+      "args": {
+        "spell": 11
+      }
+    },
+    "nativeCastWasSelected": true,
+    "name": "vampire-near-near",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 25
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "kobold",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      },
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 107,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 70,
+    "command": {
+      "code": "cast",
+      "args": {
+        "spell": 11
+      }
+    },
+    "targets": [],
+    "energy": 100,
+    "manaBefore": 53,
+    "manaAfter": 48,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 4,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      },
+      {
+        "midx": 138,
+        "hp": 222,
+        "grid": {
+          "x": 107,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 4,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      },
+      {
+        "midx": 138,
+        "hp": 222,
+        "grid": {
+          "x": 107,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [],
+    "nativeChance": 25,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        1752528004,
+        3563838280,
+        4216809224,
+        2953761521,
+        3856723679,
+        2517315150,
+        636016285,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 9,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 119,
+        "y": 33
+      }
+    ],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "vampire-far",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 25
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "hill giant",
+        "visible": true,
+        "grid": {
+          "x": 119,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 0,
+    "command": null,
+    "targets": [],
+    "energy": 0,
+    "manaBefore": 53,
+    "manaAfter": 53,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 119,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 154,
+        "grid": {
+          "x": 119,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  },
+  {
+    "playerBefore": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "playerAfter": {
+      "grid": {
+        "x": 99,
+        "y": 33
+      },
+      "hp": 205,
+      "food": 8999
+    },
+    "ratingTargets": [],
+    "chooserTargets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeChance": 25,
+    "nativeRngBefore": {
+      "quick": false,
+      "value": 1000,
+      "state": [
+        1196124911,
+        744878258,
+        1792655938,
+        2266711823,
+        1752528004,
+        3563838280,
+        4216809224,
+        2953761521,
+        3856723679,
+        2372905939,
+        2154619906,
+        3580444578,
+        3574739218,
+        1765962021,
+        3203416957,
+        732113700,
+        2426942002,
+        507770451,
+        3753211837,
+        248663954,
+        2491712393,
+        2113632066,
+        780523278,
+        1856347501,
+        422244238,
+        3962927241,
+        2796944192,
+        4010742178,
+        1026126385,
+        3512883881,
+        3250959787,
+        3924762273
+      ],
+      "stateI": 10,
+      "fixed": false,
+      "fixval": 0
+    },
+    "messages": [],
+    "actualTemp": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "nativeCommand": null,
+    "nativeCastWasSelected": false,
+    "name": "vampire-undead",
+    "level": 35,
+    "spell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "exp": 10,
+      "realm": {
+        "name": "shadow",
+        "stat": 1,
+        "verb": "perform",
+        "spellNoun": "ritual",
+        "bookNoun": "shadow book"
+      },
+      "effectsRaw": [
+        {
+          "eff": "JUMP_AND_BITE",
+          "dice": "$B",
+          "expr": [
+            {
+              "name": "B",
+              "base": "PLAYER_LEVEL",
+              "expr": "* 2"
+            }
+          ]
+        }
+      ],
+      "text": "Teleports you to the nearest living monster and drains a level-dependent number of hitpoints, healing and nourishing the player."
+    },
+    "publicSpell": {
+      "name": "Vampire Strike",
+      "sidx": 11,
+      "bidx": 2,
+      "level": 20,
+      "mana": 5,
+      "fail": 50,
+      "learned": true,
+      "worked": false,
+      "forgotten": false,
+      "studyEligible": false,
+      "infoLine": "",
+      "chance": 25
+    },
+    "legal": true,
+    "okay": true,
+    "fail": 9,
+    "visible": [
+      {
+        "name": "vampire bat",
+        "visible": true,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "light": 1,
+    "rating": 0,
+    "command": {
+      "code": "throw",
+      "args": {
+        "handle": 4
+      }
+    },
+    "targets": [
+      {
+        "x": 104,
+        "y": 33
+      }
+    ],
+    "energy": 0,
+    "manaBefore": 53,
+    "manaAfter": 53,
+    "before": [
+      {
+        "midx": 137,
+        "hp": 31,
+        "grid": {
+          "x": 104,
+          "y": 33
+        }
+      }
+    ],
+    "after": [
+      {
+        "midx": 137,
+        "hp": 31,
+        "grid": {
+          "x": 104,
+          "y": 33
+        },
+        "present": true
+      }
+    ],
+    "workedAfter": false,
+    "nonlivingPopulation": 46
+  }
+]

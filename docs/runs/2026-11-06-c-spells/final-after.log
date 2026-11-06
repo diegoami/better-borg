@@ -1,0 +1,14 @@
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 48ms using pnpm v12.16.1
+$ vitest run src/fight/c-spell-carry.test.ts src/fight/fight.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+
+ Test Files  2 passed (2)
+      Tests  93 passed (93)
+   Start at  17:48:41
+   Duration  1.42s (transform 784ms, setup 298ms, import 903ms, tests 996ms, environment 0ms)
+

@@ -1,0 +1,35 @@
+$ vitest run src/fight/c-spell-carry.test.ts
+
+ RUN  v4.1.11 <task-tree>
+
+ ❯ src/fight/c-spell-carry.test.ts (8 tests | 1 failed) 441ms
+   × 'vampire-near-far' published spell probe 42ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/fight/c-spell-carry.test.ts > 'vampire-near-far' published spell probe
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/fight/c-spell-carry.test.ts:70:104
+     68|  const exposed=ctx.view.spellbooks().flatMap(b=>b.spells).find(s=>s.si…
+     69|  const visible=ctx.view.monsters().map(m=>({name:m.race,visible:m.visi…
+     70|  for(const m of nativeMonsters)expect(ctx.view.monsters().find(v=>v.ra…
+       |                                                                                                        ^
+     71|  for(const [,k]of ctx.world.kills.entries()){fs.tempX[fs.tempN]=k.pos.…
+     72|  const effect=c.spell==="Dispel Life"?BF.PRAYER_DISPEL_LIFE:c.spell===…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  17:43:55
+   Duration  1.14s (transform 424ms, setup 147ms, import 481ms, tests 441ms, environment 0ms)
+
+[ELIFECYCLE] Test failed. See above for more details.
