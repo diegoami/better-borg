@@ -19,9 +19,9 @@
  * the Borg is offered the keyboard only for a character handed to it.
  */
 
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import * as Core from "@rpgm-tools/neo-angband-core";
-import type { Api2ControllerContext, Api2ModDefinition, Api2Prompt, JsonValue } from "@rpgm-tools/neo-angband-mod-sdk";
+import type { Api2ControllerContext, Api2ModDefinition, Api2Prompt, JsonValue, RunReport } from "@rpgm-tools/neo-angband-mod-sdk";
 import { fakeGame, type FakeGame, type FakeGameOptions } from "./src/harness-api2.js";
 import type { Scenario } from "./src/harness.js";
 import { BIRTH_FLAG_KEY } from "./src/birth/flag.js";
@@ -31,6 +31,13 @@ import { GRAVEYARD_KEY, graveyardArchiveOf } from "./src/records/journal.js";
  * is correct: `pnpm check` proves it is a current build of the source, and
  * this proves the thing that check blessed actually runs. */
 const built = ((await import("./plugin.js")) as unknown as { default: Api2ModDefinition }).default;
+
+function terminal(over: Partial<RunReport> = {}): RunReport {
+  return { key: "cedar", outcome: "death", cause: "a novice mage", maxDepth: 3, turn: 99,
+    name: "Public fixture", race: "Human", cls: "Mage", level: 1, maxLevel: 1, depth: 1, gold: 0,
+    score: 0, scored: false, endedAt: 0, history: [], messages: [], belongings: [], sheet: null,
+    birth: { race: "Human", cls: "Mage", name: "Public fixture", stats: [10, 10, 10, 10, 10] }, ...over };
+}
 
 const NOSCORE_BORG = 0x0020;
 
@@ -187,10 +194,10 @@ describe("the built plugin.js", () => {
      * exactly resumeAutoplayer (never `like`), and the slot keeps the
      * title row's sibling key - the shared-slot contract (#26). */
     const game = await begin();
-    const report = { key: "cedar", report: { key: "cedar", outcome: "death", cause: "a novice mage", maxDepth: 3, turn: 99 } };
+    const report = { key: "cedar", report: terminal({ key: "cedar", outcome: "death", cause: "a novice mage", maxDepth: 3, turn: 99 }) };
     game.listeners.get("run-end")?.(report as never);
     for (let i = 0; i < 32; i++) await Promise.resolve();
-    expect(game.created).toEqual([{ resumeAutoplayer: true }]);
+    await vi.waitFor(() => expect(game.created).toEqual([{ resumeAutoplayer: true }]));
     /* The install slot's whole contents at rest: the flag standing for the
      * next page's presenter, BESIDE the ended run's archive entry (#34) -
      * two siblings of one shared value, each write carrying the other. */
@@ -201,9 +208,9 @@ describe("the built plugin.js", () => {
     ]);
     /* T06, corrected by #34: the ended run is recorded in INSTALL storage,
      * not the character's bag - the host deletes that bag at the death,
-     * before the report even publishes. The partial report this fake sends
-     * still names the outcome and the killer, and the entry says null
-     * rather than a guess for the rest. The character's own slot keeps
+     * before the report even publishes. The typed report this fake sends
+     * carries the same public fields the real host publishes; no fixture
+     * relies on an object missing required report fields. The character's own slot keeps
      * only what may die with it: nothing recorded a depth here. */
     expect(game.characterSlot.value).toBeNull();
   });
@@ -216,9 +223,9 @@ describe("the built plugin.js", () => {
      * character bag gone -> a fresh read of install storage still
      * retrieves the ended run. */
     const game = await begin();
-    game.listeners.get("run-end")?.({ key: "cedar", report: { key: "cedar", outcome: "death", cause: "a novice mage", maxDepth: 3, turn: 99 } } as never);
+    game.listeners.get("run-end")?.({ key: "cedar", report: terminal({ key: "cedar", outcome: "death", cause: "a novice mage", maxDepth: 3, turn: 99 }) } as never);
     for (let i = 0; i < 32; i++) await Promise.resolve();
-    expect(game.created).toEqual([{ resumeAutoplayer: true }]);
+    await vi.waitFor(() => expect(game.created).toEqual([{ resumeAutoplayer: true }]));
     expect(game.characterSlot.value).toBeNull();
 
     /* The character's bag is gone with the page; a later page - a fresh
@@ -241,10 +248,10 @@ describe("the built plugin.js", () => {
     const game = await begin({
       onCreate: () => atCreate.push(structuredClone(game.installSlot.value)),
     });
-    const report = { key: "cedar", report: { key: "cedar", outcome: "death", cause: "a grey mold", maxDepth: 2, turn: 500 } };
+    const report = { key: "cedar", report: terminal({ key: "cedar", outcome: "death", cause: "a grey mold", maxDepth: 2, turn: 500 }) };
     game.listeners.get("run-end")?.(report as never);
     for (let i = 0; i < 32; i++) await Promise.resolve();
-    expect(game.created).toEqual([{ resumeAutoplayer: true }]);
+    await vi.waitFor(() => expect(game.created).toEqual([{ resumeAutoplayer: true }]));
     expect(atCreate).toHaveLength(1);
     const witnessed = atCreate[0] as Record<string, unknown>;
     /* The archive entry AND the flag were both standing when create ran -
@@ -275,7 +282,7 @@ describe("the built plugin.js", () => {
 
   it("starts nothing at a death it did not drive, and nothing without the roster seam", async () => {
     const drivenByOther = await begin({ ownsKeyboard: false });
-    drivenByOther.listeners.get("run-end")?.({ key: "cedar", report: { key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 } } as never);
+    drivenByOther.listeners.get("run-end")?.({ key: "cedar", report: terminal({ key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 }) } as never);
     for (let i = 0; i < 32; i++) await Promise.resolve();
     expect(drivenByOther.created).toEqual([]);
     /* T06: the run that ended is still recorded - a dead warrior is a dead
@@ -283,6 +290,7 @@ describe("the built plugin.js", () => {
      * not start. Since #34 the record is the install archive, so the
      * install slot carries the ended run and NO birth flag - the flag is
      * the one thing a non-driving death must never leave behind. */
+    await vi.waitFor(() => expect(said(drivenByOther)).toContain("not the one holding the keyboard"));
     const recorded = drivenByOther.installSlot.value as Record<string, unknown>;
     expect(recorded[BIRTH_FLAG_KEY]).toBeUndefined();
     expect(graveyardArchiveOf(recorded[GRAVEYARD_KEY] as JsonValue).runs).toEqual([
@@ -291,11 +299,12 @@ describe("the built plugin.js", () => {
     expect(drivenByOther.characterSlot.value).toBeNull();
 
     const noSeam = await begin({ saves: "absent" });
-    noSeam.listeners.get("run-end")?.({ key: "cedar", report: { key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 } } as never);
+    noSeam.listeners.get("run-end")?.({ key: "cedar", report: terminal({ key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 }) } as never);
     for (let i = 0; i < 32; i++) await Promise.resolve();
     expect(noSeam.created).toEqual([]);
     /* No roster seam starts nothing, but the run is recorded all the same:
      * the archive is not the roster seam. */
+    await vi.waitFor(() => expect(noSeam.installSlot.value).toHaveProperty(GRAVEYARD_KEY));
     const noSeamInstall = noSeam.installSlot.value as Record<string, unknown>;
     expect(graveyardArchiveOf(noSeamInstall[GRAVEYARD_KEY] as JsonValue).runs).toHaveLength(1);
     expect(noSeamInstall[BIRTH_FLAG_KEY]).toBeUndefined();
@@ -317,7 +326,7 @@ describe("the built plugin.js", () => {
 
     expect(game.listeners.has("run-end")).toBe(false);
     expect(game.listeners.has("dungeonlevel")).toBe(false);
-    game.listeners.get("run-end")?.({ key: "cedar", report: { key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 } } as never);
+    game.listeners.get("run-end")?.({ key: "cedar", report: terminal({ key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 }) } as never);
     await new Promise<void>((resolve) => setImmediate(resolve));
     expect(game.created).toEqual([]);
     expect(game.installSlot.value).toBeNull();
@@ -345,12 +354,12 @@ describe("the built plugin.js", () => {
     expect(gameB.listeners.has("run-end")).toBe(true);
 
     /* The newer loop is still the live one: a death restarts through it. */
-    gameB.listeners.get("run-end")?.({ key: "cedar", report: { key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 } } as never);
+    gameB.listeners.get("run-end")?.({ key: "cedar", report: terminal({ key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 }) } as never);
     for (let i = 0; i < 32; i++) await Promise.resolve();
-    expect(gameB.created).toEqual([{ resumeAutoplayer: true }]);
+    await vi.waitFor(() => expect(gameB.created).toEqual([{ resumeAutoplayer: true }]));
 
     /* And the older game's bus has no listener at all. */
-    gameA.listeners.get("run-end")?.({ key: "cedar", report: { key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 } } as never);
+    gameA.listeners.get("run-end")?.({ key: "cedar", report: terminal({ key: "cedar", outcome: "death", cause: "x", maxDepth: 1, turn: 1 }) } as never);
     for (let i = 0; i < 32; i++) await Promise.resolve();
     expect(gameA.created).toEqual([]);
   });
@@ -389,7 +398,7 @@ describe("the built plugin.js", () => {
 
     expect(game.savesMade()).toBe(1);
     expect(game.roster[0]!.name).toBe("M n0 c2d1"); /* lineage 0: a fresh install */
-    expect(game.created).toEqual([{ resumeAutoplayer: true }]);
+    await vi.waitFor(() => expect(game.created).toEqual([{ resumeAutoplayer: true }]));
     const install = game.installSlot.value as Record<string, unknown>;
     expect(install[BIRTH_FLAG_KEY]).toBe(true); /* standing for the next page's presenter */
     expect(said(game)).toContain("attained its stage");

@@ -3748,14 +3748,14 @@ function flatSvals() {
 }
 
 // src/item/deps.ts
-function isCursed(item) {
-  return item.borgAnalysis?.cursed ?? item.curses.length > 0;
+function isCursed(item2) {
+  return item2.borgAnalysis?.cursed ?? item2.curses.length > 0;
 }
-function isOneRing(item) {
-  return item.borgAnalysis?.oneRing ?? item.artifactName === "'The One Ring'";
+function isOneRing(item2) {
+  return item2.borgAnalysis?.oneRing ?? item2.artifactName === "'The One Ring'";
 }
-function hasRandomPower(item) {
-  return item.borgAnalysis?.randomPower ?? true;
+function hasRandomPower(item2) {
+  return item2.borgAnalysis?.randomPower ?? true;
 }
 function trait3(ctx, bi) {
   return ctx.world.self.trait[bi] ?? 0;
@@ -3779,39 +3779,39 @@ function danger(d) {
 function avoidance(d) {
   return d?.avoidance ?? 0;
 }
-function itemLevel(item, d) {
-  return d?.itemLevel ? d.itemLevel(item) : 0;
+function itemLevel(item2, d) {
+  return d?.itemLevel ? d.itemLevel(item2) : 0;
 }
-function isAware(item, d) {
-  return d?.isAware ? d.isAware(item) : item.aware;
+function isAware(item2, d) {
+  return d?.isAware ? d.isAware(item2) : item2.aware;
 }
-function isIdent(item, d) {
-  return d?.isIdent ? d.isIdent(item) : item.aware && !needsIdent(item);
+function isIdent(item2, d) {
+  return d?.isIdent ? d.isIdent(item2) : item2.aware && !needsIdent(item2);
 }
-function needsIdent(item, d) {
-  if (d?.needsIdent) return d.needsIdent(item);
-  return item.unknownRunes ?? (item.name?.includes("{??}") === true || item.inscription?.includes("??") === true);
+function needsIdent(item2, d) {
+  if (d?.needsIdent) return d.needsIdent(item2);
+  return item2.unknownRunes ?? (item2.name?.includes("{??}") === true || item2.inscription?.includes("??") === true);
 }
-function perItemValue(item) {
-  const facts = item.borgAnalysis;
-  if (isCursed(item) && !isOneRing(item)) return 0;
-  if (!item.aware) return guessedValue(item);
-  const fallback = item.number > 0 ? Math.trunc((item.value ?? 0) / item.number) : 0;
+function perItemValue(item2) {
+  const facts = item2.borgAnalysis;
+  if (isCursed(item2) && !isOneRing(item2)) return 0;
+  if (!item2.aware) return guessedValue(item2);
+  const fallback = item2.number > 0 ? Math.trunc((item2.value ?? 0) / item2.number) : 0;
   if (facts?.cost == null) return fallback;
-  if (!isIdent(item)) return facts.cost;
+  if (!isIdent(item2)) return facts.cost;
   let value = facts.cost;
   if (!value) return 0;
-  if (item.artifact) {
+  if (item2.artifact) {
     if (facts.artifactCost === null) return fallback;
     value = facts.artifactCost;
     if (!value) return 0;
   }
-  if (item.ego) {
+  if (item2.ego) {
     if (facts.egoCost === null) return fallback;
     if (!facts.egoCost) return 0;
     value += facts.egoCost;
   }
-  const ammo = [TV.SHOT, TV.ARROW, TV.BOLT].includes(item.tval);
+  const ammo = [TV.SHOT, TV.ARROW, TV.BOLT].includes(item2.tval);
   const armor = [
     TV.BOOTS,
     TV.GLOVES,
@@ -3822,15 +3822,15 @@ function perItemValue(item) {
     TV.SOFT_ARMOR,
     TV.HARD_ARMOR,
     TV.DRAG_ARMOR
-  ].includes(item.tval);
-  const weapon = [TV.BOW, TV.DIGGING, TV.HAFTED, TV.SWORD, TV.POLEARM].includes(item.tval);
-  const jewel = item.tval === TV.RING || item.tval === TV.AMULET;
-  if (item.tval === TV.WAND || item.tval === TV.STAFF) value += Math.trunc(value / 20) * item.pval;
-  else if (ammo || armor || weapon || jewel || item.tval === TV.LIGHT) {
-    if (item.pval < 0) return 0;
-    if (item.pval) {
+  ].includes(item2.tval);
+  const weapon = [TV.BOW, TV.DIGGING, TV.HAFTED, TV.SWORD, TV.POLEARM].includes(item2.tval);
+  const jewel = item2.tval === TV.RING || item2.tval === TV.AMULET;
+  if (item2.tval === TV.WAND || item2.tval === TV.STAFF) value += Math.trunc(value / 20) * item2.pval;
+  else if (ammo || armor || weapon || jewel || item2.tval === TV.LIGHT) {
+    if (item2.pval < 0) return 0;
+    if (item2.pval) {
       for (const flag of ["SUST_STR", "SUST_INT", "SUST_WIS", "SUST_DEX"]) {
-        if (item.flags.includes(flag)) value += item.pval * 200;
+        if (item2.flags.includes(flag)) value += item2.pval * 200;
       }
       for (const [code, multiplier] of [
         ["STEALTH", 100],
@@ -3844,27 +3844,27 @@ function perItemValue(item) {
         ["MOVES", 100],
         ["DAM_RED", 200]
       ]) {
-        value += (item.modifiers.find((modifier) => modifier.code === code)?.value ?? 0) * multiplier;
+        value += (item2.modifiers.find((modifier) => modifier.code === code)?.value ?? 0) * multiplier;
       }
-      value += Math.min(5, item.modifiers.find((modifier) => modifier.code === "BLOWS")?.value ?? 0) * 2e3;
+      value += Math.min(5, item2.modifiers.find((modifier) => modifier.code === "BLOWS")?.value ?? 0) * 2e3;
     }
   }
   if (jewel) {
-    if (item.tval === TV.RING && item.sval === SVAL.ring.dog) return 0;
-    if (item.toA < 0 || item.toH < 0 || item.toD < 0) return 0;
-    value += (item.toH + item.toD + item.toA) * 100;
+    if (item2.tval === TV.RING && item2.sval === SVAL.ring.dog) return 0;
+    if (item2.toA < 0 || item2.toH < 0 || item2.toD < 0) return 0;
+    value += (item2.toH + item2.toD + item2.toA) * 100;
   } else if (armor) {
-    if (item.toA < 0) return 0;
-    value += (item.toD + item.toA + (item.toH < 0 && item.toH > -5 ? 0 : item.toH)) * 100;
+    if (item2.toA < 0) return 0;
+    value += (item2.toD + item2.toA + (item2.toH < 0 && item2.toH > -5 ? 0 : item2.toH)) * 100;
   } else if (weapon || ammo) {
-    if (item.toH + item.toD < 0) return 0;
-    value += (item.toH + item.toD + (ammo ? 0 : item.toA)) * (ammo ? 5 : 100);
-    if (item.dd > facts.dd && item.ds === facts.ds) value += (item.dd - facts.dd) * item.ds * (ammo ? 5 : 200);
+    if (item2.toH + item2.toD < 0) return 0;
+    value += (item2.toH + item2.toD + (ammo ? 0 : item2.toA)) * (ammo ? 5 : 100);
+    if (item2.dd > facts.dd && item2.ds === facts.ds) value += (item2.dd - facts.dd) * item2.ds * (ammo ? 5 : 200);
   }
   return value;
 }
-function guessedValue(item) {
-  switch (item.tval) {
+function guessedValue(item2) {
+  switch (item2.tval) {
     case TV.FOOD:
       return 5;
     case TV.POTION:
@@ -3878,20 +3878,20 @@ function guessedValue(item) {
       return 90;
     case TV.RING:
     case TV.AMULET:
-      if (item.modifiers.some((modifier) => modifier.value < 0)) return 0;
-      return item.toA < 0 || item.toH < 0 || item.toD < 0 ? 0 : 45;
+      if (item2.modifiers.some((modifier) => modifier.value < 0)) return 0;
+      return item2.toA < 0 || item2.toH < 0 || item2.toD < 0 ? 0 : 45;
     default:
-      return item.toA < 0 || item.toH < 0 || item.toD < 0 ? 0 : 20;
+      return item2.toA < 0 || item2.toH < 0 || item2.toD < 0 ? 0 : 20;
   }
 }
-function canBrowse(item) {
-  return [TV.MAGIC_BOOK, TV.PRAYER_BOOK, TV.NATURE_BOOK, TV.SHADOW_BOOK, TV.OTHER_BOOK].includes(item.tval) && item.nameColor !== "slate";
+function canBrowse(item2) {
+  return [TV.MAGIC_BOOK, TV.PRAYER_BOOK, TV.NATURE_BOOK, TV.SHADOW_BOOK, TV.OTHER_BOOK].includes(item2.tval) && item2.nameColor !== "slate";
 }
 function packItems(ctx) {
-  const quiver = new Set(ctx.view.quiver?.().map((item) => item.handle) ?? []);
-  const ammo = (item) => [TV.SHOT, TV.ARROW, TV.BOLT].includes(item.tval);
-  const price = (item) => item.number > 0 ? Math.trunc((item.value ?? 0) / item.number) : 0;
-  return ctx.view.inventory().filter((item) => item.number > 0 && !quiver.has(item.handle)).sort((a, b) => {
+  const quiver = new Set(ctx.view.quiver?.().map((item2) => item2.handle) ?? []);
+  const ammo = (item2) => [TV.SHOT, TV.ARROW, TV.BOLT].includes(item2.tval);
+  const price = (item2) => item2.number > 0 ? Math.trunc((item2.value ?? 0) / item2.number) : 0;
+  return ctx.view.inventory().filter((item2) => item2.number > 0 && !quiver.has(item2.handle)).sort((a, b) => {
     if (canBrowse(a) !== canBrowse(b)) return canBrowse(a) ? -1 : 1;
     if (ammo(a) && ammo(b)) {
       const usable = trait3(ctx, 152 /* AMMO_TVAL */);
@@ -3905,25 +3905,25 @@ function packItems(ctx) {
     return ammo(a) ? price(a) - price(b) : price(b) - price(a);
   });
 }
-function itemValue(item, d) {
-  if (d?.itemValue) return d.itemValue(item);
-  return item.value ?? 0;
+function itemValue(item2, d) {
+  if (d?.itemValue) return d.itemValue(item2);
+  return item2.value ?? 0;
 }
 function clockOf(ctx, d) {
   return d?.clock ?? ctx.world.clock;
 }
 function borgSlot(ctx, tval, sval, d) {
   let best = null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (!isAware(item, d)) continue;
-    if (item.tval !== tval) continue;
-    if (item.sval !== sval) continue;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (!isAware(item2, d)) continue;
+    if (item2.tval !== tval) continue;
+    if (item2.sval !== sval) continue;
     if (best) {
-      if (item.number > best.number) continue;
-      if (item.pval < best.pval && item.number > best.number) continue;
+      if (item2.number > best.number) continue;
+      if (item2.pval < best.pval && item2.number > best.number) continue;
     }
-    best = item;
+    best = item2;
   }
   return best;
 }
@@ -4008,23 +4008,23 @@ function resolveOpts(opts = {}) {
 }
 
 // src/trait/item-util.ts
-function hasFlag2(item, name) {
-  return item.flags.includes(name);
+function hasFlag2(item2, name) {
+  return item2.flags.includes(name);
 }
-function mod(item, code) {
-  for (const m of item.modifiers) if (m.code === code) return m.value;
+function mod(item2, code) {
+  for (const m of item2.modifiers) if (m.code === code) return m.value;
   return 0;
 }
-function resLevel(item, element) {
-  for (const r of item.resists) if (r.element === element) return r.level;
+function resLevel(item2, element) {
+  for (const r of item2.resists) if (r.element === element) return r.level;
   return 0;
 }
-function hasBrand3(item, element) {
-  return item.brands.includes(`${element}_3`);
+function hasBrand3(item2, element) {
+  return item2.brands.includes(`${element}_3`);
 }
-function slayMult(item, race) {
+function slayMult(item2, race) {
   let m = 0;
-  for (const code of item.slays) {
+  for (const code of item2.slays) {
     const us = code.lastIndexOf("_");
     if (us < 0) continue;
     if (code.slice(0, us) !== race) continue;
@@ -4033,8 +4033,8 @@ function slayMult(item, race) {
   }
   return m;
 }
-function present(item) {
-  return !!item && item.number > 0;
+function present(item2) {
+  return !!item2 && item2.number > 0;
 }
 
 // src/item/magic.ts
@@ -4278,9 +4278,9 @@ function borgBookHandle(ctx, bidx) {
   const kind = ctx.bookKind?.(book.tval, book.name);
   if (!kind) return null;
   let handle = null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (item.tval === kind.tval && item.sval === kind.sval) handle = item.handle;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (item2.tval === kind.tval && item2.sval === kind.sval) handle = item2.handle;
   }
   return handle;
 }
@@ -4468,26 +4468,26 @@ function borgWeaponSwap(ctx, opts = {}, inventory = ctx.view.inventory()) {
   ];
   const R2 = resolveOpts(opts), t = ctx.world.self.trait;
   const trait4 = (bi) => t[bi] ?? 0;
-  const quiver = new Set(ctx.view.quiver?.().map((item) => item.handle) ?? []);
+  const quiver = new Set(ctx.view.quiver?.().map((item2) => item2.handle) ?? []);
   let best = NONE();
-  for (const item of inventory) {
-    if (quiver.has(item.handle) || !present(item) || !item.aware || !wearable.includes(item.tval)) continue;
-    if (trait4(106 /* MAXDEPTH */) < 50 && item.tval !== TV.DIGGING) continue;
-    if ((!R2.cfg.usesSwaps || trait4(106 /* MAXDEPTH */) >= 90) && item.tval !== TV.DIGGING)
+  for (const item2 of inventory) {
+    if (quiver.has(item2.handle) || !present(item2) || !item2.aware || !wearable.includes(item2.tval)) continue;
+    if (trait4(106 /* MAXDEPTH */) < 50 && item2.tval !== TV.DIGGING) continue;
+    if ((!R2.cfg.usesSwaps || trait4(106 /* MAXDEPTH */) >= 90) && item2.tval !== TV.DIGGING)
       return NONE();
-    if (!weapons.includes(item.tval)) continue;
-    if (item.curses.length && !opts.weaponSwap?.uncursable) continue;
+    if (!weapons.includes(item2.tval)) continue;
+    if (item2.curses.length && !opts.weaponSwap?.uncursable) continue;
     let digger = 0;
-    if (["DIG_1", "DIG_2", "DIG_3"].some((flag) => hasFlag2(item, flag))) {
-      if (perItemValue(item) <= 0 || isCursed(item)) continue;
+    if (["DIG_1", "DIG_2", "DIG_3"].some((flag) => hasFlag2(item2, flag))) {
+      if (perItemValue(item2) <= 0 || isCursed(item2)) continue;
       const wielded = ctx.view.equipment()[0];
       const stoneToMud = opts.spells ? R2.spells.spellLegalFail("TURN_STONE_TO_MUD", 40) : borgSpellLegalFail(ctx, 38 /* TURN_STONE_TO_MUD */, 40);
       if (!stoneToMud && !(wielded && ["DIG_1", "DIG_2", "DIG_3"].some((flag) => hasFlag2(wielded, flag))))
-        digger = item.pval;
+        digger = item2.pval;
     }
-    const damage = item.dd * item.ds * 25;
-    let value = -1 + damage * (trait4(146 /* BLOWS */) + 1) + (trait4(134 /* TOHIT */) + item.toH) * 100 + (trait4(135 /* TODAM */) + item.toD) * 75;
-    const slay = (name) => slayMult(item, name);
+    const damage = item2.dd * item2.ds * 25;
+    let value = -1 + damage * (trait4(146 /* BLOWS */) + 1) + (trait4(134 /* TOHIT */) + item2.toH) * 100 + (trait4(135 /* TODAM */) + item2.toD) * 75;
+    const slay = (name) => slayMult(item2, name);
     let dam = damage * 2 * trait4(146 /* BLOWS */);
     if (!trait4(193 /* WS_ANIMAL */) && !trait4(206 /* WB_ELEC */) && slay("ANIMAL"))
       value += Math.trunc(dam * slay("ANIMAL") / 2);
@@ -4511,14 +4511,14 @@ function borgWeaponSwap(ctx, opts = {}, inventory = ctx.view.inventory()) {
       ["COLD", 208 /* WB_COLD */, 3],
       ["POIS", 209 /* WB_POIS */, 3]
     ])
-      if (!trait4(bi) && hasBrand3(item, name)) value += Math.trunc(dam * factor / 2);
+      if (!trait4(bi) && hasBrand3(item2, name)) value += Math.trunc(dam * factor / 2);
     for (const [name, bi] of [["ORC", 197 /* WS_ORC */], ["TROLL", 198 /* WS_TROLL */]])
       if (!trait4(bi) && !trait4(194 /* WS_EVIL */) && slay(name)) value += Math.trunc(dam * slay(name) / 2);
     if (trait4(106 /* MAXDEPTH */) >= 25 && trait4(106 /* MAXDEPTH */) <= 40 && trait4(45 /* GOLD */) < 1e5 && digger)
       value += digger * 3500 + 1e3;
-    if (hasFlag2(item, "AGGRAVATE")) value -= 8e3;
-    if (item.curses.some((name) => BAD_CURSES.has(name) || !OTHER_CURSES.has(name))) value -= 1e5;
-    if (item.curses.length && opts.weaponSwap?.uncursable?.(item)) value -= 5e3;
+    if (hasFlag2(item2, "AGGRAVATE")) value -= 8e3;
+    if (item2.curses.some((name) => BAD_CURSES.has(name) || !OTHER_CURSES.has(name))) value -= 1e5;
+    if (item2.curses.length && opts.weaponSwap?.uncursable?.(item2)) value -= 5e3;
     for (const [flag, bi, weight] of [
       ["SLOW_DIGEST", 48 /* SDIG */, 10],
       ["REGEN", 50 /* REG */, 2e3],
@@ -4529,16 +4529,16 @@ function borgWeaponSwap(ctx, opts = {}, inventory = ctx.view.inventory()) {
       ["PROT_CONF", 78 /* RCONF */, 5e3],
       ["PROT_BLIND", 77 /* RBLIND */, 5e3]
     ])
-      if (!trait4(bi) && hasFlag2(item, flag)) value += weight;
-    if (!trait4(26 /* LIGHT */) && (hasFlag2(item, "LIGHT_2") || hasFlag2(item, "LIGHT_3"))) value += 2e3;
-    if (!trait4(85 /* HLIFE */) && trait4(36 /* MAXCLEVEL */) < 50 && hasFlag2(item, "HOLD_LIFE")) value += 2e3;
+      if (!trait4(bi) && hasFlag2(item2, flag)) value += weight;
+    if (!trait4(26 /* LIGHT */) && (hasFlag2(item2, "LIGHT_2") || hasFlag2(item2, "LIGHT_3"))) value += 2e3;
+    if (!trait4(85 /* HLIFE */) && trait4(36 /* MAXCLEVEL */) < 50 && hasFlag2(item2, "HOLD_LIFE")) value += 2e3;
     for (const [element, bi, weight] of [
       ["FIRE", 64 /* IFIRE */, 7e4],
       ["ACID", 65 /* IACID */, 3e4],
       ["COLD", 66 /* ICOLD */, 5e4],
       ["ELEC", 67 /* IELEC */, 25e3]
     ])
-      if (!trait4(bi) && resLevel(item, element) === 3) value += weight;
+      if (!trait4(bi) && resLevel(item2, element) === 3) value += weight;
     for (const [element, bi, weight] of [
       ["FIRE", 69 /* RFIRE */, 8e3],
       ["ACID", 72 /* RACID */, 6e3],
@@ -4554,20 +4554,20 @@ function borgWeaponSwap(ctx, opts = {}, inventory = ctx.view.inventory()) {
       ["NEXUS", 81 /* RNXUS */, 100],
       ["NETHER", 82 /* RNTHR */, 5500]
     ])
-      if (!trait4(bi) && resLevel(item, element) > 0) value += weight;
-    if (["FIRE", "ACID", "ELEC", "COLD"].every((element) => resLevel(item, element) > 0)) value += 1e4;
+      if (!trait4(bi) && resLevel(item2, element) > 0) value += weight;
+    if (["FIRE", "ACID", "ELEC", "COLD"].every((element) => resLevel(item2, element) > 0)) value += 1e4;
     if (trait4(106 /* MAXDEPTH */) >= 75 && !opts.weaponSwap?.tarrasqueDead) {
       for (const [element, bi] of [["COLD", 66 /* ICOLD */], ["FIRE", 64 /* IFIRE */]])
-        if (!trait4(bi) && resLevel(item, element) === 3) value += 9e4;
+        if (!trait4(bi) && resLevel(item2, element) === 3) value += 9e4;
     }
     for (const [element, bi, depth] of [
       ["NETHER", 82 /* RNTHR */, 55],
       ["CHAOS", 83 /* RKAOS */, 60],
       ["DISEN", 84 /* RDIS */, 60]
     ])
-      if (!trait4(bi) && trait4(106 /* MAXDEPTH */) + 1 >= depth && resLevel(item, element) > 0) value += 1e5;
+      if (!trait4(bi) && trait4(106 /* MAXDEPTH */) + 1 >= depth && resLevel(item2, element) > 0) value += 1e5;
     if (value <= 1e3 || value < best.value) continue;
-    best = { handle: item.handle, value };
+    best = { handle: item2.handle, value };
   }
   return best;
 }
@@ -4631,20 +4631,20 @@ function createStoreMemory() {
     moneyScumWare: -1
   };
 }
-function recordSold(mem, item, store2) {
+function recordSold(mem, item2, store2) {
   if (mem.soldNxt >= 9) mem.soldNxt = 0;
-  mem.soldPval[mem.soldNxt] = item.pval;
-  mem.soldTval[mem.soldNxt] = item.tval;
-  mem.soldSval[mem.soldNxt] = item.sval;
+  mem.soldPval[mem.soldNxt] = item2.pval;
+  mem.soldTval[mem.soldNxt] = item2.tval;
+  mem.soldSval[mem.soldNxt] = item2.sval;
   mem.soldStore[mem.soldNxt] = store2;
   mem.soldNum = mem.soldNxt;
   mem.soldNxt++;
 }
-function recordBought(mem, item, store2) {
+function recordBought(mem, item2, store2) {
   if (mem.boughtNxt >= 9) mem.boughtNxt = 0;
-  mem.boughtPval[mem.boughtNxt] = item.pval;
-  mem.boughtTval[mem.boughtNxt] = item.tval;
-  mem.boughtSval[mem.boughtNxt] = item.sval;
+  mem.boughtPval[mem.boughtNxt] = item2.pval;
+  mem.boughtTval[mem.boughtNxt] = item2.tval;
+  mem.boughtSval[mem.boughtNxt] = item2.sval;
   mem.boughtStore[mem.boughtNxt] = store2;
   mem.boughtNum = mem.boughtNxt;
   mem.boughtNxt++;
@@ -4658,54 +4658,54 @@ function storeInvenMax(d) {
 function packSize(d) {
   return d?.packSize ?? PACK_SIZE;
 }
-function maxStackOf(item, d) {
-  if (d?.maxStack) return d.maxStack(item);
-  return item.tval === TV.CHEST ? 1 : DEFAULT_MAX_STACK;
+function maxStackOf(item2, d) {
+  if (d?.maxStack) return d.maxStack(item2);
+  return item2.tval === TV.CHEST ? 1 : DEFAULT_MAX_STACK;
 }
-function iqty(item) {
-  return item.number;
+function iqty(item2) {
+  return item2.number;
 }
-function itemValue2(item, d) {
-  if (d?.itemValue) return d.itemValue(item);
-  return item.value ?? 0;
+function itemValue2(item2, d) {
+  if (d?.itemValue) return d.itemValue(item2);
+  return item2.value ?? 0;
 }
-function isAware2(item, d) {
-  return d?.isAware ? d.isAware(item) : true;
+function isAware2(item2, d) {
+  return d?.isAware ? d.isAware(item2) : true;
 }
-function isIdent2(item, d) {
-  return d?.isIdent ? d.isIdent(item) : true;
+function isIdent2(item2, d) {
+  return d?.isIdent ? d.isIdent(item2) : true;
 }
-function needsIdent2(item, d) {
-  return d?.needsIdent ? d.needsIdent(item) : false;
+function needsIdent2(item2, d) {
+  return d?.needsIdent ? d.needsIdent(item2) : false;
 }
-function noteNeedsId(item, d) {
-  if (d?.noteNeedsId) return d.noteNeedsId(item);
-  return needsIdent2(item, d);
+function noteNeedsId(item2, d) {
+  if (d?.noteNeedsId) return d.noteNeedsId(item2);
+  return needsIdent2(item2, d);
 }
-function worthId(item, d) {
-  return d?.worthId ? d.worthId(item) : false;
+function worthId(item2, d) {
+  return d?.worthId ? d.worthId(item2) : false;
 }
-function isOneRing2(item, d) {
-  if (d?.isOneRing) return d.isOneRing(item);
-  return item.artifactName === "The One Ring";
+function isOneRing2(item2, d) {
+  if (d?.isOneRing) return d.isOneRing(item2);
+  return item2.artifactName === "The One Ring";
 }
-function shopCost(item) {
-  return item.price ?? Infinity;
+function shopCost(item2) {
+  return item2.price ?? Infinity;
 }
 function isBookTval(tval) {
   return tval === TV.MAGIC_BOOK || tval === TV.PRAYER_BOOK || tval === TV.NATURE_BOOK || tval === TV.SHADOW_BOOK || tval === TV.OTHER_BOOK;
 }
-function canBrowse2(item, d) {
-  if (d?.canBrowse) return d.canBrowse(item);
-  return isBookTval(item.tval);
+function canBrowse2(item2, d) {
+  if (d?.canBrowse) return d.canBrowse(item2);
+  return isBookTval(item2.tval);
 }
 function packSlots(ctx, d) {
   const quiver = ctx.view.quiver?.();
-  const slots = quiver === void 0 ? st(ctx, 158 /* QUIVER_SLOTS */) : Math.ceil(quiver.reduce((count, item) => count + item.number * ([TV.SHOT, TV.ARROW, TV.BOLT].includes(item.tval) ? 1 : 5), 0) / 40);
+  const slots = quiver === void 0 ? st(ctx, 158 /* QUIVER_SLOTS */) : Math.ceil(quiver.reduce((count, item2) => count + item2.number * ([TV.SHOT, TV.ARROW, TV.BOLT].includes(item2.tval) ? 1 : 5), 0) / 40);
   return packSize(d) - slots;
 }
 function borgFirstEmptyInventorySlot(ctx, d) {
-  const quiver = new Set(ctx.view.quiver?.().map((item) => item.handle) ?? []);
+  const quiver = new Set(ctx.view.quiver?.().map((item2) => item2.handle) ?? []);
   const used = ctx.view.inventory().filter((i) => i.number > 0 && !quiver.has(i.handle)).length;
   return used < packSlots(ctx, d) ? used : -1;
 }
@@ -4725,18 +4725,18 @@ function homeWares(ctx) {
 function borgHomeFull(ctx, d) {
   return homeWares(ctx).length >= storeInvenMax(d);
 }
-function borgMinItemQuantity(ctx, item, d) {
+function borgMinItemQuantity(ctx, item2, d) {
   if (st(ctx, 45 /* GOLD */) < 250) return 1;
-  if (itemValue2(item, d) > 5) return 1;
-  if (!isAware2(item, d)) return 1;
-  switch (item.tval) {
+  if (itemValue2(item2, d) > 5) return 1;
+  if (!isAware2(item2, d)) return 1;
+  switch (item2.tval) {
     case TV.SHOT:
     case TV.ARROW:
     case TV.BOLT:
-      if (iqty(item) < 5) return iqty(item);
+      if (iqty(item2) < 5) return iqty(item2);
       return 5;
     case TV.FOOD:
-      if (iqty(item) < 3) return iqty(item);
+      if (iqty(item2) < 3) return iqty(item2);
       return 3;
     default:
       return 1;
@@ -4759,11 +4759,11 @@ function borgWearRecharge(ctx, d) {
   let worn = false;
   const pack = packItems(ctx);
   for (const [items, equipped] of [[pack, false], [ctx.view.equipment(), true]]) {
-    for (const item of items) {
-      if (!item || item.number <= 0 || !item.timeout) continue;
-      if (item.tval === TV.ROD && item.sval !== SVAL.rod.recall && trait3(ctx, 105 /* CDEPTH */) === 0) continue;
-      if (item.tval === TV.LIGHT && [SVAL.light.torch, SVAL.light.lantern].includes(item.sval)) continue;
-      best = item;
+    for (const item2 of items) {
+      if (!item2 || item2.number <= 0 || !item2.timeout) continue;
+      if (item2.tval === TV.ROD && item2.sval !== SVAL.rod.recall && trait3(ctx, 105 /* CDEPTH */) === 0) continue;
+      if (item2.tval === TV.LIGHT && [SVAL.light.torch, SVAL.light.lantern].includes(item2.sval)) continue;
+      best = item2;
       worn = equipped;
     }
   }
@@ -4773,8 +4773,8 @@ function borgWearRecharge(ctx, d) {
   d?.restAfterWear?.(best.handle);
   return ctx.act.wear(best.handle);
 }
-function wieldSlot(item) {
-  switch (item.tval) {
+function wieldSlot(item2) {
+  switch (item2.tval) {
     case TV.DIGGING:
     case TV.HAFTED:
     case TV.POLEARM:
@@ -4807,12 +4807,12 @@ function wieldSlot(item) {
       return null;
   }
 }
-function borgItemWorthId(item) {
-  return needsIdent(item) && wieldSlot(item) !== null;
+function borgItemWorthId(item2) {
+  return needsIdent(item2) && wieldSlot(item2) !== null;
 }
 function wornInSlot(ctx, slot) {
-  for (const item of ctx.view.equipment()) {
-    if (item && item.number > 0 && wieldSlot(item) === slot) return item;
+  for (const item2 of ctx.view.equipment()) {
+    if (item2 && item2.number > 0 && wieldSlot(item2) === slot) return item2;
   }
   return null;
 }
@@ -4839,8 +4839,8 @@ function borgBestStuff(ctx, shopNum, d, stores) {
     const pack = packItems(ctx);
     const home = homeWares(ctx);
     const candidates = [
-      ...pack.map((item) => ({ item, ref: { from: "gear", handle: item.handle }, home: false })),
-      ...home.map((item) => ({ item, ref: { from: "store", store: BORG_HOME, index: item.index }, home: true }))
+      ...pack.map((item2) => ({ item: item2, ref: { from: "gear", handle: item2.handle }, home: false })),
+      ...home.map((item2) => ({ item: item2, ref: { from: "store", store: BORG_HOME, index: item2.index }, home: true }))
     ];
     const equipment2 = ctx.view.equipment();
     const trial = BEST_ORDER.map(() => null);
@@ -4863,11 +4863,11 @@ function borgBestStuff(ctx, shopNum, d, stores) {
       }
       search(n + 1);
       for (const choice of candidates) {
-        const item = choice.item;
-        if (!item.number || !isAware(item, d) || !itemValue(item, d)) continue;
-        if (isCursed(item) && !d?.uncursable?.(item)) continue;
-        if (d?.randarts && item.artifact && !isIdent(item, d)) continue;
-        if (wieldSlot(item) !== BEST_SLOTS[n]) continue;
+        const item2 = choice.item;
+        if (!item2.number || !isAware(item2, d) || !itemValue(item2, d)) continue;
+        if (isCursed(item2) && !d?.uncursable?.(item2)) continue;
+        if (d?.randarts && item2.artifact && !isIdent(item2, d)) continue;
+        if (wieldSlot(item2) !== BEST_SLOTS[n]) continue;
         if (n === 9 && trial[8] === choice) continue;
         const worn = equipment2[BEST_ORDER[n]];
         if (worn && isOneRing2(worn, stores)) continue;
@@ -4892,26 +4892,26 @@ function borgBestStuff(ctx, shopNum, d, stores) {
     const choice = plan[n];
     if (!choice) continue;
     const worn = ctx.view.equipment()[BEST_ORDER[n]];
-    const matches = (item2) => item2.tval === choice.tval && item2.sval === choice.sval && item2.pval === choice.pval;
+    const matches = (item3) => item3.tval === choice.tval && item3.sval === choice.sval && item3.pval === choice.pval;
     if (choice.home) {
       if (worn?.number) {
         if (borgHomeFull(ctx, stores)) continue;
         return ctx.act.shopSell(worn.handle, worn.number);
       }
       if (borgInventoryFull(ctx, stores)) continue;
-      const item2 = homeWares(ctx).find(matches);
-      if (!item2) return null;
+      const item3 = homeWares(ctx).find(matches);
+      if (!item3) return null;
       choice.home = false;
-      return ctx.act.shopBuy(item2.index, 1);
+      return ctx.act.shopBuy(item3.index, 1);
     }
     if (worn?.number) {
       if (borgInventoryFull(ctx, stores)) continue;
       return ctx.act.takeoff(worn.handle);
     }
-    const item = [...packItems(ctx), ...ctx.view.equipment().filter((entry) => entry !== null)].find(matches);
-    if (!item) return null;
+    const item2 = [...packItems(ctx), ...ctx.view.equipment().filter((entry) => entry !== null)].find(matches);
+    if (!item2) return null;
     plan[n] = null;
-    return ctx.act.wear(item.handle);
+    return ctx.act.wear(item2.handle);
   }
   goal.doBest = plan.some((choice) => choice !== null);
   delete goal.bestItems;
@@ -4941,14 +4941,14 @@ function borgWearRings(ctx, d) {
   if (clockOf(ctx, d) - (d?.began ?? 0) > 2e3) return null;
   let best = null;
   let bestPower = 0;
-  for (const item of packItems(ctx)) {
-    if (!isAware(item, d) || itemValue(item, d) === 0) continue;
-    if (d?.randarts && item.artifact && !isIdent(item, d)) continue;
-    if (item.tval !== TV.RING) continue;
-    let p = d?.wearEval?.(item, LEFT_RING) ?? ctx.world.self.power;
-    if (isOneRing(item)) p = ctx.world.self.power * 2;
+  for (const item2 of packItems(ctx)) {
+    if (!isAware(item2, d) || itemValue(item2, d) === 0) continue;
+    if (d?.randarts && item2.artifact && !isIdent(item2, d)) continue;
+    if (item2.tval !== TV.RING) continue;
+    let p = d?.wearEval?.(item2, LEFT_RING) ?? ctx.world.self.power;
+    if (isOneRing(item2)) p = ctx.world.self.power * 2;
     if (best && p < bestPower) continue;
-    best = item;
+    best = item2;
     bestPower = p;
   }
   if (!best || bestPower <= ctx.world.self.power) return null;
@@ -4967,38 +4967,38 @@ function borgWearStuff(ctx, d) {
   const equipment2 = ctx.view.equipment();
   const left = equipment2[LEFT_RING];
   const right = equipment2[RIGHT_RING];
-  for (const item of packItems(ctx)) {
-    if (item.number <= 0) continue;
-    if (!isAware(item, d)) continue;
-    if (itemValue(item, d) <= 0) continue;
-    if ((d?.randarts ?? false) && item.artifact && !isIdent(item, d)) continue;
-    const slot = wieldSlot(item);
+  for (const item2 of packItems(ctx)) {
+    if (item2.number <= 0) continue;
+    if (!isAware(item2, d)) continue;
+    if (itemValue(item2, d) <= 0) continue;
+    if ((d?.randarts ?? false) && item2.artifact && !isIdent(item2, d)) continue;
+    const slot = wieldSlot(item2);
     if (!slot) continue;
     if (trait3(ctx, 122 /* ISENCUMB */)) {
       const worn = slot === "ring" ? left : wornInSlot(ctx, slot);
-      if (worn && mod(worn, "STR") > mod(item, "STR")) continue;
+      if (worn && mod(worn, "STR") > mod(item2, "STR")) continue;
     }
     const fullRings = slot === "ring" && !!left?.number && !!right?.number;
     if (!fullRings) {
-      let p = d?.wearEval ? d.wearEval(item, slot === "ring" ? LEFT_RING : void 0) : currentPower;
-      if (isOneRing(item) && !left?.tval) p = -99999;
+      let p = d?.wearEval ? d.wearEval(item2, slot === "ring" ? LEFT_RING : void 0) : currentPower;
+      if (isOneRing(item2) && !left?.tval) p = -99999;
       if (slot === "ring") {
-        const afterDanger = d?.wearDanger?.(item, LEFT_RING);
+        const afterDanger = d?.wearDanger?.(item2, LEFT_RING);
         if (afterDanger == null || danger(d) < afterDanger) continue;
       }
       if (p <= bestPower + 50) continue;
       bestPower = p;
-      best = item;
+      best = item2;
     }
-    if (ctx.rng.randint0(100) === 10 || isOneRing(item)) {
+    if (ctx.rng.randint0(100) === 10 || isOneRing(item2)) {
       if (!fullRings) continue;
       for (const ringSlot of [RIGHT_RING, LEFT_RING]) {
-        let p = d?.wearEval?.(item, ringSlot) ?? currentPower;
-        const afterDanger = d?.wearDanger?.(item, ringSlot);
-        if (ringSlot === LEFT_RING && isOneRing(item)) p = -99999;
+        let p = d?.wearEval?.(item2, ringSlot) ?? currentPower;
+        const afterDanger = d?.wearDanger?.(item2, ringSlot);
+        if (ringSlot === LEFT_RING && isOneRing(item2)) p = -99999;
         if (p < bestPower) continue;
         if (afterDanger == null || danger(d) <= afterDanger && danger(d) !== 0) continue;
-        best = item;
+        best = item2;
         bestPower = p;
         bestRingSlot = ringSlot;
       }
@@ -5974,9 +5974,9 @@ function borgTwitchy(ctx, flow) {
     w.self.goal.g.x = gx;
     w.self.goal.g.y = gy;
     if (!inBoundsFully(gx, gy)) continue;
-    const grid = w.map.at(gx, gy);
-    if (grid.feat >= FEAT.SECRET && grid.feat <= FEAT.PERM) continue;
-    if (grid.kill && trait(w, 113 /* ISAFRAID */)) continue;
+    const grid2 = w.map.at(gx, gy);
+    if (grid2.feat >= FEAT.SECRET && grid2.feat <= FEAT.PERM) continue;
+    if (grid2.kill && trait(w, 113 /* ISAFRAID */)) continue;
     break;
   }
   if (!count) {
@@ -5986,11 +5986,11 @@ function borgTwitchy(ctx, flow) {
       const lx = w.self.c.x + ddx[dir];
       const ly = w.self.c.y + ddy[dir];
       if (!inBoundsFully(lx, ly)) continue;
-      const grid = w.map.at(lx, ly);
-      if (grid.feat >= FEAT.SECRET && grid.feat <= FEAT.PERM) {
-        if (!trait(w, 113 /* ISAFRAID */) || grid.feat === FEAT.PERM) continue;
+      const grid2 = w.map.at(lx, ly);
+      if (grid2.feat >= FEAT.SECRET && grid2.feat <= FEAT.PERM) {
+        if (!trait(w, 113 /* ISAFRAID */) || grid2.feat === FEAT.PERM) continue;
       }
-      if (grid.kill && trait(w, 113 /* ISAFRAID */)) continue;
+      if (grid2.kill && trait(w, 113 /* ISAFRAID */)) continue;
       allWalls = false;
       break;
     }
@@ -6987,8 +6987,8 @@ function borgNotice(ctx, opts = {}) {
   borgNoticePlayer(c);
   borgNoticeEquipment(c);
   borgNoticeInventory(c);
-  const carried = new Set(c.inven.filter(present).map((item) => item.handle));
-  t[158 /* QUIVER_SLOTS */] = (view.quiver?.() ?? []).filter((item) => present(item) && carried.has(item.handle)).length;
+  const carried = new Set(c.inven.filter(present).map((item2) => item2.handle));
+  t[158 /* QUIVER_SLOTS */] = (view.quiver?.() ?? []).filter((item2) => present(item2) && carried.has(item2.handle)).length;
   finishNotice(c);
   ctx.world.self.trait = t;
   d.weaponSwapOpts = {
@@ -7081,106 +7081,106 @@ function borgNoticeEquipment(c) {
   if (pf.includes("SUST_DEX")) t[23 /* SDEX */] = 1;
   if (pf.includes("SUST_CON")) t[24 /* SCON */] = 1;
   for (let i = 0; i < equip.length; i++) {
-    const item = equip[i];
-    if (!present(item)) continue;
-    if (item.curses.length > 0) {
+    const item2 = equip[i];
+    if (!present(item2)) continue;
+    if (item2.curses.length > 0) {
       t[160 /* WHERE_CURSED */] = t[160 /* WHERE_CURSED */] | BORG_EQUIP;
       if (!t[159 /* FIRST_CURSED */]) t[159 /* FIRST_CURSED */] = i + 1;
     }
-    t[260 /* WEIGHT */] = t[260 /* WEIGHT */] + item.weight * item.number;
+    t[260 /* WEIGHT */] = t[260 /* WEIGHT */] + item2.weight * item2.number;
     const known = c.R.frame.statKnown;
-    t[5 /* ASTR */] = t[5 /* ASTR */] + mod(item, "STR") * (known ? known[0] ?? 0 : 1);
-    t[6 /* AINT */] = t[6 /* AINT */] + mod(item, "INT") * (known ? known[1] ?? 0 : 1);
-    t[7 /* AWIS */] = t[7 /* AWIS */] + mod(item, "WIS") * (known ? known[2] ?? 0 : 1);
-    t[8 /* ADEX */] = t[8 /* ADEX */] + mod(item, "DEX") * (known ? known[3] ?? 0 : 1);
-    t[9 /* ACON */] = t[9 /* ACON */] + mod(item, "CON") * (known ? known[4] ?? 0 : 1);
-    t[193 /* WS_ANIMAL */] = slayMult(item, "ANIMAL");
-    t[194 /* WS_EVIL */] = slayMult(item, "EVIL");
-    t[195 /* WS_UNDEAD */] = slayMult(item, "UNDEAD");
-    t[196 /* WS_DEMON */] = slayMult(item, "DEMON");
-    t[197 /* WS_ORC */] = slayMult(item, "ORC");
-    t[198 /* WS_TROLL */] = slayMult(item, "TROLL");
-    t[199 /* WS_GIANT */] = slayMult(item, "GIANT");
-    t[200 /* WS_DRAGON */] = slayMult(item, "DRAGON");
-    if (hasBrand3(item, "ACID")) t[205 /* WB_ACID */] = 1;
-    if (hasBrand3(item, "ELEC")) t[206 /* WB_ELEC */] = 1;
-    if (hasBrand3(item, "FIRE")) t[207 /* WB_FIRE */] = 1;
-    if (hasBrand3(item, "COLD")) t[208 /* WB_COLD */] = 1;
-    if (hasBrand3(item, "POIS")) t[209 /* WB_POIS */] = 1;
-    if (hasFlag2(item, "IMPACT")) t[204 /* W_IMPACT */] = 1;
-    t[52 /* INFRA */] = t[52 /* INFRA */] + mod(item, "INFRA");
-    t[58 /* STL */] = t[58 /* STL */] + mod(item, "STEALTH");
-    t[59 /* SRCH */] = t[59 /* SRCH */] + mod(item, "SEARCH") * 5;
+    t[5 /* ASTR */] = t[5 /* ASTR */] + mod(item2, "STR") * (known ? known[0] ?? 0 : 1);
+    t[6 /* AINT */] = t[6 /* AINT */] + mod(item2, "INT") * (known ? known[1] ?? 0 : 1);
+    t[7 /* AWIS */] = t[7 /* AWIS */] + mod(item2, "WIS") * (known ? known[2] ?? 0 : 1);
+    t[8 /* ADEX */] = t[8 /* ADEX */] + mod(item2, "DEX") * (known ? known[3] ?? 0 : 1);
+    t[9 /* ACON */] = t[9 /* ACON */] + mod(item2, "CON") * (known ? known[4] ?? 0 : 1);
+    t[193 /* WS_ANIMAL */] = slayMult(item2, "ANIMAL");
+    t[194 /* WS_EVIL */] = slayMult(item2, "EVIL");
+    t[195 /* WS_UNDEAD */] = slayMult(item2, "UNDEAD");
+    t[196 /* WS_DEMON */] = slayMult(item2, "DEMON");
+    t[197 /* WS_ORC */] = slayMult(item2, "ORC");
+    t[198 /* WS_TROLL */] = slayMult(item2, "TROLL");
+    t[199 /* WS_GIANT */] = slayMult(item2, "GIANT");
+    t[200 /* WS_DRAGON */] = slayMult(item2, "DRAGON");
+    if (hasBrand3(item2, "ACID")) t[205 /* WB_ACID */] = 1;
+    if (hasBrand3(item2, "ELEC")) t[206 /* WB_ELEC */] = 1;
+    if (hasBrand3(item2, "FIRE")) t[207 /* WB_FIRE */] = 1;
+    if (hasBrand3(item2, "COLD")) t[208 /* WB_COLD */] = 1;
+    if (hasBrand3(item2, "POIS")) t[209 /* WB_POIS */] = 1;
+    if (hasFlag2(item2, "IMPACT")) t[204 /* W_IMPACT */] = 1;
+    t[52 /* INFRA */] = t[52 /* INFRA */] + mod(item2, "INFRA");
+    t[58 /* STL */] = t[58 /* STL */] + mod(item2, "STEALTH");
+    t[59 /* SRCH */] = t[59 /* SRCH */] + mod(item2, "SEARCH") * 5;
     let dig = 0;
-    if (hasFlag2(item, "DIG_1")) dig = 1;
-    else if (hasFlag2(item, "DIG_2")) dig = 2;
-    else if (hasFlag2(item, "DIG_3")) dig = 3;
-    dig += mod(item, "TUNNEL");
+    if (hasFlag2(item2, "DIG_1")) dig = 1;
+    else if (hasFlag2(item2, "DIG_2")) dig = 2;
+    else if (hasFlag2(item2, "DIG_3")) dig = 3;
+    dig += mod(item2, "TUNNEL");
     t[63 /* DIG */] = t[63 /* DIG */] + dig * 20;
-    t[44 /* SPEED */] = t[44 /* SPEED */] + mod(item, "SPEED");
-    if (i !== SLOT_WIELD) t[147 /* EXTRA_BLOWS */] = t[147 /* EXTRA_BLOWS */] + mod(item, "BLOWS");
-    extraShots += mod(item, "SHOTS");
-    extraMight += mod(item, "MIGHT");
-    if (i !== SLOT_LIGHT || hasFlag2(item, "NO_FUEL") || item.timeout !== 0) {
-      t[26 /* LIGHT */] = t[26 /* LIGHT */] + mod(item, "LIGHT");
-      if (hasFlag2(item, "LIGHT_2")) t[26 /* LIGHT */] = t[26 /* LIGHT */] + 2;
-      else if (hasFlag2(item, "LIGHT_3")) t[26 /* LIGHT */] = t[26 /* LIGHT */] + 3;
-      if (mod(item, "LIGHT") > 0 && c.cls === CLASS_NECROMANCER) t[26 /* LIGHT */] = t[26 /* LIGHT */] - 1;
-      t[26 /* LIGHT */] = t[26 /* LIGHT */] + mod(item, "LIGHT");
+    t[44 /* SPEED */] = t[44 /* SPEED */] + mod(item2, "SPEED");
+    if (i !== SLOT_WIELD) t[147 /* EXTRA_BLOWS */] = t[147 /* EXTRA_BLOWS */] + mod(item2, "BLOWS");
+    extraShots += mod(item2, "SHOTS");
+    extraMight += mod(item2, "MIGHT");
+    if (i !== SLOT_LIGHT || hasFlag2(item2, "NO_FUEL") || item2.timeout !== 0) {
+      t[26 /* LIGHT */] = t[26 /* LIGHT */] + mod(item2, "LIGHT");
+      if (hasFlag2(item2, "LIGHT_2")) t[26 /* LIGHT */] = t[26 /* LIGHT */] + 2;
+      else if (hasFlag2(item2, "LIGHT_3")) t[26 /* LIGHT */] = t[26 /* LIGHT */] + 3;
+      if (mod(item2, "LIGHT") > 0 && c.cls === CLASS_NECROMANCER) t[26 /* LIGHT */] = t[26 /* LIGHT */] - 1;
+      t[26 /* LIGHT */] = t[26 /* LIGHT */] + mod(item2, "LIGHT");
     }
-    t[46 /* MOD_MOVES */] = t[46 /* MOD_MOVES */] + mod(item, "MOVES");
-    t[47 /* DAM_RED */] = t[47 /* DAM_RED */] + mod(item, "DAM_RED");
-    if (hasFlag2(item, "SLOW_DIGEST")) t[48 /* SDIG */] = 1;
-    if (hasFlag2(item, "AGGRAVATE")) t[174 /* CRSAGRV */] = 1;
-    if (hasFlag2(item, "IMPAIR_HP")) t[182 /* CRSHPIMP */] = 1;
-    if (hasFlag2(item, "IMPAIR_MANA")) t[183 /* CRSMPIMP */] = 1;
-    if (hasFlag2(item, "AFRAID")) t[186 /* CRSFEAR */] = 1;
-    if (hasFlag2(item, "DRAIN_EXP")) t[187 /* CRSDRAIN_XP */] = 1;
-    applyCurses(t, item);
-    if (resLevel(item, "FIRE") === -1) t[188 /* CRSFVULN */] = 1;
-    if (resLevel(item, "ACID") === -1) t[191 /* CRSAVULN */] = 1;
-    if (resLevel(item, "COLD") === -1) t[190 /* CRSCVULN */] = 1;
-    if (resLevel(item, "ELEC") === -1) t[189 /* CRSEVULN */] = 1;
-    if (hasFlag2(item, "REGEN")) t[50 /* REG */] = 1;
-    if (hasFlag2(item, "TELEPATHY")) t[37 /* ESP */] = 1;
-    if (hasFlag2(item, "SEE_INVIS")) t[51 /* SINV */] = 1;
-    if (hasFlag2(item, "FEATHER")) t[49 /* FEATH */] = 1;
-    if (hasFlag2(item, "FREE_ACT")) t[86 /* FRACT */] = 1;
-    if (hasFlag2(item, "HOLD_LIFE")) t[85 /* HLIFE */] = 1;
-    if (hasFlag2(item, "PROT_CONF")) t[78 /* RCONF */] = 1;
-    if (hasFlag2(item, "PROT_BLIND")) t[77 /* RBLIND */] = 1;
-    if (resLevel(item, "FIRE") === 3) t[64 /* IFIRE */] = t[69 /* RFIRE */] = 1;
-    if (resLevel(item, "ACID") === 3) t[65 /* IACID */] = t[72 /* RACID */] = 1;
-    if (resLevel(item, "COLD") === 3) t[66 /* ICOLD */] = t[70 /* RCOLD */] = 1;
-    if (resLevel(item, "ELEC") === 3) t[67 /* IELEC */] = t[71 /* RELEC */] = 1;
-    if (resLevel(item, "ACID") > 0) t[72 /* RACID */] = 1;
-    if (resLevel(item, "ELEC") > 0) t[71 /* RELEC */] = 1;
-    if (resLevel(item, "FIRE") > 0) t[69 /* RFIRE */] = 1;
-    if (resLevel(item, "COLD") > 0) t[70 /* RCOLD */] = 1;
-    if (resLevel(item, "POIS") > 0) t[73 /* RPOIS */] = 1;
-    if (resLevel(item, "SOUND") > 0) t[79 /* RSND */] = 1;
-    if (resLevel(item, "LIGHT") > 0) t[75 /* RLITE */] = 1;
-    if (resLevel(item, "DARK") > 0) t[76 /* RDARK */] = 1;
-    if (resLevel(item, "CHAOS") > 0) t[83 /* RKAOS */] = 1;
-    if (resLevel(item, "DISEN") > 0) t[84 /* RDIS */] = 1;
-    if (resLevel(item, "SHARD") > 0) t[80 /* RSHRD */] = 1;
-    if (resLevel(item, "NEXUS") > 0) t[81 /* RNXUS */] = 1;
-    if (resLevel(item, "NETHER") > 0) t[82 /* RNTHR */] = 1;
-    if (hasFlag2(item, "SUST_STR")) t[20 /* SSTR */] = 1;
-    if (hasFlag2(item, "SUST_INT")) t[21 /* SINT */] = 1;
-    if (hasFlag2(item, "SUST_WIS")) t[22 /* SWIS */] = 1;
-    if (hasFlag2(item, "SUST_DEX")) t[23 /* SDEX */] = 1;
-    if (hasFlag2(item, "SUST_CON")) t[24 /* SCON */] = 1;
-    const bonuses = (resLevel(item, "POIS") > 0 ? 1 : 0) + (resLevel(item, "SOUND") > 0 ? 1 : 0) + (resLevel(item, "SHARD") > 0 ? 1 : 0) + (resLevel(item, "NEXUS") > 0 ? 1 : 0) + (resLevel(item, "NETHER") > 0 ? 1 : 0) + (resLevel(item, "CHAOS") > 0 ? 1 : 0) + (resLevel(item, "DISEN") > 0 ? 1 : 0) + (resLevel(item, "FIRE") > 0 && resLevel(item, "COLD") > 0 && resLevel(item, "ELEC") > 0 && resLevel(item, "ACID") > 0 ? 1 : 0) + (hasFlag2(item, "SUST_STR") && hasFlag2(item, "SUST_INT") && hasFlag2(item, "SUST_WIS") && hasFlag2(item, "SUST_DEX") && hasFlag2(item, "SUST_CON") ? 1 : 0);
+    t[46 /* MOD_MOVES */] = t[46 /* MOD_MOVES */] + mod(item2, "MOVES");
+    t[47 /* DAM_RED */] = t[47 /* DAM_RED */] + mod(item2, "DAM_RED");
+    if (hasFlag2(item2, "SLOW_DIGEST")) t[48 /* SDIG */] = 1;
+    if (hasFlag2(item2, "AGGRAVATE")) t[174 /* CRSAGRV */] = 1;
+    if (hasFlag2(item2, "IMPAIR_HP")) t[182 /* CRSHPIMP */] = 1;
+    if (hasFlag2(item2, "IMPAIR_MANA")) t[183 /* CRSMPIMP */] = 1;
+    if (hasFlag2(item2, "AFRAID")) t[186 /* CRSFEAR */] = 1;
+    if (hasFlag2(item2, "DRAIN_EXP")) t[187 /* CRSDRAIN_XP */] = 1;
+    applyCurses(t, item2);
+    if (resLevel(item2, "FIRE") === -1) t[188 /* CRSFVULN */] = 1;
+    if (resLevel(item2, "ACID") === -1) t[191 /* CRSAVULN */] = 1;
+    if (resLevel(item2, "COLD") === -1) t[190 /* CRSCVULN */] = 1;
+    if (resLevel(item2, "ELEC") === -1) t[189 /* CRSEVULN */] = 1;
+    if (hasFlag2(item2, "REGEN")) t[50 /* REG */] = 1;
+    if (hasFlag2(item2, "TELEPATHY")) t[37 /* ESP */] = 1;
+    if (hasFlag2(item2, "SEE_INVIS")) t[51 /* SINV */] = 1;
+    if (hasFlag2(item2, "FEATHER")) t[49 /* FEATH */] = 1;
+    if (hasFlag2(item2, "FREE_ACT")) t[86 /* FRACT */] = 1;
+    if (hasFlag2(item2, "HOLD_LIFE")) t[85 /* HLIFE */] = 1;
+    if (hasFlag2(item2, "PROT_CONF")) t[78 /* RCONF */] = 1;
+    if (hasFlag2(item2, "PROT_BLIND")) t[77 /* RBLIND */] = 1;
+    if (resLevel(item2, "FIRE") === 3) t[64 /* IFIRE */] = t[69 /* RFIRE */] = 1;
+    if (resLevel(item2, "ACID") === 3) t[65 /* IACID */] = t[72 /* RACID */] = 1;
+    if (resLevel(item2, "COLD") === 3) t[66 /* ICOLD */] = t[70 /* RCOLD */] = 1;
+    if (resLevel(item2, "ELEC") === 3) t[67 /* IELEC */] = t[71 /* RELEC */] = 1;
+    if (resLevel(item2, "ACID") > 0) t[72 /* RACID */] = 1;
+    if (resLevel(item2, "ELEC") > 0) t[71 /* RELEC */] = 1;
+    if (resLevel(item2, "FIRE") > 0) t[69 /* RFIRE */] = 1;
+    if (resLevel(item2, "COLD") > 0) t[70 /* RCOLD */] = 1;
+    if (resLevel(item2, "POIS") > 0) t[73 /* RPOIS */] = 1;
+    if (resLevel(item2, "SOUND") > 0) t[79 /* RSND */] = 1;
+    if (resLevel(item2, "LIGHT") > 0) t[75 /* RLITE */] = 1;
+    if (resLevel(item2, "DARK") > 0) t[76 /* RDARK */] = 1;
+    if (resLevel(item2, "CHAOS") > 0) t[83 /* RKAOS */] = 1;
+    if (resLevel(item2, "DISEN") > 0) t[84 /* RDIS */] = 1;
+    if (resLevel(item2, "SHARD") > 0) t[80 /* RSHRD */] = 1;
+    if (resLevel(item2, "NEXUS") > 0) t[81 /* RNXUS */] = 1;
+    if (resLevel(item2, "NETHER") > 0) t[82 /* RNTHR */] = 1;
+    if (hasFlag2(item2, "SUST_STR")) t[20 /* SSTR */] = 1;
+    if (hasFlag2(item2, "SUST_INT")) t[21 /* SINT */] = 1;
+    if (hasFlag2(item2, "SUST_WIS")) t[22 /* SWIS */] = 1;
+    if (hasFlag2(item2, "SUST_DEX")) t[23 /* SDEX */] = 1;
+    if (hasFlag2(item2, "SUST_CON")) t[24 /* SCON */] = 1;
+    const bonuses = (resLevel(item2, "POIS") > 0 ? 1 : 0) + (resLevel(item2, "SOUND") > 0 ? 1 : 0) + (resLevel(item2, "SHARD") > 0 ? 1 : 0) + (resLevel(item2, "NEXUS") > 0 ? 1 : 0) + (resLevel(item2, "NETHER") > 0 ? 1 : 0) + (resLevel(item2, "CHAOS") > 0 ? 1 : 0) + (resLevel(item2, "DISEN") > 0 ? 1 : 0) + (resLevel(item2, "FIRE") > 0 && resLevel(item2, "COLD") > 0 && resLevel(item2, "ELEC") > 0 && resLevel(item2, "ACID") > 0 ? 1 : 0) + (hasFlag2(item2, "SUST_STR") && hasFlag2(item2, "SUST_INT") && hasFlag2(item2, "SUST_WIS") && hasFlag2(item2, "SUST_DEX") && hasFlag2(item2, "SUST_CON") ? 1 : 0);
     if (bonuses > 2) t[258 /* MULTIPLE_BONUSES */] = t[258 /* MULTIPLE_BONUSES */] + bonuses;
-    let toA = item.toA;
-    if (!item.artifact && !item.ego && item.ac >= 1 && toA + item.ac <= 0) {
+    let toA = item2.toA;
+    if (!item2.artifact && !item2.ego && item2.ac >= 1 && toA + item2.ac <= 0) {
       toA = -20;
     }
-    t[133 /* ARMOR */] = t[133 /* ARMOR */] + item.ac + toA;
+    t[133 /* ARMOR */] = t[133 /* ARMOR */] + item2.ac + toA;
     if (i === SLOT_WIELD || i === SLOT_BOW) continue;
-    t[134 /* TOHIT */] = t[134 /* TOHIT */] + item.toH;
-    t[135 /* TODAM */] = t[135 /* TODAM */] + item.toD;
+    t[134 /* TOHIT */] = t[134 /* TOHIT */] + item2.toH;
+    t[135 /* TODAM */] = t[135 /* TODAM */] + item2.toD;
   }
   if (c.cls === CLASS_NECROMANCER && t[26 /* LIGHT */] <= 0) t[26 /* LIGHT */] = 1;
   if (t[175 /* CRSVULN */]) {
@@ -7306,31 +7306,31 @@ function borgNoticeEquipment(c) {
   }
   const enchLimit = c.R.cfg.enchantLimit;
   for (let i = SLOT_WIELD; i <= SLOT_BOW; i++) {
-    const item = equip[i];
-    if (!present(item)) continue;
-    if (item.curses.length > 0) continue;
-    if (i === SLOT_BOW && t[154 /* AMMO_POWER */] < 3 && !item.artifact && !item.ego)
+    const item2 = equip[i];
+    if (!present(item2)) continue;
+    if (item2.curses.length > 0) continue;
+    if (i === SLOT_BOW && t[154 /* AMMO_POWER */] < 3 && !item2.artifact && !item2.ego)
       continue;
     const canEnch = c.R.spells.spellLegalFail("ENCHANT_WEAPON", 65) || t[236 /* AENCH_SWEP */] >= 1;
     const hLimit = canEnch ? enchLimit : 8;
-    if (item.toH < hLimit) t[241 /* NEED_ENCHANT_TO_H */] = t[241 /* NEED_ENCHANT_TO_H */] + hLimit - item.toH;
-    if (item.toD < hLimit) t[242 /* NEED_ENCHANT_TO_D */] = t[242 /* NEED_ENCHANT_TO_D */] + hLimit - item.toD;
+    if (item2.toH < hLimit) t[241 /* NEED_ENCHANT_TO_H */] = t[241 /* NEED_ENCHANT_TO_H */] + hLimit - item2.toH;
+    if (item2.toD < hLimit) t[242 /* NEED_ENCHANT_TO_D */] = t[242 /* NEED_ENCHANT_TO_D */] + hLimit - item2.toD;
   }
   for (let i = SLOT_BODY; i <= SLOT_FEET; i++) {
-    const item = equip[i];
-    if (!present(item)) continue;
-    if (item.curses.length > 0) continue;
+    const item2 = equip[i];
+    if (!present(item2)) continue;
+    if (item2.curses.length > 0) continue;
     const canEnch = c.R.spells.spellLegalFail("ENCHANT_ARMOUR", 65) || t[238 /* AENCH_SARM */] >= 1;
     const aLimit = canEnch ? enchLimit : 8;
-    if (item.toA < aLimit) t[240 /* NEED_ENCHANT_TO_A */] = t[240 /* NEED_ENCHANT_TO_A */] + aLimit - item.toA;
+    if (item2.toA < aLimit) t[240 /* NEED_ENCHANT_TO_A */] = t[240 /* NEED_ENCHANT_TO_A */] + aLimit - item2.toA;
   }
   if (t[105 /* CDEPTH */] === 0 && c.R.spells.spellLegal("SENSE_INVISIBLE"))
     t[51 /* SINV */] = 1;
   if (t[57 /* SAV */] >= 100) t[86 /* FRACT */] = 1;
   if (t[57 /* SAV */] >= 100 && t[76 /* RDARK */] && t[75 /* RLITE */]) t[77 /* RBLIND */] = 1;
 }
-function applyCurses(t, item) {
-  for (const name of item.curses) {
+function applyCurses(t, item2) {
+  for (const name of item2.curses) {
     switch (name) {
       case "vulnerability":
         t[175 /* CRSVULN */] = 1;
@@ -7426,97 +7426,97 @@ function borgNoticeInventory(c) {
   const { t, d, inven, R: R2 } = c;
   const sv = R2.svals;
   const equip = c.equip;
-  for (const item of inven) {
-    if (!present(item)) continue;
-    if (isAmmoTval(item.tval)) {
-      noticeAmmo(c, item);
+  for (const item2 of inven) {
+    if (!present(item2)) continue;
+    if (isAmmoTval(item2.tval)) {
+      noticeAmmo(c, item2);
       continue;
     }
-    t[260 /* WEIGHT */] = t[260 /* WEIGHT */] + item.weight * item.number;
-    if (item.curses.length > 0) {
+    t[260 /* WEIGHT */] = t[260 /* WEIGHT */] + item2.weight * item2.number;
+    if (item2.curses.length > 0) {
       t[160 /* WHERE_CURSED */] = t[160 /* WHERE_CURSED */] | BORG_INVEN;
       if (!t[159 /* FIRST_CURSED */]) t[159 /* FIRST_CURSED */] = 1;
     }
-    creditHas(c, item);
-    switch (item.tval) {
+    creditHas(c, item2);
+    switch (item2.tval) {
       case TV_MUSHROOM:
       case TV_FOOD:
-        noticeFood(c, item);
+        noticeFood(c, item2);
         break;
       case TV_POTION:
-        if (item.sval === sv.potion_healing) t[214 /* AHEAL */] = t[214 /* AHEAL */] + item.number;
-        else if (item.sval === sv.potion_star_healing) t[215 /* AEZHEAL */] = t[215 /* AEZHEAL */] + item.number;
-        else if (item.sval === sv.potion_life) t[216 /* ALIFE */] = t[216 /* ALIFE */] + item.number;
-        else if (item.sval === sv.potion_cure_critical) t[231 /* ACCW */] = t[231 /* ACCW */] + item.number;
-        else if (item.sval === sv.potion_cure_serious) t[232 /* ACSW */] = t[232 /* ACSW */] + item.number;
-        else if (item.sval === sv.potion_cure_light) t[233 /* ACLW */] = t[233 /* ACLW */] + item.number;
-        else if (item.sval === sv.potion_cure_poison) t[222 /* ACUREPOIS */] = t[222 /* ACUREPOIS */] + item.number;
-        else if (item.sval === sv.potion_resist_heat) t[244 /* ARESHEAT */] = t[244 /* ARESHEAT */] + item.number;
-        else if (item.sval === sv.potion_resist_cold) t[245 /* ARESCOLD */] = t[245 /* ARESCOLD */] + item.number;
-        else if (item.sval === sv.potion_resist_pois) t[246 /* ARESPOIS */] = t[246 /* ARESPOIS */] + item.number;
-        else if (item.sval === sv.potion_inc_str) d.amtStatgain[0] += item.number;
-        else if (item.sval === sv.potion_inc_int) d.amtStatgain[1] += item.number;
-        else if (item.sval === sv.potion_inc_wis) d.amtStatgain[2] += item.number;
-        else if (item.sval === sv.potion_inc_dex) d.amtStatgain[3] += item.number;
-        else if (item.sval === sv.potion_inc_con) d.amtStatgain[4] += item.number;
-        else if (item.sval === sv.potion_inc_all)
-          for (let s = 0; s < STAT_MAX; s++) d.amtStatgain[s] += item.number;
-        else if (item.sval === sv.potion_restore_life) t[126 /* HASFIXEXP */] = 1;
-        else if (item.sval === sv.potion_speed) t[218 /* ASPEED */] = t[218 /* ASPEED */] + item.number;
+        if (item2.sval === sv.potion_healing) t[214 /* AHEAL */] = t[214 /* AHEAL */] + item2.number;
+        else if (item2.sval === sv.potion_star_healing) t[215 /* AEZHEAL */] = t[215 /* AEZHEAL */] + item2.number;
+        else if (item2.sval === sv.potion_life) t[216 /* ALIFE */] = t[216 /* ALIFE */] + item2.number;
+        else if (item2.sval === sv.potion_cure_critical) t[231 /* ACCW */] = t[231 /* ACCW */] + item2.number;
+        else if (item2.sval === sv.potion_cure_serious) t[232 /* ACSW */] = t[232 /* ACSW */] + item2.number;
+        else if (item2.sval === sv.potion_cure_light) t[233 /* ACLW */] = t[233 /* ACLW */] + item2.number;
+        else if (item2.sval === sv.potion_cure_poison) t[222 /* ACUREPOIS */] = t[222 /* ACUREPOIS */] + item2.number;
+        else if (item2.sval === sv.potion_resist_heat) t[244 /* ARESHEAT */] = t[244 /* ARESHEAT */] + item2.number;
+        else if (item2.sval === sv.potion_resist_cold) t[245 /* ARESCOLD */] = t[245 /* ARESCOLD */] + item2.number;
+        else if (item2.sval === sv.potion_resist_pois) t[246 /* ARESPOIS */] = t[246 /* ARESPOIS */] + item2.number;
+        else if (item2.sval === sv.potion_inc_str) d.amtStatgain[0] += item2.number;
+        else if (item2.sval === sv.potion_inc_int) d.amtStatgain[1] += item2.number;
+        else if (item2.sval === sv.potion_inc_wis) d.amtStatgain[2] += item2.number;
+        else if (item2.sval === sv.potion_inc_dex) d.amtStatgain[3] += item2.number;
+        else if (item2.sval === sv.potion_inc_con) d.amtStatgain[4] += item2.number;
+        else if (item2.sval === sv.potion_inc_all)
+          for (let s = 0; s < STAT_MAX; s++) d.amtStatgain[s] += item2.number;
+        else if (item2.sval === sv.potion_restore_life) t[126 /* HASFIXEXP */] = 1;
+        else if (item2.sval === sv.potion_speed) t[218 /* ASPEED */] = t[218 /* ASPEED */] + item2.number;
         break;
       case TV_SCROLL:
-        if (item.sval === sv.scroll_identify) t[217 /* AID */] = t[217 /* AID */] + item.number;
-        else if (item.sval === sv.scroll_recharging) t[227 /* ARECHARGE */] = t[227 /* ARECHARGE */] + item.number;
-        else if (item.sval === sv.scroll_phase_door) t[210 /* APHASE */] = t[210 /* APHASE */] + item.number;
-        else if (item.sval === sv.scroll_teleport) t[211 /* ATELEPORT */] = t[211 /* ATELEPORT */] + item.number;
-        else if (item.sval === sv.scroll_word_of_recall) t[38 /* RECALL */] = t[38 /* RECALL */] + item.number;
-        else if (item.sval === sv.scroll_enchant_armor) t[237 /* AENCH_ARM */] = t[237 /* AENCH_ARM */] + item.number;
-        else if (item.sval === sv.scroll_star_enchant_armor) t[238 /* AENCH_SARM */] = t[238 /* AENCH_SARM */] + item.number;
-        else if (item.sval === sv.scroll_enchant_weapon_to_hit) t[234 /* AENCH_TOH */] = t[234 /* AENCH_TOH */] + item.number;
-        else if (item.sval === sv.scroll_enchant_weapon_to_dam) t[235 /* AENCH_TOD */] = t[235 /* AENCH_TOD */] + item.number;
-        else if (item.sval === sv.scroll_star_enchant_weapon) t[236 /* AENCH_SWEP */] = t[236 /* AENCH_SWEP */] + item.number;
-        else if (item.sval === sv.scroll_protection_from_evil) t[229 /* APFE */] = t[229 /* APFE */] + item.number;
-        else if (item.sval === sv.scroll_rune_of_protection) t[230 /* AGLYPH */] = t[230 /* AGLYPH */] + item.number;
-        else if (item.sval === sv.scroll_teleport_level) {
-          t[247 /* ATELEPORTLVL */] = t[247 /* ATELEPORTLVL */] + item.number;
+        if (item2.sval === sv.scroll_identify) t[217 /* AID */] = t[217 /* AID */] + item2.number;
+        else if (item2.sval === sv.scroll_recharging) t[227 /* ARECHARGE */] = t[227 /* ARECHARGE */] + item2.number;
+        else if (item2.sval === sv.scroll_phase_door) t[210 /* APHASE */] = t[210 /* APHASE */] + item2.number;
+        else if (item2.sval === sv.scroll_teleport) t[211 /* ATELEPORT */] = t[211 /* ATELEPORT */] + item2.number;
+        else if (item2.sval === sv.scroll_word_of_recall) t[38 /* RECALL */] = t[38 /* RECALL */] + item2.number;
+        else if (item2.sval === sv.scroll_enchant_armor) t[237 /* AENCH_ARM */] = t[237 /* AENCH_ARM */] + item2.number;
+        else if (item2.sval === sv.scroll_star_enchant_armor) t[238 /* AENCH_SARM */] = t[238 /* AENCH_SARM */] + item2.number;
+        else if (item2.sval === sv.scroll_enchant_weapon_to_hit) t[234 /* AENCH_TOH */] = t[234 /* AENCH_TOH */] + item2.number;
+        else if (item2.sval === sv.scroll_enchant_weapon_to_dam) t[235 /* AENCH_TOD */] = t[235 /* AENCH_TOD */] + item2.number;
+        else if (item2.sval === sv.scroll_star_enchant_weapon) t[236 /* AENCH_SWEP */] = t[236 /* AENCH_SWEP */] + item2.number;
+        else if (item2.sval === sv.scroll_protection_from_evil) t[229 /* APFE */] = t[229 /* APFE */] + item2.number;
+        else if (item2.sval === sv.scroll_rune_of_protection) t[230 /* AGLYPH */] = t[230 /* AGLYPH */] + item2.number;
+        else if (item2.sval === sv.scroll_teleport_level) {
+          t[247 /* ATELEPORTLVL */] = t[247 /* ATELEPORTLVL */] + item2.number;
           t[211 /* ATELEPORT */] = t[211 /* ATELEPORT */] + 1;
-        } else if (item.sval === sv.scroll_mass_banishment) t[249 /* AMASSBAN */] = t[249 /* AMASSBAN */] + item.number;
+        } else if (item2.sval === sv.scroll_mass_banishment) t[249 /* AMASSBAN */] = t[249 /* AMASSBAN */] + item2.number;
         break;
       case TV_ROD:
-        noticeRod(c, item);
+        noticeRod(c, item2);
         break;
       case TV_WAND:
-        if (item.sval === sv.wand_teleport_away) t[221 /* ATPORTOTHER */] = t[221 /* ATPORTOTHER */] + item.pval;
-        if (item.sval === sv.wand_stinking_cloud && t[106 /* MAXDEPTH */] < 30)
-          t[257 /* GOOD_W_CHG */] = t[257 /* GOOD_W_CHG */] + item.pval;
-        if (item.sval === sv.wand_magic_missile && t[106 /* MAXDEPTH */] < 30)
-          t[257 /* GOOD_W_CHG */] = t[257 /* GOOD_W_CHG */] + item.pval;
-        if (item.sval === sv.wand_annihilation) t[257 /* GOOD_W_CHG */] = t[257 /* GOOD_W_CHG */] + item.pval;
+        if (item2.sval === sv.wand_teleport_away) t[221 /* ATPORTOTHER */] = t[221 /* ATPORTOTHER */] + item2.pval;
+        if (item2.sval === sv.wand_stinking_cloud && t[106 /* MAXDEPTH */] < 30)
+          t[257 /* GOOD_W_CHG */] = t[257 /* GOOD_W_CHG */] + item2.pval;
+        if (item2.sval === sv.wand_magic_missile && t[106 /* MAXDEPTH */] < 30)
+          t[257 /* GOOD_W_CHG */] = t[257 /* GOOD_W_CHG */] + item2.pval;
+        if (item2.sval === sv.wand_annihilation) t[257 /* GOOD_W_CHG */] = t[257 /* GOOD_W_CHG */] + item2.pval;
         break;
       case TV_STAFF:
-        if (item.sval === sv.staff_teleportation) t[212 /* AESCAPE */] = t[212 /* AESCAPE */] + item.number;
-        else if (item.sval === sv.staff_speed) t[218 /* ASPEED */] = t[218 /* ASPEED */] + item.pval;
-        else if (item.sval === sv.staff_healing) t[214 /* AHEAL */] = t[214 /* AHEAL */] + item.pval;
-        else if (item.sval === sv.staff_the_magi) t[219 /* ASTFMAGI */] = t[219 /* ASTFMAGI */] + item.pval;
-        else if (item.sval === sv.staff_destruction) t[220 /* ASTFDEST */] = t[220 /* ASTFDEST */] + item.pval;
-        else if (item.sval === sv.staff_power) t[256 /* GOOD_S_CHG */] = t[256 /* GOOD_S_CHG */] + item.number;
-        else if (item.sval === sv.staff_holiness) {
-          t[256 /* GOOD_S_CHG */] = t[256 /* GOOD_S_CHG */] + item.number;
-          t[214 /* AHEAL */] = t[214 /* AHEAL */] + item.pval;
+        if (item2.sval === sv.staff_teleportation) t[212 /* AESCAPE */] = t[212 /* AESCAPE */] + item2.number;
+        else if (item2.sval === sv.staff_speed) t[218 /* ASPEED */] = t[218 /* ASPEED */] + item2.pval;
+        else if (item2.sval === sv.staff_healing) t[214 /* AHEAL */] = t[214 /* AHEAL */] + item2.pval;
+        else if (item2.sval === sv.staff_the_magi) t[219 /* ASTFMAGI */] = t[219 /* ASTFMAGI */] + item2.pval;
+        else if (item2.sval === sv.staff_destruction) t[220 /* ASTFDEST */] = t[220 /* ASTFDEST */] + item2.pval;
+        else if (item2.sval === sv.staff_power) t[256 /* GOOD_S_CHG */] = t[256 /* GOOD_S_CHG */] + item2.number;
+        else if (item2.sval === sv.staff_holiness) {
+          t[256 /* GOOD_S_CHG */] = t[256 /* GOOD_S_CHG */] + item2.number;
+          t[214 /* AHEAL */] = t[214 /* AHEAL */] + item2.pval;
         }
         break;
       case TV_FLASK:
-        if (equip[SLOT_LIGHT]?.sval === sv.light_lantern) t[213 /* AFUEL */] = t[213 /* AFUEL */] + item.number;
+        if (equip[SLOT_LIGHT]?.sval === sv.light_lantern) t[213 /* AFUEL */] = t[213 /* AFUEL */] + item2.number;
         break;
       case TV_LIGHT: {
         const light = equip[SLOT_LIGHT];
-        if (item.sval === sv.light_torch && item.timeout >= 1 && light?.sval === sv.light_torch && present(light))
-          t[213 /* AFUEL */] = t[213 /* AFUEL */] + item.number;
+        if (item2.sval === sv.light_torch && item2.timeout >= 1 && light?.sval === sv.light_torch && present(light))
+          t[213 /* AFUEL */] = t[213 /* AFUEL */] + item2.number;
         break;
       }
       case TV_DIGGING:
-        if (item.number > 0 && item.curses.length === 0 && t[63 /* DIG */] >= BORG_DIG)
-          t[255 /* ADIGGER */] = t[255 /* ADIGGER */] + item.number;
+        if (item2.number > 0 && item2.curses.length === 0 && t[63 /* DIG */] >= BORG_DIG)
+          t[255 /* ADIGGER */] = t[255 /* ADIGGER */] + item2.number;
         break;
       default:
         break;
@@ -7535,48 +7535,48 @@ function borgNoticeInventory(c) {
   t[39 /* FOOD */] = t[39 /* FOOD */] + t[41 /* FOOD_LO */];
   if (t[108 /* ISWEAK */] && t[39 /* FOOD */] >= 1e3) t[39 /* FOOD */] = t[39 /* FOOD */] - 1e3;
 }
-function noticeAmmo(c, item) {
+function noticeAmmo(c, item2) {
   const { t } = c;
-  t[260 /* WEIGHT */] = t[260 /* WEIGHT */] + item.weight * item.number;
-  t[151 /* AMMO_COUNT */] = t[151 /* AMMO_COUNT */] + item.number;
-  if (item.tval !== t[152 /* AMMO_TVAL */]) return;
-  t[155 /* AMISSILES */] = t[155 /* AMISSILES */] + item.number;
-  if (item.curses.length > 0) {
+  t[260 /* WEIGHT */] = t[260 /* WEIGHT */] + item2.weight * item2.number;
+  t[151 /* AMMO_COUNT */] = t[151 /* AMMO_COUNT */] + item2.number;
+  if (item2.tval !== t[152 /* AMMO_TVAL */]) return;
+  t[155 /* AMISSILES */] = t[155 /* AMISSILES */] + item2.number;
+  if (item2.curses.length > 0) {
     t[160 /* WHERE_CURSED */] = t[160 /* WHERE_CURSED */] | BORG_QUILL;
     if (!t[159 /* FIRST_CURSED */]) t[159 /* FIRST_CURSED */] = 1;
-    t[157 /* AMISSILES_CURSED */] = t[157 /* AMISSILES_CURSED */] + item.number;
+    t[157 /* AMISSILES_CURSED */] = t[157 /* AMISSILES_CURSED */] + item2.number;
     return;
   }
-  if (item.ego) t[156 /* AMISSILES_SPECIAL */] = t[156 /* AMISSILES_SPECIAL */] + item.number;
+  if (item2.ego) t[156 /* AMISSILES_SPECIAL */] = t[156 /* AMISSILES_SPECIAL */] + item2.number;
 }
-function noticeFood(c, item) {
+function noticeFood(c, item2) {
   const { t, R: R2 } = c;
   const sv = R2.svals;
-  if (item.tval === TV_FOOD) {
-    if (item.sval === sv.food_apple || item.sval === sv.food_handful || item.sval === sv.food_slime_mold || item.sval === sv.food_pint || item.sval === sv.food_sip)
-      t[41 /* FOOD_LO */] = t[41 /* FOOD_LO */] + item.number;
-    else if (item.sval === sv.food_ration || item.sval === sv.food_slice || item.sval === sv.food_honey_cake || item.sval === sv.food_waybread || item.sval === sv.food_draught)
-      t[40 /* FOOD_HI */] = t[40 /* FOOD_HI */] + item.number;
+  if (item2.tval === TV_FOOD) {
+    if (item2.sval === sv.food_apple || item2.sval === sv.food_handful || item2.sval === sv.food_slime_mold || item2.sval === sv.food_pint || item2.sval === sv.food_sip)
+      t[41 /* FOOD_LO */] = t[41 /* FOOD_LO */] + item2.number;
+    else if (item2.sval === sv.food_ration || item2.sval === sv.food_slice || item2.sval === sv.food_honey_cake || item2.sval === sv.food_waybread || item2.sval === sv.food_draught)
+      t[40 /* FOOD_HI */] = t[40 /* FOOD_HI */] + item2.number;
   }
 }
-function noticeRod(c, item) {
+function noticeRod(c, item2) {
   const { t, R: R2 } = c;
   const sv = R2.svals;
-  if (item.sval === sv.rod_recall) t[38 /* RECALL */] = t[38 /* RECALL */] + item.number * 100;
-  else if (item.sval === sv.rod_detection) {
-    t[223 /* ADETTRAP */] = t[223 /* ADETTRAP */] + item.number * 100;
-    t[224 /* ADETDOOR */] = t[224 /* ADETDOOR */] + item.number * 100;
-    t[225 /* ADETEVIL */] = t[225 /* ADETEVIL */] + item.number * 100;
-  } else if (item.sval === sv.rod_illumination) t[228 /* ALITE */] = t[228 /* ALITE */] + item.number * 100;
-  else if (item.sval === sv.rod_speed) t[218 /* ASPEED */] = t[218 /* ASPEED */] + item.number * 100;
-  else if (item.sval === sv.rod_mapping) t[226 /* AMAGICMAP */] = t[226 /* AMAGICMAP */] + item.number * 100;
-  else if (item.sval === sv.rod_healing) t[214 /* AHEAL */] = t[214 /* AHEAL */] + item.number * 3;
-  else if (item.sval === sv.rod_light || item.sval === sv.rod_fire_bolt || item.sval === sv.rod_elec_bolt || item.sval === sv.rod_cold_bolt || item.sval === sv.rod_acid_bolt)
-    t[251 /* AROD1 */] = t[251 /* AROD1 */] + item.number;
-  else if (item.sval === sv.rod_drain_life || item.sval === sv.rod_fire_ball || item.sval === sv.rod_elec_ball || item.sval === sv.rod_cold_ball || item.sval === sv.rod_acid_ball)
-    t[252 /* AROD2 */] = t[252 /* AROD2 */] + item.number;
+  if (item2.sval === sv.rod_recall) t[38 /* RECALL */] = t[38 /* RECALL */] + item2.number * 100;
+  else if (item2.sval === sv.rod_detection) {
+    t[223 /* ADETTRAP */] = t[223 /* ADETTRAP */] + item2.number * 100;
+    t[224 /* ADETDOOR */] = t[224 /* ADETDOOR */] + item2.number * 100;
+    t[225 /* ADETEVIL */] = t[225 /* ADETEVIL */] + item2.number * 100;
+  } else if (item2.sval === sv.rod_illumination) t[228 /* ALITE */] = t[228 /* ALITE */] + item2.number * 100;
+  else if (item2.sval === sv.rod_speed) t[218 /* ASPEED */] = t[218 /* ASPEED */] + item2.number * 100;
+  else if (item2.sval === sv.rod_mapping) t[226 /* AMAGICMAP */] = t[226 /* AMAGICMAP */] + item2.number * 100;
+  else if (item2.sval === sv.rod_healing) t[214 /* AHEAL */] = t[214 /* AHEAL */] + item2.number * 3;
+  else if (item2.sval === sv.rod_light || item2.sval === sv.rod_fire_bolt || item2.sval === sv.rod_elec_bolt || item2.sval === sv.rod_cold_bolt || item2.sval === sv.rod_acid_bolt)
+    t[251 /* AROD1 */] = t[251 /* AROD1 */] + item2.number;
+  else if (item2.sval === sv.rod_drain_life || item2.sval === sv.rod_fire_ball || item2.sval === sv.rod_elec_ball || item2.sval === sv.rod_cold_ball || item2.sval === sv.rod_acid_ball)
+    t[252 /* AROD2 */] = t[252 /* AROD2 */] + item2.number;
 }
-function creditHas(c, item) {
+function creditHas(c, item2) {
   const { d, R: R2 } = c;
   const sv = R2.svals;
   const roleFor = [
@@ -7594,8 +7594,8 @@ function creditHas(c, item) {
     [TV_FLASK, sv.flask_oil, "flask_oil"]
   ];
   for (const [tval, sval, role] of roleFor) {
-    if (sval !== void 0 && item.tval === tval && item.sval === sval)
-      addHas(d, role, item.number);
+    if (sval !== void 0 && item2.tval === tval && item2.sval === sval)
+      addHas(d, role, item2.number);
   }
 }
 function applySpellGrants(c) {
@@ -7880,18 +7880,18 @@ function calcBlows(_item) {
 function isBook(tval) {
   return tval === TV.MAGIC_BOOK || tval === TV.PRAYER_BOOK || tval === TV.NATURE_BOOK || tval === TV.SHADOW_BOOK || tval === TV.OTHER_BOOK;
 }
-function noticeDupe(c, item, checkSval, index, all, d) {
-  if (item.ego && hasRandomPower(item)) return;
-  if (needsIdent2(item, d)) return;
-  let dupeCount = iqty(item) - 1;
+function noticeDupe(c, item2, checkSval, index, all, d) {
+  if (item2.ego && hasRandomPower(item2)) return;
+  if (needsIdent2(item2, d)) return;
+  let dupeCount = iqty(item2) - 1;
   for (let x = 0; x < index; x++) {
-    const item2 = all[x];
-    if (!item2 || iqty(item2) === 0 || !isAware2(item2, d)) continue;
-    if (item.tval === item2.tval && (checkSval ? item.sval === item2.sval : true) && (item.artifactName ?? null) === (item2.artifactName ?? null) && (item.egoName ?? null) === (item2.egoName ?? null)) {
+    const item22 = all[x];
+    if (!item22 || iqty(item22) === 0 || !isAware2(item22, d)) continue;
+    if (item2.tval === item22.tval && (checkSval ? item2.sval === item22.sval : true) && (item2.artifactName ?? null) === (item22.artifactName ?? null) && (item2.egoName ?? null) === (item22.egoName ?? null)) {
       dupeCount++;
     }
   }
-  if (item.tval === TV.RING && dupeCount) dupeCount--;
+  if (item2.tval === TV.RING && dupeCount) dupeCount--;
   c.num_duplicate_items += dupeCount;
 }
 function borgNoticeHome(ctx, opts, d) {
@@ -7912,198 +7912,198 @@ function borgNoticeHome(ctx, opts, d) {
   );
   const lightSval = ctx.view.equipment().find((i) => i && i.tval === TV.LIGHT)?.sval;
   for (let i = 0; i < all.length; i++) {
-    const item = all[i];
+    const item2 = all[i];
     const fromHome = i < storeInvenLen;
-    if (iqty(item) === 0) continue;
-    if (!isAware2(item, d)) continue;
-    if (hasFlag2(item, "SLOW_DIGEST")) c.num_slow_digest += iqty(item);
-    if (hasFlag2(item, "REGEN")) c.num_regenerate += iqty(item);
-    if (hasFlag2(item, "TELEPATHY")) c.num_telepathy += iqty(item);
-    if (hasFlag2(item, "SEE_INVIS")) c.num_see_inv += iqty(item);
-    if (hasFlag2(item, "FEATHER")) c.num_ffall += iqty(item);
-    if (hasFlag2(item, "FREE_ACT")) c.num_free_act += iqty(item);
-    if (hasFlag2(item, "HOLD_LIFE")) c.num_hold_life += iqty(item);
-    if (hasFlag2(item, "PROT_CONF")) c.num_resist_conf += iqty(item);
-    if (hasFlag2(item, "PROT_BLIND")) c.num_resist_blind += iqty(item);
-    if (resLevel(item, "FIRE") === 3) {
-      c.num_immune_fire += iqty(item);
-      c.num_resist_fire += iqty(item);
+    if (iqty(item2) === 0) continue;
+    if (!isAware2(item2, d)) continue;
+    if (hasFlag2(item2, "SLOW_DIGEST")) c.num_slow_digest += iqty(item2);
+    if (hasFlag2(item2, "REGEN")) c.num_regenerate += iqty(item2);
+    if (hasFlag2(item2, "TELEPATHY")) c.num_telepathy += iqty(item2);
+    if (hasFlag2(item2, "SEE_INVIS")) c.num_see_inv += iqty(item2);
+    if (hasFlag2(item2, "FEATHER")) c.num_ffall += iqty(item2);
+    if (hasFlag2(item2, "FREE_ACT")) c.num_free_act += iqty(item2);
+    if (hasFlag2(item2, "HOLD_LIFE")) c.num_hold_life += iqty(item2);
+    if (hasFlag2(item2, "PROT_CONF")) c.num_resist_conf += iqty(item2);
+    if (hasFlag2(item2, "PROT_BLIND")) c.num_resist_blind += iqty(item2);
+    if (resLevel(item2, "FIRE") === 3) {
+      c.num_immune_fire += iqty(item2);
+      c.num_resist_fire += iqty(item2);
     }
-    if (resLevel(item, "ACID") === 3) {
-      c.num_immune_acid += iqty(item);
-      c.num_resist_acid += iqty(item);
+    if (resLevel(item2, "ACID") === 3) {
+      c.num_immune_acid += iqty(item2);
+      c.num_resist_acid += iqty(item2);
     }
-    if (resLevel(item, "COLD") === 3) {
-      c.num_immune_cold += iqty(item);
-      c.num_resist_cold += iqty(item);
+    if (resLevel(item2, "COLD") === 3) {
+      c.num_immune_cold += iqty(item2);
+      c.num_resist_cold += iqty(item2);
     }
-    if (resLevel(item, "ELEC") === 3) {
-      c.num_immune_elec += iqty(item);
-      c.num_resist_elec += iqty(item);
+    if (resLevel(item2, "ELEC") === 3) {
+      c.num_immune_elec += iqty(item2);
+      c.num_resist_elec += iqty(item2);
     }
-    if (resLevel(item, "ACID") === 1) c.num_resist_acid += iqty(item);
-    if (resLevel(item, "ELEC") === 1) c.num_resist_elec += iqty(item);
-    if (resLevel(item, "FIRE") === 1) c.num_resist_fire += iqty(item);
-    if (resLevel(item, "COLD") === 1) c.num_resist_cold += iqty(item);
-    if (resLevel(item, "POIS") === 1) c.num_resist_pois += iqty(item);
-    if (resLevel(item, "SOUND") === 1) c.num_resist_sound += iqty(item);
-    if (resLevel(item, "LIGHT") === 1) c.num_resist_LIGHT += iqty(item);
-    if (resLevel(item, "DARK") === 1) c.num_resist_dark += iqty(item);
-    if (resLevel(item, "CHAOS") === 1) c.num_resist_chaos += iqty(item);
-    if (resLevel(item, "DISEN") === 1) c.num_resist_disen += iqty(item);
-    if (resLevel(item, "SHARD") === 1) c.num_resist_shard += iqty(item);
-    if (resLevel(item, "NEXUS") === 1) c.num_resist_nexus += iqty(item);
-    if (resLevel(item, "NETHER") === 1) c.num_resist_neth += iqty(item);
-    if (hasFlag2(item, "SUST_STR")) c.num_sustain_str += iqty(item);
-    if (hasFlag2(item, "SUST_INT")) c.num_sustain_str += iqty(item);
-    if (hasFlag2(item, "SUST_WIS")) c.num_sustain_str += iqty(item);
-    if (hasFlag2(item, "SUST_DEX")) c.num_sustain_str += iqty(item);
-    if (hasFlag2(item, "SUST_CON")) c.num_sustain_str += iqty(item);
-    if (hasFlag2(item, "SUST_STR") && hasFlag2(item, "SUST_INT") && hasFlag2(item, "SUST_WIS") && hasFlag2(item, "SUST_DEX") && hasFlag2(item, "SUST_CON"))
-      c.num_sustain_all += iqty(item);
+    if (resLevel(item2, "ACID") === 1) c.num_resist_acid += iqty(item2);
+    if (resLevel(item2, "ELEC") === 1) c.num_resist_elec += iqty(item2);
+    if (resLevel(item2, "FIRE") === 1) c.num_resist_fire += iqty(item2);
+    if (resLevel(item2, "COLD") === 1) c.num_resist_cold += iqty(item2);
+    if (resLevel(item2, "POIS") === 1) c.num_resist_pois += iqty(item2);
+    if (resLevel(item2, "SOUND") === 1) c.num_resist_sound += iqty(item2);
+    if (resLevel(item2, "LIGHT") === 1) c.num_resist_LIGHT += iqty(item2);
+    if (resLevel(item2, "DARK") === 1) c.num_resist_dark += iqty(item2);
+    if (resLevel(item2, "CHAOS") === 1) c.num_resist_chaos += iqty(item2);
+    if (resLevel(item2, "DISEN") === 1) c.num_resist_disen += iqty(item2);
+    if (resLevel(item2, "SHARD") === 1) c.num_resist_shard += iqty(item2);
+    if (resLevel(item2, "NEXUS") === 1) c.num_resist_nexus += iqty(item2);
+    if (resLevel(item2, "NETHER") === 1) c.num_resist_neth += iqty(item2);
+    if (hasFlag2(item2, "SUST_STR")) c.num_sustain_str += iqty(item2);
+    if (hasFlag2(item2, "SUST_INT")) c.num_sustain_str += iqty(item2);
+    if (hasFlag2(item2, "SUST_WIS")) c.num_sustain_str += iqty(item2);
+    if (hasFlag2(item2, "SUST_DEX")) c.num_sustain_str += iqty(item2);
+    if (hasFlag2(item2, "SUST_CON")) c.num_sustain_str += iqty(item2);
+    if (hasFlag2(item2, "SUST_STR") && hasFlag2(item2, "SUST_INT") && hasFlag2(item2, "SUST_WIS") && hasFlag2(item2, "SUST_DEX") && hasFlag2(item2, "SUST_CON"))
+      c.num_sustain_all += iqty(item2);
     const addStat = (statCode, statIdx) => {
-      const v = mod(item, statCode);
+      const v = mod(item2, statCode);
       if (!v) return;
-      if (item.tval !== TV.RING || v > 3)
-        c.home_stat_add[statIdx] += v * iqty(item);
+      if (item2.tval !== TV.RING || v > 3)
+        c.home_stat_add[statIdx] += v * iqty(item2);
     };
     addStat("STR", STAT_STR);
     addStat("INT", STAT_INT);
     addStat("WIS", STAT_WIS);
     addStat("DEX", STAT_DEX);
     addStat("CON", STAT_CON);
-    c.num_speed += mod(item, "SPEED") * iqty(item);
-    if (item.artifact) c.num_artifact += iqty(item);
-    if (item.ego && hasRandomPower(item) && needsIdent2(item, d)) c.num_ego += iqty(item);
-    if (needsIdent2(item, d) && fromHome) c.home_un_id++;
-    switch (item.tval) {
+    c.num_speed += mod(item2, "SPEED") * iqty(item2);
+    if (item2.artifact) c.num_artifact += iqty(item2);
+    if (item2.ego && hasRandomPower(item2) && needsIdent2(item2, d)) c.num_ego += iqty(item2);
+    if (needsIdent2(item2, d) && fromHome) c.home_un_id++;
+    switch (item2.tval) {
       case TV.SOFT_ARMOR:
       case TV.HARD_ARMOR:
-        c.num_armor += iqty(item);
-        noticeDupe(c, item, false, i, all, d);
+        c.num_armor += iqty(item2);
+        noticeDupe(c, item2, false, i, all, d);
         break;
       case TV.DRAG_ARMOR:
-        c.num_armor += iqty(item);
-        noticeDupe(c, item, true, i, all, d);
+        c.num_armor += iqty(item2);
+        noticeDupe(c, item2, true, i, all, d);
         break;
       case TV.CLOAK:
-        c.num_cloaks += iqty(item);
-        noticeDupe(c, item, false, i, all, d);
+        c.num_cloaks += iqty(item2);
+        noticeDupe(c, item2, false, i, all, d);
         break;
       case TV.SHIELD:
-        c.num_shields += iqty(item);
-        noticeDupe(c, item, false, i, all, d);
+        c.num_shields += iqty(item2);
+        noticeDupe(c, item2, false, i, all, d);
         break;
       case TV.HELM:
       case TV.CROWN:
-        c.num_hats += iqty(item);
-        noticeDupe(c, item, false, i, all, d);
+        c.num_hats += iqty(item2);
+        noticeDupe(c, item2, false, i, all, d);
         break;
       case TV.GLOVES:
-        c.num_gloves += iqty(item);
-        c.home_damage += item.toD * 3;
-        noticeDupe(c, item, false, i, all, d);
+        c.num_gloves += iqty(item2);
+        c.home_damage += item2.toD * 3;
+        noticeDupe(c, item2, false, i, all, d);
         break;
       case TV.FLASK:
-        if (lightSval === SVAL.light.lantern) c.num_fuel += iqty(item);
+        if (lightSval === SVAL.light.lantern) c.num_fuel += iqty(item2);
         break;
       case TV.LIGHT:
-        if (lightSval === SVAL.light.torch) c.num_fuel += iqty(item);
-        if (item.artifact) c.num_LIGHT += iqty(item);
+        if (lightSval === SVAL.light.torch) c.num_fuel += iqty(item2);
+        if (item2.artifact) c.num_LIGHT += iqty(item2);
         break;
       case TV.BOOTS:
-        c.num_boots += iqty(item);
-        noticeDupe(c, item, false, i, all, d);
+        c.num_boots += iqty(item2);
+        noticeDupe(c, item2, false, i, all, d);
         break;
       case TV.SWORD:
       case TV.POLEARM:
       case TV.HAFTED: {
-        c.num_weapons += iqty(item);
+        c.num_weapons += iqty(item2);
         if ((ex.playerFlag && ex.playerFlag("BLESS_WEAPON")) ?? false) {
-          if (!(item.tval === TV.HAFTED || hasFlag2(item, "BLESSED")))
-            c.num_edged_weapon += iqty(item);
+          if (!(item2.tval === TV.HAFTED || hasFlag2(item2, "BLESSED")))
+            c.num_edged_weapon += iqty(item2);
         }
-        const numBlow = calcBlows(item);
-        if (item.toD > 8 || st(ctx, 35 /* CLEVEL */) < 15) {
-          c.home_damage += numBlow * (item.dd * item.ds + (st(ctx, 135 /* TODAM */) + item.toD));
+        const numBlow = calcBlows(item2);
+        if (item2.toD > 8 || st(ctx, 35 /* CLEVEL */) < 15) {
+          c.home_damage += numBlow * (item2.dd * item2.ds + (st(ctx, 135 /* TODAM */) + item2.toD));
         } else {
-          c.home_damage += numBlow * (item.dd * item.ds + (st(ctx, 135 /* TODAM */) + 8));
+          c.home_damage += numBlow * (item2.dd * item2.ds + (st(ctx, 135 /* TODAM */) + 8));
         }
-        noticeDupe(c, item, false, i, all, d);
+        noticeDupe(c, item2, false, i, all, d);
         break;
       }
       case TV.BOW:
-        c.num_bow += iqty(item);
-        noticeDupe(c, item, false, i, all, d);
+        c.num_bow += iqty(item2);
+        noticeDupe(c, item2, false, i, all, d);
         break;
       case TV.RING:
-        c.num_rings += iqty(item);
-        noticeDupe(c, item, true, i, all, d);
+        c.num_rings += iqty(item2);
+        noticeDupe(c, item2, true, i, all, d);
         break;
       case TV.AMULET:
-        c.num_neck += iqty(item);
-        noticeDupe(c, item, true, i, all, d);
+        c.num_neck += iqty(item2);
+        noticeDupe(c, item2, true, i, all, d);
         break;
       case TV.MAGIC_BOOK:
       case TV.PRAYER_BOOK:
       case TV.NATURE_BOOK:
       case TV.SHADOW_BOOK:
       case TV.OTHER_BOOK:
-        if (!isBook(item.tval)) break;
-        if (d?.isDungeonBook && d.isDungeonBook(item)) break;
-        if (item.sval >= 0 && item.sval < 9) c.num_book[item.sval] += iqty(item);
+        if (!isBook(item2.tval)) break;
+        if (d?.isDungeonBook && d.isDungeonBook(item2)) break;
+        if (item2.sval >= 0 && item2.sval < 9) c.num_book[item2.sval] += iqty(item2);
         break;
       case TV.FOOD:
-        if (item.sval === F.ration) c.num_food += iqty(item);
-        else if (item.sval === F.slime_mold) c.num_mold += iqty(item);
+        if (item2.sval === F.ration) c.num_food += iqty(item2);
+        else if (item2.sval === F.slime_mold) c.num_mold += iqty(item2);
         break;
       case TV.POTION:
-        if (item.sval === P.cure_critical) c.num_cure_critical += iqty(item);
-        else if (item.sval === P.cure_serious) c.num_cure_serious += iqty(item);
-        else if (item.sval === P.resist_heat) c.num_pot_rheat += iqty(item);
-        else if (item.sval === P.resist_cold) c.num_pot_rcold += iqty(item);
-        else if (item.sval === P.restore_life) c.num_fix_exp += iqty(item);
-        else if (item.sval === P.restore_mana) c.num_mana += iqty(item);
-        else if (item.sval === P.healing) c.num_heal += iqty(item);
-        else if (item.sval === P.star_healing) c.num_ezheal += iqty(item);
-        else if (item.sval === P.life) c.num_life += iqty(item);
-        else if (item.sval === P.berserk) c.num_berserk += iqty(item);
-        else if (item.sval === P.speed) c.num_speed += iqty(item);
+        if (item2.sval === P.cure_critical) c.num_cure_critical += iqty(item2);
+        else if (item2.sval === P.cure_serious) c.num_cure_serious += iqty(item2);
+        else if (item2.sval === P.resist_heat) c.num_pot_rheat += iqty(item2);
+        else if (item2.sval === P.resist_cold) c.num_pot_rcold += iqty(item2);
+        else if (item2.sval === P.restore_life) c.num_fix_exp += iqty(item2);
+        else if (item2.sval === P.restore_mana) c.num_mana += iqty(item2);
+        else if (item2.sval === P.healing) c.num_heal += iqty(item2);
+        else if (item2.sval === P.star_healing) c.num_ezheal += iqty(item2);
+        else if (item2.sval === P.life) c.num_life += iqty(item2);
+        else if (item2.sval === P.berserk) c.num_berserk += iqty(item2);
+        else if (item2.sval === P.speed) c.num_speed += iqty(item2);
         break;
       case TV.SCROLL:
-        if (item.sval === Sc.identify) c.num_ident += iqty(item);
-        else if (item.sval === Sc.phase_door) c.num_phase += iqty(item);
-        else if (item.sval === Sc.teleport) c.num_teleport += iqty(item);
-        else if (item.sval === Sc.word_of_recall) c.num_recall += iqty(item);
-        else if (item.sval === Sc.enchant_armor) c.num_enchant_to_a += iqty(item);
-        else if (item.sval === Sc.enchant_weapon_to_hit)
-          c.num_enchant_to_h += iqty(item);
-        else if (item.sval === Sc.enchant_weapon_to_dam)
-          c.num_enchant_to_d += iqty(item);
-        else if (item.sval === Sc.protection_from_evil) c.num_pfe += iqty(item);
-        else if (item.sval === Sc.rune_of_protection) c.num_glyph += iqty(item);
-        else if (item.sval === Sc.teleport_level)
-          c.num_teleport_level += iqty(item);
-        else if (item.sval === Sc.recharging) c.num_recharge += iqty(item);
-        else if (item.sval === Sc.mass_banishment)
-          c.num_mass_genocide += iqty(item);
+        if (item2.sval === Sc.identify) c.num_ident += iqty(item2);
+        else if (item2.sval === Sc.phase_door) c.num_phase += iqty(item2);
+        else if (item2.sval === Sc.teleport) c.num_teleport += iqty(item2);
+        else if (item2.sval === Sc.word_of_recall) c.num_recall += iqty(item2);
+        else if (item2.sval === Sc.enchant_armor) c.num_enchant_to_a += iqty(item2);
+        else if (item2.sval === Sc.enchant_weapon_to_hit)
+          c.num_enchant_to_h += iqty(item2);
+        else if (item2.sval === Sc.enchant_weapon_to_dam)
+          c.num_enchant_to_d += iqty(item2);
+        else if (item2.sval === Sc.protection_from_evil) c.num_pfe += iqty(item2);
+        else if (item2.sval === Sc.rune_of_protection) c.num_glyph += iqty(item2);
+        else if (item2.sval === Sc.teleport_level)
+          c.num_teleport_level += iqty(item2);
+        else if (item2.sval === Sc.recharging) c.num_recharge += iqty(item2);
+        else if (item2.sval === Sc.mass_banishment)
+          c.num_mass_genocide += iqty(item2);
         break;
       case TV.ROD:
-        if (item.sval === Ro.recall) c.num_recall += iqty(item) * 100;
+        if (item2.sval === Ro.recall) c.num_recall += iqty(item2) * 100;
         break;
       case TV.STAFF:
-        if (item.pval <= 3 && st(ctx, 35 /* CLEVEL */) > 30) break;
-        if (item.sval === Sf.teleportation) {
-          c.num_escape += item.pval * iqty(item);
+        if (item2.pval <= 3 && st(ctx, 35 /* CLEVEL */) > 30) break;
+        if (item2.sval === Sf.teleportation) {
+          c.num_escape += item2.pval * iqty(item2);
           c.num_tele_staves++;
         }
         break;
       case TV.SHOT:
       case TV.ARROW:
       case TV.BOLT:
-        if (item.tval !== st(ctx, 152 /* AMMO_TVAL */)) break;
-        if ((item.value ?? 0) <= 0) break;
-        c.num_missile += iqty(item);
+        if (item2.tval !== st(ctx, 152 /* AMMO_TVAL */)) break;
+        if ((item2.value ?? 0) <= 0) break;
+        c.num_missile += iqty(item2);
         break;
       default:
         break;
@@ -8169,8 +8169,8 @@ function noticeHomeFull(ctx, d) {
 function noticeHomeEmpty(ctx, d) {
   return borgNoticeHome(ctx, { items: [], includeEquip: false }, d);
 }
-function noticeHomeSingle(ctx, item, d) {
-  return borgNoticeHome(ctx, { items: [item], includeEquip: false }, d);
+function noticeHomeSingle(ctx, item2, d) {
+  return borgNoticeHome(ctx, { items: [item2], includeEquip: false }, d);
 }
 var MAX_STACK = DEFAULT_MAX_STACK;
 function powerHomeAux1(ctx, c) {
@@ -8611,8 +8611,8 @@ var SLOT_HANDS = 10;
 var SLOT_FEET2 = 11;
 var TV_ARROW2 = 3;
 var TV_DIGGING2 = 6;
-function wgt(item) {
-  return present(item) ? item.weight : 0;
+function wgt(item2) {
+  return present(item2) ? item2.weight : 0;
 }
 function borgPower(ctx, opts = {}) {
   const R2 = resolveOpts(opts);
@@ -9157,7 +9157,7 @@ function borgNoticeWithout(ctx, handle) {
   const reduced = {
     ...ctx,
     world: shadowWorld(ctx.world),
-    view: { ...ctx.view, inventory: () => ctx.view.inventory().filter((item) => item.handle !== handle) }
+    view: { ...ctx.view, inventory: () => ctx.view.inventory().filter((item2) => item2.handle !== handle) }
   };
   borgNotice(reduced);
   return reduced;
@@ -9322,22 +9322,22 @@ function borgHasMultiple(ctx, inItem, d) {
         return false;
     }
   }
-  for (const item of ctx.view.inventory()) {
-    if (item === inItem) continue;
-    if (item.tval === inItem.tval && item.sval === inItem.sval && iqty(item) !== 0)
+  for (const item2 of ctx.view.inventory()) {
+    if (item2 === inItem) continue;
+    if (item2.tval === inItem.tval && item2.sval === inItem.sval && iqty(item2) !== 0)
       return true;
   }
-  for (const item of ctx.view.equipment()) {
-    if (!item) continue;
-    if (item.tval === inItem.tval && item.sval === inItem.sval && iqty(item) !== 0)
+  for (const item2 of ctx.view.equipment()) {
+    if (!item2) continue;
+    if (item2.tval === inItem.tval && item2.sval === inItem.sval && iqty(item2) !== 0)
       return true;
   }
   return false;
 }
-function borgStoreBuys(item, who, d) {
+function borgStoreBuys(item2, who, d) {
   switch (who + 1) {
     case 1:
-      switch (item.tval) {
+      switch (item2.tval) {
         case TV.FOOD:
         case TV.MUSHROOM:
         case TV.FLASK:
@@ -9349,7 +9349,7 @@ function borgStoreBuys(item, who, d) {
       }
       return false;
     case 2:
-      switch (item.tval) {
+      switch (item2.tval) {
         case TV.BOOTS:
         case TV.GLOVES:
         case TV.HELM:
@@ -9362,7 +9362,7 @@ function borgStoreBuys(item, who, d) {
       }
       return false;
     case 3:
-      switch (item.tval) {
+      switch (item2.tval) {
         case TV.SHOT:
         case TV.BOLT:
         case TV.ARROW:
@@ -9375,7 +9375,7 @@ function borgStoreBuys(item, who, d) {
       }
       return false;
     case 4:
-      switch (item.tval) {
+      switch (item2.tval) {
         case TV.PRAYER_BOOK:
         case TV.MAGIC_BOOK:
         case TV.NATURE_BOOK:
@@ -9385,14 +9385,14 @@ function borgStoreBuys(item, who, d) {
       }
       return false;
     case 5:
-      switch (item.tval) {
+      switch (item2.tval) {
         case TV.SCROLL:
         case TV.POTION:
           return true;
       }
       return false;
     case 6:
-      switch (item.tval) {
+      switch (item2.tval) {
         case TV.AMULET:
         case TV.RING:
         case TV.STAFF:
@@ -9404,7 +9404,7 @@ function borgStoreBuys(item, who, d) {
       return false;
     case 7:
       if (d?.noSelling ?? false) return true;
-      switch (item.tval) {
+      switch (item2.tval) {
         case TV.LIGHT:
         case TV.CLOAK:
         case TV.FOOD:
@@ -9414,27 +9414,27 @@ function borgStoreBuys(item, who, d) {
   }
   return false;
 }
-function borgGoodSell(ctx, item, who, d) {
+function borgGoodSell(ctx, item2, who, d) {
   const mem = d?.mem ?? createStoreMemory();
   let multiple = false;
-  if (itemValue2(item, d) <= 0) {
-    if (!((item.tval === TV.POTION || item.tval === TV.SCROLL) && !isIdent2(item, d)))
+  if (itemValue2(item2, d) <= 0) {
+    if (!((item2.tval === TV.POTION || item2.tval === TV.SCROLL) && !isIdent2(item2, d)))
       return false;
   }
-  if (!borgStoreBuys(item, who, d)) return false;
-  if (noteNeedsId(item, d)) {
-    multiple = borgHasMultiple(ctx, item, d);
+  if (!borgStoreBuys(item2, who, d)) return false;
+  if (noteNeedsId(item2, d)) {
+    multiple = borgHasMultiple(ctx, item2, d);
     if (!multiple) return false;
   }
   const worshipsGold = d?.worshipsGold ?? false;
   const scumActive = mem.moneyScumAmount < st(ctx, 45 /* GOLD */) && mem.moneyScumAmount !== 0;
-  if (itemValue2(item, d) > 0 && (worshipsGold || st(ctx, 36 /* MAXCLEVEL */) < 10 || scumActive)) {
+  if (itemValue2(item2, d) > 0 && (worshipsGold || st(ctx, 36 /* MAXCLEVEL */) < 10 || scumActive)) {
   } else {
-    switch (item.tval) {
+    switch (item2.tval) {
       case TV.POTION:
       case TV.SCROLL:
-        if (!isIdent2(item, d)) return true;
-        if (item.tval === TV.POTION && item.sval === SVAL.potion.restore_mana && st(ctx, 31 /* MAXSP */) > 100)
+        if (!isIdent2(item2, d)) return true;
+        if (item2.tval === TV.POTION && item2.sval === SVAL.potion.restore_mana && st(ctx, 31 /* MAXSP */) > 100)
           return false;
         break;
       case TV.FOOD:
@@ -9444,7 +9444,7 @@ function borgGoodSell(ctx, item, who, d) {
       case TV.RING:
       case TV.AMULET:
       case TV.LIGHT:
-        if (worthId(item, d) && st(ctx, 106 /* MAXDEPTH */) < 35 && !multiple)
+        if (worthId(item2, d) && st(ctx, 106 /* MAXDEPTH */) < 35 && !multiple)
           return false;
         break;
       case TV.BOW:
@@ -9461,32 +9461,32 @@ function borgGoodSell(ctx, item, who, d) {
       case TV.SOFT_ARMOR:
       case TV.HARD_ARMOR:
       case TV.DRAG_ARMOR:
-        if (worthId(item, d) && !multiple) return false;
+        if (worthId(item2, d) && !multiple) return false;
         break;
     }
   }
-  if ((d?.randarts ?? false) && item.artifact && !isIdent2(item, d)) return false;
-  if (!isIdent2(item, d) && item.ego && iqty(item) < 2 && needsIdent2(item, d))
+  if ((d?.randarts ?? false) && item2.artifact && !isIdent2(item2, d)) return false;
+  if (!isIdent2(item2, d) && item2.ego && iqty(item2) < 2 && needsIdent2(item2, d))
     return false;
   for (let i = 0; i < mem.boughtNum; i++) {
-    if (mem.boughtTval[i] === item.tval && mem.boughtSval[i] === item.sval && (mem.boughtStore[i] === who || who !== BORG_HOME))
+    if (mem.boughtTval[i] === item2.tval && mem.boughtSval[i] === item2.sval && (mem.boughtStore[i] === who || who !== BORG_HOME))
       return false;
   }
   return true;
 }
-function homeSellBad(ctx, item, emptyHomePower, d) {
+function homeSellBad(ctx, item2, emptyHomePower, d) {
   const mem = d?.mem ?? createStoreMemory();
-  if (iqty(item) === 0 || !isAware2(item, d)) return true;
-  if ((d?.randarts ?? false) && item.artifact && !isIdent2(item, d)) return true;
-  if (!itemValue2(item, d)) return true;
+  if (iqty(item2) === 0 || !isAware2(item2, d)) return true;
+  if ((d?.randarts ?? false) && item2.artifact && !isIdent2(item2, d)) return true;
+  if (!itemValue2(item2, d)) return true;
   for (let p = 0; p < mem.boughtNum; p++) {
-    if (mem.boughtTval[p] === item.tval && mem.boughtSval[p] === item.sval && mem.boughtPval[p] === item.pval && mem.boughtStore[p] === BORG_HOME)
+    if (mem.boughtTval[p] === item2.tval && mem.boughtSval[p] === item2.sval && mem.boughtPval[p] === item2.pval && mem.boughtStore[p] === BORG_HOME)
       return true;
   }
-  const single = noticeHomeSingle(ctx, item, d);
+  const single = noticeHomeSingle(ctx, item2, d);
   if (borgPowerHomeFrom(ctx, single) <= emptyHomePower) return true;
   if (!d?.sellHomeBadEval) return true;
-  if (d.sellHomeBadEval(ctx, item) < ctx.world.self.power) return true;
+  if (d.sellHomeBadEval(ctx, item2) < ctx.world.self.power) return true;
   return false;
 }
 function homeSellBest(ctx, d) {
@@ -9502,22 +9502,22 @@ function homeSellBest(ctx, d) {
   for (let n = 0; n < firstEmpty; n++) {
     const item2 = n < W2 ? home[n] : null;
     for (let i = 0; i < pack.length; i++) {
-      const item = pack[i];
-      if (homeSellBad(ctx, item, emptyHomePower, d)) continue;
+      const item3 = pack[i];
+      if (homeSellBad(ctx, item3, emptyHomePower, d)) continue;
       const trial = [...home];
-      if (item2 && borgObjectSimilar(item2, item, d)) {
+      if (item2 && borgObjectSimilar(item2, item3, d)) {
         trial[n] = withQty(item2, iqty(item2) + 1);
       } else {
         let stacksElsewhere = false;
         for (let k = 0; k < home.length; k++) {
-          if (borgObjectSimilar(home[k], item, d)) {
+          if (borgObjectSimilar(home[k], item3, d)) {
             stacksElsewhere = true;
             break;
           }
         }
         if (stacksElsewhere) continue;
-        if (item2) trial[n] = withQty(item, 1);
-        else trial.push(withQty(item, 1));
+        if (item2) trial[n] = withQty(item3, 1);
+        else trial.push(withQty(item3, 1));
       }
       const power = borgPowerHomeFrom(
         ctx,
@@ -9531,8 +9531,8 @@ function homeSellBest(ctx, d) {
   }
   return best;
 }
-function withQty(item, n) {
-  return { ...item, number: n };
+function withQty(item2, n) {
+  return { ...item2, number: n };
 }
 function borgThinkHomeSellUseful(ctx, d) {
   const home = homeStore(ctx);
@@ -9546,18 +9546,18 @@ function borgThinkHomeSellUseful(ctx, d) {
   if (!move) return { chosen: false, bestHomePower };
   const wares = homeWares(ctx);
   const pack = ctx.view.inventory();
-  const item = pack[move.packIndex];
-  const item2 = move.slot < wares.length ? wares[move.slot] : null;
+  const item2 = pack[move.packIndex];
+  const item22 = move.slot < wares.length ? wares[move.slot] : null;
   const packFull = borgFirstEmptyInventorySlot(ctx, d) === -1;
-  if (item2 && borgObjectSimilar(item2, item, d) && iqty(item2) <= 90) {
+  if (item22 && borgObjectSimilar(item22, item2, d) && iqty(item22) <= 90) {
     ctx.world.self.goal.shop = BORG_HOME;
     ctx.world.self.goal.item = move.packIndex;
     ctx.world.self.goal.ware = -1;
     return { chosen: true, bestHomePower };
   }
-  if (!packFull && item2 && !borgObjectSimilar(item, item2, d)) {
+  if (!packFull && item22 && !borgObjectSimilar(item2, item22, d)) {
     for (let p = 0; p < mem.soldNum; p++) {
-      if (mem.soldTval[p] === item2.tval && mem.soldSval[p] === item2.sval && mem.soldStore[p] === BORG_HOME)
+      if (mem.soldTval[p] === item22.tval && mem.soldSval[p] === item22.sval && mem.soldStore[p] === BORG_HOME)
         return { chosen: false, bestHomePower };
     }
     ctx.world.self.goal.shop = BORG_HOME;
@@ -9565,7 +9565,7 @@ function borgThinkHomeSellUseful(ctx, d) {
     ctx.world.self.goal.item = -1;
     return { chosen: true, bestHomePower };
   }
-  if (iqty(item) > 0) {
+  if (iqty(item2) > 0) {
     ctx.world.self.goal.shop = BORG_HOME;
     ctx.world.self.goal.item = move.packIndex;
     ctx.world.self.goal.ware = -1;
@@ -9586,21 +9586,21 @@ function borgThinkShopSellUseless(ctx, d) {
     if (shop.isHome) continue;
     if (shop.stock.length >= invMax) continue;
     for (let i = 0; i < pack.length; i++) {
-      const item = pack[i];
-      if (iqty(item) === 0) continue;
-      if (item.tval === st(ctx, 152 /* AMMO_TVAL */) && st(ctx, 155 /* AMISSILES */) < 45)
+      const item2 = pack[i];
+      if (iqty(item2) === 0) continue;
+      if (item2.tval === st(ctx, 152 /* AMMO_TVAL */) && st(ctx, 155 /* AMISSILES */) < 45)
         continue;
-      if (item.tval === TV.ROD && item.sval === SVAL.rod.healing && countHas(ctx, TV.ROD, SVAL.rod.healing) <= 3)
+      if (item2.tval === TV.ROD && item2.sval === SVAL.rod.healing && countHas(ctx, TV.ROD, SVAL.rod.healing) <= 3)
         continue;
-      if (st(ctx, 25 /* CLASS */) === CLASS_WARRIOR && item.tval === TV.ROD && item.sval === SVAL.rod.mapping && iqty(item) <= 2)
+      if (st(ctx, 25 /* CLASS */) === CLASS_WARRIOR && item2.tval === TV.ROD && item2.sval === SVAL.rod.mapping && iqty(item2) <= 2)
         continue;
-      if (item.tval === TV.WAND && st(ctx, 35 /* CLEVEL */) < 35 && (item.sval === SVAL.wand.magic_missile || item.sval === SVAL.wand.stinking_cloud || item.sval === SVAL.wand.annihilation) && item.pval !== 0)
+      if (item2.tval === TV.WAND && st(ctx, 35 /* CLEVEL */) < 35 && (item2.sval === SVAL.wand.magic_missile || item2.sval === SVAL.wand.stinking_cloud || item2.sval === SVAL.wand.annihilation) && item2.pval !== 0)
         continue;
-      if (!borgGoodSell(ctx, item, k, d)) continue;
-      const qty = borgMinItemQuantity(ctx, item, d);
-      const p = d?.sellEval ? d.sellEval(ctx, item, qty) : ctx.world.self.power - 1;
+      if (!borgGoodSell(ctx, item2, k, d)) continue;
+      const qty = borgMinItemQuantity(ctx, item2, d);
+      const p = d?.sellEval ? d.sellEval(ctx, item2, qty) : ctx.world.self.power - 1;
       if (p < bP) continue;
-      const c = itemValue2(item, d) < 3e4 ? itemValue2(item, d) : 3e4;
+      const c = itemValue2(item2, d) < 3e4 ? itemValue2(item2, d) : 3e4;
       if (p === bP && c >= bC) continue;
       bK = k;
       bI = i;
@@ -9618,20 +9618,20 @@ function borgThinkShopSellUseless(ctx, d) {
 }
 function countHas(ctx, tval, sval) {
   let n = 0;
-  for (const item of ctx.view.inventory())
-    if (item.tval === tval && item.sval === sval) n += iqty(item);
+  for (const item2 of ctx.view.inventory())
+    if (item2.tval === tval && item2.sval === sval) n += iqty(item2);
   return n;
 }
 function borgThinkShopSell(ctx, shopNum, d) {
   const goal = ctx.world.self.goal;
   if (goal.shop !== shopNum || goal.item < 0) return null;
   const pack = ctx.view.inventory();
-  const item = pack[goal.item];
-  if (!item) return null;
-  const qty = borgMinItemQuantity(ctx, item, d);
-  const cmd = ctx.act.shopSell(item.handle, qty);
+  const item2 = pack[goal.item];
+  if (!item2) return null;
+  const qty = borgMinItemQuantity(ctx, item2, d);
+  const cmd = ctx.act.shopSell(item2.handle, qty);
   const mem = d?.mem;
-  if (mem) recordSold(mem, item, goal.shop);
+  if (mem) recordSold(mem, item2, goal.shop);
   goal.shop = -1;
   goal.ware = -1;
   goal.item = -1;
@@ -9659,19 +9659,19 @@ function borgCountSell(ctx, d) {
   const St = SVAL.staff;
   const W2 = SVAL.wand;
   const Sc = SVAL.scroll;
-  for (const item of ctx.view.inventory()) {
-    if (iqty(item) === 0) continue;
-    if (itemValue2(item, d) <= 0) continue;
-    if (item.tval === ammoTval) continue;
-    if (isBookTval(item.tval)) continue;
-    if (noteNeedsId(item, d)) {
-      if (!borgHasMultiple(ctx, item, d)) return 0;
+  for (const item2 of ctx.view.inventory()) {
+    if (iqty(item2) === 0) continue;
+    if (itemValue2(item2, d) <= 0) continue;
+    if (item2.tval === ammoTval) continue;
+    if (isBookTval(item2.tval)) continue;
+    if (noteNeedsId(item2, d)) {
+      if (!borgHasMultiple(ctx, item2, d)) return 0;
     }
-    if (item.tval === TV.POTION && item.sval === P.cure_serious || item.tval === TV.POTION && item.sval === P.cure_critical || item.tval === TV.POTION && item.sval === P.healing || item.tval === TV.POTION && item.sval === P.star_healing || item.tval === TV.POTION && item.sval === P.life || item.tval === TV.POTION && item.sval === P.speed || item.tval === TV.STAFF && item.sval === St.teleportation || item.tval === TV.WAND && item.sval === W2.drain_life || item.tval === TV.WAND && item.sval === W2.annihilation || item.tval === TV.SCROLL && item.sval === Sc.teleport)
+    if (item2.tval === TV.POTION && item2.sval === P.cure_serious || item2.tval === TV.POTION && item2.sval === P.cure_critical || item2.tval === TV.POTION && item2.sval === P.healing || item2.tval === TV.POTION && item2.sval === P.star_healing || item2.tval === TV.POTION && item2.sval === P.life || item2.tval === TV.POTION && item2.sval === P.speed || item2.tval === TV.STAFF && item2.sval === St.teleportation || item2.tval === TV.WAND && item2.sval === W2.drain_life || item2.tval === TV.WAND && item2.sval === W2.annihilation || item2.tval === TV.SCROLL && item2.sval === Sc.teleport)
       continue;
-    const price = itemValue2(item, d) < 3e4 ? itemValue2(item, d) : 3e4;
-    if (price * iqty(item) < greed && !noteNeedsId(item, d)) continue;
-    const p = d?.sellEval ? d.sellEval(ctx, item, iqty(item)) : ctx.world.self.power - 51;
+    const price = itemValue2(item2, d) < 3e4 ? itemValue2(item2, d) : 3e4;
+    if (price * iqty(item2) < greed && !noteNeedsId(item2, d)) continue;
+    const p = d?.sellEval ? d.sellEval(ctx, item2, iqty(item2)) : ctx.world.self.power - 51;
     if (p + 50 < ctx.world.self.power) continue;
     k++;
   }
@@ -9679,8 +9679,8 @@ function borgCountSell(ctx, d) {
 }
 
 // src/store/buy.ts
-function wieldSlot2(item) {
-  switch (item.tval) {
+function wieldSlot2(item2) {
+  switch (item2.tval) {
     case TV.DIGGING:
     case TV.HAFTED:
     case TV.POLEARM:
@@ -9714,33 +9714,33 @@ function wieldSlot2(item) {
   }
 }
 function wornLight(ctx) {
-  for (const item of ctx.view.equipment())
-    if (item && item.tval === TV.LIGHT) return item;
+  for (const item2 of ctx.view.equipment())
+    if (item2 && item2.tval === TV.LIGHT) return item2;
   return null;
 }
-function buyWields(ctx, item, d) {
+function buyWields(ctx, item2, d) {
   const hole = borgFirstEmptyInventorySlot(ctx, d);
   if (hole === -1 || hole + 1 >= packSlots(ctx, d)) return false;
-  let slot = wieldSlot2(item);
+  let slot = wieldSlot2(item2);
   if (slot === null) return false;
-  if (item.tval === TV.LIGHT && item.sval === SVAL.light.torch) {
+  if (item2.tval === TV.LIGHT && item2.sval === SVAL.light.torch) {
     const light = wornLight(ctx);
     if (light && hasFlag2(light, "BURNS_OUT")) slot = null;
     if (light && light.sval === SVAL.light.lantern && hasFlag2(light, "TAKES_FUEL"))
       slot = null;
   }
-  if (item.tval === TV.DIGGING) slot = null;
+  if (item2.tval === TV.DIGGING) slot = null;
   return slot !== null;
 }
-function borgGoodBuy(ctx, item, who, ware, d) {
+function borgGoodBuy(ctx, item2, who, ware, d) {
   const mem = d?.mem ?? createStoreMemory();
-  switch (item.tval) {
+  switch (item2.tval) {
     case TV.SHOT:
     case TV.ARROW:
     case TV.BOLT:
       if (st(ctx, 35 /* CLEVEL */) < 35) {
-        if (item.toH) return false;
-        if (item.toD) return false;
+        if (item2.toH) return false;
+        if (item2.toD) return false;
       }
       break;
     case TV.PRAYER_BOOK:
@@ -9748,7 +9748,7 @@ function borgGoodBuy(ctx, item, who, ware, d) {
     case TV.NATURE_BOOK:
     case TV.SHADOW_BOOK:
     case TV.OTHER_BOOK:
-      if (!canBrowse2(item, d)) return false;
+      if (!canBrowse2(item2, d)) return false;
       break;
   }
   if (who === SHOP_BLACK) {
@@ -9756,15 +9756,15 @@ function borgGoodBuy(ctx, item, who, ware, d) {
     const Ro = SVAL.rod;
     const Sc = SVAL.scroll;
     const cls = st(ctx, 25 /* CLASS */);
-    if (item.tval === TV.SCROLL && item.sval === Sc.remove_curse && st(ctx, 159 /* FIRST_CURSED */))
+    if (item2.tval === TV.SCROLL && item2.sval === Sc.remove_curse && st(ctx, 159 /* FIRST_CURSED */))
       return true;
-    const special = item.tval === TV.POTION && (item.sval === P.star_healing || item.sval === P.life || item.sval === P.healing || item.sval === P.inc_str && st(ctx, 10 /* CSTR */) < 18 + 100 || item.sval === P.inc_int && st(ctx, 11 /* CINT */) < 18 + 100 || item.sval === P.inc_wis && st(ctx, 12 /* CWIS */) < 18 + 100 || item.sval === P.inc_dex && st(ctx, 13 /* CDEX */) < 18 + 100 || item.sval === P.inc_con && st(ctx, 14 /* CCON */) < 18 + 100) || item.tval === TV.ROD && (item.sval === Ro.healing || item.sval === Ro.recall && cls !== CLASS_PRIEST && cls !== CLASS_PALADIN || item.sval === Ro.speed && cls !== CLASS_DRUID && cls !== CLASS_RANGER || item.sval === Ro.teleport_other && cls !== CLASS_MAGE && cls === CLASS_ROGUE || item.sval === Ro.illumination && !st(ctx, 228 /* ALITE */)) || canBrowse2(item, d) && (d?.amtBook ? d.amtBook(item) : 0) === 0 && (d?.isDungeonBook ? d.isDungeonBook(item) : false) || item.tval === TV.SCROLL && (item.sval === Sc.teleport_level || item.sval === Sc.teleport);
+    const special = item2.tval === TV.POTION && (item2.sval === P.star_healing || item2.sval === P.life || item2.sval === P.healing || item2.sval === P.inc_str && st(ctx, 10 /* CSTR */) < 18 + 100 || item2.sval === P.inc_int && st(ctx, 11 /* CINT */) < 18 + 100 || item2.sval === P.inc_wis && st(ctx, 12 /* CWIS */) < 18 + 100 || item2.sval === P.inc_dex && st(ctx, 13 /* CDEX */) < 18 + 100 || item2.sval === P.inc_con && st(ctx, 14 /* CCON */) < 18 + 100) || item2.tval === TV.ROD && (item2.sval === Ro.healing || item2.sval === Ro.recall && cls !== CLASS_PRIEST && cls !== CLASS_PALADIN || item2.sval === Ro.speed && cls !== CLASS_DRUID && cls !== CLASS_RANGER || item2.sval === Ro.teleport_other && cls !== CLASS_MAGE && cls === CLASS_ROGUE || item2.sval === Ro.illumination && !st(ctx, 228 /* ALITE */)) || canBrowse2(item2, d) && (d?.amtBook ? d.amtBook(item2) : 0) === 0 && (d?.isDungeonBook ? d.isDungeonBook(item2) : false) || item2.tval === TV.SCROLL && (item2.sval === Sc.teleport_level || item2.sval === Sc.teleport);
     if (special) {
       if ((d?.selfScum ?? true) && st(ctx, 35 /* CLEVEL */) >= 10 && st(ctx, 26 /* LIGHT */) && st(ctx, 39 /* FOOD */) + 0 >= 100 && /* num_food seam folded to 0 by default */
-      shopCost(item) <= 85e3) {
+      shopCost(item2) <= 85e3) {
         const dexSafe = 0;
         if (dexSafe + st(ctx, 35 /* CLEVEL */) > 90) {
-          mem.moneyScumAmount = shopCost(item);
+          mem.moneyScumAmount = shopCost(item2);
           mem.moneyScumWho = who;
           mem.moneyScumWare = ware;
         }
@@ -9776,17 +9776,17 @@ function borgGoodBuy(ctx, item, who, ware, d) {
     if (st(ctx, 45 /* GOLD */) < 1e4) return false;
   }
   for (let p = 0; p < mem.soldNum; p++) {
-    if (mem.soldTval[p] === item.tval && mem.soldSval[p] === item.sval && mem.soldStore[p] === who)
+    if (mem.soldTval[p] === item2.tval && mem.soldSval[p] === item2.sval && mem.soldStore[p] === who)
       return false;
   }
-  if (item.tval === TV.DIGGING) {
+  if (item2.tval === TV.DIGGING) {
     for (const it of ctx.view.inventory()) if (it.tval === TV.DIGGING) return false;
   }
   if (st(ctx, 36 /* MAXCLEVEL */) < 5) {
-    if (canBrowse2(item, d) && item.sval >= 1) return false;
+    if (canBrowse2(item2, d) && item2.sval >= 1) return false;
   }
   if (!borgPrimarilyCaster(ctx, d) && st(ctx, 36 /* MAXCLEVEL */) <= 8) {
-    if (canBrowse2(item, d) && item.sval >= 1) return false;
+    if (canBrowse2(item2, d) && item2.sval >= 1) return false;
   }
   return true;
 }
@@ -9808,23 +9808,23 @@ function borgThinkShopBuyUseful(ctx, d) {
     if (light0food0 && k !== 0 && k !== BORG_HOME) continue;
     if (hurt && k !== SHOP_TEMPLE) continue;
     for (let n = 0; n < shop.stock.length; n++) {
-      const item = shop.stock[n];
-      if (iqty(item) === 0) continue;
-      if (!borgGoodBuy(ctx, item, k, n, d)) continue;
+      const item2 = shop.stock[n];
+      if (iqty(item2) === 0) continue;
+      if (!borgGoodBuy(ctx, item2, k, n, d)) continue;
       if (mem.moneyScumAmount && (k !== mem.moneyScumWho || n !== mem.moneyScumWare))
         continue;
-      if (st(ctx, 45 /* GOLD */) < shopCost(item)) continue;
-      if (st(ctx, 39 /* FOOD */) === 0 && item.tval !== TV.FOOD && item.tval !== TV.SCROLL && item.sval !== SVAL.scroll.satisfy_hunger)
+      if (st(ctx, 45 /* GOLD */) < shopCost(item2)) continue;
+      if (st(ctx, 39 /* FOOD */) === 0 && item2.tval !== TV.FOOD && item2.tval !== TV.SCROLL && item2.sval !== SVAL.scroll.satisfy_hunger)
         continue;
-      if (item.tval === TV.WAND && (item.sval === SVAL.wand.magic_missile || item.sval === SVAL.wand.stinking_cloud) && st(ctx, 257 /* GOOD_W_CHG */) > 40)
+      if (item2.tval === TV.WAND && (item2.sval === SVAL.wand.magic_missile || item2.sval === SVAL.wand.stinking_cloud) && st(ctx, 257 /* GOOD_W_CHG */) > 40)
         continue;
-      if (item.tval === TV.WAND && (item.sval === SVAL.wand.magic_missile || item.sval === SVAL.wand.stinking_cloud) && st(ctx, 36 /* MAXCLEVEL */) > 30)
+      if (item2.tval === TV.WAND && (item2.sval === SVAL.wand.magic_missile || item2.sval === SVAL.wand.stinking_cloud) && st(ctx, 36 /* MAXCLEVEL */) > 30)
         continue;
-      const qty = borgMinItemQuantity(ctx, item, d);
-      const wields = buyWields(ctx, item, d);
-      const sim = { item, store: k, qty, wields };
+      const qty = borgMinItemQuantity(ctx, item2, d);
+      const wields = buyWields(ctx, item2, d);
+      const sim = { item: item2, store: k, qty, wields };
       const p = d?.buyShopEval ? d.buyShopEval(ctx, sim) : ctx.world.self.power;
-      const c = shopCost(item) * qty;
+      const c = shopCost(item2) * qty;
       if (p <= bP) continue;
       if (p === bP && c >= bC) continue;
       bK = k;
@@ -9846,18 +9846,18 @@ function borgThinkHomeBuyUseful(ctx, d) {
   let bN = -1;
   let bP = ctx.world.self.power;
   for (let n = 0; n < wares.length; n++) {
-    const item = wares[n];
-    if (iqty(item) === 0) continue;
+    const item2 = wares[n];
+    if (iqty(item2) === 0) continue;
     let skip = false;
     for (let i = 0; i < mem.soldNum; i++) {
-      if (mem.soldTval[i] === item.tval && mem.soldSval[i] === item.sval)
+      if (mem.soldTval[i] === item2.tval && mem.soldSval[i] === item2.sval)
         skip = true;
     }
     if (skip) continue;
     if (borgFirstEmptyInventorySlot(ctx, d) === -1) continue;
-    const qty = borgMinItemQuantity(ctx, item, d);
-    const wields = wieldSlot2(item) !== null;
-    const sim = { item, store: BORG_HOME, qty, wields };
+    const qty = borgMinItemQuantity(ctx, item2, d);
+    const wields = wieldSlot2(item2) !== null;
+    const sim = { item: item2, store: BORG_HOME, qty, wields };
     const p = d?.buyHomeEval ? d.buyHomeEval(ctx, sim) : ctx.world.self.power;
     if (p <= bP) continue;
     bN = n;
@@ -9887,12 +9887,12 @@ function borgThinkShopGrabInteresting(ctx, d) {
     const shop = stores[k];
     if (shop.isHome) continue;
     for (let n = 0; n < shop.stock.length; n++) {
-      const item = shop.stock[n];
-      if (iqty(item) === 0) continue;
-      if (!borgGoodBuy(ctx, item, k, n, d)) continue;
-      if (st(ctx, 45 /* GOLD */) < 1e3 + shopCost(item) * 5) continue;
-      const qty = borgMinItemQuantity(ctx, item, d);
-      const added = { ...item, number: qty };
+      const item2 = shop.stock[n];
+      if (iqty(item2) === 0) continue;
+      if (!borgGoodBuy(ctx, item2, k, n, d)) continue;
+      if (st(ctx, 45 /* GOLD */) < 1e3 + shopCost(item2) * 5) continue;
+      const qty = borgMinItemQuantity(ctx, item2, d);
+      const added = { ...item2, number: qty };
       const single = noticeHomeSingle(ctx, added, d);
       if (emptyHomePower >= borgPowerHomeFrom(ctx, single)) continue;
       const s0 = borgPowerHomeFrom(
@@ -9900,7 +9900,7 @@ function borgThinkShopGrabInteresting(ctx, d) {
         borgNoticeHome(ctx, { items: [...wares, added], includeEquip: true }, d)
       );
       let s = s0;
-      const c = shopCost(item) * qty;
+      const c = shopCost(item2) * qty;
       if (c > Math.trunc(st(ctx, 45 /* GOLD */) / 10)) s -= c;
       if (s < bS) continue;
       if (s === bS && c >= bC) continue;
@@ -9929,20 +9929,20 @@ function borgThinkHomeGrabUseless(ctx, d) {
   let bS = borgPowerHomeFrom(ctx, noticeHomeFull(ctx, d));
   let bN = -1;
   for (let n = 0; n < wares.length; n++) {
-    const item = wares[n];
-    if (iqty(item) === 0) continue;
+    const item2 = wares[n];
+    if (iqty(item2) === 0) continue;
     let skip = false;
     for (let p = 0; p < mem.soldNum; p++) {
-      if (mem.soldTval[p] === item.tval && mem.soldSval[p] === item.sval && mem.soldStore[p] === BORG_HOME)
+      if (mem.soldTval[p] === item2.tval && mem.soldSval[p] === item2.sval && mem.soldStore[p] === BORG_HOME)
         skip = true;
     }
     if (skip) continue;
-    const qty = borgMinItemQuantity(ctx, item, d);
+    const qty = borgMinItemQuantity(ctx, item2, d);
     const trial = [];
     for (let m = 0; m < wares.length; m++) {
       if (m === n) {
-        const left = iqty(item) - qty;
-        if (left > 0) trial.push({ ...item, number: left });
+        const left = iqty(item2) - qty;
+        if (left > 0) trial.push({ ...item2, number: left });
       } else {
         trial.push(wares[m]);
       }
@@ -9972,10 +9972,10 @@ function borgThinkHomeBuySwap(ctx, weapon, d) {
   if (weapon && borgFirstEmptyInventorySlot(ctx, d) === -1) return false;
   let bP = current?.value ?? 0;
   for (let n = 0; n < wares.length; n++) {
-    const item = wares[n];
-    if (iqty(item) === 0) continue;
-    if (weapon && wieldSlot2(item) !== "weapon") continue;
-    const p = evalFn(ctx, item);
+    const item2 = wares[n];
+    if (iqty(item2) === 0) continue;
+    if (weapon && wieldSlot2(item2) !== "weapon") continue;
+    const p = evalFn(ctx, item2);
     if (p <= bP) continue;
     bN = n;
     bP = p;
@@ -9998,21 +9998,21 @@ function borgThinkShopBuy(ctx, shopNum, d) {
   if (goal.shop !== shopNum || goal.ware < 0) return null;
   const shop = ctx.view.stores()[goal.shop];
   if (!shop) return null;
-  const item = shop.stock[goal.ware];
-  if (!item || item.tval === 0) {
+  const item2 = shop.stock[goal.ware];
+  if (!item2 || item2.tval === 0) {
     goal.shop = -1;
     goal.ware = -1;
     goal.item = -1;
     ctx.world.self.timeThisPanel++;
     return null;
   }
-  const cmd = ctx.act.shopBuy(item.index);
+  const cmd = ctx.act.shopBuy(item2.index);
   const mem = d?.mem;
   if (mem) {
-    if (mem.moneyScumAmount && shopCost(item) >= Math.trunc(mem.moneyScumAmount * 9 / 10)) {
+    if (mem.moneyScumAmount && shopCost(item2) >= Math.trunc(mem.moneyScumAmount * 9 / 10)) {
       mem.moneyScumAmount = 0;
     }
-    recordBought(mem, item, goal.shop);
+    recordBought(mem, item2, goal.shop);
   }
   goal.shop = -1;
   goal.ware = -1;
@@ -10087,9 +10087,9 @@ function borgThinkStore(ctx, shopNum, d, wearDeps) {
 
 // src/item/item-use.ts
 function borgQuaffPotion(ctx, sval, d) {
-  const item = borgSlot(ctx, TV.POTION, sval, d);
-  if (!item) return null;
-  return ctx.act.quaff(item.handle);
+  const item2 = borgSlot(ctx, TV.POTION, sval, d);
+  if (!item2) return null;
+  return ctx.act.quaff(item2.handle);
 }
 var quaffStore = /* @__PURE__ */ new WeakMap();
 function quaffState(world) {
@@ -10118,11 +10118,11 @@ function borgQuaffCrit(ctx, noCheck, d) {
 }
 function borgQuaffUnknown(ctx, d) {
   let n = null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (item.tval !== TV.POTION) continue;
-    if (isAware(item, d)) continue;
-    n = item;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (item2.tval !== TV.POTION) continue;
+    if (isAware(item2, d)) continue;
+    n = item2;
   }
   return n ? ctx.act.quaff(n.handle) : null;
 }
@@ -10130,18 +10130,18 @@ function borgReadScroll(ctx, sval, d) {
   if (noLight(ctx)) return null;
   if (trait3(ctx, 112 /* ISBLIND */) || trait3(ctx, 114 /* ISCONFUSED */) || trait3(ctx, 121 /* ISFORGET */))
     return null;
-  const item = borgSlot(ctx, TV.SCROLL, sval, d);
-  if (!item) return null;
+  const item2 = borgSlot(ctx, TV.SCROLL, sval, d);
+  if (!item2) return null;
   ctx.world.self.goal.shop = ctx.world.self.goal.ware = ctx.world.self.goal.item = -1;
-  return ctx.act.read(item.handle);
+  return ctx.act.read(item2.handle);
 }
 function borgReadUnknown(ctx, d) {
   let n = null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (item.tval !== TV.SCROLL) continue;
-    if (isAware(item, d)) continue;
-    n = item;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (item2.tval !== TV.SCROLL) continue;
+    if (isAware(item2, d)) continue;
+    n = item2;
   }
   if (!n) return null;
   if (noLight(ctx)) return null;
@@ -10149,71 +10149,71 @@ function borgReadUnknown(ctx, d) {
   return ctx.act.read(n.handle);
 }
 function borgEat(ctx, tval, sval, d) {
-  const item = borgSlot(ctx, tval, sval, d);
-  if (!item) return null;
-  return ctx.act.eat(item.handle);
+  const item2 = borgSlot(ctx, tval, sval, d);
+  if (!item2) return null;
+  return ctx.act.eat(item2.handle);
 }
 function borgEatUnknown(ctx, d) {
   let n = null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (item.tval !== TV.FOOD && item.tval !== TV.MUSHROOM) continue;
-    if (isAware(item, d)) continue;
-    n = item;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (item2.tval !== TV.FOOD && item2.tval !== TV.MUSHROOM) continue;
+    if (isAware(item2, d)) continue;
+    n = item2;
   }
   return n ? ctx.act.eat(n.handle) : null;
 }
 function borgEquipsRod(ctx, sval, d) {
-  const item = borgSlot(ctx, TV.ROD, sval, d);
-  if (!item) return false;
-  if (!item.pval) return false;
-  const fail = deviceFail(ctx, itemLevel(item, d));
+  const item2 = borgSlot(ctx, TV.ROD, sval, d);
+  if (!item2) return false;
+  if (!item2.pval) return false;
+  const fail = deviceFail(ctx, itemLevel(item2, d));
   return fail <= 500;
 }
 function borgZapRod(ctx, sval, d) {
-  const item = borgSlot(ctx, TV.ROD, sval, d);
-  if (!item) return null;
-  if (!item.pval) return null;
-  const fail = deviceFail(ctx, itemLevel(item, d));
+  const item2 = borgSlot(ctx, TV.ROD, sval, d);
+  if (!item2) return null;
+  if (!item2.pval) return null;
+  const fail = deviceFail(ctx, itemLevel(item2, d));
   if (sval !== SVAL.rod.recall) {
     if (fail > 500) return null;
   }
-  return ctx.act.zapRod(item.handle);
+  return ctx.act.zapRod(item2.handle);
 }
 function borgUseStaff(ctx, sval, d) {
-  const item = borgSlot(ctx, TV.STAFF, sval, d);
-  if (!item) return null;
-  if (!item.pval) return null;
-  return ctx.act.useStaff(item.handle);
+  const item2 = borgSlot(ctx, TV.STAFF, sval, d);
+  if (!item2) return null;
+  if (!item2.pval) return null;
+  return ctx.act.useStaff(item2.handle);
 }
 function borgUseUnknown(ctx, d) {
   let n = null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (item.tval !== TV.STAFF) continue;
-    if (isAware(item, d)) continue;
-    n = item;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (item2.tval !== TV.STAFF) continue;
+    if (isAware(item2, d)) continue;
+    n = item2;
   }
   return n ? ctx.act.useStaff(n.handle) : null;
 }
 function borgUseStaffFail(ctx, sval, d) {
-  const item = borgSlot(ctx, TV.STAFF, sval, d);
-  if (!item) return null;
-  if (!item.pval) return null;
-  const fail = deviceFail(ctx, itemLevel(item, d));
+  const item2 = borgSlot(ctx, TV.STAFF, sval, d);
+  if (!item2) return null;
+  if (!item2.pval) return null;
+  const fail = deviceFail(ctx, itemLevel(item2, d));
   if (fail > 500) {
     if (sval !== SVAL.staff.teleportation) return null;
     if (!trait3(ctx, 114 /* ISCONFUSED */) && !trait3(ctx, 112 /* ISBLIND */)) {
       if (fail > 500) return null;
     }
   }
-  return ctx.act.useStaff(item.handle);
+  return ctx.act.useStaff(item2.handle);
 }
 function borgEquipsStaffFail(ctx, sval, d) {
-  const item = borgSlot(ctx, TV.STAFF, sval, d);
-  if (!item) return false;
-  if (!item.pval) return false;
-  const fail = deviceFail(ctx, itemLevel(item, d));
+  const item2 = borgSlot(ctx, TV.STAFF, sval, d);
+  if (!item2) return false;
+  if (!item2.pval) return false;
+  const fail = deviceFail(ctx, itemLevel(item2, d));
   if (sval === SVAL.staff.destruction) return true;
   if (fail > 500) {
     if (sval !== SVAL.staff.teleportation) return false;
@@ -10224,57 +10224,57 @@ function borgEquipsStaffFail(ctx, sval, d) {
   return true;
 }
 function borgAimWand(ctx, sval, d) {
-  const item = borgSlot(ctx, TV.WAND, sval, d);
-  if (!item) return null;
-  if (!item.pval) return null;
-  return ctx.act.aimWand(item.handle);
+  const item2 = borgSlot(ctx, TV.WAND, sval, d);
+  if (!item2) return null;
+  if (!item2.pval) return null;
+  return ctx.act.aimWand(item2.handle);
 }
 function* equipment(ctx) {
-  for (const item of ctx.view.equipment()) {
-    if (item && item.number > 0) yield item;
+  for (const item2 of ctx.view.equipment()) {
+    if (item2 && item2.number > 0) yield item2;
   }
 }
 function borgEquipsRing(ctx, ringSval, d) {
-  for (const item of equipment(ctx)) {
-    if (!isAware(item, d)) continue;
-    if (item.tval !== TV.RING || item.sval !== ringSval) continue;
-    if (item.timeout) continue;
-    if (!isIdent(item, d)) continue;
-    const fail = deviceFail(ctx, itemLevel(item, d));
+  for (const item2 of equipment(ctx)) {
+    if (!isAware(item2, d)) continue;
+    if (item2.tval !== TV.RING || item2.sval !== ringSval) continue;
+    if (item2.timeout) continue;
+    if (!isIdent(item2, d)) continue;
+    const fail = deviceFail(ctx, itemLevel(item2, d));
     if (fail > 500) continue;
     return true;
   }
   return false;
 }
 function borgActivateRing(ctx, ringSval, d) {
-  for (const item of equipment(ctx)) {
-    if (!isAware(item, d)) continue;
-    if (item.tval !== TV.RING || item.sval !== ringSval) continue;
-    if (item.timeout) continue;
-    if (!isIdent(item, d)) continue;
-    return ctx.act.activate(item.handle);
+  for (const item2 of equipment(ctx)) {
+    if (!isAware(item2, d)) continue;
+    if (item2.tval !== TV.RING || item2.sval !== ringSval) continue;
+    if (item2.timeout) continue;
+    if (!isIdent(item2, d)) continue;
+    return ctx.act.activate(item2.handle);
   }
   return null;
 }
 function borgEquipsDragon(ctx, dragSval, d) {
-  for (const item of equipment(ctx)) {
-    if (!isAware(item, d)) continue;
-    if (item.tval !== TV.DRAG_ARMOR || item.sval !== dragSval) continue;
-    if (item.timeout) continue;
-    if (!isIdent(item, d)) continue;
-    const fail = deviceFail(ctx, itemLevel(item, d));
+  for (const item2 of equipment(ctx)) {
+    if (!isAware(item2, d)) continue;
+    if (item2.tval !== TV.DRAG_ARMOR || item2.sval !== dragSval) continue;
+    if (item2.timeout) continue;
+    if (!isIdent(item2, d)) continue;
+    const fail = deviceFail(ctx, itemLevel(item2, d));
     if (fail > 500) return false;
     return true;
   }
   return false;
 }
 function borgActivateDragon(ctx, dragSval, d) {
-  for (const item of equipment(ctx)) {
-    if (!isAware(item, d)) continue;
-    if (item.tval !== TV.DRAG_ARMOR || item.sval !== dragSval) continue;
-    if (item.timeout) continue;
-    if (!isIdent(item, d)) continue;
-    return ctx.act.activate(item.handle);
+  for (const item2 of equipment(ctx)) {
+    if (!isAware(item2, d)) continue;
+    if (item2.tval !== TV.DRAG_ARMOR || item2.sval !== dragSval) continue;
+    if (item2.timeout) continue;
+    if (!isIdent(item2, d)) continue;
+    return ctx.act.activate(item2.handle);
   }
   return null;
 }
@@ -10287,11 +10287,11 @@ function borgEquipsItem(ctx, act, checkCharge, d) {
   return equipsItem(act, checkCharge, d);
 }
 function borgActivateFailure(ctx, tval, sval, d) {
-  const item = borgSlot(ctx, tval, sval, d);
-  if (!item) return 100;
-  if (!item.pval) return 100;
-  if (!item.activation) return 100;
-  return deviceFail(ctx, itemLevel(item, d));
+  const item2 = borgSlot(ctx, tval, sval, d);
+  if (!item2) return 100;
+  if (!item2.pval) return 100;
+  if (!item2.activation) return 100;
+  return deviceFail(ctx, itemLevel(item2, d));
 }
 function borgUseThings(ctx, d) {
   const P = SVAL.potion;
@@ -10309,22 +10309,22 @@ function borgUseThings(ctx, d) {
     const cmd = trait3(ctx, 127 /* ISFIXSTR */) && (borgQuaffPotion(ctx, P.inc_str, d) || borgEat(ctx, TV.MUSHROOM, M.purging, d) || borgActivateItem(ctx, "act_shroom_purging", d) || borgActivateItem(ctx, "act_restore_str", d) || borgActivateItem(ctx, "act_restore_all", d) || borgEat(ctx, TV.MUSHROOM, M.restoring, d)) || trait3(ctx, 128 /* ISFIXINT */) && (borgQuaffPotion(ctx, P.inc_int, d) || borgActivateItem(ctx, "act_restore_int", d) || borgActivateItem(ctx, "act_restore_all", d) || borgEat(ctx, TV.MUSHROOM, M.restoring, d)) || trait3(ctx, 129 /* ISFIXWIS */) && (borgQuaffPotion(ctx, P.inc_wis, d) || borgActivateItem(ctx, "act_restore_wis", d) || borgActivateItem(ctx, "act_restore_all", d) || borgEat(ctx, TV.MUSHROOM, M.restoring, d)) || trait3(ctx, 130 /* ISFIXDEX */) && (borgQuaffPotion(ctx, P.inc_dex, d) || borgActivateItem(ctx, "act_restore_dex", d) || borgActivateItem(ctx, "act_restore_all", d) || borgEat(ctx, TV.MUSHROOM, M.restoring, d)) || trait3(ctx, 131 /* ISFIXCON */) && (borgQuaffPotion(ctx, P.inc_con, d) || borgActivateItem(ctx, "act_restore_con", d) || borgActivateItem(ctx, "act_restore_all", d) || borgEat(ctx, TV.MUSHROOM, M.purging, d) || borgActivateItem(ctx, "act_shroom_purging", d) || borgEat(ctx, TV.MUSHROOM, M.restoring, d));
     if (cmd) return cmd;
   }
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0 || !isAware(item, d)) continue;
-    if (item.tval === TV.POTION) {
-      if (item.sval === P.enlightenment) {
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0 || !isAware(item2, d)) continue;
+    if (item2.tval === TV.POTION) {
+      if (item2.sval === P.enlightenment) {
         if (inTown) continue;
-        const cmd = borgQuaffPotion(ctx, item.sval, d);
+        const cmd = borgQuaffPotion(ctx, item2.sval, d);
         if (cmd) return cmd;
-      } else if (item.sval === P.inc_all) {
-        const cmd = borgQuaffPotion(ctx, item.sval, d);
+      } else if (item2.sval === P.inc_all) {
+        const cmd = borgQuaffPotion(ctx, item2.sval, d);
         if (cmd) return cmd;
       }
-    } else if (item.tval === TV.SCROLL) {
+    } else if (item2.tval === TV.SCROLL) {
       if (trait3(ctx, 112 /* ISBLIND */) || trait3(ctx, 114 /* ISCONFUSED */)) continue;
-      if (item.sval === SVAL.scroll.mapping || item.sval === SVAL.scroll.acquirement || item.sval === SVAL.scroll.star_acquirement) {
+      if (item2.sval === SVAL.scroll.mapping || item2.sval === SVAL.scroll.acquirement || item2.sval === SVAL.scroll.star_acquirement) {
         if (inTown) continue;
-        const cmd = borgReadScroll(ctx, item.sval, d);
+        const cmd = borgReadScroll(ctx, item2.sval, d);
         if (cmd) return cmd;
       }
     }
@@ -10337,18 +10337,18 @@ function borgUseThings(ctx, d) {
 }
 function borgRecharging(ctx, d, playerHas2) {
   if (trait3(ctx, 112 /* ISBLIND */) || trait3(ctx, 114 /* ISCONFUSED */)) return null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (!isIdent(item, d) || !isAware(item, d)) continue;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (!isIdent(item2, d) || !isAware(item2, d)) continue;
     let charge = false;
-    if (item.tval === TV.WAND && item.pval <= 1) charge = true;
-    if (item.tval === TV.STAFF) {
-      if (item.pval < 2 && borgSpellOkayFail(ctx, 7 /* RECHARGING */, 96, playerHas2) && item.sval < SVAL.staff.power)
+    if (item2.tval === TV.WAND && item2.pval <= 1) charge = true;
+    if (item2.tval === TV.STAFF) {
+      if (item2.pval < 2 && borgSpellOkayFail(ctx, 7 /* RECHARGING */, 96, playerHas2) && item2.sval < SVAL.staff.power)
         charge = true;
-      if (item.pval <= 1) charge = true;
-      if (item.sval === SVAL.staff.teleportation && item.pval < 3 && trait3(ctx, 105 /* CDEPTH */) === 0)
+      if (item2.pval <= 1) charge = true;
+      if (item2.sval === SVAL.staff.teleportation && item2.pval < 3 && trait3(ctx, 105 /* CDEPTH */) === 0)
         charge = true;
-      if (item.number + item.pval >= 4 && item.pval >= 1) charge = false;
+      if (item2.number + item2.pval >= 4 && item2.pval >= 1) charge = false;
     }
     if (!charge) continue;
     const cmd = borgReadScroll(ctx, SVAL.scroll.recharging, d) || borgSpellFail(ctx, 7 /* RECHARGING */, 96, playerHas2) || borgActivateItem(ctx, "act_recharge", d);
@@ -10359,8 +10359,8 @@ function borgRecharging(ctx, d, playerHas2) {
 }
 
 // src/item/item-id.ts
-function borgItemNoteNeedsId(item, d) {
-  return needsIdent(item, d);
+function borgItemNoteNeedsId(item2, d) {
+  return needsIdent(item2, d);
 }
 function borgTestStuff(ctx, d) {
   const freeId = borgSpellLegal(ctx, 8 /* IDENTIFY_RUNE */);
@@ -10368,28 +10368,28 @@ function borgTestStuff(ctx, d) {
   if (danger(d) > 1) return null;
   let best = null;
   let bestV = -1;
-  for (const item of ctx.view.equipment()) {
-    if (!item || item.number <= 0) continue;
-    if (!borgItemNoteNeedsId(item, d)) continue;
+  for (const item2 of ctx.view.equipment()) {
+    if (!item2 || item2.number <= 0) continue;
+    if (!borgItemNoteNeedsId(item2, d)) continue;
     let v = 0;
-    if (item.artifact) v = itemValue(item, d) + 15e4;
-    if (item.ego) v = itemValue(item, d) + 1e5;
-    if (borgItemNoteNeedsId(item, d)) v = itemValue(item, d) + 2e4;
+    if (item2.artifact) v = itemValue(item2, d) + 15e4;
+    if (item2.ego) v = itemValue(item2, d) + 1e5;
+    if (borgItemNoteNeedsId(item2, d)) v = itemValue(item2, d) + 2e4;
     if (!v) continue;
     if (v <= bestV) continue;
-    best = item;
+    best = item2;
     bestV = v;
   }
   const maxDepth = trait3(ctx, 106 /* MAXDEPTH */);
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (!borgItemNoteNeedsId(item, d)) continue;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (!borgItemNoteNeedsId(item2, d)) continue;
     let v = 0;
-    if (item.artifact) v = itemValue(item, d) + 15e4;
-    if (borgItemNoteNeedsId(item, d)) v = itemValue(item, d) + 2e4;
-    else if (freeId) v = itemValue(item, d);
-    if (!isAware(item, d)) {
-      switch (item.tval) {
+    if (item2.artifact) v = itemValue(item2, d) + 15e4;
+    if (borgItemNoteNeedsId(item2, d)) v = itemValue(item2, d) + 2e4;
+    else if (freeId) v = itemValue(item2, d);
+    if (!isAware(item2, d)) {
+      switch (item2.tval) {
         case TV.RING:
         case TV.AMULET:
           v += maxDepth * 5e3;
@@ -10413,7 +10413,7 @@ function borgTestStuff(ctx, d) {
     }
     if (!v) continue;
     if (v <= bestV) continue;
-    best = item;
+    best = item2;
     bestV = v;
   }
   if (best) {
@@ -10446,14 +10446,14 @@ function borgEnchantToA(ctx, d, playerHas2) {
   const canSpell = borgSpellOkayFail(ctx, 76 /* ENCHANT_ARMOUR */, 65, playerHas2) || trait3(ctx, 238 /* AENCH_SARM */) >= 1;
   let best = null;
   let bestA = 99;
-  for (const item of ctx.view.equipment()) {
-    if (!item || item.number <= 0) continue;
-    if (!isArmourSlot(item)) continue;
-    if (!isIdent(item, d)) continue;
-    const a = item.toA;
+  for (const item2 of ctx.view.equipment()) {
+    if (!item2 || item2.number <= 0) continue;
+    if (!isArmourSlot(item2)) continue;
+    if (!isIdent(item2, d)) continue;
+    const a = item2.toA;
     if (canSpell ? a >= ENCHANT_LIMIT : a >= 8) continue;
     if (best && bestA < a) continue;
-    best = item;
+    best = item2;
     bestA = a;
   }
   if (!best) return null;
@@ -10462,32 +10462,32 @@ function borgEnchantToA(ctx, d, playerHas2) {
 function borgEnchantToH(ctx, d, playerHas2) {
   if (!trait3(ctx, 241 /* NEED_ENCHANT_TO_H */)) return null;
   if (!trait3(ctx, 234 /* AENCH_TOH */) && !trait3(ctx, 236 /* AENCH_SWEP */)) return null;
-  const item = pickLeastEnchantedWeapon(ctx, d, playerHas2, (it) => it.toH);
-  if (!item) return null;
+  const item2 = pickLeastEnchantedWeapon(ctx, d, playerHas2, (it) => it.toH);
+  if (!item2) return null;
   return borgReadScroll(ctx, SVAL.scroll.star_enchant_weapon, d) || borgReadScroll(ctx, SVAL.scroll.enchant_weapon_to_hit, d) || borgSpellFail(ctx, 75 /* ENCHANT_WEAPON */, 65, playerHas2);
 }
 function borgEnchantToD(ctx, d, playerHas2) {
   if (!trait3(ctx, 242 /* NEED_ENCHANT_TO_D */)) return null;
   if (!trait3(ctx, 235 /* AENCH_TOD */) && !trait3(ctx, 236 /* AENCH_SWEP */)) return null;
-  const item = pickLeastEnchantedWeapon(ctx, d, playerHas2, (it) => it.toD);
-  if (!item) return null;
+  const item2 = pickLeastEnchantedWeapon(ctx, d, playerHas2, (it) => it.toD);
+  if (!item2) return null;
   return borgReadScroll(ctx, SVAL.scroll.star_enchant_weapon, d) || borgReadScroll(ctx, SVAL.scroll.enchant_weapon_to_dam, d) || borgSpellFail(ctx, 75 /* ENCHANT_WEAPON */, 65, playerHas2);
 }
 function pickLeastEnchantedWeapon(ctx, d, playerHas2, bonus) {
   const canSpell = borgSpellOkayFail(ctx, 75 /* ENCHANT_WEAPON */, 65, playerHas2) || trait3(ctx, 236 /* AENCH_SWEP */) >= 1;
   let best = null;
   let bestA = 99;
-  for (const item of ctx.view.equipment()) {
-    if (!item || item.number <= 0) continue;
-    if (item.tval !== TV.BOW && !isMeleeWeapon(item)) continue;
-    if (!isIdent(item, d)) continue;
-    if (item.tval === TV.DIGGING) continue;
-    const a = bonus(item);
+  for (const item2 of ctx.view.equipment()) {
+    if (!item2 || item2.number <= 0) continue;
+    if (item2.tval !== TV.BOW && !isMeleeWeapon(item2)) continue;
+    if (!isIdent(item2, d)) continue;
+    if (item2.tval === TV.DIGGING) continue;
+    const a = bonus(item2);
     if (canSpell ? a >= ENCHANT_LIMIT : a >= 8) continue;
-    if (item.tval === TV.BOW && trait3(ctx, 154 /* AMMO_POWER */) < 3 && !item.artifact && !item.ego)
+    if (item2.tval === TV.BOW && trait3(ctx, 154 /* AMMO_POWER */) < 3 && !item2.artifact && !item2.ego)
       continue;
     if (best && bestA < a) continue;
-    best = item;
+    best = item2;
     bestA = a;
   }
   return best;
@@ -10497,8 +10497,8 @@ function borgBrandWeapon(ctx, _d) {
   if (!trait3(ctx, 239 /* ABRAND */)) return null;
   return null;
 }
-function isArmourSlot(item) {
-  switch (item.tval) {
+function isArmourSlot(item2) {
+  switch (item2.tval) {
     case TV.BOOTS:
     case TV.GLOVES:
     case TV.HELM:
@@ -10513,8 +10513,8 @@ function isArmourSlot(item) {
       return false;
   }
 }
-function isMeleeWeapon(item) {
-  switch (item.tval) {
+function isMeleeWeapon(item2) {
+  switch (item2.tval) {
     case TV.DIGGING:
     case TV.HAFTED:
     case TV.POLEARM:
@@ -10534,8 +10534,8 @@ function borgEnchanting(ctx, d, playerHas2) {
 
 // src/item/light.ts
 function currentLight(ctx) {
-  for (const item of ctx.view.equipment()) {
-    if (item && item.number > 0 && item.tval === TV.LIGHT) return item;
+  for (const item2 of ctx.view.equipment()) {
+    if (item2 && item2.number > 0 && item2.tval === TV.LIGHT) return item2;
   }
   return null;
 }
@@ -10544,12 +10544,12 @@ function borgRefuelLantern(ctx, cur, d) {
   if (!source) {
     const first = borgSlot(ctx, TV.LIGHT, SVAL.light.lantern, d);
     const inventory = ctx.view.inventory();
-    for (let i = inventory.findIndex((item) => item.handle === first?.handle); i >= 0 && i < inventory.length; i++) {
-      const item = inventory[i];
-      if (item.tval !== TV.LIGHT || item.sval !== SVAL.light.lantern) break;
-      if (hasFlag2(item, "NO_FUEL")) continue;
-      if (item.timeout > 0) {
-        source = item;
+    for (let i = inventory.findIndex((item2) => item2.handle === first?.handle); i >= 0 && i < inventory.length; i++) {
+      const item2 = inventory[i];
+      if (item2.tval !== TV.LIGHT || item2.sval !== SVAL.light.lantern) break;
+      if (hasFlag2(item2, "NO_FUEL")) continue;
+      if (item2.timeout > 0) {
+        source = item2;
         break;
       }
     }
@@ -10674,19 +10674,19 @@ function borgCheckLight(ctx, d, playerHas2) {
   const { x: px, y: py } = ctx.view.player().grid;
   const qx = panelCol(px);
   const qy = panelRow(py);
-  const grid = ctx.world.detect;
-  let doTrap = grid.quadrantNeedsDetect("trap", qy, qx);
-  let doDoor = grid.quadrantNeedsDetect("door", qy, qx);
-  const doWall = grid.quadrantNeedsDetect("wall", qy, qx);
-  let doEvil = grid.quadrantNeedsDetect("evil", qy, qx);
-  const doObj = grid.quadrantNeedsDetect("obj", qy, qx);
+  const grid2 = ctx.world.detect;
+  let doTrap = grid2.quadrantNeedsDetect("trap", qy, qx);
+  let doDoor = grid2.quadrantNeedsDetect("door", qy, qx);
+  const doWall = grid2.quadrantNeedsDetect("wall", qy, qx);
+  let doEvil = grid2.quadrantNeedsDetect("evil", qy, qx);
+  const doObj = grid2.quadrantNeedsDetect("obj", qy, qx);
   if (trait3(ctx, 37 /* ESP */)) doEvil = false;
   if (!inDungeon) {
     doTrap = false;
     doDoor = false;
   }
   const mark = (kinds) => {
-    for (const k of kinds) grid.markQuadrant(k, qy, qx);
+    for (const k of kinds) grid2.markQuadrant(k, qy, qx);
   };
   if ((doTrap || doDoor || doEvil) && (!self.whenDetectTraps || borgT - self.whenDetectTraps >= 5 || (!self.whenDetectEvil || borgT - self.whenDetectEvil >= 5) || (!self.whenDetectDoors || borgT - self.whenDetectDoors >= 5)) && inDungeon) {
     const cmd = borgActivateItem(ctx, "act_detect_all", d) || borgActivateItem(ctx, "act_mapping", d) || borgZapRod(ctx, SVAL.rod.detection, d) || borgSpellFail(ctx, 39 /* SENSE_SURROUNDINGS */, 40, playerHas2);
@@ -10911,12 +10911,12 @@ function borgRecover(ctx, d, playerHas2) {
 }
 
 // src/item/junk.ts
-function valueKnown(item, d) {
-  return !!d?.itemValue || item.value !== void 0;
+function valueKnown(item2, d) {
+  return !!d?.itemValue || item2.value !== void 0;
 }
-function valueOf(item, d) {
-  if (d?.itemValue) return d.itemValue(item);
-  return item.value ?? 0;
+function valueOf(item2, d) {
+  if (d?.itemValue) return d.itemValue(item2);
+  return item2.value ?? 0;
 }
 function isBook2(tval) {
   return tval === TV.MAGIC_BOOK || tval === TV.PRAYER_BOOK || tval === TV.NATURE_BOOK || tval === TV.SHADOW_BOOK || tval === TV.OTHER_BOOK;
@@ -10930,24 +10930,24 @@ function borgCrushJunk(ctx, d) {
   const ammoTval = trait3(ctx, 152 /* AMMO_TVAL */);
   const cls = trait3(ctx, 25 /* CLASS */);
   const maxCLevel = trait3(ctx, 36 /* MAXCLEVEL */);
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (isBook2(item.tval)) continue;
-    if (item.tval === TV.SCROLL && !item.aware) continue;
-    if (!valueKnown(item, d)) continue;
-    let value = valueOf(item, d);
-    if ((item.tval === TV.STAFF || item.tval === TV.WAND) && item.number > item.pval) {
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (isBook2(item2.tval)) continue;
+    if (item2.tval === TV.SCROLL && !item2.aware) continue;
+    if (!valueKnown(item2, d)) continue;
+    let value = valueOf(item2, d);
+    if ((item2.tval === TV.STAFF || item2.tval === TV.WAND) && item2.number > item2.pval) {
       value = 0;
     }
-    if (item.tval >= TV.CHEST) {
-      if (value > 0 && (modv(item, "STR") > 0 || modv(item, "INT") > 0 || modv(item, "WIS") > 0 || modv(item, "DEX") > 0 || modv(item, "CON") > 0))
+    if (item2.tval >= TV.CHEST) {
+      if (value > 0 && (modv(item2, "STR") > 0 || modv(item2, "INT") > 0 || modv(item2, "WIS") > 0 || modv(item2, "DEX") > 0 || modv(item2, "CON") > 0))
         value += 2e3;
-      if (item.tval === ammoTval && value > 0) value += 5e3;
-      if (isProtectedConsumable(ctx, item, cls)) value += 5e3;
-      if (item.tval === TV.DIGGING) value = 0;
-      if ((item.tval === TV.SHOT || item.tval === TV.ARROW || item.tval === TV.BOLT) && item.tval !== ammoTval)
+      if (item2.tval === ammoTval && value > 0) value += 5e3;
+      if (isProtectedConsumable(ctx, item2, cls)) value += 5e3;
+      if (item2.tval === TV.DIGGING) value = 0;
+      if ((item2.tval === TV.SHOT || item2.tval === TV.ARROW || item2.tval === TV.BOLT) && item2.tval !== ammoTval)
         value = 0;
-      if (value > 0 && maxCLevel < 10 && maxCLevel <= 20 && item.curses.length === 0)
+      if (value > 0 && maxCLevel < 10 && maxCLevel <= 20 && item2.curses.length === 0)
         continue;
       if (depth < 5 && value > 0) continue;
       if (depth < 10 && value > 15) continue;
@@ -10959,49 +10959,49 @@ function borgCrushJunk(ctx, d) {
       if (depth < 90 && value > 1600) continue;
       if (depth < 95 && value > 4800) continue;
       if (depth < 127 && value > 5600) continue;
-      const drop = d?.simDrop ? d.simDrop(item) : value === 0;
+      const drop = d?.simDrop ? d.simDrop(item2) : value === 0;
       if (!drop) continue;
-      return ctx.act.drop(item.handle, 1);
+      return ctx.act.drop(item2.handle, 1);
     }
   }
   return null;
 }
-function modv(item, code) {
-  for (const m of item.modifiers) if (m.code === code) return m.value;
+function modv(item2, code) {
+  for (const m of item2.modifiers) if (m.code === code) return m.value;
   return 0;
 }
-function isProtectedConsumable(ctx, item, cls) {
+function isProtectedConsumable(ctx, item2, cls) {
   const P = SVAL.potion;
   const Ro = SVAL.rod;
   const St = SVAL.staff;
   const W2 = SVAL.wand;
   const Sc = SVAL.scroll;
-  if (item.tval === TV.POTION) {
-    if (item.sval === P.restore_mana && trait3(ctx, 31 /* MAXSP */) >= 1) return true;
-    if (item.sval === P.healing) return true;
-    if (item.sval === P.star_healing) return true;
-    if (item.sval === P.life) return true;
-    if (item.sval === P.speed) return true;
+  if (item2.tval === TV.POTION) {
+    if (item2.sval === P.restore_mana && trait3(ctx, 31 /* MAXSP */) >= 1) return true;
+    if (item2.sval === P.healing) return true;
+    if (item2.sval === P.star_healing) return true;
+    if (item2.sval === P.life) return true;
+    if (item2.sval === P.speed) return true;
   }
-  if (item.tval === TV.ROD) {
-    if (item.sval === Ro.drain_life) return true;
-    if (item.sval === Ro.healing) return true;
-    if (item.sval === Ro.mapping && cls === CLASS_WARRIOR) return true;
+  if (item2.tval === TV.ROD) {
+    if (item2.sval === Ro.drain_life) return true;
+    if (item2.sval === Ro.healing) return true;
+    if (item2.sval === Ro.mapping && cls === CLASS_WARRIOR) return true;
   }
-  if (item.tval === TV.STAFF) {
-    if (item.sval === St.dispel_evil) return true;
-    if (item.sval === St.power) return true;
-    if (item.sval === St.holiness) return true;
+  if (item2.tval === TV.STAFF) {
+    if (item2.sval === St.dispel_evil) return true;
+    if (item2.sval === St.power) return true;
+    if (item2.sval === St.holiness) return true;
   }
-  if (item.tval === TV.WAND) {
-    if (item.sval === W2.drain_life) return true;
-    if (item.sval === W2.annihilation) return true;
-    if (item.sval === W2.teleport_away && cls === CLASS_WARRIOR) return true;
+  if (item2.tval === TV.WAND) {
+    if (item2.sval === W2.drain_life) return true;
+    if (item2.sval === W2.annihilation) return true;
+    if (item2.sval === W2.teleport_away && cls === CLASS_WARRIOR) return true;
   }
-  if (item.tval === TV.SCROLL) {
-    if (item.sval === Sc.teleport_level && trait3(ctx, 247 /* ATELEPORTLVL */) < 1e3)
+  if (item2.tval === TV.SCROLL) {
+    if (item2.sval === Sc.teleport_level && trait3(ctx, 247 /* ATELEPORTLVL */) < 1e3)
       return true;
-    if (item.sval === Sc.protection_from_evil) return true;
+    if (item2.sval === Sc.protection_from_evil) return true;
   }
   return false;
 }
@@ -11011,12 +11011,12 @@ function borgRemoveStuff(ctx, d) {
   if (clockOf(ctx, d) - (d?.began ?? 0) > 2e3) return null;
   if (ctx.world.self.timeThisPanel > 150) return null;
   let best = null;
-  for (const item of ctx.view.equipment()) {
-    if (!item || item.number <= 0) continue;
-    if (!isAware(item, d)) continue;
-    if (needsIdent(item, d) && !isCursed(item)) continue;
-    if (isOneRing(item)) continue;
-    if (d?.simRemove?.(item)) best = item;
+  for (const item2 of ctx.view.equipment()) {
+    if (!item2 || item2.number <= 0) continue;
+    if (!isAware(item2, d)) continue;
+    if (needsIdent(item2, d) && !isCursed(item2)) continue;
+    if (isOneRing(item2)) continue;
+    if (d?.simRemove?.(item2)) best = item2;
   }
   if (!best) return null;
   ctx.world.self.timeThisPanel++;
@@ -11045,10 +11045,10 @@ function onFloor(ctx) {
   const { x, y } = ctx.world.self.c;
   return ctx.world.map.at(x, y).feat === FEAT.FLOOR;
 }
-function borgConsume(ctx, item, d) {
-  if (!isAware(item, d)) return null;
+function borgConsume(ctx, item2, d) {
+  if (!isAware(item2, d)) return null;
   const cls = trait3(ctx, 25 /* CLASS */);
-  if (item.tval === TV.POTION) {
+  if (item2.tval === TV.POTION) {
     const p = SVAL.potion;
     const safe = [
       p.slime_mold,
@@ -11070,7 +11070,7 @@ function borgConsume(ctx, item, d) {
       p.speed,
       p.inc_exp
     ];
-    if (safe.includes(item.sval)) return borgQuaffPotion(ctx, item.sval, d);
+    if (safe.includes(item2.sval)) return borgQuaffPotion(ctx, item2.sval, d);
     const trades = [
       [p.inc_str2, 10 /* CSTR */, ![CLASS_MAGE, CLASS_DRUID, CLASS_NECROMANCER].includes(cls)],
       [p.inc_int2, 11 /* CINT */, cls === CLASS_MAGE || cls === CLASS_NECROMANCER],
@@ -11079,10 +11079,10 @@ function borgConsume(ctx, item, d) {
       [p.inc_con2, 14 /* CCON */, true]
     ];
     for (const [sval, stat, allowed] of trades) {
-      if (item.sval === sval && trait3(ctx, stat) < 118 && allowed) return borgQuaffPotion(ctx, item.sval, d);
+      if (item2.sval === sval && trait3(ctx, stat) < 118 && allowed) return borgQuaffPotion(ctx, item2.sval, d);
     }
   }
-  if (item.tval === TV.SCROLL) {
+  if (item2.tval === TV.SCROLL) {
     const s = SVAL.scroll;
     if ([
       s.light,
@@ -11093,16 +11093,16 @@ function borgConsume(ctx, item, d) {
       s.blessing,
       s.holy_chant,
       s.holy_prayer
-    ].includes(item.sval)) {
-      return borgReadScroll(ctx, item.sval, d);
+    ].includes(item2.sval)) {
+      return borgReadScroll(ctx, item2.sval, d);
     }
   }
   if (!trait3(ctx, 110 /* ISFULL */)) {
-    if (item.tval === TV.FOOD && [SVAL.food.ration, SVAL.food.slime_mold, SVAL.food.waybread].includes(item.sval)) {
-      return borgEat(ctx, item.tval, item.sval, d);
+    if (item2.tval === TV.FOOD && [SVAL.food.ration, SVAL.food.slime_mold, SVAL.food.waybread].includes(item2.sval)) {
+      return borgEat(ctx, item2.tval, item2.sval, d);
     }
     const m = SVAL.mush;
-    if (item.tval === TV.MUSHROOM && [
+    if (item2.tval === TV.MUSHROOM && [
       m.second_sight,
       m.fast_recovery,
       m.cure_mind,
@@ -11113,47 +11113,47 @@ function borgConsume(ctx, item, d) {
       m.debility,
       m.sprinting,
       m.purging
-    ].includes(item.sval)) {
-      return borgEat(ctx, item.tval, item.sval, d);
+    ].includes(item2.sval)) {
+      return borgEat(ctx, item2.tval, item2.sval, d);
     }
   }
   return null;
 }
-function protectedForHole(ctx, item) {
-  if (!item.aware) return false;
-  if (item.tval === TV.POTION) {
+function protectedForHole(ctx, item2) {
+  if (!item2.aware) return false;
+  if (item2.tval === TV.POTION) {
     const p = SVAL.potion;
-    return item.sval === p.restore_mana && trait3(ctx, 31 /* MAXSP */) >= 1 || [p.healing, p.star_healing, p.life, p.speed].includes(item.sval);
+    return item2.sval === p.restore_mana && trait3(ctx, 31 /* MAXSP */) >= 1 || [p.healing, p.star_healing, p.life, p.speed].includes(item2.sval);
   }
-  if (item.tval === TV.SCROLL) {
+  if (item2.tval === TV.SCROLL) {
     const s = SVAL.scroll;
-    return [s.protection_from_evil, s.rune_of_protection].includes(item.sval) || item.sval === s.teleport_level && trait3(ctx, 247 /* ATELEPORTLVL */) < 1e3;
+    return [s.protection_from_evil, s.rune_of_protection].includes(item2.sval) || item2.sval === s.teleport_level && trait3(ctx, 247 /* ATELEPORTLVL */) < 1e3;
   }
-  if (item.tval === TV.ROD) {
-    return (item.sval === SVAL.rod.healing || item.sval === SVAL.rod.mapping && trait3(ctx, 25 /* CLASS */) === CLASS_WARRIOR) && item.number <= 5 || item.sval === SVAL.rod.light && trait3(ctx, 26 /* LIGHT */) <= 0;
+  if (item2.tval === TV.ROD) {
+    return (item2.sval === SVAL.rod.healing || item2.sval === SVAL.rod.mapping && trait3(ctx, 25 /* CLASS */) === CLASS_WARRIOR) && item2.number <= 5 || item2.sval === SVAL.rod.light && trait3(ctx, 26 /* LIGHT */) <= 0;
   }
-  return item.tval === TV.WAND && item.sval === SVAL.wand.teleport_away && trait3(ctx, 25 /* CLASS */) === CLASS_WARRIOR && trait3(ctx, 221 /* ATPORTOTHER */) <= 8;
+  return item2.tval === TV.WAND && item2.sval === SVAL.wand.teleport_away && trait3(ctx, 25 /* CLASS */) === CLASS_WARRIOR && trait3(ctx, 221 /* ATPORTOTHER */) <= 8;
 }
-function holeValue(ctx, item, boost, d) {
-  let value = (d?.itemValue ? itemValue(item, d) : perItemValue(item)) + boost;
-  if (["STR", "INT", "WIS", "DEX", "CON"].some((stat) => mod(item, stat) > 0)) value += 2e4;
-  if (item.tval === trait3(ctx, 152 /* AMMO_TVAL */) && value > 0 && trait3(ctx, 155 /* AMISSILES */) <= 35 && trait3(ctx, 105 /* CDEPTH */) >= 1) value += 5e3;
-  if (trait3(ctx, 35 /* CLEVEL */) > 35 && isAware(item, d)) {
-    if (item.tval === TV.RING) value *= item.number * 10;
-    else if (valuableGear(item.tval)) value *= item.number * 5;
-    else if (item.tval === TV.CLOAK) value = item.number * (item.ego && (d?.randomPower?.(item) ?? true) ? 3e5 : value);
-    else if (item.tval === TV.ROD || item.tval === TV.WAND) {
-      value = item.number * 3e5;
-    } else if (item.tval === TV.STAFF) {
+function holeValue(ctx, item2, boost, d) {
+  let value = (d?.itemValue ? itemValue(item2, d) : perItemValue(item2)) + boost;
+  if (["STR", "INT", "WIS", "DEX", "CON"].some((stat) => mod(item2, stat) > 0)) value += 2e4;
+  if (item2.tval === trait3(ctx, 152 /* AMMO_TVAL */) && value > 0 && trait3(ctx, 155 /* AMISSILES */) <= 35 && trait3(ctx, 105 /* CDEPTH */) >= 1) value += 5e3;
+  if (trait3(ctx, 35 /* CLEVEL */) > 35 && isAware(item2, d)) {
+    if (item2.tval === TV.RING) value *= item2.number * 10;
+    else if (valuableGear(item2.tval)) value *= item2.number * 5;
+    else if (item2.tval === TV.CLOAK) value = item2.number * (item2.ego && (d?.randomPower?.(item2) ?? true) ? 3e5 : value);
+    else if (item2.tval === TV.ROD || item2.tval === TV.WAND) {
+      value = item2.number * 3e5;
+    } else if (item2.tval === TV.STAFF) {
       const s = SVAL.staff;
-      value = item.number * (item.sval !== s.dispel_evil || (item.sval !== s.power || item.sval !== s.holiness) && trait3(ctx, 256 /* GOOD_S_CHG */) < 2 || item.sval !== s.destruction && trait3(ctx, 220 /* ASTFDEST */) < 2 ? 3e5 : Math.trunc(value / 2));
-    } else if (item.tval === TV.SCROLL) value = item.number * 3e4;
-    else if (item.tval === TV.POTION) value = item.number * 3e5;
-    else value = item.number * Math.trunc(value / 3);
-  } else value *= item.number;
-  if (!isAware(item, d) && value > 0) {
+      value = item2.number * (item2.sval !== s.dispel_evil || (item2.sval !== s.power || item2.sval !== s.holiness) && trait3(ctx, 256 /* GOOD_S_CHG */) < 2 || item2.sval !== s.destruction && trait3(ctx, 220 /* ASTFDEST */) < 2 ? 3e5 : Math.trunc(value / 2));
+    } else if (item2.tval === TV.SCROLL) value = item2.number * 3e4;
+    else if (item2.tval === TV.POTION) value = item2.number * 3e5;
+    else value = item2.number * Math.trunc(value / 3);
+  } else value *= item2.number;
+  if (!isAware(item2, d) && value > 0) {
     const depth = trait3(ctx, 106 /* MAXDEPTH */);
-    switch (item.tval) {
+    switch (item2.tval) {
       case TV.RING:
       case TV.AMULET:
         value = depth * 5e3;
@@ -11174,8 +11174,8 @@ function holeValue(ctx, item, boost, d) {
         break;
     }
   }
-  if (!isIdent(item, d) && value > 0 && (d?.worthId?.(item) ?? false)) {
-    switch (item.tval) {
+  if (!isIdent(item2, d) && value > 0 && (d?.worthId?.(item2) ?? false)) {
+    switch (item2.tval) {
       case TV.SHOT:
       case TV.ARROW:
       case TV.BOLT:
@@ -11225,33 +11225,33 @@ function borgDropHole(ctx, desperate = false, d) {
   let bestPower = 0;
   let bestWeight = 0;
   const digger = ctx.view.equipment()[0]?.tval === TV.DIGGING;
-  for (const item of packItems(ctx)) {
-    if (item.artifact || item.tval === TV.FOOD && trait3(ctx, 39 /* FOOD */) < 5) continue;
-    if (d.protectedHandles?.includes(item.handle)) continue;
-    if (d.canBrowse?.(item) ?? canBrowse(item)) continue;
+  for (const item2 of packItems(ctx)) {
+    if (item2.artifact || item2.tval === TV.FOOD && trait3(ctx, 39 /* FOOD */) < 5) continue;
+    if (d.protectedHandles?.includes(item2.handle)) continue;
+    if (d.canBrowse?.(item2) ?? canBrowse(item2)) continue;
     let boost = 0;
-    if (item.tval === TV.BOOTS && !isIdent(item, d) || item.tval >= TV.DIGGING && item.tval <= TV.SWORD && digger) {
+    if (item2.tval === TV.BOOTS && !isIdent(item2, d) || item2.tval >= TV.DIGGING && item2.tval <= TV.SWORD && digger) {
       if (!desperate) continue;
       boost = 1e4;
     }
-    if (needsIdent(item, d)) {
+    if (needsIdent(item2, d)) {
       if (!desperate) continue;
       boost = 5e3;
     }
     if (!desperate) {
-      if (protectedForHole(ctx, item)) continue;
+      if (protectedForHole(ctx, item2)) continue;
     } else boost = 7e3;
-    if (item.ego && !isIdent(item, d) && (d.randomPower?.(item) ?? true)) {
+    if (item2.ego && !isIdent(item2, d) && (d.randomPower?.(item2) ?? true)) {
       if (!desperate) continue;
       boost = 1e4;
     }
-    const simulated = d.dropEval(item, item.number);
+    const simulated = d.dropEval(item2, item2.number);
     if (simulated === null) continue;
-    const power = simulated - holeValue(borgNoticeWithout(ctx, item.handle), item, boost, d);
-    const weight = item.weight * item.number;
+    const power = simulated - holeValue(borgNoticeWithout(ctx, item2.handle), item2, boost, d);
+    const weight = item2.weight * item2.number;
     if (best && power < bestPower) continue;
     if (power === bestPower && weight < bestWeight) continue;
-    best = item;
+    best = item2;
     bestPower = power;
     bestWeight = weight;
   }
@@ -11267,20 +11267,20 @@ function borgDropSlow(ctx, d) {
   let best = null;
   let bestPower = 0;
   const digger = ctx.view.equipment()[0]?.tval === TV.DIGGING;
-  for (const item of [...packItems(ctx), ...ctx.view.quiver?.() ?? []]) {
-    if (item.number <= 0 || d.protectedHandles?.includes(item.handle)) continue;
-    if (!isIdent(item, d) && ((d.worthId?.(item) ?? false) || item.tval === TV.BOOTS)) continue;
-    if (d.randarts && item.artifact && !isIdent(item, d)) continue;
-    if (needsIdent(item, d)) continue;
-    if (item.tval >= TV.DIGGING && item.tval <= TV.SWORD && digger) continue;
-    if (item.tval === TV.ROD && isAware(item, d) && (item.sval === SVAL.rod.healing || item.sval === SVAL.rod.light && trait3(ctx, 26 /* LIGHT */) <= 0)) continue;
-    const simulated = d.dropEval(item, 1);
+  for (const item2 of [...packItems(ctx), ...ctx.view.quiver?.() ?? []]) {
+    if (item2.number <= 0 || d.protectedHandles?.includes(item2.handle)) continue;
+    if (!isIdent(item2, d) && ((d.worthId?.(item2) ?? false) || item2.tval === TV.BOOTS)) continue;
+    if (d.randarts && item2.artifact && !isIdent(item2, d)) continue;
+    if (needsIdent(item2, d)) continue;
+    if (item2.tval >= TV.DIGGING && item2.tval <= TV.SWORD && digger) continue;
+    if (item2.tval === TV.ROD && isAware(item2, d) && (item2.sval === SVAL.rod.healing || item2.sval === SVAL.rod.light && trait3(ctx, 26 /* LIGHT */) <= 0)) continue;
+    const simulated = d.dropEval(item2, 1);
     if (simulated === null) continue;
-    let price = Math.min(d?.itemValue ? itemValue(item, d) : perItemValue(item), 3e4);
+    let price = Math.min(d?.itemValue ? itemValue(item2, d) : perItemValue(item2), 3e4);
     if (price < greed) price = 0;
-    const power = simulated - price + item.weight * 100;
+    const power = simulated - price + item2.weight * 100;
     if (power < bestPower) continue;
-    best = item;
+    best = item2;
     bestPower = power;
   }
   if (!best || bestPower < ctx.world.self.power) return null;
@@ -11294,14 +11294,14 @@ function borgDumpQuiver(ctx, d) {
   const quiver = ctx.view.quiver?.() ?? [];
   let best = null;
   for (let i = quiver.length - 1; i >= 0; i--) {
-    const item = quiver[i];
-    if (item.number <= 0) continue;
-    if (!isCursed(item) && item.tval === trait3(ctx, 152 /* AMMO_TVAL */)) {
-      if (item.toD > 0 && item.toH > 0) continue;
-      if (needsIdent(item, d)) continue;
-      if (trait3(ctx, 155 /* AMISSILES */) <= capacity && item.toD >= 0 && item.toH >= 0) continue;
+    const item2 = quiver[i];
+    if (item2.number <= 0) continue;
+    if (!isCursed(item2) && item2.tval === trait3(ctx, 152 /* AMMO_TVAL */)) {
+      if (item2.toD > 0 && item2.toH > 0) continue;
+      if (needsIdent(item2, d)) continue;
+      if (trait3(ctx, 155 /* AMISSILES */) <= capacity && item2.toD >= 0 && item2.toH >= 0) continue;
     }
-    best = item;
+    best = item2;
   }
   if (!best) return null;
   ctx.world.self.timeThisPanel++;
@@ -12345,22 +12345,22 @@ function auxLaunch(ctx, fs) {
   let bV = -1;
   let bAmmo = null;
   const ammoTval = trait3(ctx, 152 /* AMMO_TVAL */);
-  for (const item of ctx.view.quiver?.() ?? []) {
-    if (item.number <= 0) continue;
-    if (item.tval !== ammoTval) continue;
-    if (perItemValue(item) <= 0) continue;
-    let d = idiv(item.dd * (item.ds + 1), 2);
-    d = d + item.toD + bow.toD;
+  for (const item2 of ctx.view.quiver?.() ?? []) {
+    if (item2.number <= 0) continue;
+    if (item2.tval !== ammoTval) continue;
+    if (perItemValue(item2) <= 0) continue;
+    let d = idiv(item2.dd * (item2.ds + 1), 2);
+    d = d + item2.toD + bow.toD;
     d = d * trait3(ctx, 154 /* AMMO_POWER */) * trait3(ctx, 148 /* SHOTS */);
-    const v = perItemValue(item);
-    if (needsIdent(item)) d *= 99;
+    const v = perItemValue(item2);
+    if (needsIdent(item2)) d *= 99;
     if (d <= 0) continue;
-    const n = borgLaunchBolt(ctx, fs, 0, d, 1 /* ARROW */, 6 + 2 * trait3(ctx, 154 /* AMMO_POWER */), item);
+    const n = borgLaunchBolt(ctx, fs, 0, d, 1 /* ARROW */, 6 + 2 * trait3(ctx, 154 /* AMMO_POWER */), item2);
     if (n === bN && v >= bV) continue;
     if (n >= bN) {
       bN = n;
       bV = v;
-      bAmmo = item;
+      bAmmo = item2;
     }
   }
   if (bN < 0) return 0;
@@ -12375,17 +12375,17 @@ function auxLaunch(ctx, fs) {
 function auxObject(ctx, fs) {
   let bK = null;
   let bD = -1;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (item.tval === TV.MAGIC_BOOK || item.tval === TV.PRAYER_BOOK) continue;
-    const d = idiv(item.dd * (item.ds + 1), 2);
-    if ((item.value ?? 0) > 100 && d < 5) continue;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (item2.tval === TV.MAGIC_BOOK || item2.tval === TV.PRAYER_BOOK) continue;
+    const d = idiv(item2.dd * (item2.ds + 1), 2);
+    if ((item2.value ?? 0) > 100 && d < 5) continue;
     if (d <= 0) continue;
-    if (item.tval === TV.POTION) continue;
-    if (item.tval === TV.FLASK && trait3(ctx, 213 /* AFUEL */) <= 1 && !fs.fightingUnique) continue;
-    if (item.tval === TV.WAND || item.tval === TV.ROD) continue;
+    if (item2.tval === TV.POTION) continue;
+    if (item2.tval === TV.FLASK && trait3(ctx, 213 /* AFUEL */) <= 1 && !fs.fightingUnique) continue;
+    if (item2.tval === TV.WAND || item2.tval === TV.ROD) continue;
     if (bK && d <= bD) continue;
-    bK = item;
+    bK = item2;
     bD = d;
   }
   if (!bK) return 0;
@@ -12559,9 +12559,9 @@ function auxWandBolt(ctx, fs, sval, rad, dam, typ) {
   if (trait3(ctx, 112 /* ISBLIND */) || trait3(ctx, 114 /* ISCONFUSED */) || trait3(ctx, 120 /* ISIMAGE */)) return 0;
   if (!trait3(ctx, 105 /* CDEPTH */)) return 0;
   if (fs.simulate && ctx.rng.randint0(100) < 2) return 0;
-  const item = borgSlot(ctx, TV.WAND, sval);
-  if (!item) return 0;
-  if (!item.pval) return 0;
+  const item2 = borgSlot(ctx, TV.WAND, sval);
+  if (!item2) return 0;
+  if (!item2.pval) return 0;
   if (500 < borgActivateFailure(ctx, TV.WAND, sval)) return 0;
   let bN = borgLaunchBolt(ctx, fs, rad, dam, typ, maxRange2(ctx), null);
   if (trait3(ctx, 35 /* CLEVEL */) > 5) bN = bN - 5;
@@ -12579,11 +12579,11 @@ function auxWandUnknown(ctx, fs, dam, typ) {
   if (trait3(ctx, 112 /* ISBLIND */) || trait3(ctx, 114 /* ISCONFUSED */) || trait3(ctx, 120 /* ISIMAGE */)) return 0;
   if (fs.simulate && ctx.rng.randint0(100) < 5) return 0;
   let bItem = null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (item.tval !== TV.WAND) continue;
-    if (!item.pval) continue;
-    bItem = item;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (item2.tval !== TV.WAND) continue;
+    if (!item2.pval) continue;
+    bItem = item2;
   }
   if (!bItem) return 0;
   const bN = borgLaunchBolt(ctx, fs, 0, dam, typ, maxRange2(ctx), null);
@@ -12596,11 +12596,11 @@ function auxRodUnknown(ctx, fs, dam, typ) {
   if (trait3(ctx, 112 /* ISBLIND */) || trait3(ctx, 114 /* ISCONFUSED */) || trait3(ctx, 120 /* ISIMAGE */)) return 0;
   if (fs.simulate && ctx.rng.randint0(100) < 5) return 0;
   let bItem = null;
-  for (const item of ctx.view.inventory()) {
-    if (item.number <= 0) continue;
-    if (item.tval !== TV.ROD) continue;
-    if (!item.pval) continue;
-    bItem = item;
+  for (const item2 of ctx.view.inventory()) {
+    if (item2.number <= 0) continue;
+    if (item2.tval !== TV.ROD) continue;
+    if (!item2.pval) continue;
+    bItem = item2;
   }
   if (!bItem) return 0;
   const bN = borgLaunchBolt(ctx, fs, 0, dam, typ, maxRange2(ctx), null);
@@ -14079,12 +14079,12 @@ function scaleFail(ctx, p1, base, mid = 10) {
   else if (p1 < idiv(av(ctx), 3)) fa += 10;
   return fa;
 }
-function withTemp(ctx, keys, vals, fn) {
+function withTemp(ctx, keys2, vals, fn) {
   const t = ctx.world.self.temp;
-  const saved = keys.map((k) => t[k]);
-  keys.forEach((k, i) => t[k] = vals[i]);
+  const saved = keys2.map((k) => t[k]);
+  keys2.forEach((k, i) => t[k] = vals[i]);
   const r = fn();
-  keys.forEach((k, i) => t[k] = saved[i]);
+  keys2.forEach((k, i) => t[k] = saved[i]);
   return r;
 }
 function auxBless(ctx, fs, p1) {
@@ -15678,8 +15678,8 @@ function buildFlowHooks(session) {
     los: (world, y1, x1, y2, x2) => borgLos(world, y1, x1, y2, x2)
   };
 }
-function wareRef(store2, item) {
-  return { from: "store", store: store2, index: item.index };
+function wareRef(store2, item2) {
+  return { from: "store", store: store2, index: item2.index };
 }
 function powerOf(session, ctx, change) {
   const resolve = session.resolvers.loadoutPower;
@@ -15698,11 +15698,11 @@ function simulationBaseline(session, ctx, resolve) {
   BASELINES.set(session, { ctx, base });
   return base;
 }
-function analyzedItemValue(session, item) {
-  if (isCursed(item)) return perItemValue(item);
-  if (!item.aware) return guessedValue(item);
-  if (!isIdent(item)) return session.resolvers.kindCost?.(item.tval, item.sval)?.cost ?? perItemValue(item);
-  return perItemValue(item);
+function analyzedItemValue(session, item2) {
+  if (isCursed(item2)) return perItemValue(item2);
+  if (!item2.aware) return guessedValue(item2);
+  if (!isIdent(item2)) return session.resolvers.kindCost?.(item2.tval, item2.sval)?.cost ?? perItemValue(item2);
+  return perItemValue(item2);
 }
 function buildItemDeps(session) {
   const c = session.ctx;
@@ -15720,7 +15720,7 @@ function buildItemDeps(session) {
     worthId: borgItemWorthId,
     randomPower: hasRandomPower,
     /* borg-item-analyze.c:611-622 selects kind cost for aware, unknown gear. */
-    itemValue: (item) => analyzedItemValue(session, item),
+    itemValue: (item2) => analyzedItemValue(session, item2),
     avoidance: w.self.trait[27 /* CURHP */] ?? 0,
     /* borg_check_rest(borg.c.y, borg.c.x): the real gate, not a constant. Every
      * rest in borg-recover.c is behind it, so a hardcoded `true` is the Borg
@@ -15730,7 +15730,7 @@ function buildItemDeps(session) {
     /* borg_began, for borg_wear_stuff's "sitting on this level forever" guard. */
     began: session.flow.state.borgBegan,
     hasHole: borgFirstEmptyInventorySlot(c) !== -1,
-    emptySlots: packSlots(c) - c.view.inventory().filter((item) => item.number > 0 && !(c.view.quiver?.() ?? []).some((ammo) => ammo.handle === item.handle)).length,
+    emptySlots: packSlots(c) - c.view.inventory().filter((item2) => item2.number > 0 && !(c.view.quiver?.() ?? []).some((ammo) => ammo.handle === item2.handle)).length,
     queueRingTakeoff: (handle) => {
       session.ringTakeoff = handle;
     },
@@ -15745,11 +15745,11 @@ function buildItemDeps(session) {
     ...res.loadoutPower ? {
       /* borg_wear_stuff (wear.c:858,947) simulates each full ring slot.
        * Other equipment uses the engine's default destination. */
-      wearEval: (item, slot) => powerOf(session, c, slot === void 0 ? {
-        wield: [{ from: "gear", handle: item.handle }]
-      } : { wieldAt: [{ item: { from: "gear", handle: item.handle }, slot }] }),
-      wearDanger: (item, slot) => res.loadoutDanger?.(c, {
-        wieldAt: [{ item: { from: "gear", handle: item.handle }, slot }]
+      wearEval: (item2, slot) => powerOf(session, c, slot === void 0 ? {
+        wield: [{ from: "gear", handle: item2.handle }]
+      } : { wieldAt: [{ item: { from: "gear", handle: item2.handle }, slot }] }),
+      wearDanger: (item2, slot) => res.loadoutDanger?.(c, {
+        wieldAt: [{ item: { from: "gear", handle: item2.handle }, slot }]
       }) ?? null,
       removeEval: (slot) => {
         const score = res.loadoutPower(c, { remove: [slot] });
@@ -15763,8 +15763,8 @@ function buildItemDeps(session) {
         return score === null || base === null ? null : w.self.power + score - base;
       },
       /* borg-junk.c:1319-1357 keeps the item in the pack during removal. */
-      simRemove: (item) => {
-        const slot = c.view.equipment().findIndex((worn) => worn?.handle === item.handle);
+      simRemove: (item2) => {
+        const slot = c.view.equipment().findIndex((worn) => worn?.handle === item2.handle);
         if (slot < 0) return false;
         const score = res.loadoutPower(c, { remove: [slot] });
         if (score === null) return false;
@@ -15772,8 +15772,8 @@ function buildItemDeps(session) {
         return base !== null && score >= base;
       },
       /* borg-junk.c:659-668,1047-1057 scores the reduced inventory. */
-      dropEval: (item, quantity) => {
-        const score = res.loadoutPower(c, { release: [{ handle: item.handle, number: quantity }] });
+      dropEval: (item2, quantity) => {
+        const score = res.loadoutPower(c, { release: [{ handle: item2.handle, number: quantity }] });
         if (score === null) return null;
         const base = simulationBaseline(session, c, res.loadoutPower);
         return base === null ? null : w.self.power + (score - base);
@@ -15802,14 +15802,14 @@ function buildStoreDeps(session) {
     noteNeedsId: needsIdent,
     worthId: borgItemWorthId,
     isOneRing,
-    itemValue: (item) => analyzedItemValue(session, item),
+    itemValue: (item2) => analyzedItemValue(session, item2),
     // borg-store-buy.c:963-1014 replaces the existing backup, or fills a hole.
     // Only carried-item scoring is needed; no hypothetical worn-loadout query.
-    weaponSwapEval: (ctx, item) => {
+    weaponSwapEval: (ctx, item2) => {
       const derived = getDerived(ctx.world), current = derived.weaponSwap;
       const pack = ctx.view.inventory().filter((entry) => entry.handle !== current.handle);
       if (borgFirstEmptyInventorySlot(ctx) === -1) return -1;
-      return borgWeaponSwap(ctx, derived.weaponSwapOpts, [...pack, { ...item, number: 1 }]).value;
+      return borgWeaponSwap(ctx, derived.weaponSwapOpts, [...pack, { ...item2, number: 1 }]).value;
     }
   };
   if (!res.loadoutPower) return common;
@@ -15840,13 +15840,13 @@ function buildStoreDeps(session) {
     /* borg_think_shop_sell_useless: the power once `qty` of this stack is gone.
      * `release` empties a body slot when the handle names worn gear, so selling
      * the amulet the borg has on is one change rather than a remove and a sale. */
-    sellEval: (ctx, item, qty) => powerOf(session, ctx, {
-      release: [{ handle: item.handle, number: qty }]
+    sellEval: (ctx, item2, qty) => powerOf(session, ctx, {
+      release: [{ handle: item2.handle, number: qty }]
     }),
     /* borg_think_home_sell_bad (borg-store-sell.c:376) asks about ONE of a
      * stack, not the whole stack. */
-    sellHomeBadEval: (ctx, item) => powerOf(session, ctx, {
-      release: [{ handle: item.handle, number: 1 }]
+    sellHomeBadEval: (ctx, item2) => powerOf(session, ctx, {
+      release: [{ handle: item2.handle, number: 1 }]
     })
     /* Armour-backup value and tactical swapping remain separate unported work. */
   };
@@ -16085,8 +16085,8 @@ function borgPickUpHere(ctx, session) {
   const here = `${String(w.facts.depth)}:${String(w.self.c.x)},${String(w.self.c.y)}:${String(items.length)}`;
   if (session.pickupTried === here) return null;
   let worth = false;
-  for (const item of items) {
-    if (takeValue(item, {
+  for (const item2 of items) {
+    if (takeValue(item2, {
       kindCost: session.resolvers.kindCost,
       junked: session.junked
     }) > 0) {
@@ -16105,7 +16105,7 @@ function handleOf(cmd) {
 }
 function findByHandle(ctx, handle) {
   if (handle === void 0) return null;
-  for (const item of ctx.view.inventory()) if (item.handle === handle) return item;
+  for (const item2 of ctx.view.inventory()) if (item2.handle === handle) return item2;
   return null;
 }
 function rememberJunkDrop(ctx, session, cmd) {
@@ -16384,10 +16384,10 @@ function borgExcavateVault(ctx, session, range) {
     borgTarget(ctx, y, x);
     const cmd = borgSpell(ctx, 38 /* TURN_STONE_TO_MUD */) ?? borgActivateRing(ctx, SVAL.ring.digging) ?? borgActivateItem(ctx, "act_stone_to_mud", deps) ?? (distance2(w.self.c.x, w.self.c.y, x, y) === 1 ? borgSpell(ctx, 121 /* SHATTER_STONE */) : null);
     if (!cmd) continue;
-    const grid = w.map.at(x, y);
-    grid.info &= ~BORG_GLOW;
-    grid.info |= BORG_GLOW | BORG_IGNORE_MAP;
-    grid.feat = FEAT.FLOOR;
+    const grid2 = w.map.at(x, y);
+    grid2.info &= ~BORG_GLOW;
+    grid2.info |= BORG_GLOW | BORG_IGNORE_MAP;
+    grid2.feat = FEAT.FLOOR;
     st2.vein.wipe();
     return cmd;
   }
@@ -16402,12 +16402,12 @@ function borgThinkDungeon(ctx, session) {
   if (session.ringTakeoff) {
     const handle = session.ringTakeoff;
     session.ringTakeoff = false;
-    if (ctx.view.equipment().some((item) => item?.handle === handle)) return ctx.act.takeoff(handle);
+    if (ctx.view.equipment().some((item2) => item2?.handle === handle)) return ctx.act.takeoff(handle);
   }
   if (session.rechargeRest) {
     const handle = session.rechargeRest;
     session.rechargeRest = false;
-    if (ctx.view.equipment().some((item) => item?.handle === handle)) return ctx.act.rest(75);
+    if (ctx.view.equipment().some((item2) => item2?.handle === handle)) return ctx.act.rest(75);
   }
   getFightState(w);
   const dg = getDangerGlobals(w);
@@ -17695,17 +17695,17 @@ function junkKey(tval, sval) {
   return `${String(tval)}:${String(sval)}`;
 }
 var TV_GOLD = 35;
-function takeValue(item, valuation) {
+function takeValue(item2, valuation) {
   let value;
-  if (item.tval === TV_GOLD) {
+  if (item2.tval === TV_GOLD) {
     value = 30;
   } else {
-    const kind = valuation.kindCost?.(item.tval, item.sval) ?? null;
+    const kind = valuation.kindCost?.(item2.tval, item2.sval) ?? null;
     value = kind?.aware ? kind.cost : 1;
   }
-  if (item.toA < 0 || item.toD < 0 || item.toH < 0) value = -10;
-  if (item.inscription?.startsWith("borg ignore")) value = -10;
-  if (valuation.junked?.has(junkKey(item.tval, item.sval))) value = -10;
+  if (item2.toA < 0 || item2.toD < 0 || item2.toH < 0) value = -10;
+  if (item2.inscription?.startsWith("borg ignore")) value = -10;
+  if (valuation.junked?.has(junkKey(item2.tval, item2.sval))) value = -10;
   return value;
 }
 function ingestFloor(world, view, oldX, oldY, valuation) {
@@ -17895,25 +17895,25 @@ function createBorg(opts = {}) {
 function actToken(activation) {
   return `act_${activation.name.toLowerCase()}`;
 }
-function equippedActivation(item, objects) {
-  if (!item.activation) return null;
-  if (item.artifact && item.artifactName) {
-    const art = artifactActivation(objects, item.artifactName);
+function equippedActivation(item2, objects) {
+  if (!item2.activation) return null;
+  if (item2.artifact && item2.artifactName) {
+    const art = artifactActivation(objects, item2.artifactName);
     if (art) return art;
   }
-  if (item.ego && item.egoName) {
-    const ego = egoActivation(objects, item.egoName);
+  if (item2.ego && item2.egoName) {
+    const ego = egoActivation(objects, item2.egoName);
     if (ego) return ego;
   }
-  return kindActivation(objects, item.tval, item.sval);
+  return kindActivation(objects, item2.tval, item2.sval);
 }
 function findActivatedItem(ctx, act, checkCharge, objects) {
-  for (const item of ctx.view.equipment()) {
-    if (!item) continue;
-    const record2 = equippedActivation(item, objects);
+  for (const item2 of ctx.view.equipment()) {
+    if (!item2) continue;
+    const record2 = equippedActivation(item2, objects);
     if (!record2 || actToken(record2) !== act) continue;
-    if (checkCharge && item.timeout >= 1) continue;
-    return item;
+    if (checkCharge && item2.timeout >= 1) continue;
+    return item2;
   }
   return null;
 }
@@ -17949,8 +17949,8 @@ function makeCoreResolvers(input) {
   };
   const activateHandle2 = (ctx, act) => {
     if (!objects) return null;
-    const item = findActivatedItem(ctx, act, true, objects);
-    return item ? item.handle : null;
+    const item2 = findActivatedItem(ctx, act, true, objects);
+    return item2 ? item2.handle : null;
   };
   const state = input.state;
   const inShop = (_ctx) => {
@@ -18034,11 +18034,11 @@ var ActivationBook = class {
   /** Read the activations of every worn item that has one, for any source not read yet. */
   async ensure(api, equipment2) {
     const asks = /* @__PURE__ */ new Map();
-    for (const item of equipment2) {
-      if (item === null || !item.activation) continue;
-      if (item.artifact && item.artifactName) asks.set(`a:${item.artifactName}`, { artifact: item.artifactName });
-      if (item.ego && item.egoName) asks.set(`e:${item.egoName}`, { ego: item.egoName });
-      asks.set(`k:${String(item.tval)}:${String(item.sval)}`, { tval: item.tval, sval: item.sval });
+    for (const item2 of equipment2) {
+      if (item2 === null || !item2.activation) continue;
+      if (item2.artifact && item2.artifactName) asks.set(`a:${item2.artifactName}`, { artifact: item2.artifactName });
+      if (item2.ego && item2.egoName) asks.set(`e:${item2.egoName}`, { ego: item2.egoName });
+      asks.set(`k:${String(item2.tval)}:${String(item2.sval)}`, { tval: item2.tval, sval: item2.sval });
     }
     await Promise.all(
       [...asks].filter(([key]) => !this.names.has(key)).map(async ([key, ref]) => {
@@ -18108,7 +18108,7 @@ var LoadoutBook = class {
   }
 };
 function gearSignature(inventory, equipment2, stores, player) {
-  const one = (item) => item === null ? "-" : `${String(item.handle)}:${item.kindKey}:${String(item.number)}:${String(item.toH)}:${String(item.toD)}:${String(item.toA)}`;
+  const one = (item2) => item2 === null ? "-" : `${String(item2.handle)}:${item2.kindKey}:${String(item2.number)}:${String(item2.toH)}:${String(item2.toD)}:${String(item2.toA)}`;
   const stock = stores.map((store2) => `${String(store2.feat)}[${store2.stock.map(one).join(",")}]`).join(";");
   return `${inventory.map(one).join(",")}|${equipment2.map(one).join(",")}|${stock}|${String(player?.level ?? 0)}`;
 }
@@ -18235,22 +18235,22 @@ function itemAnalyzerFromRecords(objects, egos, artifacts, properties) {
   const negative = new Set((properties ?? []).filter((record2) => record2["type"] === "flag" && typeof record2["power"] === "number" && record2["power"] < 0).map((record2) => record2["code"]));
   const number = (value) => typeof value === "number" ? value : null;
   const field = (value, key) => value && typeof value === "object" && !Array.isArray(value) ? value[key] : void 0;
-  return (item) => {
-    const index = /^kind:(\d+)$/.exec(item.kindKey);
+  return (item2) => {
+    const index = /^kind:(\d+)$/.exec(item2.kindKey);
     const kind = index ? objects?.[Number(index[1])] : void 0;
-    const ego = egoNames.get(item.egoName);
-    const artifact = artifactNames.get(item.artifactName);
+    const ego = egoNames.get(item2.egoName);
+    const artifact = artifactNames.get(item2.artifactName);
     const dice = /^(\d+)d(\d+)$/.exec(String(field(kind?.["attack"], "hd") ?? ""));
     const flags = recordFlags(ego?.["flags"]);
     return {
       cost: kind ? number(kind["cost"]) ?? 0 : null,
       egoCost: ego ? number(field(ego["info"], "cost")) ?? 0 : null,
       artifactCost: artifact ? number(artifact["cost"]) ?? 0 : null,
-      dd: dice ? Number(dice[1]) : item.dd,
-      ds: dice ? Number(dice[2]) : item.ds,
-      cursed: item.curses.length > 0 || item.flags.some((flag) => negative.has(flag)),
-      oneRing: artifact ? artifact["act"] === "BIZARRE" : item.artifactName === "'The One Ring'",
-      randomPower: item.ego && (!ego || ["RAND_POWER", "RAND_SUSTAIN", "RAND_BASE_RES", "RAND_HI_RES", "RAND_RES_POWER"].some((flag) => flags.has(flag)))
+      dd: dice ? Number(dice[1]) : item2.dd,
+      ds: dice ? Number(dice[2]) : item2.ds,
+      cursed: item2.curses.length > 0 || item2.flags.some((flag) => negative.has(flag)),
+      oneRing: artifact ? artifact["act"] === "BIZARRE" : item2.artifactName === "'The One Ring'",
+      randomPower: item2.ego && (!ego || ["RAND_POWER", "RAND_SUSTAIN", "RAND_BASE_RES", "RAND_HI_RES", "RAND_RES_POWER"].some((flag) => flags.has(flag)))
     };
   };
 }
@@ -18417,14 +18417,14 @@ function playerView(known, floors) {
   }
   return { ...rest, status: { ...timed, food: status.food * 100, fearful: status.fearful }, recall: recall ? 1 : 0, descent: descent ? 1 : 0 };
 }
-function itemView(item, analyze) {
-  const { charging, fuel, ...rest } = writable(item);
+function itemView(item2, analyze) {
+  const { charging, fuel, ...rest } = writable(item2);
   const view = { ...rest, timeout: fuel ?? charging };
   return analyze ? { ...view, borgAnalysis: analyze(view) } : view;
 }
-function storeItemView(item, analyze) {
-  const { index, price } = item;
-  return { ...itemView(item, analyze), index, ...price === void 0 ? {} : { price } };
+function storeItemView(item2, analyze) {
+  const { index, price } = item2;
+  return { ...itemView(item2, analyze), index, ...price === void 0 ? {} : { price } };
 }
 var BAND_SHARE = { unhurt: 1, somewhat: 0.8, wounded: 0.42, badly: 0.17, almost: 0.05 };
 function knownMonsterView(monster) {
@@ -18499,8 +18499,8 @@ async function monsterViews(known, reads) {
 function simulationView(floors) {
   const loadout = (view) => ({
     player: playerView(view.player, floors),
-    equipment: view.equipment.map((item) => item === null ? null : itemView(item)),
-    inventory: view.inventory.map((item) => itemView(item)),
+    equipment: view.equipment.map((item2) => item2 === null ? null : itemView(item2)),
+    inventory: view.inventory.map((item2) => itemView(item2)),
     stats: writable(view.stats)
   });
   return (simulation) => ({
@@ -18517,9 +18517,9 @@ async function readWorld(api, reads) {
   const { statics } = reads;
   const player = playerView(known.player, statics.floors);
   const analyze = await itemAnalyzer(api);
-  const adapt = (item) => itemView(item, analyze);
+  const adapt = (item2) => itemView(item2, analyze);
   const inventory = (known.inventory ?? []).map(adapt);
-  const equipment2 = (known.equipment ?? []).map((item) => item === null ? null : adapt(item));
+  const equipment2 = (known.equipment ?? []).map((item2) => item2 === null ? null : adapt(item2));
   const quiver = (known.quiver ?? []).map(adapt);
   const floorHere = (known.floorHere ?? []).map(adapt);
   const monsters = await monsterViews(known, reads);
@@ -18559,16 +18559,16 @@ async function readWorld(api, reads) {
   };
   const kinds = /* @__PURE__ */ new Map();
   const noteKinds = (items) => {
-    for (const item of items) {
-      const index = /^kind:(\d+)$/.exec(item.kindKey);
-      if (!item.aware || index === null) continue;
-      kinds.set(`${String(item.tval)}:${String(item.sval)}`, { cost: statics.kindCosts[Number(index[1])] ?? 0, aware: true });
+    for (const item2 of items) {
+      const index = /^kind:(\d+)$/.exec(item2.kindKey);
+      if (!item2.aware || index === null) continue;
+      kinds.set(`${String(item2.tval)}:${String(item2.sval)}`, { cost: statics.kindCosts[Number(index[1])] ?? 0, aware: true });
     }
   };
   noteKinds(inventory);
   noteKinds(quiver);
   noteKinds(floorHere);
-  noteKinds(equipment2.filter((item) => item !== null));
+  noteKinds(equipment2.filter((item2) => item2 !== null));
   const floorOf = (x, y) => (cells.get(y * width + x)?.remembered.items ?? []).map(adapt);
   for (const remembered of cells.values()) noteKinds((remembered.remembered.items ?? []).map(adapt));
   const view = {
@@ -18584,7 +18584,7 @@ async function readWorld(api, reads) {
     floorItems: (x, y) => x === player.grid.x && y === player.grid.y ? [...floorHere] : floorOf(x, y),
     target: () => known.target === null ? null : { midx: known.target.monster ?? 0, grid: { x: known.target.grid.x, y: known.target.grid.y } },
     messages: () => reads.messages?.drain() ?? [],
-    stores: () => (known.stores ?? []).map((store2) => ({ ...writable(store2), stock: store2.stock.map((item) => storeItemView(item, analyze)) })),
+    stores: () => (known.stores ?? []).map((store2) => ({ ...writable(store2), stock: store2.stock.map((item2) => storeItemView(item2, analyze)) })),
     spellbooks: () => (known.spellbooks ?? []).map((book) => writable(book)),
     constants: () => ({ ...statics.constants }),
     inputToken: () => ({ epoch: known.token.epoch, revision: known.token.revision }),
@@ -18743,9 +18743,9 @@ function aimedGrid(command, from) {
 }
 function forgetGrid(world, x, y) {
   if (!world.map.inBounds(x, y)) return;
-  const grid = world.map.at(x, y);
-  grid.feat = 0;
-  grid.info &= ~(BORG_MARK | BORG_VIEW);
+  const grid2 = world.map.at(x, y);
+  grid2.feat = 0;
+  grid2.info &= ~(BORG_MARK | BORG_VIEW);
 }
 var STALLS_BEFORE_FORGET = 6;
 var STALLS_BEFORE_RELEASE = 40;
@@ -18831,13 +18831,19 @@ function createTick(bridge2, borg) {
       borg.stage.onAttained(world);
       return;
     }
+    const deliveredMessages = [];
+    const decisionView = borg.observe ? { ...world.view, messages: () => {
+      const batch = world.view.messages();
+      deliveredMessages.push(...batch);
+      return batch;
+    } } : world.view;
     let facade = createActFacade();
-    let command = borg.controller(world.view, facade.act);
+    let command = borg.controller(decisionView, facade.act);
     for (let pass = 0; pass < MAX_EXTRA_PASSES && bridge2.loadoutsPending(); pass++) {
       if (await bridge2.settleLoadouts() === 0) break;
       borg.rewind();
       facade = createActFacade();
-      command = borg.controller(world.view, facade.act);
+      command = borg.controller(decisionView, facade.act);
     }
     const targets = facade.take();
     if (command === null) {
@@ -18863,6 +18869,11 @@ function createTick(bridge2, borg) {
     if (!announced) {
       announced = true;
       mod2.meta.log("the Borg is playing");
+    }
+    try {
+      borg.observe?.(world, command, deliveredMessages);
+    } catch (error) {
+      mod2.meta.log(`Mandos decision recording failed: ${String(error)}`);
     }
     let token = input.token;
     for (const target of targets) {
@@ -19664,6 +19675,296 @@ function installBorgJournal(deps) {
   };
 }
 
+// src/records/live-schema.mjs
+var LIVE_FORMAT = "mandos/live-deaths@1";
+var ACK_FORMAT = "mandos/live-import-ack@1";
+var LIVE_PREFIX = "death-166:";
+var MAX_LIVE_BYTES = 49152;
+var MAX_LIVE_FRAMES = 12;
+var LIVE_EXPORT_LIMIT = 10;
+var isHash = (value) => typeof value === "string" && /^[a-f0-9]{64}$/.test(value);
+var isObject2 = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+function ordered(value) {
+  if (Array.isArray(value)) return value.map(ordered);
+  return isObject2(value) ? Object.fromEntries(Object.keys(value).sort().filter((k) => value[k] !== void 0).map((k) => [k, ordered(value[k])])) : value;
+}
+var packetText = (value) => JSON.stringify(ordered(value), null, 2) + "\n";
+async function packetHash(value) {
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(packetText(value)));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+}
+function keys(value, allowed) {
+  return isObject2(value) && Object.keys(value).every((k) => allowed.includes(k));
+}
+var integer = (n) => Number.isInteger(n) && n >= 0;
+var text = (v, n) => typeof v === "string" && v.length <= n;
+var grid = (v) => keys(v, ["x", "y"]) && Number.isInteger(v.x) && Number.isInteger(v.y);
+var uint = (n) => integer(n) && n <= 4294967295;
+var birthRng = (s) => keys(s, ["quick", "fixed", "value", "stateI", "fixval", "state"]) && typeof s.quick === "boolean" && typeof s.fixed === "boolean" && uint(s.value) && uint(s.stateI) && s.stateI < 32 && uint(s.fixval) && Array.isArray(s.state) && s.state.length === 32 && s.state.every(uint);
+var scalarMap = (v) => isObject2(v) && Object.values(v).every((x) => typeof x === "boolean" || Number.isFinite(x));
+var item = (v) => keys(v, ["handle", "label", "quantity", "aware", "unknownRunes"]) && Number.isFinite(v.handle) && text(v.label, 512) && integer(v.quantity) && typeof v.aware === "boolean" && (v.unknownRunes === null || typeof v.unknownRunes === "boolean");
+function frame(f) {
+  return keys(f, ["turn", "command", "player", "monsters", "map", "items", "messages", "precision"]) && integer(f.turn) && ["character-known/health-band-derived", "character-known+granted-monster-truth"].includes(f.precision) && keys(f.command, ["code", "dir", "args", "submission"]) && text(f.command.code, 64) && f.command.submission === "not-yet-submitted" && keys(f.player, ["grid", "hp", "maxHp", "sp", "maxSp", "depth", "level", "status"]) && grid(f.player.grid) && ["hp", "maxHp", "sp", "maxSp", "depth", "level"].every((k) => Number.isFinite(f.player[k])) && scalarMap(f.player.status) && Array.isArray(f.monsters) && f.monsters.length <= 12 && f.monsters.every((m) => keys(m, ["id", "name", "grid", "hp", "maxHp", "visible"]) && Number.isFinite(m.id) && (typeof m.name === "string" || Number.isFinite(m.name)) && grid(m.grid) && Number.isFinite(m.hp) && Number.isFinite(m.maxHp) && m.visible === true) && Array.isArray(f.map) && f.map.length <= 49 && f.map.every((c) => c === null || keys(c, ["x", "y", "feat", "known", "monster"]) && grid({ x: c.x, y: c.y }) && Number.isFinite(c.feat) && typeof c.known === "boolean" && Number.isFinite(c.monster)) && keys(f.items, ["pack", "equipment", "home"]) && ["pack", "equipment", "home"].every((k) => Array.isArray(f.items[k]) && f.items[k].length <= 48 && f.items[k].every((v) => v === null || item(v))) && Array.isArray(f.messages) && f.messages.length <= 8 && f.messages.every((m) => text(m, 512));
+}
+function packetShape(value) {
+  if (!keys(value, ["schema", "id", "sha256", "packet"]) || value.schema !== "mandos/death-outbox@1" || !isHash(value.id) || !isHash(value.sha256)) return false;
+  const p = value.packet;
+  return keys(p, ["schema", "id", "terminalHash", "source", "identity", "terminal", "capture", "pending"]) && p.schema === LIVE_FORMAT && p.id === value.id && isHash(p.terminalHash) && keys(p.source, ["mod", "engine", "api", "codeDigest", "flags", "settings", "life"]) && typeof p.source.mod === "string" && typeof p.source.engine === "string" && typeof p.source.api === "string" && (p.source.life === void 0 || p.source.life === null || integer(p.source.life) && p.source.life > 0) && (p.source.codeDigest === null || isHash(p.source.codeDigest)) && isObject2(p.source.flags) && Object.values(p.source.flags).every((v) => typeof v === "boolean") && isObject2(p.source.settings) && Object.values(p.source.settings).every(Number.isFinite) && keys(p.identity, ["hostKey", "quality"]) && (p.identity.hostKey === null || typeof p.identity.hostKey === "string") && ["host-key", "derived-session"].includes(p.identity.quality) && keys(p.terminal, ["outcome", "cause", "key", "race", "class", "birthStats", "level", "maxLevel", "depth", "maxDepth", "gold", "turn", "endedAt", "seed", "birthRngState", "birthOptions", "knowledge", "messages", "messagesTotal", "belongings", "belongingsTotal", "textTruncated", "missing"]) && ["death", "winner", "retired"].includes(p.terminal.outcome) && (p.terminal.cause === null || text(p.terminal.cause, 256)) && p.terminal.knowledge === "terminal-revealed" && ["race", "class"].every((k) => p.terminal[k] === null || text(p.terminal[k], 128)) && ["level", "maxLevel", "depth", "maxDepth", "gold", "turn", "endedAt"].every((k) => p.terminal[k] === null || integer(p.terminal[k])) && ["messagesTotal", "belongingsTotal"].every((k) => integer(p.terminal[k])) && Array.isArray(p.terminal.missing) && p.terminal.missing.length <= 13 && p.terminal.missing.every((k) => text(k, 32)) && (p.terminal.seed === void 0 || uint(p.terminal.seed)) && (p.terminal.birthRngState === void 0 || birthRng(p.terminal.birthRngState)) && (p.terminal.birthOptions === void 0 || isObject2(p.terminal.birthOptions) && Object.entries(p.terminal.birthOptions).every(([k, v]) => k.startsWith("birth_") && typeof v === "boolean")) && typeof p.terminal.textTruncated === "boolean" && (p.terminal.key === null || text(p.terminal.key, 256)) && Array.isArray(p.terminal.birthStats) && p.terminal.birthStats.length <= 6 && p.terminal.birthStats.every(Number.isFinite) && Array.isArray(p.terminal.messages) && p.terminal.messages.length <= 20 && p.terminal.messages.every((m) => keys(m, ["text", "count"]) && text(m.text, 512) && integer(m.count)) && Array.isArray(p.terminal.belongings) && p.terminal.belongings.length <= 48 && p.terminal.belongings.every((i) => keys(i, ["name", "location", "quantity"]) && text(i.name, 160) && ["equipment", "pack", "quiver", "home"].includes(i.location) && integer(i.quantity)) && keys(p.capture, ["frames", "decisions", "droppedFrames", "truncated", "gaps"]) && Array.isArray(p.capture.frames) && p.capture.frames.length <= MAX_LIVE_FRAMES && Number.isInteger(p.capture.decisions) && p.capture.decisions >= 0 && Number.isInteger(p.capture.droppedFrames) && p.capture.droppedFrames >= 0 && typeof p.capture.truncated === "boolean" && Array.isArray(p.capture.gaps) && p.capture.gaps.every((g) => text(g, 128)) && p.capture.frames.every(frame) && isObject2(p.pending) && p.pending.export === true && p.pending.analysis === true && new TextEncoder().encode(packetText(p)).length <= MAX_LIVE_BYTES;
+}
+
+// src/records/live-deaths.ts
+var copy = (x) => JSON.parse(JSON.stringify(x));
+function decisionFrame(view, command, hasTruth, deliveredMessages = []) {
+  const p = view.player(), bounds = view.mapBounds(), cells = [];
+  for (let y = p.grid.y - 3; y <= p.grid.y + 3; y++) for (let x = p.grid.x - 3; x <= p.grid.x + 3; x++) {
+    const c = x >= 0 && y >= 0 && x < bounds.width && y < bounds.height ? view.cell(x, y) : null;
+    cells.push(c ? copy({ x, y, feat: c.knownFeat ?? (c.known ? c.feat : -1), known: c.known, monster: c.monster }) : null);
+  }
+  const item2 = (i) => ({ handle: i.handle, label: i.label.slice(0, 512), quantity: i.number, aware: i.aware, unknownRunes: i.unknownRunes ?? null });
+  const raw = command;
+  return {
+    turn: view.turn(),
+    command: copy(raw ? { code: raw.code, ...raw.dir === void 0 ? {} : { dir: raw.dir }, ...raw.args === void 0 ? {} : { args: raw.args }, submission: "not-yet-submitted" } : null),
+    player: copy({ grid: p.grid, hp: p.hp, maxHp: p.maxHp, sp: p.sp, maxSp: p.maxSp, depth: p.depth, level: p.level, status: p.status }),
+    monsters: copy(view.monsters().filter((m) => m.visible).slice(0, 12).map((m) => ({ id: m.id, name: m.race, grid: m.grid, hp: m.hp, maxHp: m.maxHp, visible: m.visible }))),
+    map: cells,
+    items: copy({ pack: view.inventory().slice(0, 24).map(item2), equipment: view.equipment().map((i) => i ? item2(i) : null), home: view.stores().filter((s) => s.isHome).flatMap((s) => s.stock.slice(0, 24).map(item2)) }),
+    messages: copy(deliveredMessages.slice(-8).map((m) => m.slice(0, 512))),
+    precision: hasTruth ? "character-known+granted-monster-truth" : "character-known/health-band-derived"
+  };
+}
+function storedPacket(value) {
+  return packetShape(value) ? value : null;
+}
+function terminalOf(report) {
+  if (!["death", "winner", "retired"].includes(report.outcome)) throw new Error("The host supplied no valid terminal outcome");
+  const fields = ["cause", "race", "cls", "level", "maxLevel", "depth", "maxDepth", "gold", "turn", "endedAt", "birth", "messages", "belongings"];
+  const missing = fields.filter((key) => report[key] === void 0 || report[key] === null);
+  const messages = report.messages ?? [], belongings = report.belongings ?? [];
+  const clipped = (value, limit) => value.slice(0, limit);
+  const known = (value) => value === void 0 ? null : copy(value);
+  return copy({
+    outcome: report.outcome,
+    cause: typeof report.cause === "string" ? clipped(report.cause, 256) : null,
+    key: typeof report.key === "string" ? report.key : null,
+    race: known(report.race),
+    class: known(report.cls),
+    birthStats: report.birth?.stats ?? [],
+    level: known(report.level),
+    maxLevel: known(report.maxLevel),
+    depth: known(report.depth),
+    maxDepth: known(report.maxDepth),
+    gold: known(report.gold),
+    turn: known(report.turn),
+    endedAt: known(report.endedAt),
+    missing,
+    ...typeof report.seed === "number" ? { seed: report.seed } : {},
+    ...birthReplayDataOf(report),
+    knowledge: "terminal-revealed",
+    messages: messages.slice(-20).map((m) => ({ text: clipped(m.text, 512), count: m.count })),
+    messagesTotal: messages.length,
+    belongings: belongings.slice(0, 48).map((i) => ({ name: clipped(i.name, 160), location: i.location, quantity: i.quantity })),
+    belongingsTotal: belongings.length,
+    textTruncated: messages.length > 20 || belongings.length > 48 || messages.some((m) => m.text.length > 512) || belongings.some((i) => i.name.length > 160) || (report.cause?.length ?? 0) > 256
+  });
+}
+function createLiveRecorder(deps) {
+  const session = deps.sessionId ?? (globalThis.crypto?.randomUUID?.() ?? "unidentified-session");
+  const acknowledged = /* @__PURE__ */ new Map();
+  const frames = [], volatile = /* @__PURE__ */ new Map();
+  let count = 0, failure = null, chain = Promise.resolve();
+  const enqueue = (work) => {
+    const next = chain.then(work, work);
+    chain = next.then(() => void 0, () => void 0);
+    return next;
+  };
+  const fail = (why) => {
+    failure = why instanceof Error ? why.message : String(why);
+    deps.log(`Mandos death report is NOT durable: ${failure}. Automatic rebirth stops; export the pending report before reloading.`);
+    return false;
+  };
+  async function preserve(entry) {
+    try {
+      const key = LIVE_PREFIX + entry.id, prior = await deps.store.get(key);
+      if (!prior.ok) return fail(prior.message);
+      if (prior.value !== null) {
+        const existing = storedPacket(prior.value);
+        if (!existing || existing.packet.terminalHash !== entry.packet.terminalHash) return fail("A terminal identity conflicts with an existing outbox report");
+        if (await packetHash(existing.packet) !== existing.sha256) return fail("An existing outbox report failed its content hash");
+        volatile.delete(entry.id);
+        failure = null;
+        return true;
+      }
+      const written = await deps.store.set(key, copy(entry));
+      if (!written.ok) return fail(written.message);
+      const read = await deps.store.get(key);
+      if (!read.ok || packetText(read.value) !== packetText(entry)) return fail("Outbox write did not verify on read-back");
+      volatile.delete(entry.id);
+      failure = null;
+      deps.log(`Mandos recorded ${String(entry.packet.terminal.outcome)} ${entry.id}; export and analysis are pending.`);
+      return true;
+    } catch (error) {
+      return fail(error);
+    }
+  }
+  return {
+    observe(frame2) {
+      count++;
+      frames.push(structuredClone(frame2));
+      if (frames.length > MAX_LIVE_FRAMES) frames.shift();
+    },
+    capture(report) {
+      const tail = structuredClone(frames), decisions = count, source = structuredClone(deps.source());
+      const terminal = terminalOf(report);
+      return enqueue(async () => {
+        try {
+          const terminalHash = await packetHash(terminal), hostKey = typeof report.key === "string" && report.key ? report.key : null;
+          const id = await packetHash({ mod: source.mod, identity: hostKey ?? `${session}:${terminalHash}` });
+          if (acknowledged.get(id) === terminalHash) return true;
+          const gaps = ["no-full-fatal-save", "submission-results-not-recorded", "messages-only-as-delivered-to-controller", "controller-command-tail-only", "separate-target-intents-not-recorded", "frame-limits-map7x7-monsters12-pack24-home24-messages8-text512", ...terminal.missing.map((key) => "terminal-" + key + "-unavailable"), ...source.codeDigest === null ? ["exact-code-digest-unavailable"] : [], ...tail.length ? [] : ["pre-decision-tail-unavailable"]];
+          const packet = {
+            schema: LIVE_FORMAT,
+            id,
+            terminalHash,
+            source,
+            identity: { hostKey, quality: hostKey ? "host-key" : "derived-session" },
+            terminal,
+            capture: { frames: tail, decisions, droppedFrames: Math.max(0, decisions - tail.length), truncated: decisions > tail.length, gaps },
+            pending: { export: true, analysis: true }
+          };
+          while (new TextEncoder().encode(packetText(packet)).length > MAX_LIVE_BYTES && tail.length) {
+            tail.shift();
+            packet.capture.droppedFrames++;
+            packet.capture.truncated = true;
+          }
+          if (new TextEncoder().encode(packetText(packet)).length > MAX_LIVE_BYTES) return fail("Terminal packet exceeds the bounded recording size");
+          const entry = { schema: "mandos/death-outbox@1", id, sha256: await packetHash(packet), packet };
+          if (!storedPacket(entry)) return fail("Host observation does not match the portable terminal packet contract");
+          volatile.set(id, entry);
+          return preserve(entry);
+        } catch (error) {
+          return fail(error);
+        }
+      });
+    },
+    retry: () => enqueue(async () => {
+      let ok = true;
+      for (const entry of [...volatile.values()]) if (!await preserve(entry)) ok = false;
+      return ok && failure === null;
+    }),
+    entries: () => enqueue(async () => {
+      const found = /* @__PURE__ */ new Map();
+      const keys2 = await deps.store.keys();
+      if (!keys2.ok) {
+        fail(keys2.message);
+        return [...volatile.values()];
+      }
+      for (const key of keys2.value.filter((k) => k.startsWith(LIVE_PREFIX)).sort()) {
+        const read = await deps.store.get(key), entry = read.ok ? storedPacket(read.value) : null;
+        if (entry && await packetHash(entry.packet) === entry.sha256) found.set(entry.id, entry);
+        else fail(`Outbox report ${key} is unreadable or corrupt`);
+      }
+      for (const entry of volatile.values()) found.set(entry.id, entry);
+      return [...found.values()];
+    }),
+    acknowledge: (text2) => enqueue(async () => {
+      if (new TextEncoder().encode(text2).length > 32768) throw new Error("Import acknowledgement is too large");
+      const ack = JSON.parse(text2);
+      if (!isObject2(ack) || ack.schema !== ACK_FORMAT || !Array.isArray(ack.entries) || ack.entries.length > LIVE_EXPORT_LIMIT) throw new Error("Expected a successful corpus-import acknowledgement");
+      const remove = [];
+      for (const item2 of ack.entries) {
+        if (!isObject2(item2) || !isHash(item2.id) || !isHash(item2.packetSha256) || !isHash(item2.corpusReceiptSha256)) throw new Error("Invalid import acknowledgement identity/hash");
+        const read = await deps.store.get(LIVE_PREFIX + item2.id), entry = read.ok ? storedPacket(read.value) : null;
+        if (read.ok && read.value === null && !volatile.has(item2.id)) continue;
+        const pending = volatile.get(item2.id);
+        if (pending && pending.sha256 !== item2.packetSha256) throw new Error("A conflicting unrecorded terminal report remains; acknowledgement cannot discard it");
+        const current = entry ?? pending;
+        if (!current || current.sha256 !== item2.packetSha256 || await packetHash(current.packet) !== item2.packetSha256) throw new Error("Acknowledgement does not match the current report");
+        remove.push({ id: item2.id, terminalHash: current.packet.terminalHash });
+      }
+      for (const { id, terminalHash } of remove) {
+        const result = await deps.store.set(LIVE_PREFIX + id, null);
+        const read = await deps.store.get(LIVE_PREFIX + id);
+        if (!result.ok || !read.ok || read.value !== null) throw new Error("Imported report could not be retired; retry the same acknowledgement");
+        acknowledged.set(id, terminalHash);
+        volatile.delete(id);
+      }
+      if (volatile.size === 0) failure = null;
+      deps.log(`Mandos acknowledged ${String(remove.length)} imported reports; no legacy archive or character data was removed.`);
+      return remove.length;
+    }),
+    get failure() {
+      return failure;
+    }
+  };
+}
+
+// src/records/death-export.ts
+function installDeathExport(mod2, recorder, retryRestart) {
+  let stopped = false, acknowledgement = "", busy = false, mounted = false;
+  const panelId = "mandos-death-export";
+  const log = (text2) => mod2.meta.log(text2);
+  async function open() {
+    if (stopped) return;
+    const entries = await recorder.entries();
+    if (stopped) return;
+    const downloads = [];
+    for (let i = 0; i < entries.length; i += LIVE_EXPORT_LIMIT) {
+      const batch = entries.slice(i, i + LIVE_EXPORT_LIMIT);
+      downloads.push({ type: "download", label: `Download pending reports ${String(i + 1)}\u2013${String(i + batch.length)}`, name: `mandos-deaths-${batch[0].id.slice(0, 16)}.json`, text: packetText({ schema: "mandos/live-export@1", entries: batch }) });
+    }
+    const root = { type: "column", children: [
+      { type: "text", text: `${String(entries.length)} locally pending terminal reports. Analysis is pending. ${recorder.failure ?? "Storage verified when captured."}` },
+      { type: "text", text: "Review downloaded facts before publication: messages, commands, equipment and terminal-revealed knowledge may be sensitive. Import into your death corpus, then paste its successful import acknowledgement. Downloading alone never removes local reports." },
+      ...downloads,
+      { type: "input", label: "Successful corpus import acknowledgement JSON", action: "ack-input", value: acknowledgement },
+      { type: "button", label: "Acknowledge imported reports", action: "ack-import", disabled: busy },
+      { type: "button", label: "Retry recording and paused rebirth", action: "retry-recording", disabled: busy }
+    ] };
+    try {
+      const result = mounted ? await mod2.ui.patch(panelId, { root }) : await mod2.ui.mount({ id: panelId, title: "Mandos pending death reports", root }, (action, value) => {
+        if (stopped) return;
+        if (action === "ack-input") {
+          acknowledgement = typeof value === "string" ? value : "";
+          return;
+        }
+        if (busy) return;
+        if (action !== "ack-import" && action !== "retry-recording") return;
+        busy = true;
+        void (async () => {
+          try {
+            if (action === "ack-import") {
+              await recorder.acknowledge(acknowledgement);
+              acknowledgement = "";
+            }
+            if (await recorder.retry()) await retryRestart();
+          } catch (error) {
+            log(`Mandos export action failed: ${String(error)}`);
+          } finally {
+            busy = false;
+            if (!stopped) await open();
+          }
+        })();
+      }, () => {
+        mounted = false;
+      });
+      if (result.ok) mounted = true;
+      if (!result.ok) log(`Mandos export panel unavailable (${result.message}); locally recorded reports remain pending. Grant ui:panel.mount to use the download panel.`);
+    } catch (error) {
+      log(`Mandos export panel unavailable (${String(error)}); capture is independent of the panel grant.`);
+    }
+  }
+  void mod2.ui.commands.register("mandos:export-deaths", "Export Mandos deaths", open).then((r) => {
+    if (!r.ok) log(`Mandos export command unavailable: ${r.message}`);
+  }).catch((error) => log(String(error)));
+  const title = mod2.presentation?.title;
+  if (title) void title.registerRow({ id: "mandos-death-export", label: "Export Mandos death reports", run: open }).catch((error) => log(String(error)));
+  return { open, stop() {
+    stopped = true;
+    void mod2.ui.unmount(panelId).catch(() => void 0);
+  } };
+}
+
 // src/loop/restart.ts
 var messageOf2 = (error) => error instanceof Error ? error.message : String(error);
 async function flagIsDurable(slot) {
@@ -19789,6 +20090,7 @@ async function retireAtStage(deps, facts, cancelled = () => false) {
 function installBorgRestart(deps) {
   let subscription = null;
   let spent = false;
+  let pendingRecording = null;
   let retireSpent = false;
   let stopped = false;
   let epoch = 0;
@@ -19824,10 +20126,25 @@ function installBorgRestart(deps) {
       );
       return;
     }
+    if (deps.recordingRequired && deps.graveyard === void 0) {
+      pendingRecording = event;
+      deps.log("Mandos terminal recording is required but unavailable; no next character starts.");
+      return;
+    }
     if (deps.graveyard !== void 0) {
       try {
-        await deps.graveyard(report);
+        const recorded = await deps.graveyard(report);
+        if (deps.recordingRequired && recorded !== true) {
+          pendingRecording = event;
+          deps.log("Mandos could not verify the terminal outbox; no next character starts. Export/import and acknowledge the pending report, or retry recording.");
+          return;
+        }
       } catch (error) {
+        if (deps.recordingRequired) {
+          pendingRecording = event;
+          deps.log(`Mandos terminal recording failed (${messageOf2(error)}); no next character starts. Retry recording or export the pending report before reloading.`);
+          return;
+        }
         deps.log(`the Borg could not record the run that just ended (${messageOf2(error)}), so it restarts without a journal entry`);
       }
       if (retired()) return dropped("it was still recording the run that ended");
@@ -19909,6 +20226,13 @@ function installBorgRestart(deps) {
       );
       void retireAtStage(deps, facts, () => stopped || mine !== epoch);
     },
+    async retryRecording() {
+      if (stopped || pendingRecording === null) return;
+      const event = pendingRecording;
+      pendingRecording = null;
+      spent = false;
+      await onReport(event);
+    },
     async stop() {
       stopped = true;
       epoch += 1;
@@ -19951,9 +20275,9 @@ function stageValue(setting, stored) {
   return Number(snapped.toFixed(places));
 }
 function decimalsOf(value) {
-  const text = String(value);
-  const point = text.indexOf(".");
-  return point === -1 ? 0 : text.length - point - 1;
+  const text2 = String(value);
+  const point = text2.indexOf(".");
+  return point === -1 ? 0 : text2.length - point - 1;
 }
 function stageAttained(stage, facts) {
   return facts.clvl >= stage.clvl && facts.maxDepth >= stage.depth;
@@ -20005,9 +20329,9 @@ function replayValue(setting, stored) {
   return Number(snapped.toFixed(places));
 }
 function decimalsOf2(value) {
-  const text = String(value);
-  const point = text.indexOf(".");
-  return point === -1 ? 0 : text.length - point - 1;
+  const text2 = String(value);
+  const point = text2.indexOf(".");
+  return point === -1 ? 0 : text2.length - point - 1;
 }
 function replayBanner(mode) {
   if (mode.death > 0 && mode.death > mode.release) {
@@ -20053,6 +20377,7 @@ var lineageAtPage = null;
 var bridge;
 var running;
 var restartHandle;
+var deathExportHandle;
 var journalHandle;
 var replayLogHandle = null;
 var replayLogOff = null;
@@ -20068,11 +20393,13 @@ async function begin(mod2) {
     void made.dispose();
     return null;
   }
+  let observedSettings = {};
   try {
     if (typeof mod2.meta.settings === "function") {
       void mod2.meta.settings().then(
         (read) => {
           if (read.ok) {
+            observedSettings = { ...read.value };
             activeStage = stageOf({
               clvl: read.value[STAGE_CLVL_SETTING.id],
               depth: read.value[STAGE_DEPTH_SETTING.id]
@@ -20139,7 +20466,13 @@ async function begin(mod2) {
       return { level, turn };
     }
   });
+  const deathRecorder = createLiveRecorder({
+    store: mod2.store.kv,
+    source: () => ({ mod: mod2.meta.id, engine: mod2.meta.engine, api: mod2.meta.api, codeDigest: null, flags: mod2.meta.flags, settings: observedSettings }),
+    log: (message) => mod2.meta.log(message)
+  });
   const restart = installBorgRestart({
+    recordingRequired: true,
     slot: mod2.store.install,
     log: (message) => mod2.meta.log(message),
     ownsKeyboard: () => mod2.act.controller.owns(),
@@ -20150,14 +20483,17 @@ async function begin(mod2) {
      * the report itself carries - the on-death report's "where I was not
      * sure" half. Nothing journaled means no dossier: the entry keeps its
      * pre-#27 shape. */
-    graveyard: (report) => journal.graveyard(
-      report,
-      unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {}
-    ),
+    graveyard: async (report) => {
+      const durable = await deathRecorder.capture(report);
+      await journal.graveyard(report, unsure.total > 0 ? { unsure: { total: unsure.total, points: [...unsure.points] } } : {});
+      return durable;
+    },
     save: mod2.manage?.session?.save ?? null,
     listSaves: mod2.manage?.saves.list ?? null,
     rename: mod2.manage?.saves.rename ?? null
   });
+  deathExportHandle?.stop();
+  deathExportHandle = installDeathExport(mod2, deathRecorder, () => restart.retryRecording());
   const unsure = { total: 0, points: [] };
   const trainerRail = {
     assess: (world, command) => assessUncertainty(borg.world, world.view, command),
@@ -20225,7 +20561,7 @@ async function begin(mod2) {
   restartHandle = restart;
   void journalHandle?.stop();
   journalHandle = journal;
-  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
+  return { bridge: made, tick: createTick(made, { controller: borg.controller, rewind: borg.rewind, observe: (world, command, messages) => deathRecorder.observe(decisionFrame(world.view, command, made.hasTruth, messages)), forget, stage: stageWatch, replay: replayWatch, trainer: trainerRail }), restart, journal };
 }
 var definition = {
   api: ">=2.0.0 <3.0.0",
@@ -20267,6 +20603,8 @@ var definition = {
     running = void 0;
     const held = bridge;
     bridge = void 0;
+    deathExportHandle?.stop();
+    deathExportHandle = void 0;
     const loop = restartHandle;
     restartHandle = void 0;
     void loop?.stop();

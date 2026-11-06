@@ -41,11 +41,18 @@ try {
   const source = () => ({ mod: 'mandos', engine: String(Core.VERSION_STRING ?? 'published beta.2'), api: '2.0.0', codeDigest: null, flags: {}, settings: {} });
   let host = makeHost(), recorder = driver.createLiveRecorder({ store: host.store.kv, source, log() {} });
   assert.equal((await host.store.kv.set("legacy-control", { untouched: true })).ok, true);
-  const observation = driver.observingLife(Core, game, pack, frame => recorder.observe(frame));
+  const sealedFrames = [];
+  const observation = driver.observingLife(Core, game, pack, frame => { recorder.observe(frame); sealedFrames.push(structuredClone(frame)); if (sealedFrames.length > 12) sealedFrames.shift(); });
   const ended = driver.driveLife(Core, game, 600, observation, 3); observation.uninstall(); assert.equal(ended.dead, true);
   let delivered;
   const subscribed = await host.events.on('run-end', event => { delivered = recorder.capture(event.report); }); assert.equal(subscribed.ok, true);
   // Real report builder/broker after an actual Core death. Driver publishes: this is not an Electron-deployment claim.
+  // Match main.ts's public death_knowledge stage before constructing the terminal report.
+  const beforeReveal = driver.packetText(sealedFrames.at(-1));
+  const unknownBefore = Core.createAgentView(game.state).inventory().filter(i => !i.aware).map(i => i.handle);
+  Core.deathKnowledge(game.state.actor.player, { runeEnv: game.state.runeEnv, flavor: game.flavor, flavorDeps: game.state.flavorAwareDeps,
+    gear: game.state.gear.store.values(), homeStock: game.state.stores?.find(s => s.feat === Core.FEAT.HOME)?.stock ?? [],
+    setDepth: depth => { game.state.chunk.depth = depth; } });
   const view = Core.createAgentView(game.state);
   const report = frontend.buildRunReport({ state: game.state, view, messages: [], key: 'public-proof-seed3', sheet: null, scored: false, endedAt: 0 });
   broker.publish(report); assert.equal(await delivered, true); assert.equal((await recorder.entries()).length, 1);
@@ -53,6 +60,8 @@ try {
   // Fresh host and recorder use persisted backing, not the previous recorder's memory.
   host = makeHost(); recorder = driver.createLiveRecorder({ store: host.store.kv, source, log() {} });
   const entries = await recorder.entries(); assert.equal(entries.length, 1); assert.equal(entries[0].packet.terminal.outcome, 'death');
+  assert.equal(driver.packetText(entries[0].packet.capture.frames.at(-1)), beforeReveal);
+  const revealedAfter = view.inventory().filter(i => unknownBefore.includes(i.handle) && i.aware).length;
   const ui = driver.installDeathExport(host, recorder, async () => {}); await ui.open();
   const download = drawn.root.children.find(n => n.type === 'download'); assert(download);
   const input = join(scratch, 'download.json'); writeFileSync(input, download.text);
@@ -61,6 +70,7 @@ try {
   assert.equal(ack.entries.length, 1); assert.equal(await recorder.acknowledge(driver.packetText(ack)), 1); assert.equal((await recorder.entries()).length, 0); assert.deepEqual((await host.store.kv.keys()).value, ['legacy-control']); assert.deepEqual((await host.store.kv.get('legacy-control')).value, { untouched: true });
   await ui.open(); ui.stop(); frontend.stopApi2Host(host); frontend.setModRunReports(undefined);
   const receipt = { schema: 'mandos/live-host-proof@1', frontendRef: REF, publishedEngine: '1.23.0-beta.2 with Mandos carried patch set', seed: 3,
+    actualDeathKnowledge: { applied: true, unidentifiedInventoryBefore: unknownBefore.length, identifiedAfter: revealedAfter, preDecisionFrameUnchanged: true },
     actualCoreDeath: { turn: game.state.turn, decisions: ended.taken, cause: report.cause }, deliveredByRealBroker: true, freshHostPersistentKV: true,
     actualApi2PanelDownloadImported: true, verifiedImportAcknowledged: true, removedOnlyNewOutboxPacket: true,
     packetId: entries[0].id, packetSha256: entries[0].sha256, downloadSha256: hash(download.text),

@@ -17,11 +17,12 @@ function noLinks(path) {
 function read(path, max = 1024 * 1024) { noLinks(path); const s = lstatSync(path); assert(s.isFile() && s.size <= max, 'Expected bounded regular input'); return readFileSync(path, 'utf8'); }
 function inside(parent, child) { const r = relative(parent, child); return r === '' || (!isAbsolute(r) && r !== '..' && !r.startsWith('..' + sep)); }
 export function writeImmutableObservation(path, bytes) {
+  assert(typeof bytes === 'string' && Buffer.byteLength(bytes, 'utf8') <= 1024 * 1024, 'Immutable observation exceeds 1MiB');
   noLinks(path); mkdirSync(dirname(path), { recursive: true }); noLinks(path);
   try { assert(read(path) === bytes, 'Immutable export conflict: ' + path); return; } catch (e) { if (e.code !== 'ENOENT') throw e; }
   const tmp = path + '.pending-' + randomUUID();
   writeFileSync(tmp, bytes, { flag: 'wx', mode: 0o600 });
-  try { linkSync(tmp, path); } catch (e) { if (e.code !== 'EEXIST' || read(path) !== bytes) throw e; } finally { unlinkSync(tmp); }
+  try { linkSync(tmp, path); assert(read(path) === bytes, "Immutable observation did not verify on read-back"); } catch (e) { if (e.code !== 'EEXIST' || read(path) !== bytes) throw e; } finally { unlinkSync(tmp); }
 }
 function portable(base) { assert(typeof base === 'string' && base.length && !isAbsolute(base) && !base.includes('\\') && !base.split('/').some(v => !v || v === '..') && !/^[a-z][a-z0-9+.-]*:/i.test(base), 'Artifact base must be a portable relative locator'); return base.replace(/\/$/, ''); }
 /** ACK is returned only after each receipt and the whole derived corpus verify. */
@@ -48,7 +49,7 @@ export async function importLive({ input, corpus, evidence, artifactBase, review
       build: { commit: null, engine: p.source.engine, content: null, borg: null }, runner: { tool: 'tools/live-deaths.mjs', lives: 1 },
       runs: [{ runKey: p.id, outcome: t.outcome, seed: t.seed ?? null, life: p.source.life ?? null, race: t.race, class: t.class, baseStats: t.birthStats,
         ...(t.birthRngState ? { birthRngState: t.birthRngState } : {}), ...(t.birthOptions ? { birthOptions: t.birthOptions } : {}),
-        decisions: p.capture.decisions, turns: t.turn, maxDepth: t.maxDepth, clvl: t.level, gold: t.gold,
+        decisions: null, turns: t.turn, maxDepth: t.maxDepth, clvl: t.level, gold: t.gold,
         dead: t.outcome === 'death', retired: t.outcome === 'retired', causeOfDeath: t.cause }] };
     writeImmutableObservation(packetFile, packetText(entry)); writeImmutableObservation(recordFile, json(record));
     const locator = `${base}/${entry.sha256}`;

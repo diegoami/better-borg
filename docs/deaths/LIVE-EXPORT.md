@@ -24,8 +24,13 @@ The last twelve attempted commands carry nearby remembered terrain, known
 player/item state, perceived monsters and messages already consumed by the
 controller. Granted monster truth is labelled separately. Frames are copied
 before submission, after loadout settling; they do not claim command acceptance
-or actual fatal HP. Terminal item revelation never changes earlier frames.
-Missing input, dropped frames and truncation are explicit.
+or actual fatal HP. Separate target-intent submissions are not recorded; per-frame
+limits (7×7 map, twelve monsters, twenty-four pack/home items, eight messages,
+512 characters per frame text) are named in packet gaps. Terminal item revelation never changes earlier frames.
+Missing input, dropped frames and truncation are explicit. Minimal legacy reports
+keep their observed outcome/cause while absent birth/messages/belongings and
+other facts stay explicitly missing. Observed controller choices are not a
+whole-life command census; the imported case leaves its total decisions unknown.
 
 There is no full fatal save, cheat death, delayed game turn, automatic diagnosis,
 model call, network request, or repository publication. The old graveyard is
@@ -73,7 +78,11 @@ preserved separately; it is not the new outbox's source of durability.
    reports and artifact links remains an explicit reviewed Git operation.
 
 The host limits the whole mod KV store to 256 keys / 1 MiB. Packets are at most
-48 KiB and exports group at most ten. Nothing silently evicts reports. Regular
+48 KiB and exports group at most ten. Nothing silently evicts reports. A reused host key with contradictory terminal
+facts is a visible conflict: it pauses rebirth, preserves the old stored packet
+and refuses an ACK that would discard the new in-memory conflict. Preserve that
+pending export before reload and investigate the producer identity; it cannot
+be silently treated as the same death. Regular
 verified import/ACK is necessary for continuous capture; exhaustion pauses
 rebirth and says so. Existing unrelated KV data also counts toward that quota.
 

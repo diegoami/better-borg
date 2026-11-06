@@ -44,7 +44,10 @@ describe("Mandos live terminal outbox", () => {
   });
   it("preserves conflicting existing report and makes failure visible", async () => {
     const s = storage(), r = recorder(s); await r.capture(report()); const original = structuredClone([...s.data]);
+    const old = (await r.entries())[0]!;
     expect(await r.capture({ ...report(), turn: 341 })).toBe(false); expect([...s.data]).toEqual(original); expect(r.failure).toMatch(/conflict/);
+    await expect(r.acknowledge(packetText({ schema: ACK_FORMAT, entries: [{ id: old.id, packetSha256: old.sha256, corpusReceiptSha256: "1".repeat(64) }] }))).rejects.toThrow(/conflicting unrecorded/);
+    expect([...s.data]).toEqual(original);
   });
   it.each(["swallowed", "quota"])("halts on %s storage and exports volatile report; retry verifies it", async mode => {
     const s = storage(), r = recorder(s); if (mode === "quota") s.quota(true); else s.swallow(true);

@@ -63,13 +63,21 @@ export interface StoredLivePacket {
 }
 export function storedPacket(value: unknown): StoredLivePacket | null { return packetShape(value) ? value : null; }
 function terminalOf(report: RunReport): Json {
-  if (!["death", "winner", "retired"].includes(report.outcome) || !Number.isFinite(report.turn) || typeof report.cause !== "string") throw new Error("The host supplied an invalid terminal report");
+  if (!["death", "winner", "retired"].includes(report.outcome)) throw new Error("The host supplied no valid terminal outcome");
+  // Installed SDK requires these fields; legacy hosts may supply only a minimal report.
+  // Preserve that observed outcome without fabricating the missing birth/state.
+  const fields = ["cause", "race", "cls", "level", "maxLevel", "depth", "maxDepth", "gold", "turn", "endedAt", "birth", "messages", "belongings"] as const;
+  const missing = fields.filter(key => report[key] === undefined || report[key] === null);
+  const messages = report.messages ?? [], belongings = report.belongings ?? [];
   const clipped = (value: string, limit: number): string => value.slice(0, limit);
-  return copy({ outcome: report.outcome, cause: clipped(report.cause, 256), key: report.key, race: report.race, class: report.cls, birthStats: report.birth.stats,
-    level: report.level, maxLevel: report.maxLevel, depth: report.depth, maxDepth: report.maxDepth, gold: report.gold, turn: report.turn, endedAt: report.endedAt,
+  const known = (value: unknown): JsonValue => value === undefined ? null : copy(value);
+  return copy({ outcome: report.outcome, cause: typeof report.cause === "string" ? clipped(report.cause, 256) : null,
+    key: typeof report.key === "string" ? report.key : null, race: known(report.race), class: known(report.cls), birthStats: report.birth?.stats ?? [],
+    level: known(report.level), maxLevel: known(report.maxLevel), depth: known(report.depth), maxDepth: known(report.maxDepth), gold: known(report.gold), turn: known(report.turn), endedAt: known(report.endedAt), missing,
     ...(typeof (report as unknown as { seed?: unknown }).seed === "number" ? { seed: (report as unknown as { seed: number }).seed } : {}),
-    ...birthReplayDataOf(report), knowledge: "terminal-revealed", messages: report.messages.slice(-20).map(m => ({ text: clipped(m.text, 512), count: m.count })), messagesTotal: report.messages.length,
-    belongings: report.belongings.slice(0, 48).map(i => ({ name: clipped(i.name, 160), location: i.location, quantity: i.quantity })), belongingsTotal: report.belongings.length, textTruncated: report.messages.length > 20 || report.belongings.length > 48 || report.messages.some(m => m.text.length > 512) || report.belongings.some(i => i.name.length > 160) || report.cause.length > 256 }) as Json;
+    ...birthReplayDataOf(report), knowledge: "terminal-revealed", messages: messages.slice(-20).map(m => ({ text: clipped(m.text, 512), count: m.count })), messagesTotal: messages.length,
+    belongings: belongings.slice(0, 48).map(i => ({ name: clipped(i.name, 160), location: i.location, quantity: i.quantity })), belongingsTotal: belongings.length,
+    textTruncated: messages.length > 20 || belongings.length > 48 || messages.some(m => m.text.length > 512) || belongings.some(i => i.name.length > 160) || (report.cause?.length ?? 0) > 256 }) as Json;
 }
 export interface LiveRecorder {
   observe(frame: DecisionFrame): void;
@@ -118,7 +126,7 @@ export function createLiveRecorder(deps: { store: KV; source: () => LiveSource; 
           const terminalHash = await packetHash(terminal), hostKey = typeof report.key === "string" && report.key ? report.key : null;
           const id = await packetHash({ mod: source.mod, identity: hostKey ?? `${session}:${terminalHash}` });
           if (acknowledged.get(id) === terminalHash) return true;
-          const gaps = ["no-full-fatal-save", "submission-results-not-recorded", "messages-only-as-delivered-to-controller", "controller-command-tail-only", ...(source.codeDigest === null ? ["exact-code-digest-unavailable"] : []), ...(tail.length ? [] : ["pre-decision-tail-unavailable"])];
+          const gaps = ["no-full-fatal-save", "submission-results-not-recorded", "messages-only-as-delivered-to-controller", "controller-command-tail-only", "separate-target-intents-not-recorded", "frame-limits-map7x7-monsters12-pack24-home24-messages8-text512", ...((terminal.missing as string[]).map(key => "terminal-" + key + "-unavailable")), ...(source.codeDigest === null ? ["exact-code-digest-unavailable"] : []), ...(tail.length ? [] : ["pre-decision-tail-unavailable"])];
           const packet: LivePacket = { schema: LIVE_FORMAT, id, terminalHash, source, identity: { hostKey, quality: hostKey ? "host-key" : "derived-session" }, terminal,
             capture: { frames: tail, decisions, droppedFrames: Math.max(0, decisions - tail.length), truncated: decisions > tail.length, gaps }, pending: { export: true, analysis: true } };
           while (new TextEncoder().encode(packetText(packet)).length > MAX_LIVE_BYTES && tail.length) {
@@ -155,7 +163,9 @@ export function createLiveRecorder(deps: { store: KV; source: () => LiveSource; 
         if (!object(item) || !isHash(item.id) || !isHash(item.packetSha256) || !isHash(item.corpusReceiptSha256)) throw new Error("Invalid import acknowledgement identity/hash");
         const read = await deps.store.get(LIVE_PREFIX + item.id), entry = read.ok ? storedPacket(read.value) : null;
         if (read.ok && read.value === null && !volatile.has(item.id)) continue; // ACK retry is idempotent.
-        const current = entry ?? volatile.get(item.id);
+        const pending = volatile.get(item.id);
+        if (pending && pending.sha256 !== item.packetSha256) throw new Error("A conflicting unrecorded terminal report remains; acknowledgement cannot discard it");
+        const current = entry ?? pending;
         if (!current || current.sha256 !== item.packetSha256 || await packetHash(current.packet) !== item.packetSha256) throw new Error("Acknowledgement does not match the current report");
         remove.push({ id: item.id, terminalHash: current.packet.terminalHash });
       }

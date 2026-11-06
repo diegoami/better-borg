@@ -20,8 +20,11 @@ The frontend is copied from immutable Git objects at
 The game uses Mandos's installed published `1.23.0-beta.2` Core/content and
 carried package patch, independently of that frontend source. Real
 `buildRunReport`, `createRunReports`, `createApi2Host`, `modKeyValueStore` and
-panel mount validation are unmodified. The proof explicitly publishes the
-report after the actual Core death. A fresh API2 host/recorder then reads a
+panel mount validation are unmodified. The proof applies actual Core `deathKnowledge` and explicitly publishes the
+report after the actual Core death. The sealed last frame remains unchanged.
+This natural fixture has zero unidentified inventory items at death; the
+unidentified-to-revealed potion transition is an explicit contract control,
+not a claimed observation from this particular run. A fresh API2 host/recorder then reads a
 file-backed temporary KV store, exports declarative panel download bytes,
 imports them into a verified offline corpus and acknowledges only the matching
 new packet. The actual public KV key is removed, while a legacy control key
@@ -45,3 +48,12 @@ unidentified potion before terminal revelation and mutation. Storage refusals,
 swallowed writes, identity conflicts, restart retry, fresh-recorder recovery,
 reviewed import/hash failures, optional UI refusal and exact ACK matching are
 covered without playing the lab.
+
+Final focused controls: 145 tests in seven files passed, including the published
+Core on/off comparison and the shipped plugin. The replay suite ran alone:
+five tests passed in8.52s. The first focused attempt exposed five old partial
+report/microtask-only fixture assumptions; genuine SDK fixtures and observable
+completion waits fixed those controls. A separate minimal legacy-report test
+now proves capture, fresh-recorder recovery and intake with unknown context.
+No assertion about birth ordering, ownership, archive survival or no-double
+create was removed. Full required CI is a separate receipt on the PR.

@@ -43,6 +43,19 @@ describe('explicit live export/import bridge', () => {
     expect(await importLive(f)).toEqual(ack); expect(data.size).toBe(1);
     expect(await recorder.acknowledge(packetText(ack))).toBe(1); expect(data.size).toBe(0); ui.stop();
   });
+  it('captures a minimal legacy report, reloads and imports missing provenance honestly', async () => {
+    const f = fixture(), { recorder, data } = await capture();
+    await recorder.capture({ key: 'legacy-minimal', outcome: 'death', cause: 'an observed old foe', maxDepth: 3, turn: 99 });
+    const store = { keys: async () => ({ ok: true, value: [...data.keys()] }), get: async key => ({ ok: true, value: structuredClone(data.get(key) ?? null) }), set: async () => ({ ok: true, value: null }) };
+    const fresh = createLiveRecorder({ store, source: () => ({}), log() {} });
+    const entry = (await fresh.entries()).find(e => e.packet.identity.hostKey === 'legacy-minimal');
+    expect(entry.packet.terminal.birthStats).toEqual([]); expect(entry.packet.capture.gaps).toContain('terminal-birth-unavailable'); expect(entry.packet.terminal.race).toBeNull();
+    writeInput(f, [entry]); await importLive(f);
+    const index = JSON.parse(readFileSync(join(f.corpus, 'index.json'))); expect(index.totals.deaths).toBe(1);
+    const manifest = JSON.parse(readFileSync(join(f.corpus, 'cases', index.cases[0].id, 'case.json')));
+    expect(manifest.facts.seed).toBeNull(); expect(manifest.facts.decisions).toBeNull(); expect(manifest.facts.race).toBeNull();
+    expect(manifest.missingContext).toContain('baseStats'); expect(manifest.replay.status).toBe('missing-input');
+  });
   it('capture survives an unavailable optional panel grant', async () => {
     const { recorder, data } = await capture(); const logs = [];
     const mod = { meta: { log: t => logs.push(t) }, ui: { commands: { register: async () => ({ ok: true, value: null }) }, mount: async () => ({ ok: false, message: 'ui:panel.mount refused' }), unmount: async () => ({ ok: true }) } };

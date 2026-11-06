@@ -42,9 +42,10 @@
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join, resolve, relative, isAbsolute, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as Core from "@rpgm-tools/neo-angband-core";
+import { hash } from "./deaths.mjs";
 import { writeImmutableObservation } from "./live-deaths.mjs";
 import { enginePin } from "./engine-pin.mjs";
 
@@ -172,7 +173,17 @@ const session = await playPackSession(Core, loadPack(packDir), strategy, {
     const tail = { schema: "mandos/headless-decision-tail@1", life: life.life, seed: life.seed,
       knowledge: "pre-decision-known+granted-monster-truth", decisions: life.decisions,
       truncated: life.decisions > (life.decisionTail?.length ?? 0), frames: life.decisionTail ?? [] };
-    writeImmutableObservation(join(terminalOutbox, key, "decision-tail.json"), JSON.stringify(tail, null, 2) + "\n");
+    const tailBytes = JSON.stringify(tail, null, 2) + "\n";
+    const tailPath = join(terminalOutbox, key, "decision-tail.json");
+    writeImmutableObservation(tailPath, tailBytes);
+    const locator = relative(REPO_ROOT, tailPath).split(sep).join("/");
+    const portable = !isAbsolute(locator) && !locator.split("/").includes("..");
+    record.artifacts = [
+      { kind: "decision-trace", availability: portable ? "local-only" : "missing", locator: portable ? locator : null,
+        sha256: hash(tailBytes), knowledge: "character-known", note: "Bounded pre-decision tail with explicitly labelled granted monster truth; not a full recording. " + (portable ? "Local source file; not automatically published." : "Captured beside the local source record, but no portable locator is available to the corpus.") },
+      { kind: "recording", availability: "not-captured", locator: null, knowledge: "unspecified" },
+      { kind: "pre-death-save", availability: "not-captured", locator: null, knowledge: "unspecified" },
+    ];
     writeImmutableObservation(join(terminalOutbox, key, "runs.json"), JSON.stringify(record, null, 2) + "\n");
     process.stderr.write(`[mandos] terminal receipt preserved: ${terminalOutbox}/${key}; export/analysis pending\n`);
   },

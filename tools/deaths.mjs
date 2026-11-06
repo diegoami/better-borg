@@ -232,8 +232,9 @@ export function ingestRecord({ record, corpus, repository = 'diegoami/mandos', o
   if (sourceRef !== undefined) assert(/^[a-f0-9]{40}$/.test(sourceRef), 'Source ref must be an immutable commit');
   const bytes = read(path), document = JSON.parse(bytes);
   assert(object(document) && document.schema === 'better-borg/runs@1' && Array.isArray(document.runs), 'Expected better-borg/runs@1 with a runs array');
-  if (artifacts !== undefined) assert(Array.isArray(artifacts) && artifacts.length <= 16, 'Invalid initial artifacts');
-  const initialArtifacts = artifacts?.map(artifact);
+  const suppliedArtifacts = artifacts ?? document.artifacts;
+  if (suppliedArtifacts !== undefined) assert(Array.isArray(suppliedArtifacts) && suppliedArtifacts.length <= 16, 'Invalid initial artifacts');
+  const initialArtifacts = suppliedArtifacts?.map(artifact);
   const context = contextOf(document), source = { sha256: hash(bytes), repository, origin, locator: sourceLocator(path, locator), ref: sourceRef ?? null };
   const prepared = document.runs.map((run, row) => {
     assert(object(run), `Run row ${row} is not an object`);

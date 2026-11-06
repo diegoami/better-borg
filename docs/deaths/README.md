@@ -162,11 +162,13 @@ status. A local artifacts path is not off-machine recovery. Run the existing
 public-data scan before publishing generated reports. This CLI is not a general
 sanitizer for arbitrary private exports; inputs must be selected public data.
 
-Still open: per-life terminal outbox/crash reconciliation, desktop export,
-replay/analysis task execution and verified durable recording transport. A plan
-or successful intake cannot claim those bridges exist. Existing replay paths
-are unchanged, including the named seed-only collision follow-up. New gameplay
-strategy, cheat death and fatal-save changes remain separate work.
+The report-delivering first-party profile now has a verified terminal outbox,
+manual export/import/ACK and immediate headless per-life receipts, described
+below. Still open: public-tier producer support, full deployment proof and
+replay/analysis task execution. A process interrupted before the host produces
+a report cannot be reconciled from nonexistent terminal facts. Existing replay
+paths are unchanged, including the named seed-only collision follow-up. New
+gameplay strategy, cheat death and fatal-save changes remain separate work.
 
 The report-delivering live profile and explicit download/import/ACK bridge are
 documented in [LIVE-EXPORT.md](LIVE-EXPORT.md). Public-tier hosts without a full
