@@ -1,0 +1,20 @@
+{
+  "sourceBase": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+  "sourceFix": "81600f90ab4e780a05333eb4aa4a988ed431c518",
+  "fixtureSHA256": "3e3665158d6748cced1ce094d8e9288d03bc84b19446fc9fe4586b20a4a9bc92",
+  "before": {
+    "exit": 1,
+    "failed": 2,
+    "passed": 4
+  },
+  "after": {
+    "exit": 0,
+    "focusedPassed": 112,
+    "files": 3
+  },
+  "completeControlRecordsIdentical": true,
+  "node": "24.21.0",
+  "pnpm": "12.16.1",
+  "core": "1.23.0-beta.2 plus unchanged declared patch",
+  "coreTrapMD5": "34c27241f96aceff581bcb186a9d898f"
+}

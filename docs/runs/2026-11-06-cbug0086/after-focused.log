@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-cbug-0086-name-carry
+
+
+ Test Files  3 passed (3)
+      Tests  112 passed (112)
+   Start at  12:56:48
+   Duration  2.03s (transform 1.12s, setup 492ms, import 1.30s, tests 2.05s, environment 0ms)
+

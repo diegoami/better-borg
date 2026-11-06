@@ -1,0 +1,45 @@
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 54ms using pnpm v12.16.1
+
+ RUN  v4.1.11 /tmp/mandos-cbug-0086-name-carry
+
+stdout | src/perceive-unseen-name.test.ts > keeps visible Itangast out of unseen detection on a miss message
+CBUG0086 {"who":"Itangast the Fire Drake","messageKind":"miss","stamp":100,"fear":22,"beforeDanger":448,"danger":470,"command":{"code":"quaff","args":{"handle":7}},"energy":100,"spent":1,"decisionHp":421,"transactionHpBefore":19,"transactionHpAfter":19}
+
+stdout | src/perceive-unseen-name.test.ts > keeps visible Itangast out of unseen detection on a hit message
+CBUG0086 {"who":"Itangast the Fire Drake","messageKind":"hit","stamp":100,"fear":44,"beforeDanger":448,"danger":492,"command":{"code":"quaff","args":{"handle":7}},"energy":100,"spent":1,"decisionHp":421,"transactionHpBefore":19,"transactionHpAfter":19}
+
+ ❯ src/perceive-unseen-name.test.ts (6 tests | 2 failed) 345ms
+   × keeps visible Itangast out of unseen detection on a miss message 124ms
+   × keeps visible Itangast out of unseen detection on a hit message 57ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/perceive-unseen-name.test.ts > keeps visible Itangast out of unseen detection on a miss message
+ FAIL  src/perceive-unseen-name.test.ts > keeps visible Itangast out of unseen detection on a hit message
+AssertionError: expected 100 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 100
+
+ ❯ src/perceive-unseen-name.test.ts:115:24
+    113| it.each(["miss", "hit"] as const)("keeps visible Itangast out of unsee…
+    114|   const result = scenario("Itangast the Fire Drake", true, kind);
+    115|   expect(result.stamp).toBe(0);
+       |                        ^
+    116|   expect(result.fear).toBe(0);
+    117|   expect(result.command).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  12:55:35
+   Duration  993ms (transform 382ms, setup 156ms, import 422ms, tests 345ms, environment 0ms)
+
