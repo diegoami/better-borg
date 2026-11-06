@@ -19920,10 +19920,11 @@ function installBorgRestart(deps) {
 }
 
 // src/loop/stage.ts
+var STAGE_RETIREMENT_FLAG = "mandos.stageRetirement";
 var STAGE_CLVL_SETTING = {
   id: "borg.stageClvl",
   title: "Stage character level",
-  description: "The character level a run must reach for the Borg to count it as having attained its target stage, together with borg.stageDepth. A run that attains is saved under a library name and the next character starts. The default (2) is the stage baseline's calibration (2026-11-03): the strongest rung today's Borg attains on half the standard seed grid; raise it as the Borg grows stronger. Read once per page, so a change applies to the next birth.",
+  description: "Parked optional benchmark threshold, used only when mandos.stageRetirement is explicitly enabled. Together with borg.stageDepth it selects when to save and retire a character. The historical default 2 is retained; normal play does not retire at this threshold. Read once per page for the next birth.",
   min: 0,
   max: 50,
   step: 1,
@@ -19932,7 +19933,7 @@ var STAGE_CLVL_SETTING = {
 var STAGE_DEPTH_SETTING = {
   id: "borg.stageDepth",
   title: "Stage depth",
-  description: "The dungeon depth a run must have arrived on (0 is the town) for the Borg to count it as having attained its target stage, together with borg.stageClvl. The default (1) is the stage baseline's calibration (2026-11-03); the owner's destination is a moderate depth at character level around 20, which the settings reach as the Borg grows stronger. Read once per page, so a change applies to the next birth.",
+  description: "Parked optional benchmark depth, used only when mandos.stageRetirement is explicitly enabled. Together with borg.stageClvl it selects when to save and retire a character. The historical default 1 is retained; normal play continues past it. Read once per page for the next birth.",
   min: 0,
   max: 100,
   step: 1,
@@ -19974,7 +19975,7 @@ function librarySlotName(stage, identity) {
 var REPLAY_RELEASE_SETTING = {
   id: "borg.replayReleaseTurn",
   title: "Death replay release turn",
-  description: "The death-replay trainer's release point (#29): when the game's turn counter reaches this value the Borg stops playing and hands the keyboard back with the death banner, so the owner can play the last turns of a dead run themselves. Take the number from the dossier ladder's release-boundary line (docs/runs/, the run's postmortem directory); 0 (the default) keeps the replay mode off. Birth the character on the recorded seed (?seed=<S>&new, the dossier names the race settings) - the Borg replays the run deterministically to this turn. Read once per page, so the release point is fixed for the whole life.",
+  description: "Parked optional replay release point. Requires sufficient original captured birth inputs and compatible runtime/controller data; a seed alone does not guarantee reproduction. At this game turn the Borg hands back the keyboard. Default 0 keeps this feature off; read once per page.",
   min: 0,
   max: 1e6,
   step: 1,
@@ -20166,10 +20167,11 @@ async function begin(mod2) {
       if (unsure.points.length > MAX_UNSURE_KEPT) unsure.points.shift();
     }
   };
+  const stageRetirementEnabled = mod2.meta.flags[STAGE_RETIREMENT_FLAG] === true;
   let attainmentSeen = false;
   const stageWatch = {
     attained: (world) => {
-      if (attainmentSeen) return false;
+      if (!stageRetirementEnabled || attainmentSeen) return false;
       const player = world.view.player();
       if (!stageAttained(activeStage, { clvl: player.level, maxDepth: player.maxDepth })) return false;
       attainmentSeen = true;

@@ -235,6 +235,14 @@ suite("the death replay (#29)", () => {
     }
   }, 300_000);
 
+  it("reports optional replay unavailable when accepted-birth input was not captured", async () => {
+    const { run, header } = recordedRun();
+    const { birthRngState: _missing, ...withoutInput } = factsOf(run, header.cap, header.stage);
+    await expect(replayDeadRun(Core, pack!, REPLAY_PACK, withoutInput,
+      { label: header.label, directory: RECORD_DIR, recorded: header.recorded }, header.build,
+    )).rejects.toThrow(/Optional replay unavailable.*accepted-birth RNG input is missing/u);
+  });
+
   it("refuses a record whose planned birth it cannot reproduce (the plan check)", async () => {
     const { run, header } = recordedRun();
     const wrong = { ...factsOf(run, header.cap, header.stage), baseStats: [17, 10, 10, 10, 17] };

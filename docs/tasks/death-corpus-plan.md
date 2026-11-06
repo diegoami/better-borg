@@ -1,5 +1,13 @@
 # Durable death reports and action aggregation
 
+**PARKED plan — preserved advanced work, not current Mandos authorization.**
+[Scope181](https://github.com/diegoami/mandos/issues/181) and
+[the consumer contract](../MANDOS-SCOPE.md) retain basic bug/run/death evidence
+but park the broader166 capture/feedback/analysis pipeline. Existing delivered
+code and unfinished110d682/ca627bf WIP remain. This plan does not require PR433,
+advanced replay or a modified engine for normal play/upgrades, and does not
+trigger an automatic migration or new implementation.
+
 Owner request, 2026-11-06. Canonical task: [Mandos #166](https://github.com/diegoami/mandos/issues/166).
 Parent coordination: [workspace #16](https://github.com/diegoami/angband-workspace/issues/16).
 This is the audited contract, not a claim of an implemented every-death service.

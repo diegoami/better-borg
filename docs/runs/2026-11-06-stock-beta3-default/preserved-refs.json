@@ -1,0 +1,40 @@
+{
+  "enhancedProfile": {
+    "branch": "task/beta3-consumer-180",
+    "remoteHead": "7da98e94be678e2c3402639caa95526bcb576c62",
+    "containsFrozenGateHead": "ac1343f0dfbc4ffe519ea856575c96874b0f6821",
+    "publishedNormally": true
+  },
+  "inputFlushComparison": {
+    "branch": "task/beta3-fix-consumer-180",
+    "remoteHead": "4c3920eb04a589555fab0f6586e885ef4931b89b",
+    "exactComparedPluginPreserved": true,
+    "publishedNormally": true
+  },
+  "originalExport": {
+    "remoteBranch": "task/live-death-export-166",
+    "remoteHead": "110d68214be3602aac0e8da9f1b61b0821bea0f0",
+    "unchangedByThisWorker": true
+  },
+  "exportWip": {
+    "remoteBranch": "wip/live-death-export-review",
+    "remoteHead": "ca627bf1b576b67c0262fc794459d73ce0726717",
+    "unchangedByThisWorker": true
+  },
+  "historicalSeedBranches": [
+    {
+      "localBranch": "task/B54-seed-provenance",
+      "head": "86ff5ad1a58600517e8562d96e57924b68d0dbf8",
+      "namedRemoteBranchPresent": false,
+      "exactGitHubCommitApiAvailable": true,
+      "localRefUnchanged": true
+    },
+    {
+      "localBranch": "task/B54-replay-parity",
+      "head": "ef52554b526493a216d0fb4f1007fe1a043083eb",
+      "namedRemoteBranchPresent": false,
+      "exactGitHubCommitApiAvailable": true,
+      "localRefUnchanged": true
+    }
+  ]
+}

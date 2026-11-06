@@ -862,7 +862,7 @@ function eventsOverBus(bus: GameEvents): Pick<Api2Events, "on" | "off"> {
  * sheet) are empty: this is the report of a headless session and claims
  * nothing else.
  */
-function runReportOf(core: typeof Core, state: GameState, outcome: SdkRunReport["outcome"]): SdkRunReport {
+function runReportOf(core: typeof Core, state: GameState, outcome: SdkRunReport["outcome"], knownSeed: number): SdkRunReport & { readonly seed: number } {
   const player = state.actor.player;
   const name = player.fullName.length > 0 ? player.fullName : "Borg";
   return {
@@ -881,9 +881,9 @@ function runReportOf(core: typeof Core, state: GameState, outcome: SdkRunReport[
     depth: state.chunk.depth,
     gold: player.au,
     turn: state.turn,
-    /* FORK: Mandos #54 (DEFECT). Forward the engine's retained original
-     * seed, as the web host does; legacy states may have no provenance. */
-    ...(state.masterSeed === undefined ? {} : { seed: state.masterSeed }),
+    /* The harness knows the seed it passed to this fresh startGame call.
+     * Stock hosts need not expose seed/birth provenance; do not require PR #433. */
+    seed: knownSeed >>> 0,
     ...birthReplayDataOf(state),
     ...(state.options === undefined ? {} : { birthOptions: state.options.snapshot().birth }),
     score: core.totalPoints(player),
@@ -1196,7 +1196,7 @@ export async function playPackSession(
      * INSTALL archive (#34), so the next life - and any later page - can
      * still read it after this character's bag is gone. */
     const archivedBefore = archivedSoFar();
-    if (dead) await journal.graveyard(runReportOf(core, state, "death"));
+    if (dead) await journal.graveyard(runReportOf(core, state, "death", seed));
     /* The load re-fire the docs warn about (MOD_SEAMS 4l and 4w): every depth the
      * character visited, re-announced as a session's first level the way a
      * loaded save re-announces it. The dedup rule must leave the milestones

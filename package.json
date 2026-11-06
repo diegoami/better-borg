@@ -2,7 +2,7 @@
   "name": "mandos",
   "version": "0.1.0",
   "private": true,
-  "description": "Mandos: a class-agnostic fork of the Borg mod - defect fixes and strength improvements for every borg, staged for upstream",
+  "description": "Mandos carries validated Neo Borg bug fixes with traceable source and consumer evidence, plus basic run/death records.",
   "license": "GPL-2.0-only",
   "author": "diegoami",
   "homepage": "https://github.com/diegoami/mandos",
@@ -29,12 +29,13 @@
     "check": "node tools/build.mjs --check",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "verify": "pnpm typecheck && node tools/check-session.mjs && pnpm test && pnpm check"
+    "verify": "pnpm typecheck && node tools/check-session.mjs && pnpm test && pnpm check",
+    "test:optional-replay": "vitest run --config vitest.optional-replay.config.mjs"
   },
   "devDependencies": {
-    "@rpgm-tools/neo-angband-content": "1.23.0-beta.2",
-    "@rpgm-tools/neo-angband-core": "1.23.0-beta.2",
-    "@rpgm-tools/neo-angband-mod-sdk": "1.23.0-beta.2",
+    "@rpgm-tools/neo-angband-content": "1.23.0-beta.3",
+    "@rpgm-tools/neo-angband-core": "1.23.0-beta.3",
+    "@rpgm-tools/neo-angband-mod-sdk": "1.23.0-beta.3",
     "@types/node": "^22.20.1",
     "esbuild": "^0.28.1",
     "typescript": "^5.9.3",

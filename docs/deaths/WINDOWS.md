@@ -1,5 +1,13 @@
 # Mandos replay window profiles
 
+**PARKED / OPTIONAL — not a normal-play or engine-upgrade requirement.**
+The [consumer scope](../MANDOS-SCOPE.md) preserves these window profiles and old
+evidence without scheduling replay work. "Default" below means the window list
+inside an explicitly invoked optional replay, not the default Mandos engine.
+No PR433 requirement or exact historical replay is implied: original executable,
+content/configuration/start inputs must exist; otherwise report unavailable or
+diverged. Earlier-anchor/coverage development stays parked.
+
 New replays default to **mandos-death-windows-v2**:
 [5,12,25,40,60,82,105](window-profile-v2.json). Historical
 [mandos-death-windows-v1](window-profile-v1.json) remains selectable:

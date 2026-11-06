@@ -2,7 +2,7 @@
   "schema": "angband/session@1",
   "repository": "diegoami/mandos",
   "role": "mandos",
-  "scope": "Mandos-only development, integration, harness and lab adoption",
+  "scope": "Mandos bug-fix consumer, targeted regressions and basic run/death evidence; research parked and lab deployment separate",
   "issue_repositories": [
     "diegoami/neo-angband-tracker",
     "diegoami/neo-angband-borg-mod-tracker",

@@ -1,0 +1,10 @@
+$ vitest run src/records/journal.test.ts src/run-record.test.ts
+
+ RUN  v4.1.11 <raw-tree>
+
+
+ Test Files  2 passed (2)
+      Tests  37 passed (37)
+   Start at  19:49:56
+   Duration  255ms (transform 104ms, setup 284ms, import 67ms, tests 20ms, environment 0ms)
+

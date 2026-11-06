@@ -3,13 +3,20 @@
 Canonical source defects live in our repair forks:
 - diegoami/neo-angband-borg-mod-tracker: TypeScript Borg port omissions/defects.
 - diegoami/neo-angband-tracker: original C Borg/C game and Neo engine defects.
-Mandos owns only its own defects/development and distinct consumer adoption.
+Mandos owns its own bugs and applicable verified consumer adoption/C-to-TS translation.
+[Scope181](MANDOS-SCOPE.md) parks experiments, not applied corrections.
 [Migration ledger](migrations/repository-split.json) preserves old issue URLs.
 
-Run node tools/upstream-watch.mjs before work and after upstream/consumer
-movement; it reads all three boards. node tools/c-upstream-watch.mjs reads
-the engine fork's canonical C index and official C source/thread changes.
-Both are read-only; incomplete API reads retain the last successful baseline.
+Use targeted source/consumer checks for active bugs, applicability and closure.
+Broad reconciliation is a weekly manual batch or explicit owner task, not every
+session startup. Before any inherited watcher, verify its scope excludes Rust
+repository/files/external issues; borg-rs reports directly to the C board.
+Incomplete API reads remain incomplete, not a new successful baseline.
+
+Prefer the stock published engine. A Mandos engine carry needs a demonstrated
+required gameplay path plus regression/removal conditions. Optional PR433/replay
+is not a default upgrade requirement. Not needing a carry does not fix its general
+source issue; parent reconciles named-profile consumer state after actual proof.
 
 Source fork issues own source defects/proposals and use open/closed for that
 resolution. They have no carried/fixed/partial/not-carried/patch-active consumer

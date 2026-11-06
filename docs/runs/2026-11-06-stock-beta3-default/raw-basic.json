@@ -1,0 +1,286 @@
+{
+  "lives": [
+    {
+      "seed": 3,
+      "birthOptions": {
+        "birth_randarts": false,
+        "birth_connect_stairs": true,
+        "birth_force_descend": false,
+        "birth_no_recall": false,
+        "birth_no_artifacts": false,
+        "birth_stacking": true,
+        "birth_lose_arts": false,
+        "birth_feelings": true,
+        "birth_no_selling": false,
+        "birth_start_kit": true,
+        "birth_ai_learn": true,
+        "birth_know_runes": false,
+        "birth_know_flavors": false,
+        "birth_levels_persist": false,
+        "birth_percent_damage": false
+      },
+      "life": 1,
+      "dead": true,
+      "decisions": 116,
+      "turns": 1960,
+      "maxDepth": 1,
+      "endDepth": 1,
+      "clvl": 1,
+      "kills": 2,
+      "gold": 378,
+      "causeOfDeath": "a kobold shaman",
+      "race": "Human",
+      "className": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "commands": {
+        "study": 1,
+        "cast": 3,
+        "descend": 3,
+        "walk": 101,
+        "open": 3,
+        "rest": 1,
+        "pickup": 2,
+        "read": 1,
+        "ascend": 1
+      },
+      "depthsVisited": [
+        0,
+        1
+      ],
+      "places": 77,
+      "jitter": 999,
+      "restedBesideMonster": 0,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "journal": {
+        "journal": 1,
+        "milestones": [
+          {
+            "depth": 0,
+            "levelId": 0,
+            "cause": "new-game",
+            "arena": false,
+            "level": 1,
+            "turn": 0
+          },
+          {
+            "depth": 1,
+            "levelId": 1,
+            "cause": "change",
+            "arena": false,
+            "level": 1,
+            "turn": 30
+          }
+        ]
+      },
+      "stageAttained": false,
+      "retired": false,
+      "graveyard": [
+        {
+          "outcome": "death",
+          "cause": "a kobold shaman",
+          "name": "Borg",
+          "race": "Human",
+          "class": "Mage",
+          "baseStats": [
+            17,
+            16,
+            10,
+            10,
+            16
+          ],
+          "maxDepth": 1,
+          "level": 1,
+          "gold": 378,
+          "turn": 1960,
+          "score": 106,
+          "seed": 3,
+          "birthOptions": {
+            "birth_randarts": false,
+            "birth_connect_stairs": true,
+            "birth_force_descend": false,
+            "birth_no_recall": false,
+            "birth_no_artifacts": false,
+            "birth_stacking": true,
+            "birth_lose_arts": false,
+            "birth_feelings": true,
+            "birth_no_selling": false,
+            "birth_start_kit": true,
+            "birth_ai_learn": true,
+            "birth_know_runes": false,
+            "birth_know_flavors": false,
+            "birth_levels_persist": false,
+            "birth_percent_damage": false
+          },
+          "run": null
+        }
+      ],
+      "arrivalStamps": [
+        [
+          0,
+          {
+            "level": 1,
+            "turn": 0
+          }
+        ],
+        [
+          1,
+          {
+            "level": 1,
+            "turn": 30
+          }
+        ]
+      ]
+    },
+    {
+      "seed": 7,
+      "birthOptions": {
+        "birth_randarts": false,
+        "birth_connect_stairs": true,
+        "birth_force_descend": false,
+        "birth_no_recall": false,
+        "birth_no_artifacts": false,
+        "birth_stacking": true,
+        "birth_lose_arts": false,
+        "birth_feelings": true,
+        "birth_no_selling": false,
+        "birth_start_kit": true,
+        "birth_ai_learn": true,
+        "birth_know_runes": false,
+        "birth_know_flavors": false,
+        "birth_levels_persist": false,
+        "birth_percent_damage": false
+      },
+      "life": 2,
+      "dead": false,
+      "decisions": 600,
+      "turns": 8253,
+      "maxDepth": 1,
+      "endDepth": 1,
+      "clvl": 2,
+      "kills": 3,
+      "gold": 307,
+      "causeOfDeath": null,
+      "race": "Human",
+      "className": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "commands": {
+        "descend": 19,
+        "ascend": 17,
+        "study": 2,
+        "cast": 6,
+        "rest": 10,
+        "walk": 533,
+        "open": 7,
+        "pickup": 4,
+        "read": 1,
+        "tunnel": 1
+      },
+      "depthsVisited": [
+        0,
+        1
+      ],
+      "places": 352,
+      "jitter": 35,
+      "restedBesideMonster": 0,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "journal": {
+        "journal": 1,
+        "milestones": [
+          {
+            "depth": 0,
+            "levelId": 0,
+            "cause": "new-game",
+            "arena": false,
+            "level": 1,
+            "turn": 0
+          },
+          {
+            "depth": 1,
+            "levelId": 1,
+            "cause": "change",
+            "arena": false,
+            "level": 1,
+            "turn": 0
+          }
+        ]
+      },
+      "stageAttained": false,
+      "retired": false,
+      "graveyard": [],
+      "arrivalStamps": [
+        [
+          0,
+          {
+            "level": 1,
+            "turn": 0
+          }
+        ],
+        [
+          1,
+          {
+            "level": 1,
+            "turn": 0
+          }
+        ]
+      ]
+    }
+  ],
+  "graveyard": [
+    {
+      "outcome": "death",
+      "cause": "a kobold shaman",
+      "name": "Borg",
+      "race": "Human",
+      "class": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "maxDepth": 1,
+      "level": 1,
+      "gold": 378,
+      "turn": 1960,
+      "score": 106,
+      "seed": 3,
+      "birthOptions": {
+        "birth_randarts": false,
+        "birth_connect_stairs": true,
+        "birth_force_descend": false,
+        "birth_no_recall": false,
+        "birth_no_artifacts": false,
+        "birth_stacking": true,
+        "birth_lose_arts": false,
+        "birth_feelings": true,
+        "birth_no_selling": false,
+        "birth_start_kit": true,
+        "birth_ai_learn": true,
+        "birth_know_runes": false,
+        "birth_know_flavors": false,
+        "birth_levels_persist": false,
+        "birth_percent_damage": false
+      },
+      "run": null
+    }
+  ]
+}

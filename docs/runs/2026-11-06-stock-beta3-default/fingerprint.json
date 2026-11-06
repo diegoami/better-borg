@@ -1,0 +1,20 @@
+{
+  "officialGitHead": "97ceec2925e6715ba725624a61866ab93a196a12",
+  "default": "unmodified published beta.3 Core/SDK/content",
+  "appliedPackagePatches": [],
+  "publishedCoreFileCount": 1525,
+  "differentInstalledCoreFiles": [],
+  "trapMd5": "ce8b43e933803487d70973d5a9e0905c",
+  "lockSha256": "b212699bb70b75f77d53e3e1fd98d9b1442d195a6ed9b5d28d046d2599a029a0",
+  "comparedPluginSha256": "fa29c2ea8b75dbe256523aab8953b56628389eedcd0005667938b184b0201a5a",
+  "desktopLoading": "BLOCKED for current ordinary public-tier controller; source audit only, no desktop test",
+  "fullGate": "PENDING parent combined-source/doc review",
+  "currentPluginSha256": "fa29c2ea8b75dbe256523aab8953b56628389eedcd0005667938b184b0201a5a",
+  "currentPluginKiB": 737.2,
+  "requiredBasicRecordControls": {
+    "files": 2,
+    "tests": 37,
+    "skipped": 0,
+    "durationSeconds": 0.255
+  }
+}

@@ -1,0 +1,10 @@
+$ vitest run --config vitest.optional-replay.config.mjs
+
+ RUN  v4.1.11 <raw-tree>
+
+
+ Test Files  4 passed (4)
+      Tests  25 passed (25)
+   Start at  19:42:44
+   Duration  13.09s (transform 533ms, setup 603ms, import 561ms, tests 12.38s, environment 0ms)
+

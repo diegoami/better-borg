@@ -1,0 +1,58 @@
+$ pnpm typecheck && node tools/check-session.mjs && pnpm test && pnpm check
+$ tsc --noEmit
+diegoami/mandos: mandos; bootstrap files and origin verified
+$ vitest run
+
+ RUN  v4.1.11 <raw-tree>
+
+ ❯ docs-sync.test.ts (2 tests | 2 failed) 36ms
+     × cover exactly the same switches 27ms
+     × agree on every title and default 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  docs-sync.test.ts > the settings table and the manifest > cover exactly the same switches
+AssertionError: expected [ 'borg.classBlackguard', …(28) ] to deeply equal [ 'borg.classBlackguard', …(29) ]
+
+- Expected
++ Received
+
+@@ -26,7 +26,6 @@
+    "borg.worshipsDamage",
+    "borg.worshipsGold",
+    "borg.worshipsHp",
+    "borg.worshipsMana",
+    "borg.worshipsSpeed",
+-   "mandos.stageRetirement",
+  ]
+
+ ❯ docs-sync.test.ts:70:52
+     68|
+     69|   it("cover exactly the same switches", () => {
+     70|     expect(rows().map((r) => r.identifier).sort()).toEqual(
+       |                                                    ^
+     71|       toggles().map(identify).sort(),
+     72|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  docs-sync.test.ts > the settings table and the manifest > agree on every title and default
+AssertionError: mandos.stageRetirement is missing from docs/README.md: expected undefined to be defined
+ ❯ docs-sync.test.ts:80:73
+     78|     for (const toggle of toggles()) {
+     79|       const row = table.get(identify(toggle));
+     80|       expect(row, `${identify(toggle)} is missing from docs/README.md`…
+       |                                                                         ^
+     81|       expect(row?.title).toBe(toggle.title);
+     82|       expect(row?.default, `${identify(toggle)} disagrees on its defau…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 74 passed (75)
+      Tests  2 failed | 1260 passed (1262)
+   Start at  20:00:49
+   Duration  190.73s (transform 27.93s, setup 36.86s, import 52.84s, tests 308.03s, environment 14ms)
+
+[ELIFECYCLE] Test failed. See above for more details.
+[ELIFECYCLE] Command failed with exit code 1.

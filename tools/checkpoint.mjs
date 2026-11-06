@@ -27,12 +27,13 @@ import { existsSync, readFileSync, writeFileSync, mkdtempSync, rmSync } from "no
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { enginePin } from "./engine-pin.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("./", import.meta.url)), "..");
 const REPO = "diegoami/mandos";
 const LABEL = "checkpoint";
-/** trap.js md5: the published 1.23.0-beta.1 + our carried patch (#40). */
-const FINGERPRINT = "34c27241f96aceff581bcb186a9d898f";
+/** Published unpatched beta.3 trap.js; optional backports are not the default. */
+const FINGERPRINT = "ce8b43e933803487d70973d5a9e0905c";
 const TRAP = "node_modules/@rpgm-tools/neo-angband-core/dist/game/trap.js";
 /** The privacy scan's user-home-path rule, close enough to refuse on. */
 const HOME_PATH = /(?:\/home\/|\/Users\/|[A-Za-z]:\\Users\\)[A-Za-z0-9._-]+/;
@@ -99,7 +100,9 @@ if (stashes > 0) lines.push("", `**Stashes**: ${String(stashes)}.`);
 
 const trapPath = join(ROOT, TRAP);
 const md5 = existsSync(trapPath) ? createHash("md5").update(readFileSync(trapPath)).digest("hex") : null;
-lines.push("", `**Engine fingerprint**: ${md5 === null ? "trap.js missing (run pnpm install)" : md5 === FINGERPRINT ? `\`${md5}\` (published + carried patch)` : `\`${md5}\` - CHANGED from \`${FINGERPRINT}\``}.`);
+lines.push("", `**Engine fingerprint**: ${md5 === null ? "trap.js missing (run pnpm install)" : md5 === FINGERPRINT ? `\`${md5}\` (trap.js matches published beta.3)` : `\`${md5}\` - CHANGED from \`${FINGERPRINT}\``}.`);
+
+lines.push(`**Installed package profile**: ${enginePin(ROOT)}.`);
 
 const prs = gh(["pr", "list", "--state", "open", "--json", "number,title,headRefName,isDraft,labels"]);
 lines.push("", "**Open PRs**:");

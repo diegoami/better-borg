@@ -1,0 +1,10 @@
+$ vitest run src/play.test.ts --testNamePattern 'boots the next planned character|refuses to boot the next character|records its session'
+
+ RUN  v4.1.11 <comparison-tree>
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 12 skipped (15)
+   Start at  19:38:09
+   Duration  36.90s (transform 415ms, setup 146ms, import 598ms, tests 36.09s, environment 0ms)
+

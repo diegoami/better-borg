@@ -1,0 +1,10 @@
+$ vitest run plugin.test.ts src/api2/controller.test.ts src/rest.test.ts src/rest-and-store-verification.test.ts
+
+ RUN  v4.1.11 <raw-tree>
+
+
+ Test Files  4 passed (4)
+      Tests  87 passed (87)
+   Start at  19:38:46
+   Duration  19.93s (transform 1.79s, setup 1.01s, import 2.02s, tests 19.41s, environment 0ms)
+

@@ -7,17 +7,20 @@ consumer issues own those states and closure after verified downstream adoption.
 
 ## Published core patch removal units
 
-The combined @rpgm-tools__neo-angband-core@1.23.0-beta.2.patch has independent
-marked groups. A public source merge alone updates neither the patched package
-nor the separately running lab. Remove a hunk only after its consumer has the
-verified upstream replacement; retain patch-active while still needed.
+The default is unmodified published Core/SDK/content1.23.0-beta.3 with no
+patchedDependencies entry. The historical beta.2 combined patch remains
+unchanged for its old receipts. Explicitly unapplied optional deltas are
+[PR432/input-flush](optional/core-beta3-input-flush-432.patch) and
+[PR433/accepted birth](optional/core-beta3-accepted-birth-433.patch).
+A source merge, an unapplied file and the separately running lab are distinct.
+Removing a default dependency is not a claim that its upstream bug was fixed.
 
 | Upstream correction | Source issue | Mandos consumer issue | Replacement proof |
 | --- | --- | --- | --- |
-| Neo PR429 / issue428 | [source](https://github.com/diegoami/neo-angband-tracker/issues/4) | [adoption](https://github.com/diegoami/mandos/issues/126) | door/setFeat scenario |
-| Neo PR432 / issue414 | [source](https://github.com/diegoami/neo-angband-tracker/issues/5) | [adoption](https://github.com/diegoami/mandos/issues/128) | input-flush reset regression |
-| Neo PR433 / issue431 | [source](https://github.com/diegoami/neo-angband-tracker/issues/6) | [adoption](https://github.com/diegoami/mandos/issues/129) | accepted birth/seed replay |
-| Neo commit0cc75b4af | [source](https://github.com/diegoami/neo-angband-tracker/issues/15) | [adoption](https://github.com/diegoami/mandos/issues/147) | all-class spell-index mapping |
+| Neo PR429 / issue428 (replaced in beta.3) | [source](https://github.com/diegoami/neo-angband-tracker/issues/4) | [adoption](https://github.com/diegoami/mandos/issues/126) | door/setFeat scenario |
+| Neo PR432 / issue414 (optional/unapplied) | [source](https://github.com/diegoami/neo-angband-tracker/issues/5) | [adoption](https://github.com/diegoami/mandos/issues/128) | input-flush reset regression |
+| Neo PR433 / issue431 (parked/unapplied) | [source](https://github.com/diegoami/neo-angband-tracker/issues/6) | [adoption](https://github.com/diegoami/mandos/issues/129) | accepted birth/seed replay |
+| Neo commit0cc75b4af (replaced in beta.3) | [source](https://github.com/diegoami/neo-angband-tracker/issues/15) | [adoption](https://github.com/diegoami/mandos/issues/147) | all-class spell-index mapping |
 
 Run-record code in tools/engine-pin.mjs derives the patch names from actual
 marked hunks. Keep package and lab receipts distinct. A carried consumer issue
@@ -30,8 +33,13 @@ correction plus verified downstream adoption. patch-active is independent.
 compares the existing published-beta.2 carry with engine PR200's exact source
 `19ff25eac8997e8feb6b5e62eefa7ffe4d134631`. The hook is already equivalent;
 this is regression coverage and verification, not a new runtime adoption.
-The published package still needs the noteSpot hunk, and every other removal
-unit above remains independent. No package pin or live lab bundle changes.
+That historical beta.2 receipt needed its local noteSpot hunk. Beta.3 now
+provides it and the accepted class spell counts directly. The raw-versus432
+Mandos comparison found identical basic life/archive/journal results and passing
+structured-command/handover/rest controls; the general input-flush subscriber
+contract bug remains open but is not required for this proved Mandos path.
+PR433 is parked optional work, not a default seed/birth API requirement.
+No change to the retained live lab bundle is implied.
 
 ## Historical native C copies
 
