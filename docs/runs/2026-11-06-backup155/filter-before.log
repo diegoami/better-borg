@@ -1,0 +1,25 @@
+
+ RUN  v4.1.11 /tmp/mandos-backup-preflight-155
+
+ ❯ tools/backup.test.mjs (14 tests | 1 failed | 13 skipped) 13445ms
+     × uses the same selected inventory despite excluded old destination caches and still refuses real selected reductions 13440ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/backup.test.mjs > real rclone, synthetic local data only (--config null device) > uses the same selected inventory despite excluded old destination caches and still refuses real selected reductions
+Error: mandos-lab-data: suspicious backup reduction (25/37 missing files; 432/442818 bytes); inspect source and current before explicit --allow-large-reduction
+ ❯ reductionGuard tools/backup.mjs:91:133
+
+ ❯ backup tools/backup.mjs:128:24
+ ❯ tools/backup.test.mjs:189:5
+ ❯ fixture tools/backup.test.mjs:32:16
+ ❯ tools/backup.test.mjs:182:131
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 skipped (14)
+   Start at  03:12:21
+   Duration  14.54s (transform 176ms, setup 726ms, import 112ms, tests 13.45s, environment 0ms)
+

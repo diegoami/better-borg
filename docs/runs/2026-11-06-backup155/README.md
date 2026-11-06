@@ -69,3 +69,30 @@ and selections quiescent throughout transfer, then verify bytes and saved
 history in staging. A listing/dry run alone is not verified recovery. Urgent
 [OAuth52](https://github.com/diegoami/mandos/issues/52) remains a separate owner
 prerequisite before a real cold-backup/staged-restore drill.
+
+## Continuation: matching-selection correction
+
+After restart, the prior full-gate waiter no longer existed and no verify log
+or start/exit receipt had been created; that gate never started. The original
+published20b5185 and prior13-case focused receipt are preserved.
+
+Parent review found a real over-refusal: current inventory was unfiltered while
+source inventory/sync were filtered. A new real local-only rclone case adds old
+excluded caches/mod-clone files to current. On20b5185 it fails with25/37missing
+paths and432/442818bytes despite an unchanged valid included source. The
+[targeted negative control](filter-before.log) reports1failure with13other cases
+not selected by the explicit name filter; it is not a green verification gate.
+
+Current inventory now receives the same configured includes as source/sync.
+Staged pull uses those same filters too: excluded old files remain untouched
+remotely, do not inflate reductions, and do not return as staged caches/clones.
+The new case then removes six actually included paths and proves the genuine
+reduction still refuses before any write. No reduction thresholds, assertions
+or existing timeouts were weakened.
+
+The complete unfiltered fixture suite now passes **14/14, zero skips,85.24s**;
+[raw log](fixtures-filtered.log). This also executes the minimal child environment
+which excludes inherited rclone credentials/options. One fresh normal full gate
+(expected1148+14=1162tests) is registered behind the existing engine flock waiter;
+its actual result and the required hosted full result remain recorded on155/PR/
+checkpoint when complete. No duplicate or bypassed heavy gate is claimed.

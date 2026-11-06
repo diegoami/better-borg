@@ -124,7 +124,7 @@ export function backup(argv, options = {}) {
       return { name, set, local, selected };
     });
     for (const plan of plans) {
-      const current = inventory(run, remote(`${plan.name}/current`), [], true);
+      const current = inventory(run, remote(`${plan.name}/current`), filters(plan.set), true);
       plan.reduction = reductionGuard(plan.name, plan.selected, current, allowReduction);
     }
     // Catch a source/profile changed during remote inventory, still before ANY sync.
@@ -148,10 +148,10 @@ export function backup(argv, options = {}) {
     const name = names[0], set = config.sets[name], local = resolve(root, set.local);
     if (existsSync(local) && readdirSync(local).length > 0 && !args.includes("--force")) throw Error("restore target is not empty; use empty staging (explicit --force is exceptional)");
     cold(local, set);
-    validateSelection(name, inventory(run, remote(`${name}/current`)), set);
+    validateSelection(name, inventory(run, remote(`${name}/current`), filters(set)), set);
     if (args.includes("--force")) log("backup: EXCEPTION --force: operator explicitly requested a restore overlay; verify staging before live use");
     log(`backup: ${name}/current -> staging${dryRun ? " (dry run)" : ""}`);
-    try { run(["copy", remote(`${name}/current`), local, ...(dryRun ? ["--dry-run"] : [])]); }
+    try { run(["copy", remote(`${name}/current`), local, ...filters(set), ...(dryRun ? ["--dry-run"] : [])]); }
     catch { throw Error(`${name}: rclone copy failed; verify staging before any live use`); }
     return;
   }

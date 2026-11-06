@@ -48,7 +48,7 @@ lock or kills a process. On platforms without readable process cwd metadata,
 this explicit manual confirmation may be needed; it is an attestation, not a
 new automated proof. Do not use it simply because a refusal is inconvenient.
 
-Compared with the entire existing current inventory, a normal push refuses
+Compared with the same included selection in current, a normal push refuses
 more than10 missing paths, more than20% missing paths (rounded down; very small
 backups therefore permit no deletion by default), or a reduction below50% of
 previous total bytes. These are conservative safeguards, not save/history
@@ -64,6 +64,8 @@ an archive destination with a UTC stamp plus unique ID. Replaced/deleted current
 files move into archive; repeated pushes in one second cannot overwrite the
 same archive destination. Retention deletion is never automatic. Existing
 excluded remote files are not silently deleted by a changed include filter.
+They do not count as planned deletions or selected bytes, and staged pull also
+uses the same include filters instead of restoring old excluded caches/clones.
 
 Preflight is not an atomic filesystem/remote snapshot or a distributed writer
 lock. Keep the lab closed and local/remote selections quiescent through the

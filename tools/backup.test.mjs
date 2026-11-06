@@ -115,7 +115,7 @@ describe("backup preflight without a remote", () => {
     expect(() => reductionGuard("small", [row("a")], [row("a"), row("b")])).toThrow(/suspicious/);
   });
   it("checks all remote reduction plans and refreshed source metadata before any set writes", () => fixture(f => {
-    const t = fake(f); t.inventories.set(join(f.root, "remote/mandos-evidence/current"), [row("old-a"), row("old-b")]);
+    const t = fake(f); t.inventories.set(join(f.root, "remote/mandos-evidence/current"), [row("workspace-backup-old-a.log"), row("workspace-backup-old-b.log")]);
     expect(() => backup(["push"], t.options)).toThrow(/suspicious/); expect(writes(t)).toEqual([]);
     t.inventories.delete(join(f.root, "remote/mandos-evidence/current")); const run = t.options.run; let localReads = 0;
     t.options.run = args => { if (args[0] === "lsjson" && args[1] === join(f.root, "lab") && ++localReads === 2) return JSON.stringify(anchors.map(x => ({ ...x, Size: 99 }))); return run(args); };
@@ -178,6 +178,29 @@ describe("real rclone, synthetic local data only (--config null device)", () => 
     expect(() => backup(["pull", "mandos-lab-data"], { ...t.options, config: staging })).toThrow(/not empty/);
     file(stage, "user/settings.json", "deliberate synthetic corruption"); expect(() => t.run(["check", labCurrent, stage, "--download"])).toThrow();
     expect(readFileSync(join(labCurrent, "user/settings.json"), "utf8")).toBe(original + " changed again");
+  }), 60000);
+  it("uses the same selected inventory despite excluded old destination caches and still refuses real selected reductions", () => fixture(f => {
+    expect(rcloneVersion()).toMatch(/^rclone v/); const expected = populate(f); const t = real(f);
+    backup(["push"], t.options);
+    const current = join(f.root, "remote/mandos-lab-data/current");
+    for (let n = 0; n < 24; n++) file(current, `chromium/Cache/old-${n}`, "excluded old cache".repeat(1024));
+    file(current, "mods/mandos/.git/config", "excluded old clone");
+    file(join(f.root, "remote/mandos-evidence/current"), "node_modules/old-cache", "excluded evidence cache".repeat(1024));
+    backup(["push"], t.options);
+    for (const name of ["mandos-lab-data", "mandos-evidence"]) {
+      const inventories = t.calls.filter(args => args[0] === "lsjson" && args[1] === join(f.root, `remote/${name}/current`));
+      expect(inventories.length).toBeGreaterThan(0);
+      for (const args of inventories) expect(args.slice(4)).toEqual(f.config.sets[name].include.flatMap(pattern => ["--include", pattern]));
+    }
+    expect(readFileSync(join(current, "chromium/Cache/old-0"), "utf8")).toContain("excluded old cache");
+    expect(Object.keys(files(join(f.root, "remote/mandos-lab-data/archive")))).toEqual([]);
+    const staging = structuredClone(f.config); staging.sets["mandos-lab-data"].local = "staging-selected";
+    backup(["pull", "mandos-lab-data"], { ...t.options, config: staging });
+    expect(Object.keys(files(join(f.root, "staging-selected"))).sort()).toEqual(expected.included.sort());
+    const before = files(join(f.root, "remote")), count = writes(t).length;
+    for (const path of expected.included.filter(path => !["user/settings.json", "chromium/IndexedDB/db/data.ldb"].includes(path)).slice(0, 6)) unlinkSync(join(f.root, "lab", path));
+    expect(() => backup(["push"], t.options)).toThrow(/suspicious/);
+    expect(writes(t)).toHaveLength(count); expect(files(join(f.root, "remote"))).toEqual(before);
   }), 60000);
   it("refuses actual excluded-only/empty, hot, bad-anchor and reduced selections before any local-remote mutation", () => fixture(f => {
     expect(rcloneVersion()).toMatch(/^rclone v/); const t = real(f); const remoteRoot = join(f.root, "remote");
