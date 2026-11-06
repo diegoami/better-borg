@@ -1,0 +1,86 @@
+{
+  "context": {
+    "build": {
+      "borg": "warrior pack (stock parameters)",
+      "commit": "task/B25-stage-grind@315e489e (dirty)",
+      "content": "neo-angband@b53ff5f0b",
+      "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.1"
+    },
+    "label": "stage-baseline-c2d1",
+    "recorded": "2026-11-03T11:26:24.196Z",
+    "runner": {
+      "decisions": 10000,
+      "lives": 4,
+      "seeds": [
+        20,
+        23,
+        34,
+        49
+      ],
+      "stage": {
+        "clvl": 2,
+        "depth": 1
+      },
+      "tool": "tools/runs.mjs"
+    }
+  },
+  "events": [
+    {
+      "caseId": "case-bdeb0e0d04d806dfb972e7344feebf39d7a411784e5cb4e4f44f527e9c453750",
+      "fingerprint": "e90fe65b59d14d15d63a6d3ce4e4ddfd7fef3f70e9c38980b981ee67a68d23f7",
+      "id": "case-bdeb0e0d04d806dfb972e7344feebf39d7a411784e5cb4e4f44f527e9c453750",
+      "identity": {
+        "origin": "diegoami/mandos",
+        "record": "c4118ab742d5e976e286687003e9cfa45ec0787be6cd1e0bafda0334d1d3bf0c",
+        "row": 0
+      },
+      "outcome": "death",
+      "row": 0
+    },
+    {
+      "caseId": null,
+      "fingerprint": "8b14c6f2d2e7ec87e87178eeb7dfbfb6ddb876361d01cf053bc80f8d809e57eb",
+      "id": "case-b25b7889e921b544f3624c163aefb6b58438730f6f68b7a158da5dd288de28fe",
+      "identity": {
+        "origin": "diegoami/mandos",
+        "record": "c4118ab742d5e976e286687003e9cfa45ec0787be6cd1e0bafda0334d1d3bf0c",
+        "row": 1
+      },
+      "outcome": "retired",
+      "row": 1
+    },
+    {
+      "caseId": "case-75029b53898a6629d9ef13d765f6f56d4382b2f8435d99a737a17803e0ccb751",
+      "fingerprint": "0e2aa7954b77cf73998bbef9453faf779bc03e92a84db637c39b4fe67a72ebb6",
+      "id": "case-75029b53898a6629d9ef13d765f6f56d4382b2f8435d99a737a17803e0ccb751",
+      "identity": {
+        "origin": "diegoami/mandos",
+        "record": "c4118ab742d5e976e286687003e9cfa45ec0787be6cd1e0bafda0334d1d3bf0c",
+        "row": 2
+      },
+      "outcome": "death",
+      "row": 2
+    },
+    {
+      "caseId": null,
+      "fingerprint": "982cdd035fbb40a38fb6607e32fde9b3b5130bba106db23797e8283427cfcfe8",
+      "id": "case-8050402c515d660cfa3251bb97450ff533444a21484b8be0b15abeb71945abc4",
+      "identity": {
+        "origin": "diegoami/mandos",
+        "record": "c4118ab742d5e976e286687003e9cfa45ec0787be6cd1e0bafda0334d1d3bf0c",
+        "row": 3
+      },
+      "outcome": "retired",
+      "row": 3
+    }
+  ],
+  "integritySha256": "4d5487fb82399f4d268a506b81dc3f45c9b833c42c68a104109678b0129a1318",
+  "schema": "mandos/death-ingest@1",
+  "source": {
+    "locator": "docs/runs/2026-11-03-stage-baseline-c2d1/runs.json",
+    "origin": "diegoami/mandos",
+    "ref": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+    "repository": "diegoami/mandos",
+    "sha256": "c4118ab742d5e976e286687003e9cfa45ec0787be6cd1e0bafda0334d1d3bf0c"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "actions": [
+    {
+      "relationship": "historical-follow-up",
+      "url": "https://github.com/diegoami/mandos/issues/32"
+    }
+  ],
+  "author": "Legacy Mandos AI post-mortem routine; individual author identity not recorded",
+  "basis": "legacy-import",
+  "confidence": "unassessed",
+  "disposition": "design-proposal",
+  "evidence": [
+    {
+      "availability": "unverified",
+      "kind": "legacy diagnosis",
+      "knowledge": "unspecified",
+      "locator": "https://github.com/diegoami/mandos/blob/2690ae09c4166332fa9f5ff8f032e0fb52327bcc/docs/runs/2026-11-03-stage-baseline-c2d1/postmortem/seed-34/diagnosis.md",
+      "note": "The chosen committed local source was hashed; remote availability and its original knowledge-domain claims were not revalidated.",
+      "sha256": "3f84a0cde332388835efa41222f60220b94ca5a1e0ac4c95b2a2783edc29c41c"
+    }
+  ],
+  "hypotheses": [
+    "The legacy report proposes changing the caution/attack order or bounce guard. It explicitly did not independently verify the corresponding C order."
+  ],
+  "mechanism": "legacy reported back-away/flee-flow interlock",
+  "observations": [
+    "The committed diagnosis cites alternating positions in its pre-death dossiers and a visible 1-HP grey mold.",
+    "It records no remaining healing supplies at the observed boundary. These statements are imported source claims, not new observations by this CLI."
+  ],
+  "replay": {
+    "note": "The original diagnosis says its historical replay was exact. This offline import did not rerun the game, recover the dirty historical build context or prove current replay equivalence.",
+    "status": "not-attempted"
+  },
+  "summary": "The legacy analysis reports a hurt Warrior oscillating between backing away and a flee path beside a one-hit-point grey mold. This import preserves that historical reasoning and its limits; it does not re-diagnose the death under current code.",
+  "tool": "Attributed offline import of the committed legacy analysis; no new model/game run"
+}

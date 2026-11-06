@@ -1,0 +1,264 @@
+{
+  "actions": [
+    {
+      "cases": [
+        "case-75029b53898a6629d9ef13d765f6f56d4382b2f8435d99a737a17803e0ccb751"
+      ],
+      "relationships": [
+        "historical-follow-up"
+      ],
+      "url": "https://github.com/diegoami/mandos/issues/32"
+    }
+  ],
+  "cases": [
+    {
+      "analysisAuthor": "Legacy Mandos AI post-mortem routine; individual author identity not recorded",
+      "analysisBasis": "legacy-import",
+      "artifacts": [
+        {
+          "availability": "unverified",
+          "kind": "legacy diagnosis",
+          "knowledge": "unspecified",
+          "locator": "https://github.com/diegoami/mandos/blob/2690ae09c4166332fa9f5ff8f032e0fb52327bcc/docs/runs/2026-11-03-stage-baseline-c2d1/postmortem/seed-34/diagnosis.md",
+          "note": "The chosen committed local source was hashed; remote availability and its original knowledge-domain claims were not revalidated.",
+          "sha256": "3f84a0cde332388835efa41222f60220b94ca5a1e0ac4c95b2a2783edc29c41c"
+        }
+      ],
+      "confidence": "unassessed",
+      "diagnosis": "design-proposal",
+      "facts": {
+        "causeOfDeath": "grey mold",
+        "class": "Warrior",
+        "clvl": 1,
+        "life": 3,
+        "maxDepth": 1,
+        "race": "Half-Troll",
+        "seed": 34,
+        "turns": 1365
+      },
+      "id": "case-75029b53898a6629d9ef13d765f6f56d4382b2f8435d99a737a17803e0ccb751",
+      "latestAnalysis": "cases/case-75029b53898a6629d9ef13d765f6f56d4382b2f8435d99a737a17803e0ccb751/analysis/0001-54cd93b366e2a8e871a60fc661aae734b2d60347a7d7b64a3376eef4ddf91962.json",
+      "replay": {
+        "note": "The original diagnosis says its historical replay was exact. This offline import did not rerun the game, recover the dirty historical build context or prove current replay equivalence.",
+        "status": "not-attempted"
+      },
+      "report": "cases/case-75029b53898a6629d9ef13d765f6f56d4382b2f8435d99a737a17803e0ccb751/report.md",
+      "source": {
+        "locator": "docs/runs/2026-11-03-stage-baseline-c2d1/runs.json",
+        "origin": "diegoami/mandos",
+        "ref": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+        "repository": "diegoami/mandos",
+        "sha256": "c4118ab742d5e976e286687003e9cfa45ec0787be6cd1e0bafda0334d1d3bf0c"
+      }
+    },
+    {
+      "analysisAuthor": null,
+      "analysisBasis": null,
+      "artifacts": [
+        {
+          "availability": "not-captured",
+          "kind": "recording",
+          "knowledge": "unspecified",
+          "locator": null
+        },
+        {
+          "availability": "not-captured",
+          "kind": "decision-trace",
+          "knowledge": "unspecified",
+          "locator": null
+        },
+        {
+          "availability": "not-captured",
+          "kind": "pre-death-save",
+          "knowledge": "unspecified",
+          "locator": null
+        }
+      ],
+      "confidence": "unassessed",
+      "diagnosis": "pending-diagnosis",
+      "facts": {
+        "causeOfDeath": "floating eye",
+        "class": "Warrior",
+        "clvl": 1,
+        "life": 1,
+        "maxDepth": 1,
+        "race": "Half-Troll",
+        "seed": 20,
+        "turns": 5049
+      },
+      "id": "case-bdeb0e0d04d806dfb972e7344feebf39d7a411784e5cb4e4f44f527e9c453750",
+      "latestAnalysis": null,
+      "replay": {
+        "status": "not-attempted"
+      },
+      "report": "cases/case-bdeb0e0d04d806dfb972e7344feebf39d7a411784e5cb4e4f44f527e9c453750/report.md",
+      "source": {
+        "locator": "docs/runs/2026-11-03-stage-baseline-c2d1/runs.json",
+        "origin": "diegoami/mandos",
+        "ref": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+        "repository": "diegoami/mandos",
+        "sha256": "c4118ab742d5e976e286687003e9cfa45ec0787be6cd1e0bafda0334d1d3bf0c"
+      }
+    },
+    {
+      "analysisAuthor": null,
+      "analysisBasis": null,
+      "artifacts": [
+        {
+          "availability": "not-captured",
+          "kind": "recording",
+          "knowledge": "unspecified",
+          "locator": null
+        },
+        {
+          "availability": "not-captured",
+          "kind": "decision-trace",
+          "knowledge": "unspecified",
+          "locator": null
+        },
+        {
+          "availability": "not-captured",
+          "kind": "pre-death-save",
+          "knowledge": "unspecified",
+          "locator": null
+        }
+      ],
+      "confidence": "unassessed",
+      "diagnosis": "pending-diagnosis",
+      "facts": {
+        "causeOfDeath": "yellow mold",
+        "class": "Mage",
+        "clvl": 1,
+        "life": 1,
+        "maxDepth": 1,
+        "race": "Human",
+        "seed": 99110530,
+        "turns": 3167
+      },
+      "id": "case-d791ddf97f2c3fb9eae5f0964216463185fc0238b884ed395467c5b55e26f1b0",
+      "latestAnalysis": null,
+      "replay": {
+        "status": "not-attempted"
+      },
+      "report": "cases/case-d791ddf97f2c3fb9eae5f0964216463185fc0238b884ed395467c5b55e26f1b0/report.md",
+      "source": {
+        "locator": "docs/runs/2026-11-05-b99-desktop-death-replay/runs.json",
+        "origin": "diegoami/mandos",
+        "ref": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+        "repository": "diegoami/mandos",
+        "sha256": "f56eb208521efe19c76b0a27d6e9117ab77ddf2a48b0541f33e49460a1c8fba1"
+      }
+    }
+  ],
+  "cohorts": [
+    {
+      "context": {
+        "build": {
+          "borg": "warrior pack (stock parameters)",
+          "commit": "task/B25-stage-grind@315e489e (dirty)",
+          "content": "neo-angband@b53ff5f0b",
+          "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.1"
+        },
+        "label": "stage-baseline-c2d1",
+        "recorded": "2026-11-03T11:26:24.196Z",
+        "runner": {
+          "decisions": 10000,
+          "lives": 4,
+          "seeds": [
+            20,
+            23,
+            34,
+            49
+          ],
+          "stage": {
+            "clvl": 2,
+            "depth": 1
+          },
+          "tool": "tools/runs.mjs"
+        }
+      },
+      "outcomeOccurrences": {
+        "death": 2,
+        "retired": 2
+      },
+      "source": {
+        "locator": "docs/runs/2026-11-03-stage-baseline-c2d1/runs.json",
+        "origin": "diegoami/mandos",
+        "ref": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+        "repository": "diegoami/mandos",
+        "sha256": "c4118ab742d5e976e286687003e9cfa45ec0787be6cd1e0bafda0334d1d3bf0c"
+      }
+    },
+    {
+      "context": {
+        "build": {
+          "borg": "generic-mage pack (stock parameters; captured desktop birth)",
+          "commit": "c7fbfe16ee75aab242b99fc84a28c6e6bdb968c5",
+          "content": "@rpgm-tools/neo-angband-content 1.23.0-beta.2",
+          "engine": "@rpgm-tools/neo-angband-core 1.23.0-beta.2 + carried patches: PR #432 (fixes #414), PR #429 (fixes #428), PR #433 (fixes #431), commit 0cc75b4af (actual book spell counts)"
+        },
+        "label": "b99-desktop-death-replay",
+        "recorded": "2026-11-05T09:05:07.015Z",
+        "runner": {
+          "decisions": 600,
+          "lives": 1,
+          "seeds": [
+            99110530
+          ],
+          "stage": {
+            "clvl": 50,
+            "depth": 100
+          },
+          "tool": "B99 verified desktop replay (playPackSession)"
+        }
+      },
+      "outcomeOccurrences": {
+        "death": 1
+      },
+      "source": {
+        "locator": "docs/runs/2026-11-05-b99-desktop-death-replay/runs.json",
+        "origin": "diegoami/mandos",
+        "ref": "2690ae09c4166332fa9f5ff8f032e0fb52327bcc",
+        "repository": "diegoami/mandos",
+        "sha256": "f56eb208521efe19c76b0a27d6e9117ab77ddf2a48b0541f33e49460a1c8fba1"
+      }
+    }
+  ],
+  "mechanisms": [
+    {
+      "cases": [
+        "case-75029b53898a6629d9ef13d765f6f56d4382b2f8435d99a737a17803e0ccb751"
+      ],
+      "disposition": "design-proposal",
+      "mechanism": "legacy reported back-away/flee-flow interlock"
+    }
+  ],
+  "schema": "mandos/death-corpus@1",
+  "totals": {
+    "deaths": 3,
+    "diagnosis": {
+      "design-proposal": 1,
+      "pending-diagnosis": 2
+    },
+    "outcomes": {
+      "cap-survivor": 0,
+      "crash": 0,
+      "death": 3,
+      "failure": 0,
+      "retired": 2,
+      "stall": 0,
+      "survived-slice": 0,
+      "timeout": 0,
+      "unknown": 0
+    },
+    "recordedOutcomeOccurrences": 5,
+    "reviewCoverage": {
+      "assessedLatest": 0,
+      "legacyImports": 1,
+      "observedAnalyses": 0,
+      "pending": 2
+    },
+    "sourceRecords": 2,
+    "uniqueEvents": 5
+  }
+}

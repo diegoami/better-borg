@@ -2,9 +2,11 @@
 
 Owner request, 2026-11-06. Canonical task: [Mandos #166](https://github.com/diegoami/mandos/issues/166).
 Parent coordination: [workspace #16](https://github.com/diegoami/angband-workspace/issues/16).
-This is an audited plan, not an implemented every-death service. Runtime changes
-start only after review of the first offline slice. Existing C-fix carries keep
-priority and independent task branches.
+This is the audited contract, not a claim of an implemented every-death service.
+The approved first offline intake/analysis/index slice is documented in the
+[operator guide](../deaths/README.md); live capture/export and automatic analysis
+execution remain follow-ups. Existing C-fix carries keep priority and independent
+task branches.
 
 ## What exists, and what is missing
 
@@ -149,7 +151,8 @@ memory constraints and owns its own implementation.
 
 **A. Offline intake/index, after this plan's review.** Proposed first command:
 `node tools/deaths.mjs ingest --record <runs-directory> --corpus <output>`.
-This command does not exist yet. Consume an existing public run record, create
+The reviewed offline slice now implements this command; the original audit
+predates it. Consume an existing public run record, create
 one small pending case per death and a deterministic index, and retain all
 non-death outcomes in coverage totals. Do not run the game, generate a diagnosis,
 call GitHub or mutate source records. Its coverage claim is deaths in its

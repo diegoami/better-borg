@@ -14,8 +14,10 @@ trainer design in the roadmap does not authorize those features.
 The owner has now requested a durable report for every death and aggregation
 into actionable issues. [Issue #166](https://github.com/diegoami/mandos/issues/166)
 and [the audited implementation plan](tasks/death-corpus-plan.md) cover the
-missing intake/index/diagnosis-queue layer. Those are planned follow-ups; the
-manual replay and diagnosis tools below are already implemented. Repository
+intake/index/diagnosis-queue layer. The first [offline corpus tool](deaths/README.md)
+now ingests exported public records and attributed analysis revisions; automatic
+live capture/export and analysis execution remain follow-ups. The manual replay
+and diagnosis tools below are already implemented. Repository
 reports do not imply a full fatal-state save or an automatic analysis service.
 
 ## The loop
