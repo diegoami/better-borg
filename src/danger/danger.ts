@@ -211,8 +211,9 @@ export function borgDangerPhysical(
         z = dDice * dSide;
         power = 10;
         if (trait(world, BI.RCOLD)) z = div(z + 2, 3);
-        /* upstream reads res_acid here (preserved verbatim) */
-        if (temp.resAcid) z = div(z + 2, 3);
+        /* FORK: Mandos164 carries CBUG-0004 / neo-angband-tracker#26,
+         * source d504eb3d: cold blows use their own temporary protection. */
+        if (temp.resCold) z = div(z + 2, 3);
         z = z * 2;
         if (pfe && !attacking) z = div(z, 2);
         break;
