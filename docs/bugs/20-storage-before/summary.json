@@ -1,0 +1,28 @@
+{
+  "info": {
+    "origin": "http://127.0.0.1:33901",
+    "secureContext": true,
+    "webLocksAvailable": true,
+    "installStorageKey": "neo:modPrefs:install:mandos",
+    "controllerUsed": false,
+    "capabilities": []
+  },
+  "summary": {
+    "sequential": {
+      "cases": 4,
+      "lostArchive": 0,
+      "lostCounterIncrement": 0
+    },
+    "independentFacades": {
+      "cases": 4,
+      "lostArchive": 2,
+      "lostCounterIncrement": 2
+    },
+    "independentSameOriginPages": {
+      "cases": 8,
+      "lostArchive": 3,
+      "lostCounterIncrement": 4
+    }
+  },
+  "browserErrors": []
+}

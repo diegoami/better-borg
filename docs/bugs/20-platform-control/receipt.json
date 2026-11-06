@@ -1,0 +1,29 @@
+{
+  "schema": "mandos/issue20-platform-control@1",
+  "productionFix": false,
+  "baseline": "03fcb3fc1109b64d090f2f618fe487fb823fb365",
+  "frontendRef": "97ceec2925e6715ba725624a61866ab93a196a12",
+  "node": "v26.13.0",
+  "node22": "not run: no local Node22 binary; final hosted qualification still required",
+  "chromium": {
+    "sequential": 4,
+    "independentFacades": 4,
+    "independentPages": 8,
+    "lostUpdates": 0
+  },
+  "electron": {
+    "sequential": 4,
+    "independentFacades": 4,
+    "independentPages": 8,
+    "lostUpdates": 0
+  },
+  "scope": "External native Web Locks around unchanged production functions, with fresh read/merge/write inside acquisition; same current-version cooperating writers only. No cached birth-draw uniqueness guarantee.",
+  "adapters": "Unused Vite discovery/production constants only; no get/set shim, Core patch, controller, new grant or owner data.",
+  "toolingIncident": "Initial package lookup required electron/index.js and triggered its ignored dependency installer/path metadata. No tracked engine/lock or owner profile changed. This probe subsequently resolves a checked binary path without running that installer; no shared dependency cleanup.",
+  "inputs": {
+    "tools/proofs/issue20-platform.mjs": "702982c3f70c71336c7d40adf99b380f805975d326ddbfbdb423ef68788b45bc",
+    "tools/proofs/issue20-platform-client.mjs": "b0074fe46abd12a5b9ab25a3921a13b947ba0a94e9e0e54569373f4e41e29886",
+    "src/records/journal.ts": "bc46b6dc8b31dd745eed27aaf35a9c8bcfc680b5c037bda9ddc86e452c9a223f",
+    "src/class/warrior/lineage.ts": "abad1e53051bbe52f097155aba993771dd8fe2e0f98041c57451b38ec486a0f2"
+  }
+}

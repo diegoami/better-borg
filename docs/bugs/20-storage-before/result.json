@@ -1,0 +1,1120 @@
+{
+  "schema": "mandos/issue20-browser-proof@1",
+  "baseline": "03fcb3fc1109b64d090f2f618fe487fb823fb365",
+  "frontendRef": "97ceec2925e6715ba725624a61866ab93a196a12",
+  "node": "v26.13.0",
+  "chromium": "153.0.8010.12",
+  "info": {
+    "origin": "http://127.0.0.1:33901",
+    "secureContext": true,
+    "webLocksAvailable": true,
+    "installStorageKey": "neo:modPrefs:install:mandos",
+    "controllerUsed": false,
+    "capabilities": []
+  },
+  "fixtureRole": "synthetic public run reports; actual production archive/lineage functions, actual official API2 host/default modInstallPrefs/native localStorage; no controller/gameplay",
+  "adapters": "Only unused Vite module/content discovery and production DEV/PROD build constants; no get/set delay, replacement, CAS, locking or transaction shim.",
+  "desktopCoverage": "Desktop source uses standard+secure neo-angband://game. This run uses the shown Chromium loopback origin; actual Electron custom-scheme behavior is not executed.",
+  "inputHashes": {
+    "src/records/journal.ts": "bc46b6dc8b31dd745eed27aaf35a9c8bcfc680b5c037bda9ddc86e452c9a223f",
+    "src/class/warrior/lineage.ts": "abad1e53051bbe52f097155aba993771dd8fe2e0f98041c57451b38ec486a0f2",
+    "src/birth/flag.ts": "4665b62f9e6837bf53b3b9c9b22211c2e4a2d5f7692046377d84a6bee3dce5ed",
+    "title.ts": "72f38a724fb65528afa27a6eaa7b3e0854c00f58e4f7581e23dc26534a0a4109",
+    "pnpm-lock.yaml": "b212699bb70b75f77d53e3e1fd98d9b1442d195a6ed9b5d28d046d2599a029a0",
+    "tools/proofs/issue20-browser.mjs": "cc5aef1eb17b8818ecd74f70ced6e2b635c3c406dacef17781c7943283985130"
+  },
+  "frontendHashes": {
+    "mod-api2-host.ts": "8008ab7b050e887c1de0d500edba17509554293305d30749b9870459369ed9b4",
+    "mod-prefs.ts": "75a0a1e497e875693c8cb4480a7394cc1c50518bfc720cae4debb6edd9d4e00b",
+    "main.ts": "7da9cdaf0f63093419d2bd17d71a440903f2551ce1f299a98717f9c47f5582c8"
+  },
+  "controls": [
+    {
+      "name": "archive then bump",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "cedar"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "name": "bump then archive",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "cedar"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "name": "two distinct archives",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              },
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "birch"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "birch",
+          "cedar"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              },
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "birch"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "name": "two lineage bumps",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 9,
+          "other": {
+            "sentinel": "preserve"
+          }
+        },
+        "archiveKeys": [],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 9,
+          "other": {
+            "sentinel": "preserve"
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    }
+  ],
+  "samePage": [
+    {
+      "name": "archive then bump",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          }
+        },
+        "archiveKeys": [],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          }
+        }
+      },
+      "lostArchive": true,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "name": "bump then archive",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "cedar"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": true,
+      "siblingsPreserved": true
+    },
+    {
+      "name": "two distinct archives",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "birch"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "birch"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "birch"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": true,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "name": "two lineage bumps",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          }
+        },
+        "archiveKeys": [],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": true,
+      "siblingsPreserved": true
+    }
+  ],
+  "crossPage": [
+    {
+      "attempt": 1,
+      "name": "archive then bump",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          }
+        },
+        "archiveKeys": [],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          }
+        }
+      },
+      "lostArchive": true,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "attempt": 2,
+      "name": "bump then archive",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "cedar"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": true,
+      "siblingsPreserved": true
+    },
+    {
+      "attempt": 3,
+      "name": "two distinct archives",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "birch"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "birch"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "birch"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": true,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "attempt": 4,
+      "name": "two lineage bumps",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 9,
+          "other": {
+            "sentinel": "preserve"
+          }
+        },
+        "archiveKeys": [],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 9,
+          "other": {
+            "sentinel": "preserve"
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "attempt": 5,
+      "name": "archive then bump",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "cedar"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": true,
+      "siblingsPreserved": true
+    },
+    {
+      "attempt": 6,
+      "name": "bump then archive",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "cedar"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "cedar"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": true,
+      "siblingsPreserved": true
+    },
+    {
+      "attempt": 7,
+      "name": "two distinct archives",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "birch"
+              }
+            ]
+          }
+        },
+        "archiveKeys": [
+          "birch"
+        ],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 7,
+          "other": {
+            "sentinel": "preserve"
+          },
+          "graveyard": {
+            "journal": 1,
+            "runs": [
+              {
+                "outcome": "death",
+                "cause": "synthetic public fixture",
+                "name": "Fixture",
+                "race": "Human",
+                "class": "Warrior",
+                "baseStats": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "maxDepth": 1,
+                "level": 1,
+                "gold": 0,
+                "turn": 10,
+                "score": 0,
+                "run": "birch"
+              }
+            ]
+          }
+        }
+      },
+      "lostArchive": true,
+      "lostCounterIncrement": false,
+      "siblingsPreserved": true
+    },
+    {
+      "attempt": 8,
+      "name": "two lineage bumps",
+      "answers": [
+        true,
+        true
+      ],
+      "snapshot": {
+        "value": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          }
+        },
+        "archiveKeys": [],
+        "rawInstall": {
+          "profileIds": [
+            "disposable-p1"
+          ],
+          "lineage": 8,
+          "other": {
+            "sentinel": "preserve"
+          }
+        }
+      },
+      "lostArchive": false,
+      "lostCounterIncrement": true,
+      "siblingsPreserved": true
+    }
+  ],
+  "summary": {
+    "sequential": {
+      "cases": 4,
+      "lostArchive": 0,
+      "lostCounterIncrement": 0
+    },
+    "independentFacades": {
+      "cases": 4,
+      "lostArchive": 2,
+      "lostCounterIncrement": 2
+    },
+    "independentSameOriginPages": {
+      "cases": 8,
+      "lostArchive": 3,
+      "lostCounterIncrement": 4
+    }
+  },
+  "browserErrors": []
+}
