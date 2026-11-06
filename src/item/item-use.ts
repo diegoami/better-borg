@@ -54,13 +54,13 @@ export function borgQuaffPotion(
 
 /** Per-world static for borg_quaff_crit's when_last_quaff (use.c:47). */
 interface QuaffState {
-  whenLastQuaff: number;
+  whenLastQuaff: number | null;
 }
 const quaffStore = new WeakMap<BorgWorld, QuaffState>();
 function quaffState(world: BorgWorld): QuaffState {
   let s = quaffStore.get(world);
   if (!s) {
-    s = { whenLastQuaff: 0 };
+    s = { whenLastQuaff: null };
     quaffStore.set(world, s);
   }
   return s;
@@ -86,10 +86,15 @@ export function borgQuaffCrit(
     return cmd;
   }
 
-  /* Avoid drinking CCW twice in a row (use.c:58). */
+  /* FORK: Mandos168 translates diegoami/neo-angband-tracker#77 / CBUG-0061
+   * (cedf25eb): conserve during elapsed decisions 1..4 after an actual request.
+   * Null represents no previous request; unlike C's zero sentinel it also
+   * distinguishes a valid supplied-clock-zero drink. Tradeoff: conserving can
+   * leave current injury/conditions untreated; emergency bypass is unchanged. */
   if (
-    st.whenLastQuaff > borgT - 4 &&
-    st.whenLastQuaff <= borgT &&
+    st.whenLastQuaff !== null &&
+    st.whenLastQuaff < borgT &&
+    st.whenLastQuaff >= borgT - 4 &&
     ctx.rng.randint1(100) < 75
   )
     return null;
