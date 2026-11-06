@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-weapon-backup-home-carry
+
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  11:42:55
+   Duration  8.68s (transform 423ms, setup 141ms, import 491ms, tests 7.98s, environment 0ms)
+

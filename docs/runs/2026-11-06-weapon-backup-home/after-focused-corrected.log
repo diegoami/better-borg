@@ -1,0 +1,13 @@
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 56ms using pnpm v12.16.1
+
+ RUN  v4.1.11 /tmp/mandos-weapon-backup-home-carry
+
+
+ Test Files  5 passed (5)
+      Tests  96 passed (96)
+   Start at  12:01:14
+   Duration  1.53s (transform 952ms, setup 783ms, import 1.11s, tests 1.08s, environment 0ms)
+
