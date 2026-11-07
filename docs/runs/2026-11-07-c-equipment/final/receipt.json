@@ -1,0 +1,35 @@
+{
+  "schema": "mandos/c-equipment-final@1",
+  "base": "e1ce216e022e2dbf8994319fd0ecb90a4bb7a878",
+  "producerRuntime": "2ee4f82f7f845674e6c12575afbcc7837ae713db",
+  "producerPolicyFixture": "3bcfe2fd3aa39c9e95e711ecbbc889930a40d26e",
+  "slaysBefore": "a9b71e7b492cd8b745c0ae8af7fbaa60fec928ef",
+  "portBefore": "99e8ca9429fccd6e057926da56b3d7dd2e322458",
+  "portRuntimeImport": "e6d51b5ac23ece66120c14d055c2b27d1b84c076",
+  "lightBefore": "44f2fd83c0815e5d200cc83d77cb4e0ee87f4dd5",
+  "lightRuntime": "75ad79bf7c57145d1588264ec7ef7eba1ab9b409",
+  "focused": {
+    "tests": 561,
+    "files": 25,
+    "skips": 0
+  },
+  "pluginTests": 29,
+  "removalReverseChecks": [
+    "C239",
+    "C238",
+    "port41-base",
+    "port41-fixtures"
+  ],
+  "hashes": {
+    "src/trait/trait.ts": "4b018fcbc66789aa6780b0afccfab10ffe93933aed294cc241fe2de7859ecca8",
+    "src/trait/c-equipment-corrections.test.ts": "a3dee2e340f858f00e23fc28820beeabe8de3f230951b28646140e0a4794b1f0",
+    "src/trait/light-base.test.ts": "1244a85ec9a62dae1a8a5f2084c77d9b543913c7d91ce690ab1f58648efa4b88",
+    "src/test-known-light.ts": "3fd51c910f0b403e539ad67082e4f8071b9e517870d762bd34130e293e1b5d60",
+    "src/perceive-unseen-name.test.ts": "6dd5a045b96d31346900b95e48947844fe2ffaea7f90bb29d4f0063e192c8f60",
+    "plugin.js": "24292392ae4693d402589e87ff26d1934ff2832ea77f415332e47f533c808f9d",
+    "package.json": "91b045d6ff86d99f95562c2c6759b27c1bc22c3c0d676e40edfce9feabb02568",
+    "pnpm-lock.yaml": "b212699bb70b75f77d53e3e1fd98d9b1442d195a6ed9b5d28d046d2599a029a0",
+    "manifest.json": "39f29974bc08d69babeabc67e37557632e99b41cd6fb26b108fff3cee6fe8134"
+  },
+  "requiredHosted": "Not yet claimed; exact-head required Node22/default CI and actual-main tracked on canonical PR/issues."
+}

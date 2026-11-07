@@ -1,0 +1,53 @@
+{
+  "schema": "mandos/headless-shadow-fuel-proof@1",
+  "priorCandidate": "b008298f2e0124fbd55bde7f2ffb48486c7e7203",
+  "before": "4fa7d75ed4344f39548aeecbb2ebdb9877a0d542",
+  "firstRequiredRun": {
+    "id": 42367824095,
+    "passed": 1297,
+    "failed": 11,
+    "files": 79,
+    "seconds": 248.24
+  },
+  "seed": 3,
+  "diagnosticCap": 600,
+  "defaultRegressionCap": 1,
+  "beforePublicFuel": 5000,
+  "beforeShadowTimeout": 0,
+  "beforeOutcome": {
+    "dead": false,
+    "decisions": 600,
+    "turns": 5720,
+    "takeoff": 256,
+    "wield": 255
+  },
+  "afterPublicFuel": 5000,
+  "afterShadowTimeout": 5000,
+  "afterOutcome": {
+    "dead": true,
+    "decisions": 116,
+    "turns": 1960,
+    "cause": "a kobold shaman"
+  },
+  "spentFuelControl": 0,
+  "basicGuards": {
+    "passed": 79,
+    "files": 6,
+    "localCiOnlyContentSkip": 1,
+    "separateCiOnlyContentPass": 1,
+    "seconds": 178.0
+  },
+  "existingGameAssertionsChanged": false,
+  "existingSeedsCapsTimeoutsChanged": false,
+  "hashes": {
+    "src/play-session.ts": "4e8d1983d6bca2bd5b3db926335ae2c49eda00367d76f1e2712ac85183d3e934",
+    "src/play-fuel.test.ts": "5983c8f5e73408adb8d1d954894742e9b76b70c4480c1017402688cfbc5121f5",
+    "src/wiring-allowlist.ts": "f9d394e1b800daaf6b57c9371ea29a25da28db72428c3c8c7565bd5e2ce9eba7",
+    "plugin.js": "24292392ae4693d402589e87ff26d1934ff2832ea77f415332e47f533c808f9d",
+    "package.json": "91b045d6ff86d99f95562c2c6759b27c1bc22c3c0d676e40edfce9feabb02568",
+    "pnpm-lock.yaml": "b212699bb70b75f77d53e3e1fd98d9b1442d195a6ed9b5d28d046d2599a029a0",
+    "manifest.json": "39f29974bc08d69babeabc67e37557632e99b41cd6fb26b108fff3cee6fe8134"
+  },
+  "unchangedProductionC7Diff": [],
+  "newRequiredHosted": "Pending parent-reviewed final publication; PR197 owns live required state."
+}

@@ -1,0 +1,27 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+ ❯ src/play-fuel.test.ts (2 tests | 1 failed) 6651ms
+   × keeps the actual born Mage's publicly described lamp fuel through playView 6613ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/play-fuel.test.ts > keeps the actual born Mage's publicly described lamp fuel through playView
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/play-fuel.test.ts:17:1
+     15| afterEach(() => vi.restoreAllMocks());
+     16| afterAll(() => { const target = process.env["MANDOS_FUEL_PROOF_OUTPUT"…
+     17| it("keeps the actual born Mage's publicly described lamp fuel through …
+       | ^
+     18|   let known: ReturnType<typeof Core.buildKnownWorld> | undefined;
+     19|   const observedCore: typeof Core = { ...Core, buildKnownWorld(state, …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  12:31:02
+   Duration  7.42s (transform 460ms, setup 165ms, import 534ms, tests 6.65s, environment 0ms)
+

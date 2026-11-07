@@ -1,0 +1,59 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+stdout | src/trait/light-base.test.ts > single equipment light from actual known loadouts (port41 + C238) > Warrior with phial counts known equipment light once
+{"cls":"Warrior","light":"phial","publicLight":4,"derivedLight":4,"borgLight":8,"equipment":[{"label":"& Phial~","flags":["NO_FUEL"],"modifiers":[{"code":"LIGHT","value":4}],"timeout":0,"tval":19}]}
+
+stdout | src/trait/light-base.test.ts > single equipment light from actual known loadouts (port41 + C238) > Necromancer with phial counts known equipment light once
+{"cls":"Necromancer","light":"phial","publicLight":3,"derivedLight":3,"borgLight":7,"equipment":[{"label":"& Phial~","flags":["NO_FUEL"],"modifiers":[{"code":"LIGHT","value":4}],"timeout":0,"tval":19}]}
+
+ ❯ src/trait/light-base.test.ts (8 tests | 2 failed) 1133ms
+     × Warrior with phial counts known equipment light once 156ms
+     × Necromancer with phial counts known equipment light once 91ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/trait/light-base.test.ts > single equipment light from actual known loadouts (port41 + C238) > Warrior with phial counts known equipment light once
+AssertionError: expected 8 to be 4 // Object.is equality
+
+- Expected
++ Received
+
+- 4
++ 8
+
+ ❯ src/trait/light-base.test.ts:90:44
+     88|       expect(item!.modifiers).toContainEqual({ code: "LIGHT", value: 4…
+     89|     }
+     90|     expect(ctx.world.self.trait[BI.LIGHT]).toBe(expected);
+       |                                            ^
+     91|   });
+     92| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/trait/light-base.test.ts > single equipment light from actual known loadouts (port41 + C238) > Necromancer with phial counts known equipment light once
+AssertionError: expected 7 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 7
+
+ ❯ src/trait/light-base.test.ts:90:44
+     88|       expect(item!.modifiers).toContainEqual({ code: "LIGHT", value: 4…
+     89|     }
+     90|     expect(ctx.world.self.trait[BI.LIGHT]).toBe(expected);
+       |                                            ^
+     91|   });
+     92| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 6 passed (8)
+   Start at  12:03:14
+   Duration  2.59s (transform 544ms, setup 581ms, import 560ms, tests 1.13s, environment 0ms)
+

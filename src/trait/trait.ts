@@ -11,7 +11,7 @@
  * of value are handled differently, both faithfully:
  *
  *  1. Values the C re-derives only to reproduce a number the game already knows
- *     (net speed, final AC-less skills, light radius, infravision, blows/shots,
+ *     (net speed, final AC-less skills, infravision, blows/shots,
  *     max-HP) are taken straight from the corresponding already-derived
  *     PlayerView field. This is the value the C code is building toward, so the
  *     result is identical without needing race/class base tables AgentView does
@@ -258,9 +258,12 @@ function borgNoticePlayer(c: Ctx): void {
     t[BI.ISFIXSTR + i] = drained?.[i] ? 1 : 0;
   }
 
-  /* Net speed, light, infravision, shots: game-derived (see fidelity note). */
+  /* Net speed and infravision: game-derived (see fidelity note). */
   t[BI.SPEED] = p.speed;
-  t[BI.LIGHT] = p.light;
+  /* FORK diegoami/neo-angband-borg-mod-tracker#41: BI_LIGHT starts at zero
+   * as in C borg_notice (borg-trait.c:2825). The
+   * equipment loop below rebuilds it; public p.light already includes gear.
+   * The faithful port retains C238; Mandos186 corrects it below separately. */
   t[BI.INFRA] = p.seeInfra;
 
   /* SAURON_DEAD has no AgentView field; left 0 (caveat). */
@@ -322,15 +325,22 @@ function borgNoticeEquipment(c: Ctx): void {
     t[BI.ADEX] = t[BI.ADEX]! + mod(item, "DEX") * (known ? (known[3] ?? 0) : 1);
     t[BI.ACON] = t[BI.ACON]! + mod(item, "CON") * (known ? (known[4] ?? 0) : 1);
 
-    /* Slays: last-writer-wins overwrite, verbatim (trait.c:1453). */
-    t[BI.WS_ANIMAL] = slayMult(item, "ANIMAL");
-    t[BI.WS_EVIL] = slayMult(item, "EVIL");
-    t[BI.WS_UNDEAD] = slayMult(item, "UNDEAD");
-    t[BI.WS_DEMON] = slayMult(item, "DEMON");
-    t[BI.WS_ORC] = slayMult(item, "ORC");
-    t[BI.WS_TROLL] = slayMult(item, "TROLL");
-    t[BI.WS_GIANT] = slayMult(item, "GIANT");
-    t[BI.WS_DRAGON] = slayMult(item, "DRAGON");
+    /* FORK Mandos185 / C239, proposal304@9ab78ae6: later equipment must
+     * not erase a known weapon slay. ItemView stores numeric multipliers;
+     * max retains the strongest (C uses bitwise OR for its presence traits).
+     * Greater undead/demon/dragon slays feed the separate x5 combat flags. */
+    t[BI.WS_ANIMAL] = Math.max(t[BI.WS_ANIMAL]!, slayMult(item, "ANIMAL"));
+    t[BI.WS_EVIL] = Math.max(t[BI.WS_EVIL]!, slayMult(item, "EVIL"));
+    t[BI.WS_UNDEAD] = Math.max(t[BI.WS_UNDEAD]!, slayMult(item, "UNDEAD"));
+    t[BI.WS_DEMON] = Math.max(t[BI.WS_DEMON]!, slayMult(item, "DEMON"));
+    t[BI.WS_ORC] = Math.max(t[BI.WS_ORC]!, slayMult(item, "ORC"));
+    t[BI.WS_TROLL] = Math.max(t[BI.WS_TROLL]!, slayMult(item, "TROLL"));
+    t[BI.WS_GIANT] = Math.max(t[BI.WS_GIANT]!, slayMult(item, "GIANT"));
+    t[BI.WS_DRAGON] = Math.max(t[BI.WS_DRAGON]!, slayMult(item, "DRAGON"));
+
+    if (t[BI.WS_UNDEAD]! >= 5) t[BI.WK_UNDEAD] = 1;
+    if (t[BI.WS_DEMON]! >= 5) t[BI.WK_DEMON] = 1;
+    if (t[BI.WS_DRAGON]! >= 5) t[BI.WK_DRAGON] = 1;
 
     /* Brands: OR-accumulated, _3 codes only (trait.c:1463). */
     if (hasBrand3(item, "ACID")) t[BI.WB_ACID] = 1;
@@ -362,11 +372,12 @@ function borgNoticeEquipment(c: Ctx): void {
       hasFlag(item, "NO_FUEL") ||
       item.timeout !== 0
     ) {
+      /* FORK Mandos186 / C238, proposal349@66b18334: count the known
+       * modifier once, before flags and the Necromancer unlight adjustment. */
       t[BI.LIGHT] = t[BI.LIGHT]! + mod(item, "LIGHT");
       if (hasFlag(item, "LIGHT_2")) t[BI.LIGHT] = t[BI.LIGHT]! + 2;
       else if (hasFlag(item, "LIGHT_3")) t[BI.LIGHT] = t[BI.LIGHT]! + 3;
       if (mod(item, "LIGHT") > 0 && c.cls === CLASS_NECROMANCER) t[BI.LIGHT] = t[BI.LIGHT]! - 1;
-      t[BI.LIGHT] = t[BI.LIGHT]! + mod(item, "LIGHT");
     }
 
     t[BI.MOD_MOVES] = t[BI.MOD_MOVES]! + mod(item, "MOVES");

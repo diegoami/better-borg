@@ -1,0 +1,83 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+ ❯ src/trait/c-equipment-corrections.test.ts (13 tests | 6 failed | 3 skipped) 865ms
+     × keeps the weapon's known slay after a later ordinary torch 211ms
+     × raises the animal melee estimate from the registered known slay 187ms
+     × retains the known greater Undead slay and its kill classification 53ms
+     × retains the known greater Demon slay and its kill classification 56ms
+     × retains the known greater Dragon slay and its kill classification 41ms
+     × distinguishes a registered greater dragon slay from the ordinary slay in melee 79ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > keeps the weapon's known slay after a later ordinary torch
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ src/trait/c-equipment-corrections.test.ts:86:50
+     84|     const s = scene({ ego: "of Slay Animal" });
+     85|     expect(s.weapon.slays).toContain("ANIMAL_2"); expect(s.light!.slay…
+     86|     expect(s.ctx.world.self.trait[BI.WS_ANIMAL]).toBe(2);
+       |                                                  ^
+     87|   });
+     88|   it("raises the animal melee estimate from the registered known slay"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > raises the animal melee estimate from the registered known slay
+AssertionError: expected 20 to be greater than 20
+ ❯ src/trait/c-equipment-corrections.test.ts:91:28
+     89|     const known = scene({ ego: "of Slay Animal" }), unknown = scene({ …
+     90|     expect(unknown.weapon.slays).toEqual([]);
+     91|     expect(known.rating()).toBeGreaterThan(unknown.rating());
+       |                            ^
+     92|   });
+     93|   it.each([["Undead", BI.WS_UNDEAD, BI.WK_UNDEAD], ["Demon", BI.WS_DEM…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Undead slay and its kill classification
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Demon slay and its kill classification
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Dragon slay and its kill classification
+AssertionError: expected +0 to be 5 // Object.is equality
+
+- Expected
++ Received
+
+- 5
++ 0
+
+ ❯ src/trait/c-equipment-corrections.test.ts:97:44
+     95|       const s = scene({ ego: `of *Slay ${name}*` });
+     96|       expect(s.weapon.slays).toContain(`${name.toUpperCase()}_5`);
+     97|       expect(s.ctx.world.self.trait[slay]).toBe(5); expect(s.ctx.world…
+       |                                            ^
+     98|     });
+     99|   it("distinguishes a registered greater dragon slay from the ordinary…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > distinguishes a registered greater dragon slay from the ordinary slay in melee
+AssertionError: expected 20 to be greater than 20
+ ❯ src/trait/c-equipment-corrections.test.ts:103:30
+    101|     const ordinary = scene({ ego: "of Slay Dragon", monster: "baby gre…
+    102|     expect(greater.weapon.slays).toContain("DRAGON_5"); expect(ordinar…
+    103|     expect(greater.rating()).toBeGreaterThan(ordinary.rating());
+       |                              ^
+    104|   });
+    105|   it("keeps an undiscovered wielded slay concealed", () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 4 passed | 3 skipped (13)
+   Start at  11:50:40
+   Duration  1.98s (transform 696ms, setup 232ms, import 766ms, tests 865ms, environment 0ms)
+

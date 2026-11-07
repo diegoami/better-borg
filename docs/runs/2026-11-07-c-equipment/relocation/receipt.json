@@ -1,0 +1,23 @@
+{
+  "schema": "mandos/equipment-helper-relocation@1",
+  "priorCandidate": "b008298f2e0124fbd55bde7f2ffb48486c7e7203",
+  "producerFixture": "714852008d6dff58f2ca72132d13e4e11716fd80",
+  "helper": "test/fixtures/known-light.ts",
+  "helperSha256": "a7cd7ab062b43d5b1f94e1d9e4a6d70f9266a0593489073175e3e5b685430731",
+  "focused": {
+    "tests": 610,
+    "files": 27,
+    "skips": 0,
+    "seconds": 21.25
+  },
+  "unchangedProductionAndPackageDiff": [],
+  "runtimeHashes": {
+    "src/trait/trait.ts": "4b018fcbc66789aa6780b0afccfab10ffe93933aed294cc241fe2de7859ecca8",
+    "plugin.js": "24292392ae4693d402589e87ff26d1934ff2832ea77f415332e47f533c808f9d",
+    "package.json": "91b045d6ff86d99f95562c2c6759b27c1bc22c3c0d676e40edfce9feabb02568",
+    "pnpm-lock.yaml": "b212699bb70b75f77d53e3e1fd98d9b1442d195a6ed9b5d28d046d2599a029a0",
+    "manifest.json": "39f29974bc08d69babeabc67e37557632e99b41cd6fb26b108fff3cee6fe8134"
+  },
+  "earlierHostedRun": 42367824095,
+  "newRequiredHosted": "Required after normal follow-up publication; canonical PR197/checkpoint36 own final state."
+}

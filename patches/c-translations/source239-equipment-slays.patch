@@ -1,0 +1,50 @@
+diff --git a/src/trait/trait.ts b/src/trait/trait.ts
+index 9812d7d..30b5df0 100644
+--- a/src/trait/trait.ts
++++ b/src/trait/trait.ts
+@@ -322,15 +322,22 @@ function borgNoticeEquipment(c: Ctx): void {
+     t[BI.ADEX] = t[BI.ADEX]! + mod(item, "DEX") * (known ? (known[3] ?? 0) : 1);
+     t[BI.ACON] = t[BI.ACON]! + mod(item, "CON") * (known ? (known[4] ?? 0) : 1);
+ 
+-    /* Slays: last-writer-wins overwrite, verbatim (trait.c:1453). */
+-    t[BI.WS_ANIMAL] = slayMult(item, "ANIMAL");
+-    t[BI.WS_EVIL] = slayMult(item, "EVIL");
+-    t[BI.WS_UNDEAD] = slayMult(item, "UNDEAD");
+-    t[BI.WS_DEMON] = slayMult(item, "DEMON");
+-    t[BI.WS_ORC] = slayMult(item, "ORC");
+-    t[BI.WS_TROLL] = slayMult(item, "TROLL");
+-    t[BI.WS_GIANT] = slayMult(item, "GIANT");
+-    t[BI.WS_DRAGON] = slayMult(item, "DRAGON");
++    /* FORK Mandos185 / C239, proposal304@9ab78ae6: later equipment must
++     * not erase a known weapon slay. ItemView stores numeric multipliers;
++     * max retains the strongest (C uses bitwise OR for its presence traits).
++     * Greater undead/demon/dragon slays feed the separate x5 combat flags. */
++    t[BI.WS_ANIMAL] = Math.max(t[BI.WS_ANIMAL]!, slayMult(item, "ANIMAL"));
++    t[BI.WS_EVIL] = Math.max(t[BI.WS_EVIL]!, slayMult(item, "EVIL"));
++    t[BI.WS_UNDEAD] = Math.max(t[BI.WS_UNDEAD]!, slayMult(item, "UNDEAD"));
++    t[BI.WS_DEMON] = Math.max(t[BI.WS_DEMON]!, slayMult(item, "DEMON"));
++    t[BI.WS_ORC] = Math.max(t[BI.WS_ORC]!, slayMult(item, "ORC"));
++    t[BI.WS_TROLL] = Math.max(t[BI.WS_TROLL]!, slayMult(item, "TROLL"));
++    t[BI.WS_GIANT] = Math.max(t[BI.WS_GIANT]!, slayMult(item, "GIANT"));
++    t[BI.WS_DRAGON] = Math.max(t[BI.WS_DRAGON]!, slayMult(item, "DRAGON"));
++
++    if (t[BI.WS_UNDEAD]! >= 5) t[BI.WK_UNDEAD] = 1;
++    if (t[BI.WS_DEMON]! >= 5) t[BI.WK_DEMON] = 1;
++    if (t[BI.WS_DRAGON]! >= 5) t[BI.WK_DRAGON] = 1;
+ 
+     /* Brands: OR-accumulated, _3 codes only (trait.c:1463). */
+     if (hasBrand3(item, "ACID")) t[BI.WB_ACID] = 1;
+diff --git a/src/wiring-allowlist.ts b/src/wiring-allowlist.ts
+index d059a97..229c014 100644
+--- a/src/wiring-allowlist.ts
++++ b/src/wiring-allowlist.ts
+@@ -17,9 +17,6 @@ export const WIRING_ALLOWLIST: readonly {
+   { name: "BI.ISFIXALL", kind: "constant", reason: "Upstream also leaves the all-stat repair flag zero and sets individual stat flags instead.", c: "borg-trait.c:2829 (blanket zeroing only); borg-recover.c:210 (read)" },
+   { name: "BI.NEED_BRAND_WEAPON", kind: "bug", reason: "The port never counts ammunition needing a brand; its branding action is also a stub.", c: "borg-trait.c:1173, borg-trait.c:1211" },
+   { name: "BI.SAURON_DEAD", kind: "bug", reason: "The port never copies Sauron's recorded death into the trait used by power and shopping.", c: "borg-trait.c:3136" },
+-  { name: "BI.WK_DEMON", kind: "constant", reason: "Upstream also leaves the demon kill flag zero and writes the WS_DEMON slay trait instead.", c: "borg-trait.c:2829 (blanket zeroing only); borg-fight-attack.c:148 (read)" },
+-  { name: "BI.WK_DRAGON", kind: "constant", reason: "Upstream also leaves the dragon kill flag zero and writes the WS_DRAGON slay trait instead.", c: "borg-trait.c:2829 (blanket zeroing only); borg-fight-attack.c:149 (read)" },
+-  { name: "BI.WK_UNDEAD", kind: "constant", reason: "Upstream also leaves the undead kill flag zero and writes the WS_UNDEAD slay trait instead.", c: "borg-trait.c:2829 (blanket zeroing only); borg-fight-attack.c:147 (read)" },
+   { name: "BI.WORN_NEED_ID", kind: "bug", reason: "The port never counts unidentified worn gear for the equipment power bonus.", c: "borg-trait.c:1437" },
+   { name: "self.goal.fleeingLunal", kind: "constant", reason: "Lunal mode is deliberately disabled in think-ladder.ts, so its fleeing flag stays false.", c: "borg-think-dungeon.c:230 (disabled mode)" },
+   { name: "self.goal.fleeingMunchkin", kind: "constant", reason: "Munchkin mode is deliberately disabled in think-ladder.ts, so its fleeing flag stays false.", c: "borg-think-dungeon.c:583 (disabled mode)" },

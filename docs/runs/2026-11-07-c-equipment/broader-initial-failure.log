@@ -1,0 +1,414 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+ ❯ src/fight/fight.test.ts (78 tests | 18 failed) 896ms
+     × scores mass genocide at 120 percent danger, reads before casting, and forgets non-uniques across the level 26ms
+     × rejects lethal mass-genocide strain and discounts a crowd during the Morgoth fight 8ms
+     × banishes a distant level threat by default symbol and preserves uniques sharing it 11ms
+     × subtracts both fear caches before the immediate-danger gates and keeps the C's <= gate 10ms
+     × counts nasties once, keeps historical counts, chooses the last qualifying symbol, and resets only that count 18ms
+     × uses banishment for assumed hounds through the production controller 185ms
+     × scores teleport-away, targets the remembered grid, and requires ten glyphs 7ms
+     × uses the glyph and low-mana teleport values in C order 6ms
+     × scores crowded banishment at 1500, counts close monsters twice, and casts mass before evil 7ms
+     × lights a dark path to Morgoth using the tracked position, with 500 simulation and 200 execution values 8ms
+     × scores and casts the prayer at level 29 13ms
+     × scores and casts the prayer at level 30 35ms
+     × prefers a genocide spell to its activation when spell=true 7ms
+     × scores nasty health/depth { hp: 250, maxHp: 250, depth: 25 } at danger 25 as 10 8ms
+     × scores nasty health/depth { hp: 700, maxHp: 1000, depth: 25 } at danger 0 as 10 5ms
+     × rejects a genocide level threat below 375 HP or at 75 monsters 6ms
+     × casts banish evil on a crowd and preserves uniques while forgetting all other races 8ms
+     × uses Morgoth light fallback 74 6ms
+stdout | src/perceive-unseen-name.test.ts > still requests detection for the unseen descriptor It
+CBUG0086 {"who":"It","messageKind":"miss","stamp":100,"fear":22,"beforeDanger":0,"danger":22,"command":null,"energy":0,"spent":0,"decisionHp":421,"transactionHpBefore":19,"transactionHpAfter":19}
+
+stdout | src/perceive-unseen-name.test.ts > still requests detection for the unseen descriptor it
+CBUG0086 {"who":"it","messageKind":"miss","stamp":100,"fear":22,"beforeDanger":0,"danger":22,"command":null,"energy":0,"spent":0,"decisionHp":421,"transactionHpBefore":19,"transactionHpAfter":19}
+
+stdout | src/perceive-unseen-name.test.ts > still requests detection for the unseen descriptor Something
+CBUG0086 {"who":"Something","messageKind":"miss","stamp":100,"fear":22,"beforeDanger":0,"danger":22,"command":null,"energy":0,"spent":0,"decisionHp":421,"transactionHpBefore":19,"transactionHpAfter":19}
+
+ ❯ src/perceive-unseen-name.test.ts (6 tests | 3 failed) 1336ms
+   × still requests detection for the unseen descriptor It 170ms
+   × still requests detection for the unseen descriptor it 157ms
+   × still requests detection for the unseen descriptor Something 118ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 21 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/perceive-unseen-name.test.ts > still requests detection for the unseen descriptor It
+ FAIL  src/perceive-unseen-name.test.ts > still requests detection for the unseen descriptor it
+ FAIL  src/perceive-unseen-name.test.ts > still requests detection for the unseen descriptor Something
+AssertionError: expected undefined to be 'quaff' // Object.is equality
+
+- Expected:
+"quaff"
+
++ Received:
+undefined
+
+ ❯ src/perceive-unseen-name.test.ts:127:32
+    125|   const result = scenario(who, false);
+    126|   expect(result.stamp).toBe(100); expect(result.fear).toBeGreaterThan(…
+    127|   expect(result.command?.code).toBe("quaff"); expect(result.spent).toB…
+       |                                ^
+    128| });
+    129|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/21]⎯
+
+ FAIL  src/fight/fight.test.ts > genocide defences through notice and perceive > scores mass genocide at 120 percent danger, reads before casting, and forgets non-uniques across the level
+AssertionError: expected null to deeply equal { code: 'read', args: { handle: 7 } }
+
+- Expected:
+{
+  "args": {
+    "handle": 7,
+  },
+  "code": "read",
+}
+
++ Received:
+null
+
+ ❯ src/fight/fight.test.ts:426:34
+    424|     expect(defenseScore(ctx, BD.MASS_GENOCIDE, 120)).toBe(117);
+    425|     expect([...ctx.world.kills.entries()]).toHaveLength(3);
+    426|     expect(borgDefend(ctx, 120)).toEqual({ code: "read", args: { handl…
+       |                                  ^
+    427|     expect([...ctx.world.kills.entries()].map(([, k]) => k.rIdx)).toEq…
+    428|     expect(ctx.world.map.at(21, 12).kill).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/21]⎯
+
+ FAIL  src/fight/fight.test.ts > genocide defences through notice and perceive > rejects lethal mass-genocide strain and discounts a crowd during the Morgoth fight
+AssertionError: expected +0 to be 104 // Object.is equality
+
+- Expected
++ Received
+
+- 104
++ 0
+
+ ❯ src/fight/fight.test.ts:436:54
+    434|     const { ctx } = defenseScenario({ monsters }, [Spell.MASS_BANISHME…
+    435|     getFightState(ctx.world).fightingUnique = 10;
+    436|     expect(defenseScore(ctx, BD.MASS_GENOCIDE, 120)).toBe(104);
+       |                                                      ^
+    437|     ctx.world.self.trait[BI.CURHP] = 32;
+    438|     expect(defenseScore(ctx, BD.MASS_GENOCIDE, 120)).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/21]⎯
+
+ FAIL  src/fight/fight.test.ts > genocide defences through notice and perceive > banishes a distant level threat by default symbol and preserves uniques sharing it
+AssertionError: expected null to deeply equal { code: 'read', …(1) }
+
+- Expected:
+{
+  "args": {
+    "handle": 7,
+    "tgtsymbol": "o",
+  },
+  "code": "read",
+}
+
++ Received:
+null
+
+ ❯ src/fight/fight.test.ts:447:32
+    445|     ], inventory: [item({ handle: 7, tval: TV.SCROLL, sval: SVAL.scrol…
+    446|     expect(defenseScore(ctx, BD.GENOCIDE)).toBe(2000);
+    447|     expect(borgDefend(ctx, 0)).toEqual({ code: "read", args: { handle:…
+       |                                ^
+    448|     expect([...ctx.world.kills.entries()].map(([, k]) => k.rIdx)).toEq…
+    449|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/21]⎯
+
+ FAIL  src/fight/fight.test.ts > genocide defences through notice and perceive > subtracts both fear caches before the immediate-danger gates and keeps the C's <= gate
+AssertionError: expected +0 to be 1000 // Object.is equality
+
+- Expected
++ Received
+
+- 1000
++ 0
+
+ ❯ src/fight/fight.test.ts:456:50
+    454|       { raceIndex: 2, grid: { x: 20, y: 13 } },
+    455|     ] }, [Spell.BANISHMENT], { 1: "a", 2: "b" }, 100);
+    456|     expect(defenseScore(ctx, BD.GENOCIDE, 3000)).toBe(1000);
+       |                                                  ^
+    457|     const fear = getFearCaches(ctx.world);
+    458|     fear.region2d[1]![1] = 100;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/21]⎯
+
+ FAIL  src/fight/fight.test.ts > genocide defences through notice and perceive > counts nasties once, keeps historical counts, chooses the last qualifying symbol, and resets only that count
+AssertionError: expected +0 to be 10 // Object.is equality
+
+- Expected
++ Received
+
+- 10
++ 0
+
+ ❯ src/fight/fight.test.ts:475:52
+    473|     expect(ctx.world.facts.nastiesCount).toEqual([25, 0, 0, 0, 0, 0, 1…
+    474|     ctx.world.kills.delete(1);
+    475|     expect(defenseScore(ctx, BD.GENOCIDE_NASTIES)).toBe(10);
+       |                                                    ^
+    476|     expect(borgDefend(ctx, 0)).toEqual({ code: "cast", args: { spell: …
+    477|     expect(ctx.world.facts.nastiesCount).toEqual([25, 0, 0, 0, 0, 0, 0…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/21]⎯
+
+ FAIL  src/fight/fight.test.ts > genocide defences through notice and perceive > uses banishment for assumed hounds through the production controller
+AssertionError: expected { code: 'walk', dir: 2 } to deeply equal { code: 'cast', …(1) }
+
+- Expected
++ Received
+
+  {
+-   "args": {
+-     "spell": 27,
+-     "tgtsymbol": "Z",
+-   },
+-   "code": "cast",
++   "code": "walk",
++   "dir": 2,
+  }
+
+ ❯ src/fight/fight.test.ts:490:40
+    488|       resolveMonsterFacts: getDangerGlobals(ctx.world).resolveFacts,
+    489|     } });
+    490|     expect(borg.controller(view, act)).toEqual({ code: "cast", args: {…
+       |                                        ^
+    491|     expect(borg.world.facts.nastiesCount[0]).toBe(0);
+    492|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/21]⎯
+
+ FAIL  src/fight/fight.test.ts > Morgoth defences through notice and perceive > scores teleport-away, targets the remembered grid, and requires ten glyphs
+AssertionError: expected +0 to be 100 // Object.is equality
+
+- Expected
++ Received
+
+- 100
++ 0
+
+ ❯ src/fight/fight.test.ts:506:53
+    504|       item({ tval: TV.SCROLL, sval: SVAL.scroll.rune_of_protection!, n…
+    505|     ] }, [Spell.TELEPORT_OTHER]);
+    506|     expect(defenseScore(ctx, BD.TELE_AWAY_MORGOTH)).toBe(100);
+       |                                                     ^
+    507|     expect(act.targets).toEqual([]);
+    508|     expect(borgDefend(ctx, 0)).toEqual({ code: "cast", args: { spell: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/21]⎯
+
+ FAIL  src/fight/fight.test.ts > Morgoth defences through notice and perceive > uses the glyph and low-mana teleport values in C order
+AssertionError: expected +0 to be 300 // Object.is equality
+
+- Expected
++ Received
+
+- 300
++ 0
+
+ ❯ src/fight/fight.test.ts:523:53
+    521|     ctx.world.map.at(29, 12).glyph = true;
+    522|     getDangerGlobals(ctx.world).morgothPosition = true;
+    523|     expect(defenseScore(ctx, BD.TELE_AWAY_MORGOTH)).toBe(300);
+       |                                                     ^
+    524|     ctx.world.self.trait[BI.CURSP] = 35;
+    525|     expect(defenseScore(ctx, BD.TELE_AWAY_MORGOTH)).toBe(150);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/21]⎯
+
+ FAIL  src/fight/fight.test.ts > Morgoth defences through notice and perceive > scores crowded banishment at 1500, counts close monsters twice, and casts mass before evil
+AssertionError: expected +0 to be 1500 // Object.is equality
+
+- Expected
++ Received
+
+- 1500
++ 0
+
+ ❯ src/fight/fight.test.ts:532:54
+    530|       ...Array.from({ length: 4 }, (_, i) => ({ grid: { x: 22 + i, y: …
+    531|     ] }, [Spell.MASS_BANISHMENT]);
+    532|     expect(defenseScore(ctx, BD.BANISHMENT_MORGOTH)).toBe(1500);
+       |                                                      ^
+    533|     expect([...ctx.world.kills.entries()]).toHaveLength(5);
+    534|     expect(defenseScore(ctx, BD.BANISHMENT_MORGOTH, 0, false)).toBe(10…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/21]⎯
+
+ FAIL  src/fight/fight.test.ts > Morgoth defences through notice and perceive > lights a dark path to Morgoth using the tracked position, with 500 simulation and 200 execution values
+AssertionError: expected +0 to be 500 // Object.is equality
+
+- Expected
++ Received
+
+- 500
++ 0
+
+ ❯ src/fight/fight.test.ts:552:49
+    550|     expect(defenseScore(ctx, BD.LIGHT_MORGOTH)).toBe(0);
+    551|     getDangerGlobals(ctx.world).morgothPosition = true;
+    552|     expect(defenseScore(ctx, BD.LIGHT_MORGOTH)).toBe(500);
+       |                                                 ^
+    553|     expect(act.targets).toEqual([]);
+    554|     expect(defenseScore(ctx, BD.LIGHT_MORGOTH, 0, false)).toBe(200);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/21]⎯
+
+ FAIL  src/fight/fight.test.ts > Orb of Draining (attack.c:3904) > scores and casts the prayer at level 29
+AssertionError: expected +0 to be 106 // Object.is equality
+
+- Expected
++ Received
+
+- 106
++ 0
+
+ ❯ src/fight/fight.test.ts:573:80
+    571|     fs.tempY[0] = 12;
+    572|     const expected = level === 29 ? 106 : 136;
+    573|     expect(borgCalculateAttackEffectiveness(ctx, fs, BF.PRAYER_HOLY_OR…
+       |                                                                                ^
+    574|     expect(act.targets).toEqual([]);
+    575|     expect(borgAttack(ctx)).toEqual({ code: "cast", args: { spell: 6 }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/21]⎯
+
+ FAIL  src/fight/fight.test.ts > Orb of Draining (attack.c:3904) > scores and casts the prayer at level 30
+AssertionError: expected +0 to be 136 // Object.is equality
+
+- Expected
++ Received
+
+- 136
++ 0
+
+ ❯ src/fight/fight.test.ts:573:80
+    571|     fs.tempY[0] = 12;
+    572|     const expected = level === 29 ? 106 : 136;
+    573|     expect(borgCalculateAttackEffectiveness(ctx, fs, BF.PRAYER_HOLY_OR…
+       |                                                                                ^
+    574|     expect(act.targets).toEqual([]);
+    575|     expect(borgAttack(ctx)).toEqual({ code: "cast", args: { spell: 6 }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/21]⎯
+
+ FAIL  src/fight/fight.test.ts > banishment action order > prefers a genocide spell to its activation when spell=true
+AssertionError: expected { code: 'activate', …(1) } to deeply equal { code: 'cast', …(1) }
+
+- Expected
++ Received
+
+  {
+    "args": {
+-     "spell": 27,
++     "handle": 42,
+      "tgtsymbol": "o",
+    },
+-   "code": "cast",
++   "code": "activate",
+  }
+
+ ❯ src/fight/fight.test.ts:641:46
+    639|     activation(ctx);
+    640|     expect(defenseScore(ctx, BD.GENOCIDE, 0, false)).toBe(2000);
+    641|     expect(getFightState(ctx.world).pending).toEqual(spell
+       |                                              ^
+    642|       ? { code: "cast", args: { spell: 27, tgtsymbol: "o" } }
+    643|       : { code: "activate", args: { handle: 42, tgtsymbol: "o" } });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/21]⎯
+
+ FAIL  src/fight/fight.test.ts > defence boundaries from the C > scores nasty health/depth { hp: 250, maxHp: 250, depth: 25 } at danger 25 as 10
+ FAIL  src/fight/fight.test.ts > defence boundaries from the C > scores nasty health/depth { hp: 700, maxHp: 1000, depth: 25 } at danger 0 as 10
+AssertionError: expected +0 to be 10 // Object.is equality
+
+- Expected
++ Received
+
+- 10
++ 0
+
+ ❯ src/fight/fight.test.ts:679:60
+    677|   ] as const)("scores nasty health/depth %o at danger %s as %s", (play…
+    678|     const { ctx } = defenseScenario({ player }, [Spell.BANISHMENT]);
+    679|     expect(defenseScore(ctx, BD.GENOCIDE_NASTIES, danger)).toBe(value);
+       |                                                            ^
+    680|   });
+    681|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/21]⎯
+
+ FAIL  src/fight/fight.test.ts > defence boundaries from the C > rejects a genocide level threat below 375 HP or at 75 monsters
+AssertionError: expected +0 to be 2000 // Object.is equality
+
+- Expected
++ Received
+
+- 2000
++ 0
+
+ ❯ src/fight/fight.test.ts:688:44
+    686|     expect(defenseScore(low, BD.GENOCIDE)).toBe(0);
+    687|     low.world.self.trait[BI.CURHP] = 375;
+    688|     expect(defenseScore(low, BD.GENOCIDE)).toBe(2000);
+       |                                            ^
+    689|     const pit = defenseScenario({ monsters: Array.from({ length: 75 },…
+    690|       grid: { x: 45 + i % 20, y: 2 + Math.trunc(i / 20) },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/21]⎯
+
+ FAIL  src/fight/fight.test.ts > defence boundaries from the C > casts banish evil on a crowd and preserves uniques while forgetting all other races
+AssertionError: expected +0 to be 1500 // Object.is equality
+
+- Expected
++ Received
+
+- 1500
++ 0
+
+ ❯ src/fight/fight.test.ts:702:54
+    700|       { raceIndex: 2, grid: { x: 50, y: 12 } },
+    701|     ] }, [Spell.BANISH_EVIL]);
+    702|     expect(defenseScore(ctx, BD.BANISHMENT_MORGOTH)).toBe(1500);
+       |                                                      ^
+    703|     expect(borgDefend(ctx, 0)).toEqual({ code: "cast", args: { spell: …
+    704|     expect([...ctx.world.kills.entries()].map(([, k]) => k.rIdx)).toEq…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/21]⎯
+
+ FAIL  src/fight/fight.test.ts > defence boundaries from the C > uses Morgoth light fallback 74
+AssertionError: expected +0 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 0
+
+ ❯ src/fight/fight.test.ts:712:59
+    710|     }, [spell]);
+    711|     getDangerGlobals(ctx.world).morgothPosition = true;
+    712|     expect(defenseScore(ctx, BD.LIGHT_MORGOTH, 0, false)).toBe(200);
+       |                                                           ^
+    713|     expect(getFightState(ctx.world).pending).toEqual({ code: "cast", a…
+    714|     ctx.world.kills.at(1).pos.x = 25;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/21]⎯
+
+
+ Test Files  2 failed | 13 passed (15)
+      Tests  21 failed | 227 passed (248)
+   Start at  12:04:47
+   Duration  5.29s (transform 11.99s, setup 8.17s, import 17.54s, tests 19.90s, environment 4ms)
+

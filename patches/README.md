@@ -1,6 +1,6 @@
 # Mandos consumer backports
 
-This directory owns only Mandos package/lab backports and named consumer
+This directory owns Mandos consumer correction units and named package/plugin/lab
 receipts. Canonical source defects/proposals live in the two tracker forks.
 Source issues have no carried/fixed/patch-active labels; their linked Mandos
 consumer issues own those states and closure after verified downstream adoption.
@@ -58,3 +58,16 @@ link canonical C source issues/proposals, exact original translations, Mandos
 consumer issues and replacement conditions. These are TS source deltas, separate
 from the published core package patch and frozen historical upstream-c copies.
 Live consumer carry/fixed state belongs on the linked issues, not this index.
+
+## Faithful-port source corrections
+
+[Port correction units](port-corrections/README.md) record narrow TS source
+imports, separate from C translations and engine package patches. Port41's
+zero-base equipment-light correction is independent of original-C238's duplicate
+modifier correction; each has its own consumer and removal unit.
+
+## Mandos-owned corrections
+
+[Own correction units](mandos/README.md) describe defects in our consumer/harness
+without a false upstream dependency. They use normal verified own-issue closure;
+source-port and C carries keep their separate upstream-linked lifecycle.

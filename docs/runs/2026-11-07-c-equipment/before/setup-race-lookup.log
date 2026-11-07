@@ -1,0 +1,157 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+ ❯ src/trait/c-equipment-corrections.test.ts (12 tests | 12 failed) 659ms
+     × keeps the weapon's known slay after a later ordinary torch 154ms
+     × raises the animal melee estimate from the registered known slay 72ms
+     × retains the known greater Undead slay and its kill classification 50ms
+     × retains the known greater Demon slay and its kill classification 42ms
+     × retains the known greater Dragon slay and its kill classification 43ms
+     × keeps an undiscovered wielded slay concealed 45ms
+     × does not add an animal slay against the registered non-animal kobold 40ms
+     × preserves a known slay without any later occupied equipment slot 42ms
+     × does not invent a slay or kill for an ordinary sword and torch 43ms
+     × counts the registered Phial's LIGHT[4] once 37ms
+     × preserves a fuelled ordinary torch's flag-based radius 40ms
+     × keeps the Necromancer unlight adjustment after the single modifier add 45ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > keeps the weapon's known slay after a later ordinary torch
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:84:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > raises the animal melee estimate from the registered known slay
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:89:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Undead slay and its kill classification
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Demon slay and its kill classification
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Dragon slay and its kill classification
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:95:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > keeps an undiscovered wielded slay concealed
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:100:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > does not add an animal slay against the registered non-animal kobold
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:104:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > preserves a known slay without any later occupied equipment slot
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:108:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > does not invent a slay or kill for an ordinary sword and torch
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:112:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > counts the registered Phial's LIGHT[4] once
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:118:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > preserves a fuelled ordinary torch's flag-based radius
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:124:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > keeps the Necromancer unlight adjustment after the single modifier add
+AssertionError: expected undefined to be defined
+ ❯ scene src/trait/c-equipment-corrections.test.ts:69:16
+     67|   expect(weapon.dd).toBe(sword.obj.dd); expect(weapon.ds).toBe(sword.o…
+     68|   const race = game.booted.registries.monsters.races.find(r => r.name …
+     69|   expect(race).toBeDefined();
+       |                ^
+     70|   const base = makeScenarioView({ player: { cls: options.cls ?? "Warri…
+     71|     hp: 400, maxHp: 400, sp: 0, maxSp: 0, stats: [118, 118, 118, 118, …
+ ❯ src/trait/c-equipment-corrections.test.ts:129:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  12 failed (12)
+   Start at  11:48:55
+   Duration  1.68s (transform 632ms, setup 211ms, import 703ms, tests 659ms, environment 0ms)
+

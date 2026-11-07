@@ -58,7 +58,16 @@ function scenario(who: string, visible = true, messageKind: "miss" | "hit" = "mi
   gear.pack.push(potionHandle, ringHandle);
   state.actor.player.upkeep.totalWeight = Core.gearTotalWeight(gear);
   Core.playerLearnAllRunes(state.actor.player, state.runeEnv);
-  const known = Core.buildKnownWorld(state, { reg }).inventory!;
+  // Port41's zero base needs the actual lamp behind this fixture's light2.
+  // Reuse the same game's real birth torch; do not inject a positive trait.
+  const publicWorld = Core.buildKnownWorld(state, { reg,
+    describe: obj => Core.describeObject(state, obj, Core.ODESC.PREFIX | Core.ODESC.FULL) });
+  const known = publicWorld.inventory!;
+  const birthTorch = publicWorld.equipment![5]!;
+  expect(birthTorch).toBeDefined();
+  expect(reg.lookupKind(birthTorch.tval, birthTorch.sval)?.name).toBe("& Wooden Torch~");
+  const torch = itemView(birthTorch as KnownItem, analyze);
+  expect(torch.flags).toContain("LIGHT_2"); expect(torch.timeout).toBeGreaterThan(0);
   const knownPotion = known.find(item => item.handle === potionHandle)!;
   const knownRing = known.find(item => item.handle === ringHandle)!;
   expect(knownPotion.kindKey).toBe(`kind:${potionKind.kidx}`);
@@ -66,6 +75,7 @@ function scenario(who: string, visible = true, messageKind: "miss" | "hit" = "mi
   const inv = [itemView(knownPotion as KnownItem, analyze)];
   const equipment = new Array<Core.ItemView | null>(12).fill(null);
   equipment[2] = itemView(knownRing as KnownItem, analyze);
+  equipment[5] = torch;
   const raceName = who.toLowerCase().startsWith("it") && who.length > 2 ? "Itangast the Fire Drake" : "Ogre";
   const race = game.booted.registries.monsters.races.find(r => r.name.toLowerCase() === raceName.toLowerCase())!;
   expect(race).toBeDefined();
@@ -84,6 +94,7 @@ function scenario(who: string, visible = true, messageKind: "miss" | "hit" = "mi
   const resolvers = makeCoreResolvers({ races: game.booted.registries.monsters.races, blowMethods: [...game.booted.registries.monsters.blowMethods.values()] });
   installThinkSession(world, buildThinkSession(resolvers));
   borgNotice(ctx);
+  expect(world.self.trait[BI.LIGHT]).toBe(2);
   const memo = makePerceiveMemo(); perceive(world, view, memo);
   const g = getDangerGlobals(world); g.resolveFacts = resolvers.resolveMonsterFacts!; g.avoidance = world.self.trait[BI.CURHP] ?? 0;
   const beforeDanger = borgDanger(ctx, 12, 20, 1, false, false);

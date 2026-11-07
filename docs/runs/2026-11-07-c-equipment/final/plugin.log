@@ -1,0 +1,12 @@
+$ node tools/build.mjs
+[mod-build] building 1: mandos
+[mod-build] mandos: wrote plugin.js (739.6 KiB, api >=2.0.0 <3.0.0)
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+
+ Test Files  1 passed (1)
+      Tests  29 passed (29)
+   Start at  12:18:16
+   Duration  731ms (transform 237ms, setup 149ms, import 259ms, tests 252ms, environment 0ms)
+

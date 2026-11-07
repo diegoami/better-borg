@@ -1,0 +1,167 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+ ❯ src/trait/c-equipment-corrections.test.ts (12 tests | 12 failed) 687ms
+     × keeps the weapon's known slay after a later ordinary torch 167ms
+     × raises the animal melee estimate from the registered known slay 85ms
+     × retains the known greater Undead slay and its kill classification 47ms
+     × retains the known greater Demon slay and its kill classification 48ms
+     × retains the known greater Dragon slay and its kill classification 39ms
+     × keeps an undiscovered wielded slay concealed 40ms
+     × does not add an animal slay against the registered non-animal kobold 42ms
+     × preserves a known slay without any later occupied equipment slot 44ms
+     × does not invent a slay or kill for an ordinary sword and torch 46ms
+     × counts the registered Phial's LIGHT[4] once 35ms
+     × preserves a fuelled ordinary torch's flag-based radius 43ms
+     × keeps the Necromancer unlight adjustment after the single modifier add 41ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > keeps the weapon's known slay after a later ordinary torch
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:84:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > raises the animal melee estimate from the registered known slay
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:89:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Undead slay and its kill classification
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Demon slay and its kill classification
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Dragon slay and its kill classification
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:95:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > keeps an undiscovered wielded slay concealed
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:100:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > does not add an animal slay against the registered non-animal kobold
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:104:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > preserves a known slay without any later occupied equipment slot
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:108:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > does not invent a slay or kill for an ordinary sword and torch
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:112:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > counts the registered Phial's LIGHT[4] once
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:118:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > preserves a fuelled ordinary torch's flag-based radius
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:124:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > keeps the Necromancer unlight adjustment after the single modifier add
+AssertionError: expected undefined to be defined
+ ❯ equip src/trait/c-equipment-corrections.test.ts:45:18
+     43|     const art = artifactName ? reg.artifacts.find(a => a?.name === art…
+     44|     const kind = art ? reg.lookupKind(art.tval, art.sval) : reg.kinds.…
+     45|     expect(kind).toBeDefined();
+       |                  ^
+     46|     const obj = Core.objectPrep(state.rng, reg, z, kind!, 50, "maximis…
+     47|     if (egoName) {
+ ❯ scene src/trait/c-equipment-corrections.test.ts:58:17
+ ❯ src/trait/c-equipment-corrections.test.ts:129:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  12 failed (12)
+   Start at  11:48:36
+   Duration  1.93s (transform 629ms, setup 399ms, import 716ms, tests 687ms, environment 0ms)
+

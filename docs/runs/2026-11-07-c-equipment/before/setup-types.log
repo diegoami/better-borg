@@ -1,0 +1,4 @@
+$ tsc --noEmit
+src/trait/c-equipment-corrections.test.ts(18,10): error TS2724: '"../danger/globals.js"' has no exported member named 'getDangerGlobals'. Did you mean 'DangerGlobals'?
+src/trait/c-equipment-corrections.test.ts(48,73): error TS2339: Property 'includes' does not exist on type 'Set<number>'.
+[ELIFECYCLE] Command failed with exit code 2.

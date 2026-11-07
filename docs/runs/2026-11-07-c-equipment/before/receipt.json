@@ -1,0 +1,11 @@
+{
+  "schema": "mandos/c-equipment-before@1",
+  "base": "e1ce216e022e2dbf8994319fd0ecb90a4bb7a878",
+  "selected": "C239",
+  "expectedFailures": 6,
+  "passingControls": 4,
+  "explicitlyFilteredC238": 3,
+  "exit": 1,
+  "fixtureSha256": "7c5a733ebe19b00e426a7fff53d41e36f664b3360def55864048ff0dad7450fb",
+  "runtimeDiff": []
+}
