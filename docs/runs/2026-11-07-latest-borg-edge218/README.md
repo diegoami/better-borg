@@ -64,3 +64,36 @@ reviewed b8 plugin; it is not latest-port acceptance or GUI/autonomous play.
 Observed developer Core availability does not grant first-party profile/session
 management. No Worker rewrite, identity spoof, default engine patch, mandatory
 replay/433 feature, owner lab/profile/save data or Rust work is introduced.
+
+## Accepted wiring after import, published default
+
+After importing only accepted runtime hunks, focused108/7 files/zero passes,
+including all19 new tests, C239/C238/198 and strict inventory checks. The existing
+shared itemAnalyzerFromRecords is retained for host and headless use: the new
+effects property is added there, rather than reverting Mandos's own shared
+analyzer refactor. One source hunk's comment context is adapted to the retained
+C238 marker. No whole faithful-port file overwrites C corrections.
+
+The existing real play/chain/death/stop plus C7/backup controls pass **118 tests /
+12 files /zero skips /214.57s underCI=1**. All original assertions/seeds/caps/
+timeouts remain. Types/session/grants/current own741.7KiB plugin pass;29 built
+plugin cases pass. Own plugin SHA256
+05ec00ece395dd341088ffffc1ed62afe92b6e3269fe463faacd9114cb72b9db.
+Default package/lock/workspace/manifest remain unchanged published beta.3;
+Mandos identity/version remain its own.
+
+The nine C corrections remain: seven old patch units and five runtime modules
+are byte-identical, both newer C239/C238 runtime blocks remain unchanged, as do
+all eight C-specific fixtures plus own198/stopped-life fixtures. Accepted94d
+changes the strict gap inventory/Sauron explanation, so two stored unit contexts
+(C239 inventory and source41 light base) are refreshed without changing their
+behavior. Initial failed context checks and exact before/after hashes remain in
+after/. All12 prior reverse-removal checks plus the new accepted94 provenance
+unit apply independently. Historical units remain retrievable at b8.
+
+Source producer actual master a3541b2dbfdd080579b9915e65f058a442a7e205 passed
+951/51/zero in both default and exact raw06a profiles (42373863107). That is
+producer readiness; this consumer's required/default and stamped-source full
+and actual-main remain separate pending gates. Bootstrap port anchor advances
+to accepted a443; engine anchor waits the independently qualified new source
+profile before final freeze. No npm Edge publication or desktop play is claimed.
