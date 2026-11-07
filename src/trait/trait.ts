@@ -372,11 +372,12 @@ function borgNoticeEquipment(c: Ctx): void {
       hasFlag(item, "NO_FUEL") ||
       item.timeout !== 0
     ) {
+      /* FORK Mandos186 / C238, proposal349@66b18334: count the known
+       * modifier once, before flags and the Necromancer unlight adjustment. */
       t[BI.LIGHT] = t[BI.LIGHT]! + mod(item, "LIGHT");
       if (hasFlag(item, "LIGHT_2")) t[BI.LIGHT] = t[BI.LIGHT]! + 2;
       else if (hasFlag(item, "LIGHT_3")) t[BI.LIGHT] = t[BI.LIGHT]! + 3;
       if (mod(item, "LIGHT") > 0 && c.cls === CLASS_NECROMANCER) t[BI.LIGHT] = t[BI.LIGHT]! - 1;
-      t[BI.LIGHT] = t[BI.LIGHT]! + mod(item, "LIGHT");
     }
 
     t[BI.MOD_MOVES] = t[BI.MOD_MOVES]! + mod(item, "MOVES");

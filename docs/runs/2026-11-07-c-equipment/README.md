@@ -141,3 +141,14 @@ with exit1: real Warrior Phial8 versus4, Necromancer Phial7 versus3. The public
 engine values remain4/3, unaffected by this controller correction. Raw public
 player/equipment snapshots and failures are in c238/before.log. This separates
 the original-C double modifier from the already imported port zero-base fix.
+
+## C238-only translation after proof
+
+The independent source238 unit removes the second modifier addition and marks
+why; it keeps flag/fuel and Necromancer adjustment order. All8 actual-frame
+cases now pass, plus10 unchanged C239 and41 no-light policy cases (59/3 files,
+zero skips), types pass. Actual same-loadout public values and Borg traits now
+agree at Warrior Phial4/Torch2 and Necromancer Phial3/Torch2; empty/spent
+Necromancer still has the existing Borg minimum1 even when engine light0.
+That retained policy minimum is not silently changed. No extra engine patch,
+light policy retune, occult knowledge or increased survival is claimed.
