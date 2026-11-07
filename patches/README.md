@@ -65,3 +65,9 @@ Live consumer carry/fixed state belongs on the linked issues, not this index.
 imports, separate from C translations and engine package patches. Port41's
 zero-base equipment-light correction is independent of original-C238's duplicate
 modifier correction; each has its own consumer and removal unit.
+
+## Mandos-owned corrections
+
+[Own correction units](mandos/README.md) describe defects in our consumer/harness
+without a false upstream dependency. They use normal verified own-issue closure;
+source-port and C carries keep their separate upstream-linked lifecycle.

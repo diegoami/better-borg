@@ -364,7 +364,10 @@ export function observingLife(
       blowMethods: game.booted.registries.monsters.blowMethods.values(),
     }),
   });
-  const viewDeps = { resolver, reg: game.booted.registries.objects };
+  /* FORK Mandos198: shadow ItemViews need the same public description as
+   * the host so KnownItem fuel survives hypothetical loadout conversion. */
+  const viewDeps: Core.AgentViewDeps = { resolver, reg: game.booted.registries.objects,
+    describe: obj => core.describeObject(state, obj, core.ODESC.PREFIX | core.ODESC.FULL) };
   const floors = playGradeFloors(game);
 
   /* The latch the host installs for the same reason (main.ts): runGameLoop

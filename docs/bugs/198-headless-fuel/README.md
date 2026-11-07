@@ -60,3 +60,30 @@ the inventory guard itself remains unchanged.
 
 No fake upstream dependency, new engine patch, seed search, gameplay-policy
 retune, parked replay/cohort feature, lab/profile/data or Rust work belongs here.
+
+## Matching after trace
+
+After only the declared viewDeps description dependency, the **same** seed3 /
+cap600 gives directTorch5000 = shadowTorch5000 and unchanged player/BI2. The
+original real death returns exactly: **116 decisions,1960 game turns, kobold
+shaman**. No equip/remove loop remains: study1,cast3,descend3,walk101,open3,
+rest1,pickup2,read1,ascend1. This is restoration of the existing regression,
+not a survival improvement or replacement seed. The exhausted-lamp control
+still reports0. Both narrow tests pass; after.json/after.log retain the result.
+
+The zero-writer inventory removes exactly WK_DEMON,WK_DRAGON,WK_UNDEAD now
+written by C239. Its strict assertion and every other entry remain. This is
+recorded in C239's own removal unit, separate from the headless198 unit.
+
+## Original basic guards restored
+
+The unchanged movement, chain, stopped-life and real-death guards plus wiring,
+architecture and new public-fuel suites pass **79 tests/6 files,178.00s**.
+The one local skip is the existing CI-only content-install assertion
+(it.runIf(process.env.CI)); it is run separately with CI=1 and passes1/1,
+with14 unrelated play cases explicitly filtered by that named selection.
+All original eight real-game failures from the first full are now green;
+no gameplay assertion, seed, cap, jitter minimum, chain rule or existing timeout
+was modified. The full default gate still must run on the final exact head.
+The new cheap public-fuel regression uses cap1 by default; bounded cap600
+before/after diagnostic output is separate evidence, not extra independent lives.

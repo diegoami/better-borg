@@ -255,3 +255,23 @@ unchanged hypothetical Torch0/player2, followed by511 equip/remove commands
 out of600. This is not an improvement or a reason to replace seeds/minima.
 A narrowly scoped own adapter repair and original guard verification must
 precede the next required full gate; no new full is triggered prematurely.
+
+## Own headless fix after the failed full
+
+The independently tracked [Mandos198](../../bugs/198-headless-fuel/README.md)
+repair adds only the declared description dependency to headless viewDeps.
+Direct known fuel was already correct; hypothetical fuel was missing. That
+actual/shadow comparison now agrees, the spent-lamp control remains0, and the
+same original seed3 dies at116/1960 to the kobold shaman rather than repeatedly
+removing/equipping its Torch. All eight previously failing play/chain/stop
+assertions are restored without changing seeds/caps/minima/timeouts.
+
+Original basic guard focus passes79/6files,178.00s; its one existing local
+CI-only content guard is separately run withCI=1 and passes1. New boundary
+and affected control focus610/27/zero remains valid for the relocated helper.
+Types/current plugin pass. The new own patch is independent of all source
+units; removing three now-written WK fields from the documented-zero inventory
+belongs to C239's updated unit. All five reverse-removal checks pass. No engine
+patch, policy retune or optional advanced replay prerequisite is introduced.
+Publication/new full remains held for parent review of this genuine own fix;
+no green full/default delivery is inferred from the targeted results.
