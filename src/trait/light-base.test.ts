@@ -1,4 +1,6 @@
-/** Port41: real beta.3 public loadout frames; retain C238's separate modifier bug. */
+/** FORK Mandos186/C238 after port41: real beta.3 matching public loadout frames.
+ * Producer fixture is preserved byte-identically in the prior port41 import;
+ * only the Phial totals below now require the independent C correction. */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -62,17 +64,17 @@ function frame(cls: "Warrior" | "Necromancer", light: Light) {
   return { ctx, publicFrame };
 }
 
-describe("light base from actual known loadouts (port41)", () => {
+describe("single equipment light from actual known loadouts (port41 + C238)", () => {
   it.each([
     ["Warrior", "none", 0, 0],
     ["Warrior", "torch", 2, 2],
     ["Warrior", "spent-torch", 0, 0],
-    ["Warrior", "phial", 4, 8],
+    ["Warrior", "phial", 4, 4],
     ["Necromancer", "none", 0, 1],
     ["Necromancer", "torch", 2, 2],
     ["Necromancer", "spent-torch", 0, 1],
-    ["Necromancer", "phial", 3, 7],
-  ] as const)("%s with %s preserves C equipment-light calculation", (cls, light, derived, expected) => {
+    ["Necromancer", "phial", 3, 3],
+  ] as const)("%s with %s counts known equipment light once", (cls, light, derived, expected) => {
     const { ctx, publicFrame } = frame(cls, light);
     expect(publicFrame.player.light).toBe(derived);
     if (light === "torch") {

@@ -130,3 +130,14 @@ unit tests, keeping every original radius and assertion. No fabricated gear is
 added to pretend those are actual loadout tests. The eight registered actual
 loadout cases never override the player.light or BI_LIGHT values. Source
 initial112/120 failure and the approved fixture correction remain on port41.
+
+## Independent C238 before contract after the faithful-port import
+
+The actual matching-frame test changes only its two Phial expected totals from
+C8/7 to corrected4/3; Torch, spent, empty and Necromancer minimum controls stay
+unchanged. The test header/name now marks this deliberate Mandos divergence.
+Before any C238 runtime edit it gives **2 expected failures/6 passing controls**
+with exit1: real Warrior Phial8 versus4, Necromancer Phial7 versus3. The public
+engine values remain4/3, unaffected by this controller correction. Raw public
+player/equipment snapshots and failures are in c238/before.log. This separates
+the original-C double modifier from the already imported port zero-base fix.
