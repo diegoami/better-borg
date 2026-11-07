@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+
+ Test Files  3 passed (3)
+      Tests  59 passed (59)
+   Start at  12:02:22
+   Duration  5.00s (transform 3.92s, setup 1.90s, import 4.73s, tests 4.14s, environment 1ms)
+

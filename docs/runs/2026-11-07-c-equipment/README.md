@@ -111,3 +111,22 @@ not an invented fuel field, supplies the public equipment timeout. No BI_LIGHT
 or player.light value is forced in these actual-frame tests. Producer runtime
 2ee4f82f7f845674e6c12575afbcc7837ae713db is parent-reviewed; required producer
 CI/main/consumer acceptance remains separately held, not inferred from focus.
+
+## Port41-only import / Mandos196
+
+The reviewed source2ee4f82f7f845674e6c12575afbcc7837ae713db contributes only the
+zero-base light notice change and approved no-light policy-fixture correction.
+The source plugin/whole trait module are not copied. C239 remains intact;
+C238's double modifier is deliberately retained at this intermediate step.
+The exact producer8-case actual-public-frame fixture remains byte-identical.
+Combined actual-frame8 + C23910 + no-light policy41 now pass59/3 files/zero
+skips, types pass; logs are port41/after.log and types.log. No final full gate
+or producer actual-main/adoption state is inferred from these focused results.
+
+The separate policy fixtures previously injected a positive synthetic
+PlayerView.light without any matching equipment. They now explicitly provide
+that model-level radius after notice/before perceive for the beam/recovery
+unit tests, keeping every original radius and assertion. No fabricated gear is
+added to pretend those are actual loadout tests. The eight registered actual
+loadout cases never override the player.light or BI_LIGHT values. Source
+initial112/120 failure and the approved fixture correction remain on port41.
