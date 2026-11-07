@@ -263,7 +263,7 @@ function borgNoticePlayer(c: Ctx): void {
   /* FORK diegoami/neo-angband-borg-mod-tracker#41: BI_LIGHT starts at zero
    * as in C borg_notice (borg-trait.c:2825). The
    * equipment loop below rebuilds it; public p.light already includes gear.
-   * Keep the separate original-C238 duplicate modifier unchanged here. */
+   * The faithful port retains C238; Mandos186 corrects it below separately. */
   t[BI.INFRA] = p.seeInfra;
 
   /* SAURON_DEAD has no AgentView field; left 0 (caveat). */

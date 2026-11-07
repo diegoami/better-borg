@@ -152,3 +152,29 @@ agree at Warrior Phial4/Torch2 and Necromancer Phial3/Torch2; empty/spent
 Necromancer still has the existing Borg minimum1 even when engine light0.
 That retained policy minimum is not silently changed. No extra engine patch,
 light policy retune, occult knowledge or increased survival is claimed.
+
+## Broader regression failure and approved fixture repair
+
+The broader15-file focus correctly failed21 cases while227 passed; the chained
+build did not run. The complete failure is retained in broader-initial-failure.log.
+Eighteen defence unit cases in fight.test.ts and three original C0086 unseen
+name controls relied on a positive synthetic player.light with no matching
+lamp. The parent/source worker owns the defence fixture correction; no production
+spell guard or old expected command is weakened to obtain green.
+
+The C0086 fixture now reuses its **same actual born Human Warrior's registered
+birth torch** from buildKnownWorld.equipment[5], using the real describeObject
+callback and production itemView. It asserts registered Wooden Torch kind,
+LIGHT_2, positive actual fuel and derived BI_LIGHT2. It adds no RNG draw, object,
+seed, trait override, threshold or HP/energy/command change. All original six
+C0086 tests pass, including the three detection/quaff/spent assertions. This is
+one explicitly parent-approved fixture input repair, so the six original C
+fixture files are **not** all byte-identical: only perceive-unseen-name.test.ts
+changes. All seven prior patch units and their five production files are
+byte-identical to baseline; the other five C fixtures are unchanged. Exact
+preservation and three independent reverse-removal checks are in preservation.json.
+
+The port import's local comment now explains that the faithful port retains
+C238 while Mandos186 corrects it below. Its stored removal patch reflects only
+that prose adaptation; source import e6d51b5 and producer history remain intact.
+No runtime scope is expanded by this clarification.

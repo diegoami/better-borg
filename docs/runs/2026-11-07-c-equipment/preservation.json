@@ -1,0 +1,27 @@
+{
+  "schema": "mandos/equipment-preservation@1",
+  "base": "e1ce216e022e2dbf8994319fd0ecb90a4bb7a878",
+  "existingPatchUnits": [
+    "patches/c-translations/CBUG-0004-cold-melee.patch",
+    "patches/c-translations/CBUG-0061-ccw-timing.patch",
+    "patches/c-translations/CBUG-0065-enlightenment.patch",
+    "patches/c-translations/CBUG-0086-exact-unseen-name.patch",
+    "patches/c-translations/shot-path-279-caster-origin.patch",
+    "patches/c-translations/source248-dispel-living.patch",
+    "patches/c-translations/source257-vampire-selected-distance.patch"
+  ],
+  "changedExistingPatchUnits": [],
+  "existingRuntimeFiles": [
+    "src/danger/danger.ts",
+    "src/danger/geometry.ts",
+    "src/fight/attack.ts",
+    "src/item/item-use.ts",
+    "src/perceive-messages.ts"
+  ],
+  "changedExistingRuntimeFiles": [],
+  "changedExistingFixtures": [
+    "src/perceive-unseen-name.test.ts"
+  ],
+  "independentRemovalReverseChecks": "C239,C238,port41 all pass",
+  "packagesChanged": []
+}
