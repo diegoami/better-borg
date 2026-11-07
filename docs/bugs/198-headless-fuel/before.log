@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+ ❯ src/play-fuel.test.ts (2 tests | 1 failed) 6514ms
+   × keeps the actual born Mage's publicly described lamp fuel through playView 6478ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/play-fuel.test.ts > keeps the actual born Mage's publicly described lamp fuel through playView
+AssertionError: expected { sameLampTimeout: +0, …(4) } to match object { playerLight: 2, borgLight: 2, …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "borgLight": 2,
+    "playerLight": 2,
+-   "sameLampTimeout": 5000,
++   "sameLampTimeout": 0,
+    "shadowPlayerLight": 2,
+  }
+
+ ❯ src/play-fuel.test.ts:43:17
+     41|   expect(lamp.fuel).toBeGreaterThan(0);
+     42|   expect(converted.timeout).toBeGreaterThan(0);
+     43|   expect(first).toMatchObject({ playerLight: 2, borgLight: 2, shadowPl…
+       |                 ^
+     44| }, 300000);
+     45| it("does not invent fuel for an actually exhausted registered birth to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  12:32:44
+   Duration  7.23s (transform 440ms, setup 141ms, import 503ms, tests 6.51s, environment 0ms)
+

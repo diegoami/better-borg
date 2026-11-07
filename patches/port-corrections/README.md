@@ -23,3 +23,10 @@ keeping original assertions. The actual-source light fixture was unchanged at
 import; Mandos's two C238 Phial expectations are a separately documented
 intentional divergence afterward. The base unit has a local comment-only
 clarification pointing to Mandos186; producer runtime code is otherwise exact.
+
+The test helper is finally located outside production src/ at
+ test/fixtures/known-light.ts, matching qualified producer714852008d6dff58f2ca72132d13e4e11716fd80.
+The current fixture patch includes that mechanical relocation/import update.
+No production boundary test/allowlist is relaxed. Prior source/adoption commits
+and their failed required checks remain preserved; current consumer issues and
+PR197 own final gate/application status.

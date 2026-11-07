@@ -213,3 +213,45 @@ are not copied. Source and consumer full verification may run independently
 while both merges remain subject to their required green checks. Raw published
 beta.3, unchanged engine/package/manifest/grants and the independently retained
 lab/stock-host limitation remain explicit.
+
+## Test-helper boundary follow-up
+
+The architecture guards correctly classify a non-test file under src/ as
+production, so src/test-known-light.ts was an incorrect location for a helper
+that imports Core/content only to construct unit-test inputs. The parent
+explicitly authorized the mechanical move to **test/fixtures/known-light.ts**,
+with relative test/adapter import updates. No boundary/census assertion,
+allowlist, gameplay source, plugin, dependency, existing assertion or input
+changes. The shared helper SHA256
+ a7cd7ab062b43d5b1f94e1d9e4a6d70f9266a0593489073175e3e5b685430731
+matches qualified producer714852008d6dff58f2ca72132d13e4e11716fd80; the stored
+policy-fixture patch now uses the same correct paths. Its independent reverse
+check still passes, as do the other three units.
+
+The earlier b008298 required hosted run42367824095 is allowed to finish with
+its own outcome; no cancellation or rewrite disguises that old location.
+A normal new commit must trigger fresh exact-head required verification before
+merge. The previous561 focus deliberately did not include the architecture
+guards; that limited receipt remains intact and is not a full-gate claim.
+
+New relevant verification after the move: **610 tests/27 files/zero skips,
+21.25s**, including the same25 affected suites plus49 checks in the two
+unchanged architecture suites. Types and own plugin currency pass; plugin bytes
+and all production/dependency/C7 preservation results are unchanged from b008298.
+The plugin remains739.6KiB and SHA25624292392ae4693d402589e87ff26d1934ff2832ea77f415332e47f533c808f9d.
+No local duplicate full, optional advanced replay or engine patch is added.
+The first hosted outcome and final new exact-head gate remain canonical on
+PR197; no green or delivery is inferred from this focused follow-up.
+
+## First required full: additional real failures, not only the helper location
+
+Actual b008298 run42367824095 finished11 failed/1297 passed,79 files,
+248.24s. The earlier expectation of only two architecture failures was wrong.
+It also reports three stale greater-kill zero-writer inventory entries and
+real default movement/death/chain guard failures. They are retained and not
+waived. The new own bug198's [bounded public actual/shadow fuel proof](../../bugs/198-headless-fuel/README.md)
+finds a headless adapter dependency mismatch: direct Torch5000/BI2 versus the
+unchanged hypothetical Torch0/player2, followed by511 equip/remove commands
+out of600. This is not an improvement or a reason to replace seeds/minima.
+A narrowly scoped own adapter repair and original guard verification must
+precede the next required full gate; no new full is triggered prematurely.

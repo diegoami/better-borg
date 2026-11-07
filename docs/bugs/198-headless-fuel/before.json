@@ -1,0 +1,220 @@
+[
+  {
+    "name": "actual-public-fuel",
+    "seed": 3,
+    "cap": 600,
+    "knownPlayerLight": 2,
+    "knownLamp": {
+      "handle": 2,
+      "kindKey": "kind:4",
+      "itemKey": "gear:2",
+      "nameColor": "yellow",
+      "label": "& Wooden Torch~",
+      "aware": true,
+      "tval": 19,
+      "sval": 1,
+      "pval": 0,
+      "number": 1,
+      "weight": 22,
+      "ac": 0,
+      "toA": 0,
+      "toH": 0,
+      "toD": 0,
+      "dd": 1,
+      "ds": 1,
+      "ego": false,
+      "artifact": false,
+      "flags": [
+        "BURNS_OUT",
+        "LIGHT_2"
+      ],
+      "modifiers": [],
+      "brands": [],
+      "slays": [],
+      "resists": [],
+      "curses": [],
+      "egoName": null,
+      "artifactName": null,
+      "activation": false,
+      "inscription": null,
+      "kindId": "core:light:wooden-torch",
+      "value": 6,
+      "baseName": "Wooden Torch",
+      "carried": true,
+      "fuel": 5000,
+      "charging": 0,
+      "unknownRunes": false
+    },
+    "converted": {
+      "label": "& Wooden Torch~",
+      "timeout": 5000
+    },
+    "first": {
+      "sameLampTimeout": 0,
+      "shadowPlayerLight": 2,
+      "playerLight": 2,
+      "borgLight": 2,
+      "equipment": [
+        {
+          "label": "& Rapier~",
+          "timeout": 0,
+          "flags": [],
+          "modifiers": []
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+          "label": "& Wooden Torch~",
+          "timeout": 5000,
+          "flags": [
+            "BURNS_OUT",
+            "LIGHT_2"
+          ],
+          "modifiers": []
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "life": {
+      "seed": 3,
+      "birthOptions": {
+        "birth_randarts": false,
+        "birth_connect_stairs": true,
+        "birth_force_descend": false,
+        "birth_no_recall": false,
+        "birth_no_artifacts": false,
+        "birth_stacking": true,
+        "birth_lose_arts": false,
+        "birth_feelings": true,
+        "birth_no_selling": false,
+        "birth_start_kit": true,
+        "birth_ai_learn": true,
+        "birth_know_runes": false,
+        "birth_know_flavors": false,
+        "birth_levels_persist": false,
+        "birth_percent_damage": false
+      },
+      "life": 1,
+      "dead": false,
+      "decisions": 600,
+      "turns": 5720,
+      "maxDepth": 1,
+      "endDepth": 0,
+      "clvl": 1,
+      "kills": 2,
+      "gold": 347,
+      "causeOfDeath": null,
+      "race": "Human",
+      "className": "Mage",
+      "baseStats": [
+        17,
+        16,
+        10,
+        10,
+        16
+      ],
+      "commands": {
+        "study": 1,
+        "takeoff": 256,
+        "wield": 255,
+        "cast": 3,
+        "descend": 3,
+        "ascend": 2,
+        "walk": 76,
+        "rest": 1,
+        "pickup": 1,
+        "open": 1,
+        "read": 1
+      },
+      "depthsVisited": [
+        0,
+        1
+      ],
+      "places": 41,
+      "jitter": 1,
+      "restedBesideMonster": 0,
+      "unsure": {
+        "total": 0,
+        "points": []
+      },
+      "wallClockMs": 6384,
+      "arrivalStamps": {},
+      "journal": {
+        "journal": 1,
+        "milestones": [
+          {
+            "depth": 0,
+            "levelId": 0,
+            "cause": "new-game",
+            "arena": false,
+            "level": 1,
+            "turn": 0
+          },
+          {
+            "depth": 1,
+            "levelId": 1,
+            "cause": "change",
+            "arena": false,
+            "level": 1,
+            "turn": 780
+          }
+        ]
+      },
+      "stageAttained": false,
+      "retired": false,
+      "graveyard": []
+    }
+  },
+  {
+    "name": "prepared-spent-control",
+    "knownLamp": {
+      "handle": 2,
+      "kindKey": "kind:4",
+      "itemKey": "gear:2",
+      "nameColor": "yellow",
+      "label": "& Wooden Torch~",
+      "aware": true,
+      "tval": 19,
+      "sval": 1,
+      "pval": 0,
+      "number": 1,
+      "weight": 22,
+      "ac": 0,
+      "toA": 0,
+      "toH": 0,
+      "toD": 0,
+      "dd": 1,
+      "ds": 1,
+      "ego": false,
+      "artifact": false,
+      "flags": [
+        "BURNS_OUT",
+        "LIGHT_2"
+      ],
+      "modifiers": [],
+      "brands": [],
+      "slays": [],
+      "resists": [],
+      "curses": [],
+      "egoName": null,
+      "artifactName": null,
+      "activation": false,
+      "inscription": null,
+      "name": "a Wooden Torch (0 turns)",
+      "value": 6,
+      "baseName": "Wooden Torch",
+      "carried": true,
+      "fuel": 0,
+      "charging": 0,
+      "unknownRunes": false
+    },
+    "timeout": 0
+  }
+]
