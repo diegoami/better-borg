@@ -7111,7 +7111,6 @@ function borgNoticePlayer(c) {
     t[127 /* ISFIXSTR */ + i] = drained?.[i] ? 1 : 0;
   }
   t[44 /* SPEED */] = p.speed;
-  t[26 /* LIGHT */] = p.light;
   t[52 /* INFRA */] = p.seeInfra;
 }
 function borgNoticeEquipment(c) {
@@ -7153,14 +7152,17 @@ function borgNoticeEquipment(c) {
     t[7 /* AWIS */] = t[7 /* AWIS */] + mod(item, "WIS") * (known ? known[2] ?? 0 : 1);
     t[8 /* ADEX */] = t[8 /* ADEX */] + mod(item, "DEX") * (known ? known[3] ?? 0 : 1);
     t[9 /* ACON */] = t[9 /* ACON */] + mod(item, "CON") * (known ? known[4] ?? 0 : 1);
-    t[193 /* WS_ANIMAL */] = slayMult(item, "ANIMAL");
-    t[194 /* WS_EVIL */] = slayMult(item, "EVIL");
-    t[195 /* WS_UNDEAD */] = slayMult(item, "UNDEAD");
-    t[196 /* WS_DEMON */] = slayMult(item, "DEMON");
-    t[197 /* WS_ORC */] = slayMult(item, "ORC");
-    t[198 /* WS_TROLL */] = slayMult(item, "TROLL");
-    t[199 /* WS_GIANT */] = slayMult(item, "GIANT");
-    t[200 /* WS_DRAGON */] = slayMult(item, "DRAGON");
+    t[193 /* WS_ANIMAL */] = Math.max(t[193 /* WS_ANIMAL */], slayMult(item, "ANIMAL"));
+    t[194 /* WS_EVIL */] = Math.max(t[194 /* WS_EVIL */], slayMult(item, "EVIL"));
+    t[195 /* WS_UNDEAD */] = Math.max(t[195 /* WS_UNDEAD */], slayMult(item, "UNDEAD"));
+    t[196 /* WS_DEMON */] = Math.max(t[196 /* WS_DEMON */], slayMult(item, "DEMON"));
+    t[197 /* WS_ORC */] = Math.max(t[197 /* WS_ORC */], slayMult(item, "ORC"));
+    t[198 /* WS_TROLL */] = Math.max(t[198 /* WS_TROLL */], slayMult(item, "TROLL"));
+    t[199 /* WS_GIANT */] = Math.max(t[199 /* WS_GIANT */], slayMult(item, "GIANT"));
+    t[200 /* WS_DRAGON */] = Math.max(t[200 /* WS_DRAGON */], slayMult(item, "DRAGON"));
+    if (t[195 /* WS_UNDEAD */] >= 5) t[201 /* WK_UNDEAD */] = 1;
+    if (t[196 /* WS_DEMON */] >= 5) t[202 /* WK_DEMON */] = 1;
+    if (t[200 /* WS_DRAGON */] >= 5) t[203 /* WK_DRAGON */] = 1;
     if (hasBrand3(item, "ACID")) t[205 /* WB_ACID */] = 1;
     if (hasBrand3(item, "ELEC")) t[206 /* WB_ELEC */] = 1;
     if (hasBrand3(item, "FIRE")) t[207 /* WB_FIRE */] = 1;
@@ -7185,7 +7187,6 @@ function borgNoticeEquipment(c) {
       if (hasFlag2(item, "LIGHT_2")) t[26 /* LIGHT */] = t[26 /* LIGHT */] + 2;
       else if (hasFlag2(item, "LIGHT_3")) t[26 /* LIGHT */] = t[26 /* LIGHT */] + 3;
       if (mod(item, "LIGHT") > 0 && c.cls === CLASS_NECROMANCER) t[26 /* LIGHT */] = t[26 /* LIGHT */] - 1;
-      t[26 /* LIGHT */] = t[26 /* LIGHT */] + mod(item, "LIGHT");
     }
     t[46 /* MOD_MOVES */] = t[46 /* MOD_MOVES */] + mod(item, "MOVES");
     t[47 /* DAM_RED */] = t[47 /* DAM_RED */] + mod(item, "DAM_RED");

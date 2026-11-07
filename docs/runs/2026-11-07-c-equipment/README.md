@@ -178,3 +178,38 @@ The port import's local comment now explains that the faithful port retains
 C238 while Mandos186 corrects it below. Its stored removal patch reflects only
 that prose adaptation; source import e6d51b5 and producer history remain intact.
 No runtime scope is expanded by this clarification.
+
+## Frozen shared fixture follow-up and final consumer focus
+
+Producer fixture-only3bcfe2fd3aa39c9e95e711ecbbc889930a40d26e supplies the
+reviewed explicit policy-model inputs and real known-light helper across the
+existing affected tests. Its12-path test-only diff applies cleanly, separately
+from the runtime2ee4f82 import and the independent C units. The stored
+port-corrections/source41-policy-fixtures.patch is an additional test removal
+unit. No whole producer plugin or runtime module is copied. Original assertions
+remain. Pure Notice policy tests explicitly restore their named model radius;
+controller re-entry cases use actual known registered light equipment instead.
+Recall uses the intended Lantern3, and a vault's old positive-light1 gate uses
+real Torch2 (same lit/unlit gate). Unit helper handles9900/9901 are explicitly
+remapped to avoid collisions with unrelated inventory fixtures; these policy
+fixtures are not engine transaction/handle execution proof. The actual8 matching
+loadout cases keep real engine handles and never override light or traits.
+
+Final affected consumer focus: **561 tests/25 files/zero skips,19.40s**. The
+selected files include both new correction suites, policy/controller/helper
+consumers, all seven prior C regressions, combat, trait/power/backup and light
+controls. Own rebuilt plugin **739.6KiB**, SHA256
+24292392ae4693d402589e87ff26d1934ff2832ea77f415332e47f533c808f9d;
+its29 tests pass, types/session/grants/currency pass. Logs are in final/.
+These are targeted and built-plugin results, not extra game lives or a full
+required-gate success. No local full or advanced optional replay run is claimed.
+The exact-head hosted Node22/default gate and actual-main results must be
+recorded on the PR/consumer checkpoints before final delivery/carry.
+
+Producer privacy/required-full/fork-main status is separate and remains owned
+by the parent/source session. Only the cleaned frozen source code/fixture
+patches and our own focused receipts are imported; large producer failure logs
+are not copied. Source and consumer full verification may run independently
+while both merges remain subject to their required green checks. Raw published
+beta.3, unchanged engine/package/manifest/grants and the independently retained
+lab/stock-host limitation remain explicit.

@@ -15,3 +15,11 @@ state. A stored patch or work-branch commit is not a carried main correction.
 
 Retire only after an equivalent accepted upstream TS correction is imported
 and independently verified in Mandos. Keep unrelated C and engine units.
+
+The fixture-only producer follow-up3bcfe2fd3aa39c9e95e711ecbbc889930a40d26e
+is preserved separately in [source41-policy-fixtures.patch](source41-policy-fixtures.patch).
+It corrects tests' explicit model-radius or actual-known-lamp inputs while
+keeping original assertions. The actual-source light fixture was unchanged at
+import; Mandos's two C238 Phial expectations are a separately documented
+intentional divergence afterward. The base unit has a local comment-only
+clarification pointing to Mandos186; producer runtime code is otherwise exact.
