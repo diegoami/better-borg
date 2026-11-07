@@ -1,0 +1,130 @@
+
+ RUN  v4.1.11 /tmp/mandos-c-traits-238-239
+
+ ❯ src/trait/c-equipment-corrections.test.ts (12 tests | 8 failed) 873ms
+     × keeps the weapon's known slay after a later ordinary torch 176ms
+     × raises the animal melee estimate from the registered known slay 149ms
+     × retains the known greater Undead slay and its kill classification 51ms
+     × retains the known greater Demon slay and its kill classification 61ms
+     × retains the known greater Dragon slay and its kill classification 46ms
+     × counts the registered Phial's LIGHT[4] once 59ms
+     × preserves a fuelled ordinary torch's flag-based radius 61ms
+     × keeps the Necromancer unlight adjustment after the single modifier add 55ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > keeps the weapon's known slay after a later ordinary torch
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ src/trait/c-equipment-corrections.test.ts:86:50
+     84|     const s = scene({ ego: "of Slay Animal" });
+     85|     expect(s.weapon.slays).toContain("ANIMAL_2"); expect(s.light!.slay…
+     86|     expect(s.ctx.world.self.trait[BI.WS_ANIMAL]).toBe(2);
+       |                                                  ^
+     87|   });
+     88|   it("raises the animal melee estimate from the registered known slay"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > raises the animal melee estimate from the registered known slay
+AssertionError: expected 6 to be greater than 6
+ ❯ src/trait/c-equipment-corrections.test.ts:91:28
+     89|     const known = scene({ ego: "of Slay Animal" }), unknown = scene({ …
+     90|     expect(unknown.weapon.slays).toEqual([]);
+     91|     expect(known.rating()).toBeGreaterThan(unknown.rating());
+       |                            ^
+     92|   });
+     93|   it.each([["Undead", BI.WS_UNDEAD, BI.WK_UNDEAD], ["Demon", BI.WS_DEM…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Undead slay and its kill classification
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Demon slay and its kill classification
+ FAIL  src/trait/c-equipment-corrections.test.ts > C239 publicly known equipment slays > retains the known greater Dragon slay and its kill classification
+AssertionError: expected +0 to be 5 // Object.is equality
+
+- Expected
++ Received
+
+- 5
++ 0
+
+ ❯ src/trait/c-equipment-corrections.test.ts:97:44
+     95|       const s = scene({ ego: `of *Slay ${name}*` });
+     96|       expect(s.weapon.slays).toContain(`${name.toUpperCase()}_5`);
+     97|       expect(s.ctx.world.self.trait[slay]).toBe(5); expect(s.ctx.world…
+       |                                            ^
+     98|     });
+     99|   it("keeps an undiscovered wielded slay concealed", () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > counts the registered Phial's LIGHT[4] once
+AssertionError: expected 9 to be 4 // Object.is equality
+
+- Expected
++ Received
+
+- 4
++ 9
+
+ ❯ src/trait/c-equipment-corrections.test.ts:121:46
+    119|     expect(s.light!.artifact).toBe(true); expect(s.light!.artifactName…
+    120|     expect(s.light!.modifiers).toContainEqual({ code: "LIGHT", value: …
+    121|     expect(s.ctx.world.self.trait[BI.LIGHT]).toBe(4);
+       |                                              ^
+    122|   });
+    123|   it("preserves a fuelled ordinary torch's flag-based radius", () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > preserves a fuelled ordinary torch's flag-based radius
+AssertionError: expected 3 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 3
+
+ ❯ src/trait/c-equipment-corrections.test.ts:126:46
+    124|     const s = scene({ light: "torch" });
+    125|     expect(s.light!.flags).toContain("LIGHT_2"); expect(s.light!.timeo…
+    126|     expect(s.ctx.world.self.trait[BI.LIGHT]).toBe(2);
+       |                                              ^
+    127|   });
+    128|   it("keeps the Necromancer unlight adjustment after the single modifi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  src/trait/c-equipment-corrections.test.ts > C238 known equipment light modifiers > keeps the Necromancer unlight adjustment after the single modifier add
+AssertionError: expected 8 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 8
+
+ ❯ src/trait/c-equipment-corrections.test.ts:131:46
+    129|     const s = scene({ cls: "Necromancer", light: "phial" });
+    130|     expect(s.light!.modifiers).toContainEqual({ code: "LIGHT", value: …
+    131|     expect(s.ctx.world.self.trait[BI.LIGHT]).toBe(3);
+       |                                              ^
+    132|   });
+    133| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 4 passed (12)
+   Start at  11:49:13
+   Duration  1.92s (transform 645ms, setup 205ms, import 727ms, tests 873ms, environment 0ms)
+
