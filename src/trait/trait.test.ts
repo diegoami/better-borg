@@ -158,7 +158,7 @@ describe("borg_notice equipment derivation", () => {
     expect(ctx.world.self.trait[BI.WB_ACID]).toBe(0);
   });
 
-  it("reads slay multipliers per race flag (last-writer-wins)", () => {
+  it("reads known slay multipliers per race flag", () => {
     const weapon = item({ tval: 9, dd: 1, ds: 4, weight: 30, slays: ["EVIL_2", "UNDEAD_5"] });
     const ctx = mkCtx({}, equipArray({ 0: weapon }));
     borgNotice(ctx);

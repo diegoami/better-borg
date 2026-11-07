@@ -69,3 +69,23 @@ Reviewed native pins: C239 proposal304 at
 f1e899b66b383b19ab2d69b4d7ffbb2148ba5444. Native and TS runtime
 proofs are independent. No engine/port/native source, lab, owner profile,
 save, deployment or Rust repository is accessed or changed by these fixtures.
+
+## C239-only translation
+
+The ten selected C239 cases now pass. The same three C238 cases remain
+explicitly outside this intermediate selected command; no default-gate result
+is claimed. Relevant trait/combat/backup and six existing carry suites pass
+167/10 files; the actual C spell suite is run separately (17 cases). The
+initial focused command also named an absent old necro test path, which Vitest
+ignored; the separate actual c-spell-carry.test.ts result is authoritative.
+Types pass. These are targeted results, not the final full required gate.
+
+The independent runtime unit uses Math.max for numeric ItemView multipliers,
+not C's bitwise OR, so a3 and5 cannot become a fictitious7. The existing combat
+ladder tests ordinary WS flags for x2/x3 and separate WK flags for x5; known
+greater UNDEAD/DEMON/DRAGON multipliers now set those flags. Later no-slay items
+cannot erase either. The old trait test's title mentioning last-writer-wins is
+updated to describe the corrected contract; its original assertions remain.
+Core/packages and all seven prior C source/patch units are unchanged. The
+rebuilt plugin and final required gate wait for the separately routed light
+port finding before the final combined delivery is frozen.

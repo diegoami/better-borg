@@ -322,15 +322,22 @@ function borgNoticeEquipment(c: Ctx): void {
     t[BI.ADEX] = t[BI.ADEX]! + mod(item, "DEX") * (known ? (known[3] ?? 0) : 1);
     t[BI.ACON] = t[BI.ACON]! + mod(item, "CON") * (known ? (known[4] ?? 0) : 1);
 
-    /* Slays: last-writer-wins overwrite, verbatim (trait.c:1453). */
-    t[BI.WS_ANIMAL] = slayMult(item, "ANIMAL");
-    t[BI.WS_EVIL] = slayMult(item, "EVIL");
-    t[BI.WS_UNDEAD] = slayMult(item, "UNDEAD");
-    t[BI.WS_DEMON] = slayMult(item, "DEMON");
-    t[BI.WS_ORC] = slayMult(item, "ORC");
-    t[BI.WS_TROLL] = slayMult(item, "TROLL");
-    t[BI.WS_GIANT] = slayMult(item, "GIANT");
-    t[BI.WS_DRAGON] = slayMult(item, "DRAGON");
+    /* FORK Mandos185 / C239, proposal304@9ab78ae6: later equipment must
+     * not erase a known weapon slay. ItemView stores numeric multipliers;
+     * max retains the strongest (C uses bitwise OR for its presence traits).
+     * Greater undead/demon/dragon slays feed the separate x5 combat flags. */
+    t[BI.WS_ANIMAL] = Math.max(t[BI.WS_ANIMAL]!, slayMult(item, "ANIMAL"));
+    t[BI.WS_EVIL] = Math.max(t[BI.WS_EVIL]!, slayMult(item, "EVIL"));
+    t[BI.WS_UNDEAD] = Math.max(t[BI.WS_UNDEAD]!, slayMult(item, "UNDEAD"));
+    t[BI.WS_DEMON] = Math.max(t[BI.WS_DEMON]!, slayMult(item, "DEMON"));
+    t[BI.WS_ORC] = Math.max(t[BI.WS_ORC]!, slayMult(item, "ORC"));
+    t[BI.WS_TROLL] = Math.max(t[BI.WS_TROLL]!, slayMult(item, "TROLL"));
+    t[BI.WS_GIANT] = Math.max(t[BI.WS_GIANT]!, slayMult(item, "GIANT"));
+    t[BI.WS_DRAGON] = Math.max(t[BI.WS_DRAGON]!, slayMult(item, "DRAGON"));
+
+    if (t[BI.WS_UNDEAD]! >= 5) t[BI.WK_UNDEAD] = 1;
+    if (t[BI.WS_DEMON]! >= 5) t[BI.WK_DEMON] = 1;
+    if (t[BI.WS_DRAGON]! >= 5) t[BI.WK_DRAGON] = 1;
 
     /* Brands: OR-accumulated, _3 codes only (trait.c:1463). */
     if (hasBrand3(item, "ACID")) t[BI.WB_ACID] = 1;
