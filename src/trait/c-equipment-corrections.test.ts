@@ -119,21 +119,3 @@ describe("C239 publicly known equipment slays", () => {
     expect(s.weapon.slays).toEqual([]); expect(s.ctx.world.self.trait[BI.WS_ANIMAL]).toBe(0); expect(s.ctx.world.self.trait[BI.WK_DRAGON]).toBe(0);
   });
 });
-describe("C238 known equipment light modifiers", () => {
-  it("counts the registered Phial's LIGHT[4] once", () => {
-    const s = scene({ light: "phial" });
-    expect(s.light!.artifact).toBe(true); expect(s.light!.artifactName).toContain("Galadriel");
-    expect(s.light!.modifiers).toContainEqual({ code: "LIGHT", value: 4 });
-    expect(s.ctx.world.self.trait[BI.LIGHT]).toBe(4);
-  });
-  it("preserves a fuelled ordinary torch's flag-based radius", () => {
-    const s = scene({ light: "torch" });
-    expect(s.light!.flags).toContain("LIGHT_2"); expect(s.light!.timeout).toBeGreaterThan(0);
-    expect(s.ctx.world.self.trait[BI.LIGHT]).toBe(2);
-  });
-  it("keeps the Necromancer unlight adjustment after the single modifier add", () => {
-    const s = scene({ cls: "Necromancer", light: "phial" });
-    expect(s.light!.modifiers).toContainEqual({ code: "LIGHT", value: 4 });
-    expect(s.ctx.world.self.trait[BI.LIGHT]).toBe(3);
-  });
-});

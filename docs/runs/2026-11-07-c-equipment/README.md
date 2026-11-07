@@ -89,3 +89,25 @@ updated to describe the corrected contract; its original assertions remain.
 Core/packages and all seven prior C source/patch units are unchanged. The
 rebuilt plugin and final required gate wait for the separately routed light
 port finding before the final combined delivery is frozen.
+
+## Port41 / Mandos196 before proof on the actual matching public frame
+
+The producer's immutable8-case fixture6e2c71bc1f0eb91f186e6449c75d444c67d1c794
+is copied byte-identically as src/trait/light-base.test.ts (SHA256
+ed9838fe7ff61af2ddabd597a68f800f9a4c182c795b3c6f76c2dc8c7409df46).
+On the current C239-only Mandos branch it gives4 expected failures/4 passing
+controls: actual matching public player/items produce Warrior Torch4/Phial12
+and Necromancer Torch4/Phial10, against faithful C2/8 and2/7. Empty and spent
+controls pass. port41/before.log retains the public snapshots and failures.
+These replace the three earlier mixed-frame light cases as the authoritative
+light integration fixture. The earlier source/test/output remain at frozen
+beforea9b71e7; the changed fixture boundary is explicit, not an assertion waiver.
+
+The source fixture uses a real registered game and declared simulateLoadout →
+knownLoadoutSimulation → production API2 simulationView. Matching player.light
+and public derived stats.light are asserted first; real Phial LIGHT[4] and
+Torch fuel5000 are asserted before notice. The engine's description callback,
+not an invented fuel field, supplies the public equipment timeout. No BI_LIGHT
+or player.light value is forced in these actual-frame tests. Producer runtime
+2ee4f82f7f845674e6c12575afbcc7837ae713db is parent-reviewed; required producer
+CI/main/consumer acceptance remains separately held, not inferred from focus.
